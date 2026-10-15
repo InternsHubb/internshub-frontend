@@ -3,9 +3,17 @@ import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
+import InternshipPage from './pages/InternshipPage'
+
+// TEMPORARY: path check until the team adds a router. Every other path keeps the default view.
+const INTERNSHIP_PATH = '/internship'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  if (window.location.pathname === INTERNSHIP_PATH) {
+    return <InternshipPage />
+  }
 
   return (
     <>

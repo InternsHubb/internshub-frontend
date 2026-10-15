@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Global styles live in the base layer so Tailwind utility classes can override them. */
+@layer base {
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -18,7 +19,6 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
@@ -27,10 +27,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,29 +50,30 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
+/* The body font size is set here instead of on :root so 1rem stays 16px for Tailwind's spacing and type scale. */
 body {
   margin: 0;
+  font: 18px/145% var(--sans);
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
 }
 
-h1,
-h2 {
+/* Default-view heading styles are scoped to its sections so they do not leak into feature pages. */
+:where(#center, #next-steps) :is(h1, h2) {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
 }
 
-h1 {
+:where(#center, #next-steps) h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
@@ -85,7 +82,7 @@ h1 {
     margin: 20px 0;
   }
 }
-h2 {
+:where(#center, #next-steps) h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
@@ -111,4 +108,5 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
 }
