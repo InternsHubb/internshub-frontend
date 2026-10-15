@@ -1,81 +1,77 @@
-﻿# InternsHub Frontend Architecture & Role Specifications
+﻿# InternsHub Frontend UI Architecture & Task Assignments
 
-The platform is built using React, TypeScript (strict), Vite, and Tailwind CSS (Frontend UI Standalone, no backend integration, utilizing mock data and local state).
+The platform focuses purely on standalone Frontend UI screens, built using React, TypeScript (strict), Vite, and Tailwind CSS (no backend integration, relying on local state and mock data).
 
 ## General Rules for All Developers:
 1. No direct pushes to main: Every developer must work inside an independent feature branch.
 2. Styling & RTL: Use Tailwind CSS exclusively with logical properties (ms-, me-, ps-, pe-, start-, end-) to support Arabic and English layouts without rewrites.
-3. Form Validation: Use React Hook Form integrated with Zod schemas for structural validation.
-4. Localization & Utilities: Use i18next for strings, date-fns for dates, and the built-in Intl API for currency formatting (EGP).
+3. Form Validation & UI Components: Use React Hook Form with Zod for local validation schemas, and shadcn/ui or Radix UI for accessible components.
+4. UI Focus: Build clean, responsive, and pixel-perfect UI screens as assigned below.
 
-## Detailed File Structure & Task Assignments:
+## Detailed UI Screen Assignments:
 
 ### 1. Amr Elawadly
-* Assigned Module: Landing Page
+* Assigned UI Module: Landing Page UI
 * Target Files:
   * `src/pages/LandingPage.tsx`
   * `src/components/landing/` (Navbar, Hero, Footer, Features)
 * Detailed Tasks:
-  * Build the complete landing page layout (Navbar, Hero section, and footer).
-  * Implement static prerendering (vite-react-ssg) for optimized public page SEO.
-  * Apply Tailwind CSS logical RTL utilities and i18next for bilingual text rendering.
+  * Build the complete landing page UI layout (Navbar, Hero section, and footer).
+  * Apply Tailwind CSS logical RTL utilities for bilingual Arabic/English layout support.
 
 ### 2. Abdallah Ashraf
-* Assigned Module: Internship Page
+* Assigned UI Module: Internship Page UI
 * Target Files:
   * `src/pages/InternshipPage.tsx`
   * `src/components/internship/` (TrackCard, FilterBar, FAQ)
 * Detailed Tasks:
-  * Build the complete internship overview interface and features section.
-  * Develop the interactive "Choose Your Track" filtering component with local state handling.
-  * Integrate localized typography and responsive grids using shadcn/ui and Radix UI accessibility primitives.
+  * Build the complete internship overview interface and features section UI.
+  * Develop the interactive "Choose Your Track" filtering UI component using local state.
 
 ### 3. Ali Hatem
-* Assigned Module: Authentication - General/Main Flow
+* Assigned UI Module: Authentication - General Layout UI
 * Target Files:
   * `src/pages/auth/AuthMain.tsx`
   * `src/components/auth/AuthLayout.tsx`
 * Detailed Tasks:
-  * Build the main authentication wrapper views, shared form layouts, and initial routing views.
-  * Implement forms using React Hook Form and Zod schemas for client-side structural validation.
+  * Build the main authentication wrapper views, shared form layouts, and navigation UI containers.
   * Ensure accessible components and proper focus behavior using Radix UI primitives.
 
 ### 4. Youssef Ahmed
-* Assigned Module: Auth - Login
+* Assigned UI Module: Auth - Login UI
 * Target Files:
   * `src/pages/auth/Login.tsx`
+  * `src/components/auth/LoginForm.tsx`
 * Detailed Tasks:
-  * Build the complete email and password login interface alongside Google Identity Services button integration.
-  * Implement error handling UI states (e.g., empty fields, invalid credentials).
-  * Style using Tailwind CSS and shadcn/ui input components with strict RTL alignment.
+  * Build the complete email and password login interface UI alongside Google button mockup.
+  * Implement local error handling UI states (e.g., empty fields, invalid credentials view).
 
 ### 5. Renad Mansour
-* Assigned Module: Auth - Forgot Password
+* Assigned UI Module: Auth - Forgot Password UI
 * Target Files:
   * `src/pages/auth/ForgotPassword.tsx`
 * Detailed Tasks:
-  * Build the complete password recovery flow, including email input and validation errors.
-  * Design the success state screen (Check your email) and server error handling UI.
-  * Use React Hook Form and Zod for local email format validation.
+  * Build the password recovery flow UI, including email input and validation error states.
+  * Design the success state screen UI (Check your email confirmation view).
 
 ### 6. Nora Abdelnabi
-* Assigned Module: Auth - Phone OTP Login
+* Assigned UI Module: Auth - Phone OTP Login UI
 * Target Files:
   * `src/pages/auth/PhoneOTP.tsx`
 * Detailed Tasks:
-  * Build the phone number entry screen with country code selectors.
-  * Implement the 6-digit OTP verification input layout with local countdown timer simulation.
-  * Design verification error states (Incorrect code) and success confirmations (Phone verified).
+  * Build the phone number entry screen UI with country code selector components.
+  * Implement the 6-digit OTP verification input layout UI with a simulated countdown timer.
 
 ### 7. Gamal Wessam
-* Assigned Module: All Onboarding Steps (01 to 10)
+* Assigned UI Module: All Onboarding Steps UI (01 to 10)
 * Target Files:
   * `src/pages/onboarding/OnboardingFlow.tsx`
   * `src/components/onboarding/steps/`
 * Detailed Tasks:
-  * Steps 01-04: Registration form using React Hook Form and Zod, Terms & Privacy modals, dual verification, age validation, and package/track selection.
-  * Steps 05-06: CV upload dropzone (react-dropzone verifying size limits), Smart Review snapshot, and desktop-only interview media readiness checks (getUserMedia) displaying a mobile fallback screen.
-  * Steps 07-10: Assessment results screens, payment gateway checkout interface (EGP formatting via built-in Intl API), journey status timeline, and mentorship slot booking using date-fns for timezone management.
+  * Steps 01-04: Registration form UI, Terms & Privacy modals, dual verification views, and track selection UI.
+  * Steps 05-06: CV upload dropzone UI mockup, Smart Review snapshot UI, and desktop-only interview media readiness UI check.
+  * Steps 07-10: Assessment results screen UI, payment gateway checkout UI mockup (EGP currency format), and journey status timeline UI.
+  
   ## How to Work & Create Your Branch:
 
 To prevent code conflicts and keep our work organized, never push directly to the main branch. Follow these steps on your local machine:
