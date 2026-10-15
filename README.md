@@ -117,7 +117,6 @@ git checkout -b feature/onboarding-flow
 
 Commit and push your work when done:
 
-*in terminal*
 
 git add .
 
