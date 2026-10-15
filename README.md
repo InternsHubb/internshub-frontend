@@ -127,7 +127,11 @@ Commit and push your work when done:
 *in terminal*
 
 git add .
+
 git commit -m "feat: complete UI for my assigned module"
+
 git push origin feature/your-branch-name
+
 Open a Pull Request (PR):
+
 Go to GitHub, open a Pull Request from your feature branch into main, and wait for review and merge.
