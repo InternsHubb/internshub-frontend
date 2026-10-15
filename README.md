@@ -85,40 +85,33 @@ To prevent code conflicts and keep our work organized, never push directly to th
    
    git checkout main
    git pull origin main
-Create and switch to your assigned feature branch (choose the command matching your name below):
+Create and switch to your assigned feature branch (choose the command matching your name below): #USE TERMINAL#
 
 #Amr (Landing Page):
-*in terminal*
 
 git checkout -b feature/landing-page
 
 #Abdallah (Internship Page):
-*in terminal*
 
 git checkout -b feature/internship-page
 
 #Ali (Auth General Flow):
-*in terminal*
 
 git checkout -b feature/auth-main
 
 #Youssef (Auth Login):
-*in terminal*
 
 git checkout -b feature/auth-login
 
 #Renad (Forgot Password):
-*in terminal*
 
 git checkout -b feature/auth-forgot-password
 
 #Nora (Phone OTP):
-*in terminal*
 
 git checkout -b feature/auth-phone-otp
 
 #Gamal (Onboarding Flow):
-*in terminal*
 
 git checkout -b feature/onboarding-flow
 
