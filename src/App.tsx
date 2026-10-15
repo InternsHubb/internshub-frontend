@@ -1,5 +1,11 @@
-import AuthMain from '@/pages/auth/AuthMain';
+import OnboardingFlow from "./pages/onboarding/OnboardingFlow";
 
-export default function App() {
-  return <AuthMain />;
+function App() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      <OnboardingFlow />
+    </div>
+  );
 }
+
+export default App;
