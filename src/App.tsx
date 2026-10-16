@@ -1,5 +1,11 @@
-import ForgotPassword from "./pages/auth/ForgotPassword";
+import OnboardingFlow from "./pages/onboarding/OnboardingFlow";
 
-export default function App() {
-  return <ForgotPassword />;
+function App() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      <OnboardingFlow />
+    </div>
+  );
 }
+
+export default App;
