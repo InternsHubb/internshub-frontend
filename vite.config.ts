@@ -8,8 +8,4 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
-  // @ts-expect-error vite-react-ssg options
-  ssgOptions: {
-    mock: true,
-  },
 })
