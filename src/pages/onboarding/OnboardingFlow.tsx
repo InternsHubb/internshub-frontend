@@ -340,7 +340,7 @@ export default function OnboardingFlow() {
                   <div className="absolute -right-16 -top-16 w-64 h-64 border-[24px] border-white/5 rounded-full pointer-events-none"></div>
                   <div className="absolute right-4 top-20 w-36 h-36 border border-white/10 rounded-full pointer-events-none"></div>
 
-                  <div className="w-[52px] h-[52px] bg-white/12 border border-white/15 rounded-[14px] flex items-center justify-center font-extrabold text-sm tracking-wide z-10 text-white">
+                  <div className="w-[52px] h-[52px] bg-white/12 border border-white/15 rounded-[14px] flex items-center justify-center font-extrabold text-sm tracking-wide z-10">
                     18+
                   </div>
 
@@ -653,6 +653,14 @@ export default function OnboardingFlow() {
                 </div>
               </div>
 
+              <div className="bg-white p-5 rounded-[18px] border border-[#3A0353]/10 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                <div className="border-r border-[#E8E2EC] pr-4"><span className="text-[10px] text-[#111827] font-bold block">Resume window</span><span className="text-[9px] text-[#6B7280]">Within one hour</span></div>
+                <div className="border-r border-[#E8E2EC] pr-4"><span className="text-[10px] text-[#111827] font-bold block">Resume attempts</span><span className="text-[9px] text-[#6B7280]">Up to three</span></div>
+                <div className="border-r border-[#E8E2EC] pr-4"><span className="text-[10px] text-[#111827] font-bold block">Incomplete attempt</span><span className="text-[9px] text-[#6B7280]">Retake after 48 hours, subject to attempt rules</span></div>
+                <div><span className="text-[10px] text-[#111827] font-bold block">Attempt limit</span><span className="text-[9px] text-[#6B7280]">Three per track and interview type, then admin review</span></div>
+              </div>
+              <p className="text-[11px] text-[#6B7280]">Interview duration and question count are intentionally not shown because they remain open business decisions.</p>
+
               <div className="flex justify-end items-center gap-4 pt-4 border-t border-[#E8E2EC]">
                 <button onClick={() => setCurrentStep(5)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button onClick={() => setCurrentStep(7)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
@@ -698,12 +706,37 @@ export default function OnboardingFlow() {
                     Your level will appear here after the assessment and review process completes.
                   </p>
 
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                    <div className="p-3 bg-white/5 border border-white/12 rounded-[12px]">
+                      <span className="text-[8px] text-[#BFAEC9] uppercase block">Selected package</span>
+                      <p className="text-[10px] text-white font-medium mt-1">Dynamic package months</p>
+                    </div>
+                    <div className="p-3 bg-white/5 border border-white/12 rounded-[12px]">
+                      <span className="text-[8px] text-[#BFAEC9] uppercase block">Selected track</span>
+                      <p className="text-[10px] text-white font-medium mt-1">Dynamic track</p>
+                    </div>
+                    <div className="p-3 bg-white/5 border border-white/12 rounded-[12px]">
+                      <span className="text-[8px] text-[#BFAEC9] uppercase block">Result source</span>
+                      <p className="text-[10px] text-white font-medium mt-1">Demo placeholder</p>
+                    </div>
+                  </div>
+
                   <div className="pt-2">
                     <button onClick={() => setCurrentStep(8)} className="px-7 py-3 bg-white text-[#3A0353] font-bold text-xs rounded-[13px] shadow flex items-center gap-2">
                       Continue to Payment →
                     </button>
                   </div>
                 </div>
+              </div>
+
+              <div className="bg-white/90 p-5 rounded-[18px] border border-[#E8E2EC] shadow-sm flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-normal text-[#111827]">Need a result reviewed?</h4>
+                  <p className="text-[10px] text-[#6B7280] mt-0.5">Appeals are available within seven days. A different reviewer makes the final appeal decision.</p>
+                </div>
+                <button className="px-5 py-2.5 bg-white border border-[#CCB8D8] text-[#3A0353] text-xs font-bold rounded-[13px]">
+                  View appeal policy
+                </button>
               </div>
 
               <div className="flex justify-end items-center gap-4 pt-6 border-t border-[#E8E2EC]">
@@ -723,15 +756,72 @@ export default function OnboardingFlow() {
                 <p className="text-[#69616D] text-base">Review your selected package and securely complete your enrollment.</p>
               </div>
 
+              <div className="bg-white/90 p-4 rounded-[18px] border border-[#3A0353]/10 shadow-sm flex items-center justify-between text-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-[34px] h-[34px] bg-[#16794A] text-white rounded-[11px] flex items-center justify-center font-bold">✓</div>
+                  <div><h5 className="font-normal text-[#111827]">Interview result</h5><p className="text-[8px] text-[#AAA2AD]">Required stage complete</p></div>
+                </div>
+                <div className="flex-grow h-[1px] bg-[#E8E2EC] mx-6"></div>
+                <div className="flex items-center gap-3">
+                  <div className="w-[34px] h-[34px] bg-[#3A0353] text-white rounded-[11px] flex items-center justify-center font-bold ring-4 ring-[#F3E9FA]">2</div>
+                  <div><h5 className="font-normal text-[#111827]">Payment</h5><p className="text-[8px] text-[#AAA2AD]">Review and enroll</p></div>
+                </div>
+                <div className="flex-grow h-[1px] bg-[#E8E2EC] mx-6"></div>
+                <div className="flex items-center gap-3">
+                  <div className="w-[34px] h-[34px] bg-white border border-[#DDD4E1] text-[#AAA2AD] rounded-[11px] flex items-center justify-center font-bold">3</div>
+                  <div><h5 className="font-normal text-[#111827]">Waiting stage</h5><p className="text-[8px] text-[#AAA2AD]">Begins after confirmation</p></div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5 relative">
                   <div className="absolute top-6 right-6 w-8 h-8 bg-[#3A0353] text-white rounded-lg flex items-center justify-center text-xs">🔒</div>
                   <div>
                     <span className="text-[9px] font-bold text-[#8B5DB0] uppercase">SECURE CHECKOUT · DEMO</span>
                     <h3 className="text-[22px] font-normal text-[#111827] mt-1">Choose how you’ll pay</h3>
+                    <p className="text-[9px] text-[#6B7280]">All methods remain subject to the final gateway configuration.</p>
+                  </div>
+
+                  <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
+                    <span>ℹ️</span>
+                    <div><p className="font-bold">Gateway configuration pending</p><p className="text-[11px] mt-0.5">One Egyptian gateway supporting cards, wallets, and Fawry is planned. No gateway has been selected or connected here.</p></div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="p-4 bg-[#FBF7FE] border-2 border-[#5C1D87] rounded-[15px] flex items-center justify-between shadow-xs">
+                      <div className="flex items-center gap-3">
+                        <div className="w-[42px] h-[42px] bg-[#3A0353] text-white rounded-[12px] flex items-center justify-center">💳</div>
+                        <div><h4 className="text-xs font-normal text-[#111827]">Debit or credit card</h4><p className="text-[9px] text-[#6B7280]">Demo method · Egyptian pounds</p></div>
+                      </div>
+                      <div className="w-[22px] h-[22px] bg-[#16794A] text-white rounded-full flex items-center justify-center text-xs">✓</div>
+                    </div>
+                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
+                      <div className="flex items-center gap-3">
+                        <div className="w-[42px] h-[42px] bg-[#F1EBF4] text-[#5C1D87] rounded-[12px] flex items-center justify-center">📱</div>
+                        <div><h4 className="text-xs font-normal text-[#111827]">Mobile wallet</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
+                      </div>
+                      <div className="w-5 h-5 rounded-full border border-slate-300"></div>
+                    </div>
+                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
+                      <div className="flex items-center gap-3">
+                        <div className="w-[42px] h-[42px] bg-[#F1EBF4] text-[#5C1D87] rounded-[12px] flex items-center justify-center">🧾</div>
+                        <div><h4 className="text-xs font-normal text-[#111827]">Fawry</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
+                      </div>
+                      <div className="w-5 h-5 rounded-full border border-slate-300"></div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-[#5C1D87] pt-2">
+                    <input type="checkbox" id="terms" className="w-4 h-4 rounded" />
+                    <label htmlFor="terms">I accept the enrollment terms and acknowledge the <a href="#refund" className="underline font-bold">Refund Policy</a>.</label>
                   </div>
 
                   <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Pay & Enroll →</button>
+
+                  <div className="text-center space-y-1 pt-2">
+                    <div className="flex items-center justify-center gap-1.5 text-[9px] text-[#16794A]"><span>🛡️</span><span className="font-bold">Protected demo checkout</span> — No real payment details are collected or processed</div>
+                    <div><a href="#fail" className="text-[9px] text-[#5C1D87] underline">Preview payment failure state</a></div>
+                  </div>
                 </div>
 
                 <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5">
@@ -739,6 +829,33 @@ export default function OnboardingFlow() {
                     <div><span className="text-[9px] font-bold text-[#8B5DB0] uppercase">ORDER SUMMARY</span><h3 className="text-[21px] font-normal text-[#111827] mt-1">Your enrollment</h3></div>
                     <span className="px-3 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full">PRICE PENDING</span>
                   </div>
+
+                  <div className="p-5 bg-gradient-to-br from-[#22023C] to-[#4C0585] text-white rounded-[17px] shadow-md flex items-center gap-4">
+                    <div className="w-[52px] h-[52px] bg-white/10 border border-white/20 rounded-[16px] flex items-center justify-center text-xl font-extrabold">6</div>
+                    <div><span className="text-[8px] text-[#CDBDD7] uppercase">SELECTED PACKAGE</span><h4 className="text-[17px] font-normal">{formData.selectedPackage}</h4><p className="text-[9px] text-[#E5DCE9]">{formData.selectedTrack}</p></div>
+                  </div>
+
+                  <div>
+                    <span className="text-[8px] text-[#6B7280] uppercase block mb-2">WHAT’S INCLUDED</span>
+                    <ul className="space-y-2 text-xs text-[#5C5C5C]">
+                      <li>✓ Published courses after payment</li>
+                      <li>✓ Practical internship</li>
+                      <li>✓ 6 mentorship sessions · proposed</li>
+                      <li>✓ Course + internship certificate types</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-4 bg-[#FAF9FB] border border-[#E8E2EC] rounded-[15px] space-y-3 text-xs">
+                    <div className="flex justify-between"><span className="text-slate-600">Package price</span><span className="font-bold text-[#111827]">To be confirmed</span></div>
+                    <div className="flex justify-between border-t border-[#E8E2EC] pt-3"><span className="text-slate-600">Approved discount</span><span className="font-bold text-[#111827]">Not supplied</span></div>
+                    <div className="flex justify-between border-t border-[#E8E2EC] pt-3"><span className="text-[#3A0353]">Total in EGP</span><span className="font-bold text-[#3A0353]">Pending approved pricing</span></div>
+                  </div>
+
+                  <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 text-xs text-[#9A5700] space-y-1">
+                    <p className="font-bold">Refund policy pending final approval</p>
+                    <p className="text-[11px] leading-relaxed">The proposed terms include a full refund before squad Start minus gateway fees, with course-use reductions for 6- and 12-month paths, and no refund after Start. Legal confirmation is required.</p>
+                  </div>
+                  <p className="text-[11px] text-[#6B7280]">Promo-code availability remains an open launch decision.</p>
                 </div>
               </div>
 
@@ -759,6 +876,53 @@ export default function OnboardingFlow() {
                 <p className="text-[#69616D] text-base">Your enrollment is confirmed. We’re preparing the next stage of your journey.</p>
               </div>
 
+              <div className="p-8 bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[30px] shadow-xl flex justify-between items-center relative overflow-hidden">
+                <div className="space-y-2">
+                  <span className="px-3 py-1 bg-[#EAF8F0] text-[#16794A] text-[9px] font-bold rounded-full">PAYMENT CONFIRMED · DEMO</span>
+                  <h2 className="text-[22px] font-normal">Welcome to your next chapter</h2>
+                  <p className="text-xs text-[#D9CCE1]">Squad assignment is automatic. You do not need to select a squad or internship.</p>
+                </div>
+                <div className="w-[105px] h-[105px] bg-[#5C1D87] rounded-full flex flex-col items-center justify-center font-bold shadow-inner border border-white/10">
+                  <span className="text-2xl font-normal">02</span>
+                  <span className="text-[8px] text-[#D9CCE1] mt-0.5">Current stage</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div className="bg-white/92 p-8 rounded-[28px] border border-[#3A0353]/10 shadow-sm space-y-5">
+                  <div>
+                    <span className="text-[9px] font-bold text-[#6B7280] uppercase">JOURNEY STATUS</span>
+                    <h3 className="text-xl font-normal text-[#111827] mt-1">Waiting for Your Squad</h3>
+                    <span className="inline-block mt-2 px-3 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">IN PROGRESS</span>
+                  </div>
+
+                  <div className="space-y-6 pt-4 border-t border-[#E8E2EC]">
+                    <div className="flex items-start gap-4"><div className="w-[33px] h-[33px] bg-[#16794A] text-white rounded-full flex items-center justify-center text-xs">✓</div><div><h4 className="text-xs text-[#111827]">Enrollment confirmed</h4><p className="text-[9px] text-[#6B7280]">Completed in demo</p></div></div>
+                    <div className="flex items-start gap-4"><div className="w-[33px] h-[33px] bg-[#3A0353] text-white rounded-full flex items-center justify-center text-xs ring-4 ring-[#F3E9FA]">2</div><div><h4 className="text-xs text-[#111827]">Waiting for squad assignment</h4><p className="text-[9px] text-[#6B7280]">No waiting-time promise available</p></div></div>
+                    <div className="flex items-start gap-4 opacity-70"><div className="w-[33px] h-[33px] bg-[#F0EDF1] text-[#6B7280] rounded-full flex items-center justify-center text-xs">3</div><div><h4 className="text-xs text-[#111827]">Squad assignment completed</h4><p className="text-[9px] text-[#6B7280]">Pending</p></div></div>
+                    <div className="flex items-start gap-4 opacity-70"><div className="w-[33px] h-[33px] bg-[#F0EDF1] text-[#6B7280] rounded-full flex items-center justify-center text-xs">4</div><div><h4 className="text-xs text-[#111827]">Official squad Start</h4><p className="text-[9px] text-[#6B7280]">Pending</p></div></div>
+                    <div className="flex items-start gap-4 opacity-70"><div className="w-[33px] h-[33px] bg-[#F0EDF1] text-[#6B7280] rounded-full flex items-center justify-center text-xs">5</div><div><h4 className="text-xs text-[#111827]">Sprint work begins</h4><p className="text-[9px] text-[#6B7280]">Pending</p></div></div>
+                  </div>
+                </div>
+
+                <div className="bg-white/92 p-8 rounded-[28px] border border-[#3A0353]/10 shadow-sm space-y-4">
+                  <div className="p-4 border border-[#E8E2EC] rounded-[14px] grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="text-[8px] text-[#8B5DB0] block uppercase">PACKAGE</span><span className="font-normal text-[#111827]">{formData.selectedPackage}</span></div>
+                    <div><span className="text-[8px] text-[#8B5DB0] block uppercase">TRACK</span><span className="font-normal text-[#111827]">{formData.selectedTrack}</span></div>
+                  </div>
+                  <div className="p-4 border border-[#E8E2EC] rounded-[14px] space-y-1"><h4 className="text-xs font-normal text-[#111827]">When your package starts</h4><p className="text-[10px] text-[#6B7280] leading-relaxed">Your package clock starts only at the official squad Start.</p></div>
+                  <div className="p-4 border border-[#E8E2EC] rounded-[14px] space-y-2">
+                    <h4 className="text-xs font-normal text-[#111827]">Mentorship</h4>
+                    <p className="text-[10px] text-[#6B7280] leading-relaxed">Selected package sessions entitlement is proposed pending business confirmation. Usage data will appear when available.</p>
+                    <span className="px-2.5 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full inline-block">ENTITLEMENT PROVISIONAL</span>
+                  </div>
+                  <div className="bg-[#FBF7FE] p-4 rounded-[14px] border border-[#3A0353]/10 flex gap-3 text-xs text-[#3A0353]">
+                    <span>ℹ️</span><div><p className="font-bold">How squads start</p><p className="text-[11px] mt-0.5 leading-relaxed">The required seats must be filled before Start. The Senior leads the squad and is not counted as a member.</p></div>
+                  </div>
+                  <button className="w-full h-[50px] bg-white border border-[#CCB8D8] text-[#3A0353] font-bold text-xs rounded-[13px]">Contact support</button>
+                </div>
+              </div>
+
               <div className="flex justify-end items-center gap-4 pt-6 border-t border-[#E8E2EC]">
                 <button onClick={() => setCurrentStep(8)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button onClick={() => setCurrentStep(10)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
@@ -774,6 +938,89 @@ export default function OnboardingFlow() {
               <div>
                 <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Learn from People<br />Who’ve Been There</h1>
                 <p className="text-[#69616D] text-base mt-2">Book a session with a mentor who understands your technology track.</p>
+              </div>
+
+              <div className="p-8 bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[30px] shadow-xl flex justify-between items-center relative overflow-hidden">
+                <div className="space-y-2">
+                  <span className="px-3 py-1 bg-[#FFF7E6] text-[#CBBBD5] text-[9px] font-bold rounded-full">ILLUSTRATIVE PROFILES & AVAILABILITY</span>
+                  <h2 className="text-[22px] font-normal">Frontend Development mentorship</h2>
+                  <p className="text-xs text-[#D9CCE1]">Sample data only. Actual mentor profiles, session balance, and availability must come from the system.</p>
+                </div>
+                <div className="p-4 border border-white/15 rounded-[16px] text-center bg-white/5 min-w-[150px]">
+                  <span className="text-[8px] text-[#CBBBD5] uppercase block">PROPOSED ENTITLEMENT</span>
+                  <h3 className="text-[22px] font-normal mt-1">6 sessions</h3>
+                  <span className="text-[8px] text-[#CBBBD5] block mt-0.5">Usage data not supplied</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                <div className="md:col-span-8 space-y-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-4"><span className="text-[#DD6F0D] font-bold text-xs">01</span><h2 className="text-xl font-normal text-[#111827]">Choose a mentor</h2></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div onClick={() => setFormData({...formData, selectedMentor: 'Amina M.'})} className={`p-6 rounded-[18px] relative shadow-md cursor-pointer transition ${formData.selectedMentor === 'Amina M.' ? 'bg-[#FBF7FE] border-2 border-[#5C1D87]' : 'bg-white border border-[#E8E2EC]'}`}>
+                        <div className="absolute top-5 right-5 w-4 h-4 rounded-full border-4 border-[#5C1D87] bg-white flex items-center justify-center"></div>
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#8B5DB0] to-[#3A0353] rounded-[14px] text-white flex items-center justify-center font-bold text-sm mb-4 shadow-sm">AM</div>
+                        <span className="px-2.5 py-1 bg-[#F3E9FA] text-[#5C1D87] text-[9px] font-bold rounded-full inline-block mb-2">SAMPLE PROFILE</span>
+                        <h3 className="text-base font-normal text-[#111827]">Amina M.</h3>
+                        <p className="text-[10px] text-[#6B7280]">Senior Frontend Engineer</p>
+                        <p className="text-[9px] text-[#5C1D87] mt-1">React · Design systems</p>
+                        <p className="text-[9px] text-[#6B7280] mt-3 leading-relaxed">Illustrative profile focused on scalable frontend architecture.</p>
+                      </div>
+
+                      <div onClick={() => setFormData({...formData, selectedMentor: 'Youssef K.'})} className={`p-6 rounded-[18px] relative shadow-sm cursor-pointer transition ${formData.selectedMentor === 'Youssef K.' ? 'bg-[#FBF7FE] border-2 border-[#5C1D87]' : 'bg-white border border-[#E8E2EC]'}`}>
+                        <div className="absolute top-5 right-5 w-4 h-4 rounded-full border border-slate-300"></div>
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#8B5DB0] to-[#3A0353] rounded-[14px] text-white flex items-center justify-center font-bold text-sm mb-4 shadow-sm">YK</div>
+                        <span className="px-2.5 py-1 bg-[#F3E9FA] text-[#5C1D87] text-[9px] font-bold rounded-full inline-block mb-2">SAMPLE PROFILE</span>
+                        <h3 className="text-base font-normal text-[#111827]">Youssef K.</h3>
+                        <p className="text-[10px] text-[#6B7280]">Frontend Tech Lead</p>
+                        <p className="text-[9px] text-[#5C1D87] mt-1">React · Performance</p>
+                        <p className="text-[9px] text-[#6B7280] mt-3 leading-relaxed">Illustrative profile focused on product engineering and career growth.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 mb-4"><span className="text-[#DD6F0D] font-bold text-xs">02</span><h2 className="text-xl font-normal text-[#111827]">Choose a demo time</h2></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white p-5 rounded-[14px] border border-[#E8E2EC] space-y-2">
+                        <span className="text-[9px] text-[#5C5C5C] block">Date · 24 hours to 14 days ahead</span>
+                        <div className="h-[42px] border border-[#E8E2EC] rounded-[10px] bg-white"></div>
+                      </div>
+                      <div className="bg-white p-5 rounded-[14px] border border-[#E8E2EC] space-y-2">
+                        <span className="text-[9px] text-[#5C5C5C] block">45-minute slots · your local time</span>
+                        <div className="flex gap-2">
+                          <button className="px-3 py-2 border border-[#E8E2EC] rounded-[8px] text-[9px] text-[#5C1D87]">10:00</button>
+                          <button className="px-3 py-2 border border-[#E8E2EC] rounded-[8px] text-[9px] text-[#5C1D87]">13:30</button>
+                          <button className="px-3 py-2 border border-[#E8E2EC] rounded-[8px] text-[9px] text-[#5C1D87]">16:00</button>
+                        </div>
+                        <p className="text-[8px] text-[#6B7280] pt-1">Illustrative availability only</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-[9px] text-[#5C5C5C] block">What would you like help with?</span>
+                    <input type="text" placeholder="One line about your topic" className="w-full h-[50px] px-4 border border-[#E8E2EC] rounded-[12px] text-xs outline-none bg-white placeholder:text-slate-300" />
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[12px]"><span className="font-bold text-[9px] text-[#111827] block mb-1">Cancellation</span><p className="text-[9px] text-[#6B7280]">At least 24 hours before returns the session; later cancellation consumes it.</p></div>
+                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[12px]"><span className="font-bold text-[9px] text-[#111827] block mb-1">Rescheduling</span><p className="text-[9px] text-[#6B7280]">Cancel and book again under the same rules.</p></div>
+                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[12px]"><span className="font-bold text-[9px] text-[#111827] block mb-1">Availability</span><p className="text-[9px] text-[#6B7280]">Begins at package Start for 3/6 months and at payment for 12 months.</p></div>
+                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[12px]"><span className="font-bold text-[9px] text-[#111827] block mb-1">Expiry</span><p className="text-[9px] text-[#6B7280]">Unused sessions expire when the package ends.</p></div>
+                  </div>
+                </div>
+
+                <div className="md:col-span-4 bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-lg space-y-4 sticky top-24">
+                  <span className="text-[9px] font-bold text-[#8B5DB0] uppercase block">SESSION SUMMARY</span>
+                  <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">MENTOR</span><h5 className="text-xs font-normal text-[#111827]">{formData.selectedMentor}</h5></div>
+                  <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">DATE & TIME</span><h5 className="text-xs font-normal text-[#111827]">Choose a date · Choose a slot</h5></div>
+                  <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">TRACK</span><h5 className="text-xs font-normal text-[#111827]">Selected track</h5></div>
+                  <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">TOPIC</span><h5 className="text-xs font-normal text-[#111827]">Add your topic</h5></div>
+                  <div className="flex items-center gap-2 text-[9px] text-[#6B7280] pt-1"><span>⏰</span><p>Sessions are 45 minutes. Maximum two upcoming sessions at a time.</p></div>
+                  <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Confirm Booking</button>
+                </div>
               </div>
 
               <div className="flex justify-end items-center gap-4 pt-6 border-t border-[#E8E2EC]">
