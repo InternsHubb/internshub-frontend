@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgDev" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#180e29" />
+      <stop offset="50%" stop-color="#2a124e" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" fill="url(#bgDev)" rx="16" />
+
+  <!-- Multi monitor and node graph -->
+  <g transform="translate(40, 30)">
+    <rect x="0" y="0" width="150" height="130" rx="8" fill="#1e1e38" stroke="#7e22ce" stroke-width="1.5" />
+    <!-- Graph circles on monitor 1 -->
+    <circle cx="45" cy="55" r="22" fill="none" stroke="#f43f5e" stroke-width="3" />
+    <circle cx="85" cy="75" r="28" fill="none" stroke="#06b6d4" stroke-width="3" />
+    <circle cx="105" cy="45" r="16" fill="none" stroke="#eab308" stroke-width="3" />
+
+    <!-- Monitor 2 -->
+    <rect x="170" y="15" width="150" height="130" rx="8" fill="#17172b" stroke="#4338ca" stroke-width="1.5" />
+    <!-- Analytics chart inside monitor 2 -->
+    <polyline points="185,115 210,80 240,95 270,50 300,65" fill="none" stroke="#22c55e" stroke-width="2.5" />
+    <circle cx="270" cy="50" r="4" fill="#22c55e" />
+    <rect x="185" y="30" width="50" height="6" rx="3" fill="#a5b4fc" />
+  </g>
+
+  <!-- Floating tag -->
+  <rect x="35" y="175" width="110" height="32" rx="16" fill="#7c3aed" />
+  <text x="90" y="196" fill="#ffffff" font-family="system-ui, sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Data &amp; AI</text>
+</svg>
