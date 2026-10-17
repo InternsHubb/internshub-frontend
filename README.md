@@ -1,4 +1,4 @@
-﻿# InternsHub Frontend UI Architecture & Task Assignments
+# InternsHub Frontend UI Architecture & Task Assignments
 
 The platform focuses purely on standalone Frontend UI screens, built using React, TypeScript (strict), Vite, and Tailwind CSS (no backend integration, relying on local state and mock data).
 
@@ -72,54 +72,45 @@ The platform focuses purely on standalone Frontend UI screens, built using React
   * Steps 05-06: CV upload dropzone UI mockup, Smart Review snapshot UI, and desktop-only interview media readiness UI check.
   * Steps 07-10: Assessment results screen UI, payment gateway checkout UI mockup (EGP currency format), and journey status timeline UI.
   
-  ## How to Work & Create Your Branch:
+## How to Work & Create Your Branch:
 
 To prevent code conflicts and keep our work organized, never push directly to the main branch. Follow these steps on your local machine:
 
 1. Pull the latest changes from main:
-   ```*in terminal*
-   
+   ```bash
    git checkout main
    git pull origin main
-Create and switch to your assigned feature branch (choose the command matching your name below): #USE TERMINAL#
+   ```
 
-#Amr (Landing Page):
+2. Create and switch to your assigned feature branch (choose the command matching your name below):
 
-git checkout -b feature/landing-page
+   - Amr (Landing Page):
+     `git checkout -b feature/landing-page`
 
-#Abdallah (Internship Page):
+   - Abdallah (Internship Page):
+     `git checkout -b feature/internship-page`
 
-git checkout -b feature/internship-page
+   - Ali (Auth General Flow):
+     `git checkout -b feature/auth-main`
 
-#Ali (Auth General Flow):
+   - Youssef (Auth Login):
+     `git checkout -b feature/auth-login`
 
-git checkout -b feature/auth-main
+   - Renad (Forgot Password):
+     `git checkout -b feature/auth-forgot-password`
 
-#Youssef (Auth Login):
+   - Nora (Phone OTP):
+     `git checkout -b feature/auth-phone-otp`
 
-git checkout -b feature/auth-login
+   - Gamal (Onboarding Flow):
+     `git checkout -b feature/onboarding-flow`
 
-#Renad (Forgot Password):
+3. Commit and push your work when done:
+   ```bash
+   git add .
+   git commit -m "feat: complete UI for my assigned module"
+   git push origin feature/your-branch-name
+   ```
 
-git checkout -b feature/auth-forgot-password
-
-#Nora (Phone OTP):
-
-git checkout -b feature/auth-phone-otp
-
-#Gamal (Onboarding Flow):
-
-git checkout -b feature/onboarding-flow
-
-Commit and push your work when done:
-
-
-git add .
-
-git commit -m "feat: complete UI for my assigned module"
-
-git push origin feature/your-branch-name
-
-Open a Pull Request (PR):
-
-Go to GitHub, open a Pull Request from your feature branch into main, and wait for review and merge.
+4. Open a Pull Request (PR):
+   Go to GitHub, open a Pull Request from your feature branch into dev, and wait for review and merge.

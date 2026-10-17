@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#311042" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" fill="url(#bgDark)" rx="16" />
+
+  <!-- Code editor window -->
+  <g transform="translate(30, 25)">
+    <!-- Window top bar -->
+    <rect width="340" height="190" rx="10" fill="#181825" stroke="#3730a3" stroke-width="1.5" />
+    <circle cx="20" cy="18" r="5" fill="#ef4444" />
+    <circle cx="36" cy="18" r="5" fill="#f59e0b" />
+    <circle cx="52" cy="18" r="5" fill="#10b981" />
+    <line x1="0" y1="34" x2="340" y2="34" stroke="#2d2b55" stroke-width="1" />
+
+    <!-- Code lines -->
+    <!-- Line 1 -->
+    <rect x="25" y="48" width="50" height="8" rx="3" fill="#ec4899" />
+    <rect x="82" y="48" width="70" height="8" rx="3" fill="#38bdf8" />
+    <rect x="158" y="48" width="40" height="8" rx="3" fill="#a855f7" />
+
+    <!-- Line 2 -->
+    <rect x="40" y="66" width="30" height="8" rx="3" fill="#fbbf24" />
+    <rect x="76" y="66" width="90" height="8" rx="3" fill="#4ade80" />
+
+    <!-- Line 3 -->
+    <rect x="40" y="84" width="85" height="8" rx="3" fill="#38bdf8" />
+    <rect x="132" y="84" width="60" height="8" rx="3" fill="#ec4899" />
+    <rect x="198" y="84" width="45" height="8" rx="3" fill="#a855f7" />
+
+    <!-- Line 4 -->
+    <rect x="55" y="102" width="110" height="8" rx="3" fill="#4ade80" />
+    <rect x="172" y="102" width="40" height="8" rx="3" fill="#f43f5e" />
+
+    <!-- Line 5 -->
+    <rect x="55" y="120" width="75" height="8" rx="3" fill="#38bdf8" />
+    <rect x="136" y="120" width="85" height="8" rx="3" fill="#fbbf24" />
+
+    <!-- Line 6 -->
+    <rect x="40" y="138" width="40" height="8" rx="3" fill="#ec4899" />
+
+    <!-- Line 7 -->
+    <rect x="25" y="156" width="25" height="8" rx="3" fill="#38bdf8" />
+  </g>
+
+  <!-- Floating badge -->
+  <rect x="250" y="165" width="120" height="34" rx="17" fill="#6366f1" fill-opacity="0.9" />
+  <text x="310" y="187" fill="#ffffff" font-family="monospace" font-weight="bold" font-size="12" text-anchor="middle">&lt;FullStack /&gt;</text>
+</svg>
