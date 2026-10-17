@@ -340,7 +340,7 @@ export default function OnboardingFlow() {
                   <div className="absolute -right-16 -top-16 w-64 h-64 border-[24px] border-white/5 rounded-full pointer-events-none"></div>
                   <div className="absolute right-4 top-20 w-36 h-36 border border-white/10 rounded-full pointer-events-none"></div>
 
-                  <div className="w-[52px] h-[52px] bg-white/12 border border-white/15 rounded-[14px] flex items-center justify-center font-extrabold text-sm tracking-wide z-10">
+                  <div className="w-[52px] h-[52px] bg-white/12 border border-white/15 rounded-[14px] flex items-center justify-center font-extrabold text-sm tracking-wide z-10 text-white">
                     18+
                   </div>
 
