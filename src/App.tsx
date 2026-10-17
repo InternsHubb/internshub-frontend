@@ -3,9 +3,11 @@ import LandingPage from './pages/LandingPage';
 import InternshipPage from './pages/InternshipPage';
 import PhoneOTP from './pages/auth/PhoneOTP';
 import AuthMain from './pages/auth/AuthMain';
+import ForgotPassword from './pages/auth/ForgotPassword';
 
 const INTERNSHIP_PATH = '/internship';
 const PHONE_OTP_PATH = '/auth/phone-otp';
+const FORGOT_PASSWORD_PATH = '/auth/forgot-password';
 const AUTH_PATH = '/auth';
 
 export const App: React.FC = () => {
@@ -25,6 +27,10 @@ export const App: React.FC = () => {
 
   if (currentPath === PHONE_OTP_PATH) {
     return <PhoneOTP />;
+  }
+
+  if (currentPath === FORGOT_PASSWORD_PATH) {
+    return <ForgotPassword />;
   }
 
   if (currentPath === AUTH_PATH || currentPath.startsWith('/auth')) {
