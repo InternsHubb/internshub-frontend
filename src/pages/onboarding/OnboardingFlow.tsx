@@ -89,16 +89,15 @@ export default function OnboardingFlow() {
   });
 
   const stepsMeta = [
-    { num: '01', title: 'Account' },
-    { num: '02', title: 'Verify' },
-    { num: '03', title: 'Profile' },
-    { num: '04', title: 'Path' },
-    { num: '05', title: 'CV' },
-    { num: '06', title: 'Payment' },
-    { num: '07', title: 'Setup' },
-    { num: '08', title: 'Result' },
-    { num: '09', title: 'Squad' },
-    { num: '10', title: 'Mentorship' }
+    { num: '01', title: 'Verify' },
+    { num: '02', title: 'Profile' },
+    { num: '03', title: 'Path' },
+    { num: '04', title: 'CV' },
+    { num: '05', title: 'Payment' },
+    { num: '06', title: 'Setup' },
+    { num: '07', title: 'Result' },
+    { num: '08', title: 'Squad' },
+    { num: '09', title: 'Mentorship' }
   ];
 
   // CV Review Screen View
@@ -303,29 +302,8 @@ export default function OnboardingFlow() {
             </span>
           </div>
 
-          {/* STEP 1: Account */}
+          {/* STEP 1: Verify */}
           {currentStep === 1 && (
-            <div className="space-y-6">
-              <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Create Your Account</h1>
-              <p className="text-[#69616D] text-base">Get started with your technical journey at InternsHub.</p>
-              <div className="bg-white/92 p-8 rounded-[28px] border border-[#3A0353]/10 max-w-lg space-y-4">
-                <div>
-                  <label className="block text-xs text-[#34303A] mb-1 font-semibold">Email Address</label>
-                  <input type="email" placeholder="name@example.com" className="w-full h-[52px] px-4 rounded-[10px] border border-[#D9D1DD] bg-[#FAF9FB] text-sm outline-none" />
-                </div>
-                <div>
-                  <label className="block text-xs text-[#34303A] mb-1 font-semibold">Password</label>
-                  <input type="password" placeholder="At least 8 characters" className="w-full h-[52px] px-4 rounded-[10px] border border-[#D9D1DD] bg-[#FAF9FB] text-sm outline-none" />
-                </div>
-                <button onClick={() => setCurrentStep(2)} className="w-full h-[50px] bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold rounded-[13px]">
-                  Create Account & Continue →
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: Verify */}
-          {currentStep === 2 && (
             <div className="space-y-6">
               <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Verify Your Account</h1>
               <p className="text-[#69616D] text-base">Confirm your email, phone number and National ID to secure your account.</p>
@@ -404,14 +382,23 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="flex justify-end items-center gap-4 pt-6">
-                <button onClick={() => setCurrentStep(1)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(3)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow">Continue to Profile →</button>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    window.history.pushState({}, '', '/register');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }} 
+                  className="font-bold text-sm text-[#5C1D87] hover:underline"
+                >
+                  Back to Register
+                </button>
+                <button onClick={() => setCurrentStep(2)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow">Continue to Profile →</button>
               </div>
             </div>
           )}
 
-          {/* STEP 3: Profile */}
-          {currentStep === 3 && (
+          {/* STEP 2: Profile */}
+          {currentStep === 2 && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Let’s Get to Know You</h1>
@@ -477,8 +464,8 @@ export default function OnboardingFlow() {
                   </div>
 
                   <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                    <button onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                    <button onClick={() => setCurrentStep(4)} className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
+                    <button onClick={() => setCurrentStep(1)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                    <button onClick={() => setCurrentStep(3)} className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
                       Save & Continue →
                     </button>
                   </div>
@@ -487,8 +474,8 @@ export default function OnboardingFlow() {
             </div>
           )}
 
-          {/* STEP 4: Path */}
-          {currentStep === 4 && (
+          {/* STEP 3: Path */}
+          {currentStep === 3 && (
             <div className="space-y-8">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Choose Your Path to a Tech Career</h1>
@@ -578,14 +565,14 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                <button onClick={() => setCurrentStep(3)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(5)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow">Confirm Path →</button>
+                <button onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(4)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow">Confirm Path →</button>
               </div>
             </div>
           )}
 
-          {/* STEP 5: CV */}
-          {currentStep === 5 && (
+          {/* STEP 4: CV */}
+          {currentStep === 4 && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Upload Your CV</h1>
@@ -676,16 +663,16 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                <button onClick={() => setCurrentStep(4)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(6)} className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow flex items-center gap-2 ${formData.cvUploaded ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}>
+                <button onClick={() => setCurrentStep(3)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(5)} className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow flex items-center gap-2 ${formData.cvUploaded ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}>
                   Continue to Payment →
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 7: Setup */}
-          {currentStep === 7 && (
+          {/* STEP 6: Setup */}
+          {currentStep === 6 && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Get Ready for Your Interview</h1>
@@ -745,16 +732,16 @@ export default function OnboardingFlow() {
               <p className="text-[11px] text-[#6B7280]">Interview duration and question count are intentionally not shown because they remain open business decisions.</p>
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                <button onClick={() => setCurrentStep(6)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(8)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
+                <button onClick={() => setCurrentStep(5)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(7)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
                   Start Interview →
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 8: Result */}
-          {currentStep === 8 && (
+          {/* STEP 7: Result */}
+          {currentStep === 7 && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Your Assessment Results</h1>
@@ -830,7 +817,7 @@ export default function OnboardingFlow() {
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
                     {resultState === 'assigned' ? (
-                      <button type="button" onClick={() => setCurrentStep(9)} className="min-h-[50px] px-6 flex items-center gap-[9px] rounded-[13px] bg-[linear-gradient(166deg,#4C0585_0%,#3A0353_100%)] text-white text-[13px] font-bold tracking-[0.13px] shadow-[0_10px_11px_rgba(58,3,83,0.18)]">
+                      <button type="button" onClick={() => setCurrentStep(8)} className="min-h-[50px] px-6 flex items-center gap-[9px] rounded-[13px] bg-[linear-gradient(166deg,#4C0585_0%,#3A0353_100%)] text-white text-[13px] font-bold tracking-[0.13px] shadow-[0_10px_11px_rgba(58,3,83,0.18)]">
                         {activeResult.action}
                         <img src={arrowRightWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />
                       </button>
@@ -864,13 +851,13 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="!mt-4">
-                <button type="button" onClick={() => setCurrentStep(7)} className="min-h-[50px] px-6 text-[13px] font-bold tracking-[0.13px] text-[#5C1D87]">Back to device check</button>
+                <button type="button" onClick={() => setCurrentStep(6)} className="min-h-[50px] px-6 text-[13px] font-bold tracking-[0.13px] text-[#5C1D87]">Back to device check</button>
               </div>
             </div>
           )}
 
-          {/* STEP 6: Payment */}
-          {currentStep === 6 && (
+          {/* STEP 5: Payment */}
+          {currentStep === 5 && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Complete Your Enrollment</h1>
@@ -981,16 +968,16 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
-                <button onClick={() => setCurrentStep(5)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(7)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
+                <button onClick={() => setCurrentStep(4)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(6)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
                   Preview Interview Setup →
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 9: Squad */}
-          {currentStep === 9 && (
+          {/* STEP 8: Squad */}
+          {currentStep === 8 && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Your Journey Is About to Begin</h1>
@@ -1045,16 +1032,16 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
-                <button onClick={() => setCurrentStep(8)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(10)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
+                <button onClick={() => setCurrentStep(7)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(9)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
                   Explore Mentorship →
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 10: Mentorship */}
-          {currentStep === 10 && (
+          {/* STEP 9: Mentorship */}
+          {currentStep === 9 && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Learn from People<br />Who’ve Been There</h1>
@@ -1145,7 +1132,7 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
-                <button onClick={() => setCurrentStep(9)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(8)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button disabled className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
                   Confirm Booking →
                 </button>

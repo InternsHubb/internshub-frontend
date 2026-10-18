@@ -69,7 +69,8 @@ export default function RegisterScreen() {
       setErrors(validationErrors);
     } else {
       setSubmissionError(null);
-      alert('Registration successful!');
+      window.history.pushState({}, '', '/onboarding');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
 
