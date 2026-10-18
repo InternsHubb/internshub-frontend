@@ -5,11 +5,14 @@ import PhoneOTP from './pages/auth/PhoneOTP';
 import AuthMain from './pages/auth/AuthMain';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import OnboardingFlow from './pages/onboarding/OnboardingFlow';
+import RegisterScreen from './components/RegisterScreen';
 
 const INTERNSHIP_PATH = '/internship';
 const ONBOARDING_PATH = '/onboarding';
 const PHONE_OTP_PATH = '/auth/phone-otp';
 const FORGOT_PASSWORD_PATH = '/auth/forgot-password';
+const REGISTER_PATH = '/register';
+const AUTH_REGISTER_PATH = '/auth/register';
 const AUTH_PATH = '/auth';
 
 export const App: React.FC = () => {
@@ -22,6 +25,10 @@ export const App: React.FC = () => {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  if (currentPath === REGISTER_PATH || currentPath === AUTH_REGISTER_PATH || window.location.hash === '#signup' || window.location.hash === '#register') {
+    return <RegisterScreen />;
+  }
 
   if (currentPath === INTERNSHIP_PATH || currentPath.startsWith('/internship')) {
     return <InternshipPage />;
