@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import PhoneInputStep from '../../components/auth/PhoneInputStep';
 import OtpVerificationStep from '../../components/auth/OtpVerificationStep';
 import SuccessStep from '../../components/auth/SuccessStep';
+import lockWhiteIcon from '../../assets/auth/lock-white.svg';
+import shieldCheckGreenIcon from '../../assets/auth/shield-check-green.svg';
 
 export default function PhoneOTP() {
   const [step, setStep] = useState<'phone' | 'otp' | 'success'>('phone');
@@ -54,78 +56,55 @@ export default function PhoneOTP() {
   return (
     <main className="phone-auth-page">
       <section className="phone-brand-panel">
-        <div className="brand-orb brand-orb-one" />
-        <div className="brand-orb brand-orb-two" />
-        <div className="brand-orb brand-orb-three" />
-        <div className="brand-wave brand-wave-one" />
-        <div className="brand-wave brand-wave-two" />
+        <div className="brand-circle" />
 
-
-<header className="brand-header">
-  <div className="brand-identity">
-    
-<div className="brand-logo">ih</div>
-
-    <span className="brand-name">
-  Interns<span>Hub</span>
-</span>
-    <span className="brand-badge">EDTECH</span>
-  </div>
-</header>
-
+        <header className="brand-header">
+          <div className="brand-identity">
+            <div className="brand-lockup">
+              <div className="brand-logo">ih</div>
+              <span className="brand-name">
+                Interns<span>Hub</span>
+              </span>
+            </div>
+            <span className="brand-badge">EDTECH</span>
+          </div>
+        </header>
 
         <div className="brand-content">
           <div className="phone-illustration-area">
-            <div className="phone-ring phone-ring-one" />
-            <div className="phone-ring phone-ring-two" />
+            <div className="phone-illustration">
+              <div className="phone-ring phone-ring-solid" />
+              <div className="phone-ring phone-ring-dashed" />
 
-            <div className="phone-mockup">
-              <div className="phone-speaker" />
+              <div className="phone-mockup">
+                <div className="phone-speaker" />
 
-              <div className="phone-lock">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  className="lock-icon"
-                  aria-hidden="true"
-                >
-                  <rect x="5" y="10" width="14" height="11" rx="2" />
-                  <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                </svg>
+                <div className="phone-screen">
+                  <div className="phone-lock">
+                    <img src={lockWhiteIcon} alt="" aria-hidden="true" width={29} height={29} />
+                  </div>
+
+                  <p className="phone-screen-title">Secure phone access</p>
+
+                  <div className="phone-code-preview">
+                    {[1, 2, 3, 4, 5, 6].map((item) => (
+                      <span key={item} />
+                    ))}
+                  </div>
+
+                  <p className="phone-screen-caption">
+                    One-time verification
+                  </p>
+                </div>
               </div>
 
-              <p className="phone-screen-title">Secure phone access</p>
+              <div className="security-tooltip">
+                <img src={shieldCheckGreenIcon} alt="" aria-hidden="true" width={20} height={20} />
 
-              <div className="phone-code-preview">
-                {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <span key={item} />
-                ))}
-              </div>
-
-              <p className="phone-screen-caption">
-                One-time verification
-              </p>
-            </div>
-
-            <div className="security-tooltip">
-              <div className="security-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  aria-hidden="true"
-                >
-                  <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" />
-                  <path d="m9 12 2 2 4-4" />
-                </svg>
-              </div>
-
-              <div className="security-copy">
-                <p>Protected sign-in</p>
-                <span>Five attempts before temporary lockout</span>
+                <div className="security-copy">
+                  <p>Protected sign-in</p>
+                  <span>Five attempts before temporary lockout</span>
+                </div>
               </div>
             </div>
           </div>

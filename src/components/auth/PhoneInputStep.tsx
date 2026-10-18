@@ -1,5 +1,8 @@
 
 import React from 'react';
+import arrowRightWhiteIcon from '../../assets/auth/arrow-right-white.svg';
+import chevronDownIcon from '../../assets/auth/chevron-down-purple.svg';
+import shieldCheckPurpleIcon from '../../assets/auth/shield-check-purple.svg';
 
 interface Props {
   phoneNumber: string;
@@ -38,7 +41,7 @@ export default function PhoneInputStep({
 
       <div className="auth-heading">
         <span className="auth-eyebrow">PHONE LOGIN</span>
-        <h2>Login with your phone</h2>
+        <h2>Log in with your phone</h2>
         <p>
           Enter your phone number to receive a verification code.
         </p>
@@ -61,15 +64,7 @@ export default function PhoneInputStep({
               <option value="+44">UK (+44)</option>
             </select>
 
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
+            <img src={chevronDownIcon} alt="" aria-hidden="true" width={10} height={6} />
           </div>
 
           <span className="input-divider" />
@@ -95,15 +90,7 @@ export default function PhoneInputStep({
 
         <button type="submit" className="send-code-button">
           <span>Send verification code</span>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            aria-hidden="true"
-          >
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
+          <img src={arrowRightWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />
         </button>
       </form>
 
@@ -112,29 +99,12 @@ export default function PhoneInputStep({
         className="back-to-login"
         onClick={onBackToLogin}
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          aria-hidden="true"
-        >
-          <path d="M19 12H5m6 6-6-6 6-6" />
-        </svg>
+        <span className="back-to-login-arrow" aria-hidden="true">←</span>
         <span>Back to login</span>
       </button>
 
       <div className="privacy-note">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          aria-hidden="true"
-        >
-          <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" />
-          <path d="m9 12 2 2 4-4" />
-        </svg>
+        <img src={shieldCheckPurpleIcon} alt="" aria-hidden="true" width={17} height={20} />
         <p>Prototype only. No real SMS message will be sent.</p>
       </div>
     </>
