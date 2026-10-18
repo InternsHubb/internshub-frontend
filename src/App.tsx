@@ -1,8 +1,9 @@
-import React from 'react'
-import LandingPage from './pages/LandingPage'
+import React from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { router } from '@/app/router';
 
-export const App: React.FC = () => {
-  return <LandingPage />
-}
+export const App: React.FC = () => (
+  <RouterProvider router={router} future={{ v7_startTransition: true }} />
+);
 
-export default App
+export default App;

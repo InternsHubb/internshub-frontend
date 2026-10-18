@@ -1,6 +1,8 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, ArrowLeft } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
 
 export const Hero: React.FC = () => {
   const { t, i18n } = useTranslation()
@@ -52,8 +54,8 @@ export const Hero: React.FC = () => {
 
             {/* CTA Button: Single Start Now Button with glowing purple shadow (Figma node 1002:1024 & 1002:1025) */}
             <div>
-              <a
-                href="#signup"
+              <Link
+                to={ROUTES.register}
                 className="inline-flex items-center justify-center gap-3 px-9 py-4 text-[16px] sm:text-[17px] font-bold text-white bg-[#3a0453] hover:bg-[#4d076d] rounded-full shadow-[0px_10px_25px_0px_rgba(224,191,254,0.75),0px_4px_12px_-2px_rgba(58,4,83,0.35)] hover:shadow-[0px_14px_32px_0px_rgba(224,191,254,0.85),0px_6px_16px_-2px_rgba(58,4,83,0.45)] transition-all duration-200"
               >
                 <span>{t('hero.cta')}</span>
@@ -62,7 +64,7 @@ export const Hero: React.FC = () => {
                 ) : (
                   <ArrowRight className="w-5 h-5" />
                 )}
-              </a>
+              </Link>
             </div>
           </div>
 
