@@ -1,6 +1,8 @@
 
 import './PhoneOTP.css';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 import PhoneInputStep from '../../components/auth/PhoneInputStep';
 import OtpVerificationStep from '../../components/auth/OtpVerificationStep';
 import SuccessStep from '../../components/auth/SuccessStep';
@@ -8,6 +10,7 @@ import lockWhiteIcon from '../../assets/auth/lock-white.svg';
 import shieldCheckGreenIcon from '../../assets/auth/shield-check-green.svg';
 
 export default function PhoneOTP() {
+  const navigate = useNavigate();
   const [step, setStep] = useState<'phone' | 'otp' | 'success'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+20');
@@ -138,7 +141,7 @@ export default function PhoneOTP() {
               setCountryCode={setCountryCode}
               error={error}
               onSubmit={handlePhoneSubmit}
-              onBackToLogin={() => window.history.back()}
+              onBackToLogin={() => navigate(ROUTES.login)}
             />
           )}
 

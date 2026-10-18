@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 import calendarIcon from '../../assets/onboarding/calendar.svg';
 import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
@@ -77,6 +79,7 @@ const RESULT_STATES: Record<ResultState, {
 const RESULT_STATE_ORDER: ResultState[] = ['assigned', 'pending', 'incomplete'];
 
 export default function OnboardingFlow() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
   const [resultState, setResultState] = useState<ResultState>('assigned');
@@ -384,10 +387,7 @@ export default function OnboardingFlow() {
               <div className="flex justify-end items-center gap-4 pt-6">
                 <button 
                   type="button"
-                  onClick={() => {
-                    window.history.pushState({}, '', '/register');
-                    window.dispatchEvent(new PopStateEvent('popstate'));
-                  }} 
+                  onClick={() => navigate(ROUTES.register)}
                   className="font-bold text-sm text-[#5C1D87] hover:underline"
                 >
                   Back to Register

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Menu, X, Globe, ArrowRight, ArrowLeft } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
 
 interface NavbarProps {
   activeSection?: string
@@ -19,7 +21,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
   const navLinks = [
     { id: 'home', label: t('nav.home'), href: '#home' },
     { id: 'courses', label: t('nav.courses'), href: '#courses' },
-    { id: 'internship', label: t('nav.internship'), href: '#internship' },
+    // The Internship item opens its own page; the rest scroll to landing sections.
+    { id: 'internship', label: t('nav.internship'), href: ROUTES.internship, isRoute: true },
     { id: 'mentorship', label: t('nav.mentorship'), href: '#mentorship' },
     { id: 'pricing', label: t('nav.pricing'), href: '#pricing' },
     { id: 'about', label: t('nav.about'), href: '#about' },
@@ -48,16 +51,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
           >
             {navLinks.map((link) => {
               const isActive = activeSection === link.id
-              return (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  className={`text-[16px] transition-colors relative py-1.5 ${
-                    isActive
-                      ? 'text-[#5a198f] font-bold after:content-[""] after:absolute after:bottom-0 after:start-0 after:end-0 after:h-[2.5px] after:bg-[#5a198f] after:rounded-full'
-                      : 'text-[#2d3748] hover:text-[#5a198f] font-medium'
-                  }`}
-                >
+              const className = `text-[16px] transition-colors relative py-1.5 ${
+                isActive
+                  ? 'text-[#5a198f] font-bold after:content-[""] after:absolute after:bottom-0 after:start-0 after:end-0 after:h-[2.5px] after:bg-[#5a198f] after:rounded-full'
+                  : 'text-[#2d3748] hover:text-[#5a198f] font-medium'
+              }`
+              return link.isRoute ? (
+                <Link key={link.id} to={link.href} className={className}>
+                  {link.label}
+                </Link>
+              ) : (
+                <a key={link.id} href={link.href} className={className}>
                   {link.label}
                 </a>
               )
@@ -78,20 +82,20 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
             </button>
 
             {/* Log In Link (Figma node 1002:949) */}
-            <a
-              href="#login"
+            <Link
+              to={ROUTES.login}
               className="text-[16px] font-medium text-[#2d3748] hover:text-[#5a198f] transition-colors px-1"
             >
               {t('nav.login')}
-            </a>
+            </Link>
 
             {/* Sign Up Free Button (Figma node 1002:951) */}
-            <a
-              href="#signup"
+            <Link
+              to={ROUTES.register}
               className="inline-flex items-center justify-center px-6 py-2.5 text-[14px] sm:text-[15px] font-semibold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow-xs hover:shadow transition-all duration-200"
             >
               <span>{t('nav.signUp')}</span>
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Menu & Language Toggle */}
@@ -125,38 +129,39 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
           <div className="px-4 pt-3 pb-6 space-y-1 sm:px-6">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id
-              return (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-2.5 rounded-xl text-base font-medium transition-colors ${
-                    isActive
-                      ? 'text-[#5a198f] font-bold bg-purple-50'
-                      : 'text-slate-700 hover:text-[#5a198f] hover:bg-purple-50/50'
-                  }`}
-                >
+              const className = `block px-4 py-2.5 rounded-xl text-base font-medium transition-colors ${
+                isActive
+                  ? 'text-[#5a198f] font-bold bg-purple-50'
+                  : 'text-slate-700 hover:text-[#5a198f] hover:bg-purple-50/50'
+              }`
+              const closeMenu = () => setMobileMenuOpen(false)
+              return link.isRoute ? (
+                <Link key={link.id} to={link.href} onClick={closeMenu} className={className}>
+                  {link.label}
+                </Link>
+              ) : (
+                <a key={link.id} href={link.href} onClick={closeMenu} className={className}>
                   {link.label}
                 </a>
               )
             })}
 
             <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col gap-3">
-              <a
-                href="#login"
+              <Link
+                to={ROUTES.login}
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full text-center py-2.5 text-sm font-semibold text-slate-700 hover:text-[#5a198f] rounded-xl"
               >
                 {t('nav.login')}
-              </a>
-              <a
-                href="#signup"
+              </Link>
+              <Link
+                to={ROUTES.register}
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full inline-flex items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow"
               >
                 <span>{t('nav.signUp')}</span>
                 {isRtl ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import LoginLayout from '@/components/auth/LoginLayout';
+import { ROUTES } from '@/constants/routes';
 
 function EyeIcon({ hidden }: { hidden: boolean }) {
   return hidden ? (
@@ -76,12 +78,12 @@ export default function Login() {
             >
               Password
             </label>
-            <a
-              href="/forgot-password"
+            <Link
+              to={ROUTES.forgotPassword}
               className="rounded-sm text-xs font-semibold text-brand-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
             >
               Forgot password?
-            </a>
+            </Link>
           </div>
 
           <div className="relative">
@@ -140,12 +142,12 @@ export default function Login() {
 
         <p className="pt-1 text-center text-xs text-muted">
           New to InternsHub?{' '}
-          <a
-            href="/register"
+          <Link
+            to={ROUTES.register}
             className="rounded-sm font-bold text-brand-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
           >
             Create an account
-          </a>
+          </Link>
         </p>
       </form>
     </LoginLayout>

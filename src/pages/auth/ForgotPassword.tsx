@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { ROUTES } from "@/constants/routes";
 
 // ---------- [0] Design tokens (From Figma) ----------
 const C = {
@@ -297,14 +299,14 @@ function SuccessView({ email, t, onRetry }: { email: string; t: Text; onRetry: (
         {t.successAfter}
       </p>
 
-      <a
-        href="/login"
+      <Link
+        to={ROUTES.login}
         className="mx-auto mt-[88px] flex h-14 w-[252px] items-center justify-center gap-2 rounded-xl text-[14px] font-semibold text-white focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-300"
         style={{ background: buttonBg, boxShadow: buttonShadow }}
       >
         {t.back}
         <ArrowIcon />
-      </a>
+      </Link>
       <button
         type="button"
         onClick={onRetry}
@@ -441,10 +443,10 @@ export default function ForgotPassword() {
                   </button>
 
                   <div className="mt-6 text-center">
-                    <a href="/login" className="inline-flex items-center gap-2 text-[12px] leading-[16px] hover:underline" style={{ color: C.gray600 }}>
+                    <Link to={ROUTES.login} className="inline-flex items-center gap-2 text-[12px] leading-[16px] hover:underline" style={{ color: C.gray600 }}>
                       <BackArrowIcon />
                       {t.back}
-                    </a>
+                    </Link>
                   </div>
 
                   <div

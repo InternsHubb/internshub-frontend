@@ -1,7 +1,9 @@
 // TEMPORARY: local copy of the navbar from the Internship Figma frame.
 // Replace with the team's shared Navbar once it lands on main.
 import { useState } from 'react'
-import { cn } from './cn'
+import { Link } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
+import { cn } from '@/lib/cn'
 
 interface MenuIconProps {
   isOpen: boolean
@@ -31,13 +33,37 @@ interface NavLink {
 
 const NAV_LINKS: ReadonlyArray<NavLink> = [
   { label: 'Courses', href: '#' },
-  { label: 'Internship', href: '/internship' },
+  { label: 'Internship', href: ROUTES.internship },
   { label: 'Mentorship', href: '#' },
   { label: 'Pricing', href: '#' },
   { label: 'About Us', href: '#' },
 ]
 
 const ACTIVE_LINK = 'Internship'
+
+interface NavItemProps {
+  link: NavLink
+  isActive: boolean
+  className: string
+  onClick?: () => void
+}
+
+// App routes use client-side navigation; placeholder "#" links stay plain anchors.
+function NavItem({ link, isActive, className, onClick }: NavItemProps) {
+  const ariaCurrent = isActive ? 'page' : undefined
+  if (link.href.startsWith('/')) {
+    return (
+      <Link to={link.href} aria-current={ariaCurrent} className={className} onClick={onClick}>
+        {link.label}
+      </Link>
+    )
+  }
+  return (
+    <a href={link.href} aria-current={ariaCurrent} className={className} onClick={onClick}>
+      {link.label}
+    </a>
+  )
+}
 
 function InternshipNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -48,42 +74,40 @@ function InternshipNavbar() {
         aria-label="Main navigation"
         className="mx-auto flex max-w-[1440px] items-center justify-between gap-6 px-4 py-4 sm:px-10 xl:justify-center xl:gap-[138px]"
       >
-        <a href="/" className="p-[10px] text-2xl font-semibold text-[#4c0585]">
+        <Link to={ROUTES.home} className="p-[10px] text-2xl font-semibold text-[#4c0585]">
           EdTech
-        </a>
+        </Link>
 
         <ul className="hidden items-start gap-[10px] p-[10px] lg:flex">
           {NAV_LINKS.map((link) => {
             const isActive = link.label === ACTIVE_LINK
             return (
               <li key={link.label}>
-                <a
-                  href={link.href}
-                  aria-current={isActive ? 'page' : undefined}
+                <NavItem
+                  link={link}
+                  isActive={isActive}
                   className={cn(
                     'flex p-[10px] text-xl transition-colors hover:text-[#5a198f]',
                     isActive
                       ? 'border-b-2 border-[#4c0585] font-semibold text-[#5a198f]'
                       : 'text-[#393939]',
                   )}
-                >
-                  {link.label}
-                </a>
+                />
               </li>
             )
           })}
         </ul>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <a href="#" className="text-sm font-semibold text-[#374151] hover:text-[#5a198f]">
+          <Link to={ROUTES.login} className="text-sm font-semibold text-[#374151] hover:text-[#5a198f]">
             Log In
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to={ROUTES.register}
             className="rounded-full bg-[#5a198f] px-5 py-[10px] text-sm font-semibold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#3b0454]"
           >
             Sign Up Free
-          </a>
+          </Link>
         </div>
 
         <button
@@ -108,27 +132,26 @@ function InternshipNavbar() {
               const isActive = link.label === ACTIVE_LINK
               return (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    aria-current={isActive ? 'page' : undefined}
+                  <NavItem
+                    link={link}
+                    isActive={isActive}
+                    onClick={() => setIsMenuOpen(false)}
                     className={cn(
                       'block rounded-xl px-3 py-3 text-base',
                       isActive ? 'bg-[#f4f0f8] font-semibold text-[#5a198f]' : 'text-[#393939]',
                     )}
-                  >
-                    {link.label}
-                  </a>
+                  />
                 </li>
               )
             })}
           </ul>
           <div className="mt-3 flex items-center gap-4 border-t border-[#e4e7ec] px-3 pt-4">
-            <a href="#" className="text-sm font-semibold text-[#374151]">
+            <Link to={ROUTES.login} className="text-sm font-semibold text-[#374151]">
               Log In
-            </a>
-            <a href="#" className="rounded-full bg-[#5a198f] px-5 py-[10px] text-sm font-semibold text-white">
+            </Link>
+            <Link to={ROUTES.register} className="rounded-full bg-[#5a198f] px-5 py-[10px] text-sm font-semibold text-white">
               Sign Up Free
-            </a>
+            </Link>
           </div>
         </div>
       )}
