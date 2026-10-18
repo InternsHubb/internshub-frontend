@@ -1,8 +1,13 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 import LegalModal from './LegalModal';
 import studentImage from '../assets/Image (Students beginning a collaborative technology journey).png';
 
+const NATIONAL_ID_LENGTH = 14;
+
 export default function RegisterScreen() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -43,9 +48,12 @@ export default function RegisterScreen() {
     } else if (!/^\d{10,11}$/.test(formData.phone.replace(/\s+/g, ''))) {
       newErrors.phone = 'Enter a valid phone number.';
     }
-    if (!formData.nationalId.trim()) {
+    const nationalId = formData.nationalId.trim();
+    if (!nationalId) {
       newErrors.nationalId = 'National ID is required.';
-    } else if (formData.nationalId.length !== 14) {
+    } else if (!/^\d+$/.test(nationalId)) {
+      newErrors.nationalId = 'National ID must contain digits only.';
+    } else if (nationalId.length !== NATIONAL_ID_LENGTH) {
       newErrors.nationalId = 'National ID must be exactly 14 digits.';
     }
     if (!formData.password) {
@@ -69,8 +77,7 @@ export default function RegisterScreen() {
       setErrors(validationErrors);
     } else {
       setSubmissionError(null);
-      window.history.pushState({}, '', '/onboarding');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      navigate(ROUTES.onboarding);
     }
   };
 
@@ -291,10 +298,15 @@ export default function RegisterScreen() {
 
                 {/* National ID */}
                 <div>
-                  <label className="block text-xs font-medium text-[#111827] mb-1.5">National ID</label>
+                  <label htmlFor="register-national-id" className="block text-xs font-medium text-[#111827] mb-1.5">National ID</label>
                   <input
+                    id="register-national-id"
                     type="text"
-                    maxLength={14}
+                    inputMode="numeric"
+                    autoComplete="off"
+                    maxLength={NATIONAL_ID_LENGTH}
+                    aria-invalid={Boolean(errors.nationalId)}
+                    aria-describedby={errors.nationalId ? 'register-national-id-error' : undefined}
                     name="nationalId"
                     value={formData.nationalId}
                     onChange={handleChange}
@@ -305,7 +317,7 @@ export default function RegisterScreen() {
                         : 'border-gray-200 focus:border-[#3B0454] focus:bg-white'
                     }`}
                   />
-                  {errors.nationalId && <p className="mt-1 text-[11px] text-[#B42318] font-medium">{errors.nationalId}</p>}
+                  {errors.nationalId && <p id="register-national-id-error" className="mt-1 text-[11px] text-[#B42318] font-medium">{errors.nationalId}</p>}
                 </div>
 
                 {/* Password & Confirm Password */}
@@ -419,7 +431,7 @@ export default function RegisterScreen() {
 
               {/* Login link & Prototype error preview */}
               <div className="text-center mt-3 text-xs text-[#5C5C5C]">
-                Already have an account? <a href="#" className="font-semibold text-[#3B0454] hover:underline">Log in</a>
+                Already have an account? <Link to={ROUTES.login} className="font-semibold text-[#3B0454] hover:underline">Log in</Link>
               </div>
               <div className="text-center mt-1">
                 <button

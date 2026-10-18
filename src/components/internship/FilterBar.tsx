@@ -2,7 +2,7 @@ import { useId } from 'react'
 import type { FormEvent } from 'react'
 import iconGrid from '../../assets/internship/icon-grid.svg'
 import iconSearch from '../../assets/internship/icon-search.svg'
-import { cn } from './cn'
+import { cn } from '@/lib/cn'
 import { TRACK_FILTERS } from './mockData'
 import type { TrackFilter } from './mockData'
 
