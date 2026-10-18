@@ -4,8 +4,10 @@ import InternshipPage from './pages/InternshipPage';
 import PhoneOTP from './pages/auth/PhoneOTP';
 import AuthMain from './pages/auth/AuthMain';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import OnboardingFlow from './pages/onboarding/OnboardingFlow';
 
 const INTERNSHIP_PATH = '/internship';
+const ONBOARDING_PATH = '/onboarding';
 const PHONE_OTP_PATH = '/auth/phone-otp';
 const FORGOT_PASSWORD_PATH = '/auth/forgot-password';
 const AUTH_PATH = '/auth';
@@ -23,6 +25,10 @@ export const App: React.FC = () => {
 
   if (currentPath === INTERNSHIP_PATH || currentPath.startsWith('/internship')) {
     return <InternshipPage />;
+  }
+
+  if (currentPath === ONBOARDING_PATH) {
+    return <OnboardingFlow />;
   }
 
   if (currentPath === PHONE_OTP_PATH) {

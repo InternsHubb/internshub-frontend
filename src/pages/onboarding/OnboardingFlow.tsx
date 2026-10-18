@@ -1,4 +1,20 @@
 import React, { useState } from 'react';
+import calendarIcon from '../../assets/onboarding/calendar.svg';
+import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
+import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
+import idCardPurpleIcon from '../../assets/onboarding/id-card-purple.svg';
+import lockMutedIcon from '../../assets/onboarding/lock-muted.svg';
+import lockPurpleIcon from '../../assets/onboarding/lock-purple.svg';
+import lockWhiteIcon from '../../assets/onboarding/lock-white.svg';
+import receiptPurpleIcon from '../../assets/onboarding/receipt-purple.svg';
+import shieldGreenIcon from '../../assets/onboarding/shield-green.svg';
+import shieldPurpleIcon from '../../assets/onboarding/shield-purple.svg';
+import shieldWhiteIcon from '../../assets/onboarding/shield-white.svg';
+import shieldWhiteNarrowIcon from '../../assets/onboarding/shield-white-narrow.svg';
+import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
+import uploadPurpleIcon from '../../assets/onboarding/upload-purple.svg';
+import uploadWhiteIcon from '../../assets/onboarding/upload-white.svg';
+import walletPurpleIcon from '../../assets/onboarding/wallet-purple.svg';
 
 export default function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -18,8 +34,8 @@ export default function OnboardingFlow() {
     { num: '04', title: 'Path' },
     { num: '05', title: 'CV' },
     { num: '06', title: 'Payment' },
-    { num: '07', title: 'Result' },
-    { num: '08', title: 'Setup' },
+    { num: '07', title: 'Setup' },
+    { num: '08', title: 'Result' },
     { num: '09', title: 'Squad' },
     { num: '10', title: 'Mentorship' }
   ];
@@ -27,14 +43,14 @@ export default function OnboardingFlow() {
   // CV Review Screen View
   if (viewMode === 'cv-review') {
     return (
-      <div className="min-h-screen flex flex-col justify-between bg-[#F8F6FA] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif]">
-        <header className="sticky top-0 z-50 flex items-center justify-between px-[72px] h-[72px] bg-white/92 border-b border-[#E8E2EC]">
+      <div className="min-h-screen flex flex-col justify-between bg-[#F8F6FA] bg-[radial-gradient(circle_at_8%_2%,rgba(139,93,176,0.12),transparent_26%),radial-gradient(circle_at_96%_20%,rgba(221,111,13,0.06),transparent_25%)] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] overflow-x-hidden">
+        <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-4 md:px-[72px] h-[72px] bg-white/92 border-b border-[#E8E2EC]">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2.5">
               <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] rounded-[13px_13px_13px_4px] flex items-center justify-center shadow-md">
                 <span className="text-white font-bold text-sm">ih</span>
               </div>
-              <span className="font-bold text-xl text-[#111827]">InternsHub</span>
+              <span className="font-bold text-xl text-[#111827]">Interns<span className="text-[#4C0585]">Hub</span></span>
               <span className="bg-[#F7F0FB] text-[#5C1D87] text-[10px] font-bold px-2.5 py-1 rounded-full">EDTECH</span>
             </div>
             <span className="text-[9px] font-normal tracking-[1.08px] text-[#6B7280] pl-2 border-l border-[#E8E2EC]">CV REVIEW</span>
@@ -45,14 +61,14 @@ export default function OnboardingFlow() {
         </header>
 
         <main className="flex-grow flex justify-center px-4 py-12">
-          <div className="w-[1146px] space-y-6">
+          <div className="w-full max-w-[1146px] min-w-0 space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
               <div className="space-y-3">
                 <span className="inline-block px-3 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full tracking-[0.72px]">ILLUSTRATIVE EXTRACTION PREVIEW</span>
                 <h1 className="text-[47px] font-extrabold text-[#21062E] tracking-[-2.115px]">Review your information</h1>
                 <p className="text-xs text-[#6B7280]">Check the information extracted from your CV and correct anything that needs attention.</p>
               </div>
-              <div className="bg-white p-3.5 border border-[#E8E2EC] rounded-[15px] shadow-sm flex items-center gap-3 w-[300px]">
+              <div className="bg-white p-3.5 border border-[#E8E2EC] rounded-[15px] shadow-sm flex items-center gap-3 w-full max-w-[300px]">
                 <div className="w-9 h-9 bg-[#F3E9FA] text-[#5C1D87] rounded-[9px] flex items-center justify-center text-xs font-bold">PDF</div>
                 <div className="flex-grow">
                   <h4 className="text-[10px] text-[#111827]">sample-cv.pdf</h4>
@@ -133,26 +149,26 @@ export default function OnboardingFlow() {
                     <button className="px-3 py-1 bg-white border border-[#DACDE1] text-[#5C1D87] text-[8px] font-bold rounded-[9px]">Add manually</button>
                   </div>
                   <div className="p-3.5 bg-[#FAF9FB] rounded-[12px] flex items-center gap-3">
-                    <span className="text-slate-500">⬆</span>
+                    <img src={uploadMutedIcon} alt="" aria-hidden="true" width={20} height={20} />
                     <div><h4 className="text-[10px] text-[#111827]">No experience information extracted</h4><p className="text-[8px] text-[#6B7280]">You can add it manually or continue if this section does not apply.</p></div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-6 border-t border-[#E8E2EC]">
+            <div className="flex flex-wrap justify-end gap-3 pt-6">
               <button className="px-6 py-3 bg-white border border-[#CCB8D8] text-[#3A0353] font-bold text-xs rounded-[13px]">Re-upload CV</button>
               <button onClick={() => setViewMode('onboarding')} className="px-7 py-3 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-xs rounded-[13px] shadow">Confirm and continue →</button>
             </div>
           </div>
         </main>
 
-        <footer className="flex flex-row items-center justify-between px-[72px] h-[130px] bg-gradient-to-tr from-[#22023C] via-[#22023C] to-[#8B5DB0]/30 text-white">
-          <div className="flex items-center gap-3">
+        <footer className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 px-4 md:px-[72px] py-8 md:py-0 md:h-[130px] bg-gradient-to-tr from-[#22023C] via-[#22023C] to-[#8B5DB0]/30 text-white">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] rounded-[13px_13px_13px_4px] flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-sm">ih</span>
             </div>
-            <span className="font-bold text-xl">InternsHub</span>
+            <span className="font-bold text-xl text-white">Interns<span className="text-[#4C0585]">Hub</span></span>
             <span className="text-[11px] text-[#D7C8DF] pl-3 border-l border-white/20">From Student to a Tech Career.</span>
           </div>
           <span className="text-[9px] text-[#9F8DAC]">Modern Onboarding v6.0 · Interactive product demo</span>
@@ -162,27 +178,27 @@ export default function OnboardingFlow() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#F8F6FA] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className="min-h-screen flex flex-col justify-between bg-[#F8F6FA] bg-[radial-gradient(circle_at_8%_2%,rgba(139,93,176,0.12),transparent_26%),radial-gradient(circle_at_96%_20%,rgba(221,111,13,0.06),transparent_25%)] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] overflow-x-hidden">
       
       {/* Header */}
-      <header className="sticky top-0 z-50 flex items-center justify-between px-[72px] h-[72px] bg-white/82 border-b border-[#3A0353]/10 shadow-[0_1px_0_rgba(58,3,83,0.04)] backdrop-blur-md">
+      <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-4 md:px-[72px] h-[72px] bg-white/82 border-b border-[#3A0353]/10 shadow-[0_1px_0_rgba(58,3,83,0.04)] backdrop-blur-md">
         <div className="flex items-center gap-2.5">
           <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] shadow-[0_8px_18px_rgba(58,3,83,0.2)] rounded-[13px_13px_13px_4px] flex items-center justify-center relative">
             <span className="text-white font-bold text-sm tracking-[-1.12px]">ih</span>
           </div>
-          <span className="font-bold text-xl text-[#111827]">InternsHub</span>
+          <span className="font-bold text-xl text-[#111827]">Interns<span className="text-[#4C0585]">Hub</span></span>
           <span className="bg-[#F7F0FB] text-[#5C1D87] text-[10px] font-bold px-2.5 py-1 rounded-full tracking-[1.6px]">EDTECH</span>
         </div>
 
         <div className="flex items-center gap-6">
-          <span className="text-xs text-[#6B7280]">Demo onboarding</span>
+          <span className="hidden sm:inline text-xs text-[#6B7280]">Demo onboarding</span>
           <button className="text-[#5C1D87] font-bold text-[13px] hover:underline">Need help?</button>
         </div>
       </header>
 
       {/* Progress Navigation Bar */}
-      <div className="w-full flex justify-center pt-4 px-4">
-        <div className="w-[1120px] h-[85.6px] bg-white/86 border border-[#3A0353]/10 shadow-[0_8px_28px_rgba(34,2,60,0.06)] backdrop-blur-md rounded-[20px] flex items-center justify-between px-8 relative">
+      <div className="w-full flex justify-center pt-[18px] px-4">
+        <div className="w-full max-w-[1120px] h-[85.6px] bg-white/86 border border-[#3A0353]/10 shadow-[0_8px_28px_rgba(34,2,60,0.06)] backdrop-blur-md rounded-[20px] flex items-center justify-between px-4 md:px-8 relative overflow-x-auto">
           
           {stepsMeta.map((s, index) => {
             const stepNumber = index + 1;
@@ -193,20 +209,20 @@ export default function OnboardingFlow() {
               <React.Fragment key={s.num}>
                 <button
                   onClick={() => setCurrentStep(stepNumber)}
-                  className="flex flex-col items-center gap-1.5 focus:outline-none transition group z-10"
+                  className="flex shrink-0 flex-col items-center gap-[7px] focus:outline-none transition group z-10"
                 >
-                  <div className={`w-[34px] h-[34px] rounded-full flex items-center justify-center text-[10px] font-bold transition ${
+                  <div className={`w-[34px] h-[34px] rounded-full flex items-center justify-center text-[10px] transition ${
                     isCompleted ? 'bg-[#8B5DB0] text-white' :
                     isCurrent ? 'bg-gradient-to-br from-[#5C1D87] to-[#3A0353] text-white shadow-[0_0_0_5px_#F2E8F8,0_8px_16px_rgba(58,3,83,0.18)]' :
                     'bg-white border border-[#E6DFE9] text-[#AAA2AD]'
                   }`}>
                     {isCompleted ? '✓' : s.num}
                   </div>
-                  <span className={`text-[10px] tracking-[0.1px] ${isCurrent ? 'text-[#3A0353] font-bold' : 'text-[#AAA2AD]'}`}>{s.title}</span>
+                  <span className={`text-[10px] tracking-[0.1px] ${isCurrent ? 'text-[#3A0353]' : isCompleted ? 'text-[#5C1D87]' : 'text-[#AAA2AD]'}`}>{s.title}</span>
                 </button>
 
                 {index < stepsMeta.length - 1 && (
-                  <div className={`flex-grow h-[2px] mx-2 transition-colors ${
+                  <div className={`flex-grow min-w-3 h-[2px] mx-2 transition-colors ${
                     stepNumber < currentStep ? 'bg-[#8B5DB0]' : 'bg-[#E8E2EC]'
                   }`} />
                 )}
@@ -217,8 +233,8 @@ export default function OnboardingFlow() {
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-grow flex justify-center px-4 py-8">
-        <div className="w-[1240px]">
+      <main className="flex-grow flex justify-center px-4 md:px-6 pt-10 md:pt-[72px] pb-16 md:pb-[100px]">
+        <div className="w-full max-w-[1240px] min-w-0">
           
           <div className="inline-flex items-center px-3 py-1.5 bg-[#FFF3E8] rounded-[9px] mb-3">
             <span className="text-[11px] font-bold text-[#DD6F0D] tracking-[1.32px]">
@@ -229,7 +245,7 @@ export default function OnboardingFlow() {
           {/* STEP 1: Account */}
           {currentStep === 1 && (
             <div className="space-y-6">
-              <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Create Your Account</h1>
+              <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Create Your Account</h1>
               <p className="text-[#69616D] text-base">Get started with your technical journey at InternsHub.</p>
               <div className="bg-white/92 p-8 rounded-[28px] border border-[#3A0353]/10 max-w-lg space-y-4">
                 <div>
@@ -250,10 +266,10 @@ export default function OnboardingFlow() {
           {/* STEP 2: Verify */}
           {currentStep === 2 && (
             <div className="space-y-6">
-              <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Verify Your Account</h1>
+              <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Verify Your Account</h1>
               <p className="text-[#69616D] text-base">Confirm your email, phone number and National ID to secure your account.</p>
               
-              <div className="bg-[#FFFFFF] p-4 rounded-[14px] border border-[#4C0585]/10 flex items-start gap-3 mb-6 shadow-sm">
+              <div className="bg-[#FBF7FE] p-4 rounded-[14px] border border-[#4C0585]/10 flex items-start gap-3">
                 <div className="w-[22px] h-[22px] rounded-full border border-[#3A0353] flex items-center justify-center text-[#3A0353] text-xs font-serif italic">i</div>
                 <div className="text-xs text-[#3A0353]">
                   <p className="font-bold">All three verifications are required, in order</p>
@@ -264,57 +280,63 @@ export default function OnboardingFlow() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-[42px] h-[42px] bg-[#F3E9FA] rounded-[12px] flex items-center justify-center text-[#5C1D87]">🛡️</div>
-                      <span className="px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
+                    <div className="flex items-start gap-3 mb-6">
+                      <div className="w-[42px] h-[42px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={shieldPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
+                      <div className="min-w-0 flex-1 pt-0.5">
+                        <h3 className="text-base font-normal text-[#111827]">Email verification</h3>
+                        <p className="text-[11px] text-[#6B7280] mt-1">Code sent to m***@gmail.com</p>
+                      </div>
+                      <span className="shrink-0 px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
                     </div>
-                    <h3 className="text-base font-normal text-[#111827]">Email verification</h3>
-                    <p className="text-[11px] text-[#6B7280] mb-4">Code sent to m***@gmail.com</p>
                     <p className="text-[11px] text-[#111827] mb-3">Enter the 6-digit code we sent to your email address, then tap Verify Email.</p>
                     <div className="flex gap-1.5 mb-5">
-                      {[...Array(6)].map((_, i) => (<input key={i} type="text" maxLength={1} className="w-10 h-[52px] text-center border border-[#D9D1DD] rounded-[10px] text-base font-bold bg-[#FAF9FB] outline-none" />))}
+                      {[...Array(6)].map((_, i) => (<input key={i} type="text" maxLength={1} className="w-11 min-w-0 shrink h-[52px] text-center border border-[#D9D1DD] rounded-[10px] text-base font-bold bg-[#FAF9FB] outline-none" />))}
                     </div>
                     <div className="mb-6"><a href="#resend" className="text-xs text-[#5C1D87] underline">Resend code · 00:24</a></div>
                   </div>
                   <div>
-                    <button className="w-full h-[50px] bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-xs rounded-[13px] mb-3">Verify Email</button>
+                    <button className="min-h-[50px] px-6 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-[13px] rounded-[13px] shadow-[0_10px_22px_rgba(58,3,83,0.2)] mb-3">Verify Email</button>
                     <p className="text-[10px] text-[#6B7280]">Demo only. No real message is sent or verified.</p>
                   </div>
                 </div>
 
                 <div className="bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm opacity-70 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-[42px] h-[42px] bg-[#F3E9FA] rounded-[12px] flex items-center justify-center text-[#5C1D87]">🔒</div>
-                      <span className="px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
+                    <div className="flex items-start gap-3 mb-6">
+                      <div className="w-[42px] h-[42px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={lockPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
+                      <div className="min-w-0 flex-1 pt-0.5">
+                        <h3 className="text-base font-normal text-[#111827]">Phone verification</h3>
+                        <p className="text-[11px] text-[#6B7280] mt-1">Code will be sent to +20 ••• ••• 4821</p>
+                      </div>
+                      <span className="shrink-0 px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
                     </div>
-                    <h3 className="text-base font-normal text-[#111827]">Phone verification</h3>
-                    <p className="text-[11px] text-[#6B7280] mb-4">Code will be sent to +20 ••• ••• 4821</p>
                     <p className="text-[11px] text-[#111827] mb-3">Enter the 6-digit code we send by SMS to your phone. Available after your email is verified.</p>
                     <div className="flex gap-1.5 mb-5">
-                      {[...Array(6)].map((_, i) => (<input key={i} type="text" maxLength={1} disabled className="w-10 h-[52px] text-center border border-[#D9D1DD] rounded-[10px] text-base bg-[#FAF9FB] outline-none" />))}
+                      {[...Array(6)].map((_, i) => (<input key={i} type="text" maxLength={1} disabled className="w-11 min-w-0 shrink h-[52px] text-center border border-[#D9D1DD] rounded-[10px] text-base bg-[#FAF9FB] outline-none" />))}
                     </div>
                     <div className="mb-6"><a href="#resend" className="text-xs text-[#5C1D87] underline">Resend code</a></div>
                   </div>
                   <div>
-                    <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] mb-3">Verify Phone</button>
+                    <button disabled className="min-h-[50px] px-6 bg-[#ECEAED] text-[#9A939E] font-bold text-[13px] rounded-[13px] mb-3">Verify Phone</button>
                     <p className="text-[10px] text-[#6B7280]">Demo only. No real message is sent or verified.</p>
                   </div>
                 </div>
 
                 <div className="bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm opacity-70 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-[42px] h-[42px] bg-[#F3E9FA] rounded-[12px] flex items-center justify-center text-[#5C1D87]">🪪</div>
-                      <span className="px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
+                    <div className="flex items-start gap-3 mb-6">
+                      <div className="w-[42px] h-[42px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={idCardPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
+                      <div className="min-w-0 flex-1 pt-0.5">
+                        <h3 className="text-base font-normal text-[#111827]">National ID verification</h3>
+                        <p className="text-[11px] text-[#6B7280] mt-1">Egyptian National ID · 14 digits</p>
+                      </div>
+                      <span className="shrink-0 px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
                     </div>
-                    <h3 className="text-base font-normal text-[#111827]">National ID verification</h3>
-                    <p className="text-[11px] text-[#6B7280] mb-4">Egyptian National ID · 14 digits</p>
                     <p className="text-[11px] text-[#111827] mb-3">Enter your 14-digit National ID number to verify your identity. Available after your phone is verified.</p>
                     <input type="text" disabled placeholder="Enter 14-digit National ID" className="w-full h-[52px] px-4 border border-[#D9D1DD] rounded-[10px] text-xs bg-[#FAF9FB] mb-5 outline-none" />
                   </div>
                   <div>
-                    <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] mb-3">Verify National ID</button>
+                    <button disabled className="min-h-[50px] px-6 bg-[#ECEAED] text-[#9A939E] font-bold text-[13px] rounded-[13px] mb-3">Verify National ID</button>
                     <p className="text-[10px] text-[#6B7280]">Demo only. No real message is sent or verified.</p>
                   </div>
                 </div>
@@ -331,7 +353,7 @@ export default function OnboardingFlow() {
           {currentStep === 3 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Let’s Get to Know You</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Let’s Get to Know You</h1>
                 <p className="text-[#69616D] text-base mt-2">Add the essential details needed to set up your InternsHub account.</p>
               </div>
 
@@ -356,7 +378,7 @@ export default function OnboardingFlow() {
                   <div className="space-y-5">
                     <div className="flex items-center justify-between border-b border-[#E8E2EC] pb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#3A0353] text-white rounded-[12px] flex items-center justify-center">🛡️</div>
+                        <div className="w-10 h-10 shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
                         <div>
                           <span className="text-[9px] font-bold text-[#8B5DB0] uppercase tracking-[0.9px]">ACCOUNT ESSENTIALS</span>
                           <h3 className="text-[18px] font-normal text-[#111827]">Your basic information</h3>
@@ -366,7 +388,7 @@ export default function OnboardingFlow() {
                     </div>
 
                     <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                      <span>ℹ️</span>
+                      <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
                       <div>
                         <p className="font-bold">Age requirement</p>
                         <p className="text-[11px] mt-0.5">You must be 18 or older to join InternsHub.</p>
@@ -382,18 +404,18 @@ export default function OnboardingFlow() {
                         <label className="block text-[11px] text-[#34303A] mb-1 font-medium">Date of birth</label>
                         <div className="relative flex items-center">
                           <input type="text" placeholder="Enter your birthday" className="w-full h-[52px] px-4 rounded-[12px] border border-[#E3DCE6] bg-[#FAF9FB] text-xs outline-none placeholder:text-slate-400" />
-                          <span className="absolute right-4 text-[#4A2A5E]">📅</span>
+                          <span className="absolute right-4 flex"><img src={calendarIcon} alt="" aria-hidden="true" width={18} height={18} /></span>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 text-[#6B7280] text-[11px] pt-1">
-                      <span>🔒</span>
+                      <img src={lockMutedIcon} alt="" aria-hidden="true" width={16} height={16} />
                       <p>Your date of birth is saved once and cannot be changed later.</p>
                     </div>
                   </div>
 
-                  <div className="flex justify-end items-center gap-4 pt-4 border-t border-[#E8E2EC]">
+                  <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
                     <button onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                     <button onClick={() => setCurrentStep(4)} className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
                       Save & Continue →
@@ -408,7 +430,7 @@ export default function OnboardingFlow() {
           {currentStep === 4 && (
             <div className="space-y-8">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Choose Your Path to a Tech Career</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Choose Your Path to a Tech Career</h1>
                 <p className="text-[#69616D] text-base">Choose the program duration and technology track that match your goals.</p>
               </div>
 
@@ -494,7 +516,7 @@ export default function OnboardingFlow() {
                 </div>
               </div>
 
-              <div className="flex justify-end items-center gap-4 pt-4 border-t border-[#E8E2EC]">
+              <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
                 <button onClick={() => setCurrentStep(3)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button onClick={() => setCurrentStep(5)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow">Confirm Path →</button>
               </div>
@@ -505,16 +527,16 @@ export default function OnboardingFlow() {
           {currentStep === 5 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Upload Your CV</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Upload Your CV</h1>
                 <p className="text-[#69616D] text-base">Your CV helps us understand your background and prepare a relevant assessment.</p>
               </div>
 
-              <div className="bg-white/88 p-4 rounded-[18px] border border-[#3A0353]/10 flex items-center justify-between shadow-sm">
+              <div className="bg-white/88 p-4 rounded-[18px] border border-[#3A0353]/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="w-[38px] h-[38px] bg-[#3A0353] text-white rounded-[12px] flex items-center justify-center">🛡️</div>
+                  <div className="w-[38px] h-[38px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteNarrowIcon} alt="" aria-hidden="true" width={18} height={18} /></div>
                   <div><h4 className="text-xs font-bold text-[#111827]">Required for every package</h4><p className="text-[9px] text-[#6B7280]">Your CV must be ready before the interview.</p></div>
                 </div>
-                <div className="flex items-center gap-4 text-[9px] text-[#5C1D87]">
+                <div className="flex flex-wrap items-center gap-4 text-[9px] text-[#5C1D87]">
                   <span className="border-l border-[#E8E2EC] pl-3">PDF or DOCX</span>
                   <span className="border-l border-[#E8E2EC] pl-3">5 MB maximum</span>
                   <button onClick={() => setViewMode('cv-review')} className="px-3 py-1 bg-[#F3E9FA] font-bold rounded-full tracking-[0.72px] underline">PREVIEW CV REVIEW LAYOUT</button>
@@ -531,7 +553,7 @@ export default function OnboardingFlow() {
 
                     <div onClick={() => setFormData({...formData, cvUploaded: !formData.cvUploaded})} className={`border-2 border-dashed p-8 rounded-[24px] text-center cursor-pointer flex flex-col items-center justify-center ${formData.cvUploaded ? 'border-[#8AC8A7] bg-gradient-to-b from-[#FFFFFF] to-[#F1FBF5]' : 'border-[#BFA4CE] bg-gradient-to-b from-[#FDFBFF] to-[#F6EEFB]'}`}>
                       <div className={`w-16 h-16 rounded-[20px] flex items-center justify-center text-xl mb-3 shadow-lg text-white ${formData.cvUploaded ? 'bg-[#16794A]' : 'bg-[#3A0353]'}`}>
-                        {formData.cvUploaded ? '✓' : '⬆'}
+                        {formData.cvUploaded ? '✓' : <img src={uploadWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />}
                       </div>
                       <h4 className="text-base font-normal text-[#111827]">{formData.cvUploaded ? 'CV added successfully' : 'Drop your CV here'}</h4>
                       <p className="text-xs text-[#6B7280] mb-4">{formData.cvUploaded ? 'Click anywhere to replace this file' : 'Drag and drop, or click to browse'}</p>
@@ -583,7 +605,7 @@ export default function OnboardingFlow() {
                       </div>
                     ) : (
                       <div className="text-center py-6 text-[#6B7280]">
-                        <div className="w-[68px] h-[68px] bg-gradient-to-br from-white to-[#F4EAFA] border border-[#D9C8E3] rounded-[20px] mx-auto flex items-center justify-center text-xl mb-3 shadow-md">📄</div>
+                        <div className="w-[68px] h-[68px] bg-gradient-to-br from-white to-[#F4EAFA] border border-[#D9C8E3] rounded-[20px] mx-auto flex items-center justify-center mb-3 shadow-md"><img src={uploadPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
                         <h4 className="text-sm font-normal text-[#111827]">Your profile preview starts here</h4>
                         <p className="text-[11px] text-[#6B7280] max-w-[270px] mx-auto mt-1 leading-relaxed">Skills, education, projects, and experience will be organized for your review.</p>
                       </div>
@@ -592,25 +614,25 @@ export default function OnboardingFlow() {
                 </div>
               </div>
 
-              <div className="flex justify-end items-center gap-4 pt-4 border-t border-[#E8E2EC]">
+              <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
                 <button onClick={() => setCurrentStep(4)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button onClick={() => setCurrentStep(6)} className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow flex items-center gap-2 ${formData.cvUploaded ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}>
-                  Continue to Interview →
+                  Continue to Payment →
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 6: Setup */}
-          {currentStep === 6 && (
+          {/* STEP 7: Setup */}
+          {currentStep === 7 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Get Ready for Your Interview</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Get Ready for Your Interview</h1>
                 <p className="text-[#69616D] text-base">Check your setup and review the recording requirements before starting.</p>
               </div>
 
               <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                <span>ℹ️</span>
+                <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
                 <div>
                   <p className="font-bold">Please open InternsHub on your laptop to continue.</p>
                   <p className="text-[11px] mt-0.5">The recorded interview is available on desktop or laptop only.</p>
@@ -640,7 +662,7 @@ export default function OnboardingFlow() {
 
               <div className="bg-white p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-[52px] h-[52px] bg-[#3A0353] text-white rounded-[12px] flex items-center justify-center text-xl">🛡️</div>
+                  <div className="w-[52px] h-[52px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
                   <div>
                     <h3 className="text-lg font-normal text-[#111827]">Recording & privacy consent</h3>
                     <p className="text-[11px] text-[#5C5C5C] mt-1 leading-relaxed">InternsHub records camera, microphone, and shared screen during the interview. Recordings are deleted 90 days after the final decision; scores and transcripts are retained.</p>
@@ -661,31 +683,31 @@ export default function OnboardingFlow() {
               </div>
               <p className="text-[11px] text-[#6B7280]">Interview duration and question count are intentionally not shown because they remain open business decisions.</p>
 
-              <div className="flex justify-end items-center gap-4 pt-4 border-t border-[#E8E2EC]">
-                <button onClick={() => setCurrentStep(5)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(7)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
+              <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
+                <button onClick={() => setCurrentStep(6)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(8)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
                   Start Interview →
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 7: Result */}
-          {currentStep === 7 && (
+          {/* STEP 8: Result */}
+          {currentStep === 8 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Your Assessment Results</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Your Assessment Results</h1>
                 <p className="text-[#69616D] text-base">A clear, supportive view of your interview outcome and next steps.</p>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button onClick={() => setResultState('assigned')} className={`px-4 py-2 rounded-full text-xs font-bold transition ${resultState === 'assigned' ? 'bg-[#3A0353] text-white' : 'bg-white text-[#6B7280] border border-[#E8E2EC]'}`}>Level assigned</button>
                 <button onClick={() => setResultState('pending')} className={`px-4 py-2 rounded-full text-xs font-bold transition ${resultState === 'pending' ? 'bg-[#3A0353] text-white' : 'bg-white text-[#6B7280] border border-[#E8E2EC]'}`}>Pending review</button>
                 <button onClick={() => setResultState('incomplete')} className={`px-4 py-2 rounded-full text-xs font-bold transition ${resultState === 'incomplete' ? 'bg-[#3A0353] text-white' : 'bg-white text-[#6B7280] border border-[#E8E2EC]'}`}>Incomplete</button>
               </div>
 
-              <div className="bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[34px] shadow-2xl p-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-[380px] h-[260px] border border-white/10 rounded-[157px] pointer-events-none flex items-center justify-center">
+              <div className="bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[34px] shadow-2xl p-6 md:p-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="hidden md:flex absolute -left-20 top-1/2 -translate-y-1/2 w-[380px] h-[260px] border border-white/10 rounded-[157px] pointer-events-none items-center justify-center">
                   <div className="w-[280px] h-[180px] border border-white/10 rounded-[120px] flex items-center justify-center">
                     <div className="w-[105px] h-[105px] bg-white transform -rotate-8 rounded-[36px_36px_36px_10px] shadow-2xl flex items-center justify-center text-[#4C0585] text-3xl font-bold">
                       ✓
@@ -722,14 +744,14 @@ export default function OnboardingFlow() {
                   </div>
 
                   <div className="pt-2">
-                    <button onClick={() => setCurrentStep(8)} className="px-7 py-3 bg-white text-[#3A0353] font-bold text-xs rounded-[13px] shadow flex items-center gap-2">
-                      Continue to Payment →
+                    <button onClick={() => setCurrentStep(9)} className="px-7 py-3 bg-white text-[#3A0353] font-bold text-xs rounded-[13px] shadow flex items-center gap-2">
+                      Continue to Squad →
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white/90 p-5 rounded-[18px] border border-[#E8E2EC] shadow-sm flex items-center justify-between">
+              <div className="bg-white/90 p-5 rounded-[18px] border border-[#E8E2EC] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h4 className="text-sm font-normal text-[#111827]">Need a result reviewed?</h4>
                   <p className="text-[10px] text-[#6B7280] mt-0.5">Appeals are available within seven days. A different reviewer makes the final appeal decision.</p>
@@ -739,43 +761,43 @@ export default function OnboardingFlow() {
                 </button>
               </div>
 
-              <div className="flex justify-end items-center gap-4 pt-6 border-t border-[#E8E2EC]">
-                <button onClick={() => setCurrentStep(6)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(8)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
-                  Continue to Payment →
+              <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
+                <button onClick={() => setCurrentStep(7)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(9)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
+                  Continue to Squad →
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 8: Payment */}
-          {currentStep === 8 && (
+          {/* STEP 6: Payment */}
+          {currentStep === 6 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Complete Your Enrollment</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Complete Your Enrollment</h1>
                 <p className="text-[#69616D] text-base">Review your selected package and securely complete your enrollment.</p>
               </div>
 
-              <div className="bg-white/90 p-4 rounded-[18px] border border-[#3A0353]/10 shadow-sm flex items-center justify-between text-xs">
+              <div className="bg-white/90 p-4 rounded-[18px] border border-[#3A0353]/10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-3">
                   <div className="w-[34px] h-[34px] bg-[#16794A] text-white rounded-[11px] flex items-center justify-center font-bold">✓</div>
-                  <div><h5 className="font-normal text-[#111827]">Interview result</h5><p className="text-[8px] text-[#AAA2AD]">Required stage complete</p></div>
+                  <div><h5 className="font-normal text-[#111827]">CV upload</h5><p className="text-[8px] text-[#AAA2AD]">Required stage complete</p></div>
                 </div>
-                <div className="flex-grow h-[1px] bg-[#E8E2EC] mx-6"></div>
+                <div className="hidden md:block flex-grow h-[1px] bg-[#E8E2EC] mx-6"></div>
                 <div className="flex items-center gap-3">
                   <div className="w-[34px] h-[34px] bg-[#3A0353] text-white rounded-[11px] flex items-center justify-center font-bold ring-4 ring-[#F3E9FA]">2</div>
                   <div><h5 className="font-normal text-[#111827]">Payment</h5><p className="text-[8px] text-[#AAA2AD]">Review and enroll</p></div>
                 </div>
-                <div className="flex-grow h-[1px] bg-[#E8E2EC] mx-6"></div>
+                <div className="hidden md:block flex-grow h-[1px] bg-[#E8E2EC] mx-6"></div>
                 <div className="flex items-center gap-3">
                   <div className="w-[34px] h-[34px] bg-white border border-[#DDD4E1] text-[#AAA2AD] rounded-[11px] flex items-center justify-center font-bold">3</div>
-                  <div><h5 className="font-normal text-[#111827]">Waiting stage</h5><p className="text-[8px] text-[#AAA2AD]">Begins after confirmation</p></div>
+                  <div><h5 className="font-normal text-[#111827]">Interview</h5><p className="text-[8px] text-[#AAA2AD]">Begins after confirmation</p></div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5 relative">
-                  <div className="absolute top-6 right-6 w-8 h-8 bg-[#3A0353] text-white rounded-lg flex items-center justify-center text-xs">🔒</div>
+                  <div className="absolute top-6 right-6 w-8 h-8 bg-[#3A0353] rounded-lg flex items-center justify-center"><img src={lockWhiteIcon} alt="" aria-hidden="true" width={16} height={16} /></div>
                   <div>
                     <span className="text-[9px] font-bold text-[#8B5DB0] uppercase">SECURE CHECKOUT · DEMO</span>
                     <h3 className="text-[22px] font-normal text-[#111827] mt-1">Choose how you’ll pay</h3>
@@ -783,28 +805,28 @@ export default function OnboardingFlow() {
                   </div>
 
                   <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                    <span>ℹ️</span>
+                    <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
                     <div><p className="font-bold">Gateway configuration pending</p><p className="text-[11px] mt-0.5">One Egyptian gateway supporting cards, wallets, and Fawry is planned. No gateway has been selected or connected here.</p></div>
                   </div>
 
                   <div className="space-y-3">
                     <div className="p-4 bg-[#FBF7FE] border-2 border-[#5C1D87] rounded-[15px] flex items-center justify-between shadow-xs">
                       <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] bg-[#3A0353] text-white rounded-[12px] flex items-center justify-center">💳</div>
+                        <div className="w-[42px] h-[42px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={cardWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
                         <div><h4 className="text-xs font-normal text-[#111827]">Debit or credit card</h4><p className="text-[9px] text-[#6B7280]">Demo method · Egyptian pounds</p></div>
                       </div>
                       <div className="w-[22px] h-[22px] bg-[#16794A] text-white rounded-full flex items-center justify-center text-xs">✓</div>
                     </div>
                     <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
                       <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] bg-[#F1EBF4] text-[#5C1D87] rounded-[12px] flex items-center justify-center">📱</div>
+                        <div className="w-[42px] h-[42px] shrink-0 bg-[#F1EBF4] rounded-[12px] flex items-center justify-center"><img src={walletPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
                         <div><h4 className="text-xs font-normal text-[#111827]">Mobile wallet</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
                       </div>
                       <div className="w-5 h-5 rounded-full border border-slate-300"></div>
                     </div>
                     <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
                       <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] bg-[#F1EBF4] text-[#5C1D87] rounded-[12px] flex items-center justify-center">🧾</div>
+                        <div className="w-[42px] h-[42px] shrink-0 bg-[#F1EBF4] rounded-[12px] flex items-center justify-center"><img src={receiptPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
                         <div><h4 className="text-xs font-normal text-[#111827]">Fawry</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
                       </div>
                       <div className="w-5 h-5 rounded-full border border-slate-300"></div>
@@ -819,13 +841,13 @@ export default function OnboardingFlow() {
                   <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Pay & Enroll →</button>
 
                   <div className="text-center space-y-1 pt-2">
-                    <div className="flex items-center justify-center gap-1.5 text-[9px] text-[#16794A]"><span>🛡️</span><span className="font-bold">Protected demo checkout</span> — No real payment details are collected or processed</div>
+                    <div className="flex flex-wrap items-center justify-center gap-1.5 text-[9px] text-[#16794A]"><img src={shieldGreenIcon} alt="" aria-hidden="true" width={14} height={14} /><span className="font-bold">Protected demo checkout</span> — No real payment details are collected or processed</div>
                     <div><a href="#fail" className="text-[9px] text-[#5C1D87] underline">Preview payment failure state</a></div>
                   </div>
                 </div>
 
                 <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-start gap-3">
                     <div><span className="text-[9px] font-bold text-[#8B5DB0] uppercase">ORDER SUMMARY</span><h3 className="text-[21px] font-normal text-[#111827] mt-1">Your enrollment</h3></div>
                     <span className="px-3 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full">PRICE PENDING</span>
                   </div>
@@ -859,10 +881,10 @@ export default function OnboardingFlow() {
                 </div>
               </div>
 
-              <div className="flex justify-end items-center gap-4 pt-6 border-t border-[#E8E2EC]">
-                <button onClick={() => setCurrentStep(7)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(9)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
-                  Preview Waiting Stage →
+              <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
+                <button onClick={() => setCurrentStep(5)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => setCurrentStep(7)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
+                  Preview Interview Setup →
                 </button>
               </div>
             </div>
@@ -872,11 +894,11 @@ export default function OnboardingFlow() {
           {currentStep === 9 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Your Journey Is About to Begin</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Your Journey Is About to Begin</h1>
                 <p className="text-[#69616D] text-base">Your enrollment is confirmed. We’re preparing the next stage of your journey.</p>
               </div>
 
-              <div className="p-8 bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[30px] shadow-xl flex justify-between items-center relative overflow-hidden">
+              <div className="p-6 md:p-8 bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[30px] shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
                 <div className="space-y-2">
                   <span className="px-3 py-1 bg-[#EAF8F0] text-[#16794A] text-[9px] font-bold rounded-full">PAYMENT CONFIRMED · DEMO</span>
                   <h2 className="text-[22px] font-normal">Welcome to your next chapter</h2>
@@ -917,13 +939,13 @@ export default function OnboardingFlow() {
                     <span className="px-2.5 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full inline-block">ENTITLEMENT PROVISIONAL</span>
                   </div>
                   <div className="bg-[#FBF7FE] p-4 rounded-[14px] border border-[#3A0353]/10 flex gap-3 text-xs text-[#3A0353]">
-                    <span>ℹ️</span><div><p className="font-bold">How squads start</p><p className="text-[11px] mt-0.5 leading-relaxed">The required seats must be filled before Start. The Senior leads the squad and is not counted as a member.</p></div>
+                    <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span><div><p className="font-bold">How squads start</p><p className="text-[11px] mt-0.5 leading-relaxed">The required seats must be filled before Start. The Senior leads the squad and is not counted as a member.</p></div>
                   </div>
                   <button className="w-full h-[50px] bg-white border border-[#CCB8D8] text-[#3A0353] font-bold text-xs rounded-[13px]">Contact support</button>
                 </div>
               </div>
 
-              <div className="flex justify-end items-center gap-4 pt-6 border-t border-[#E8E2EC]">
+              <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
                 <button onClick={() => setCurrentStep(8)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button onClick={() => setCurrentStep(10)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
                   Explore Mentorship →
@@ -936,11 +958,11 @@ export default function OnboardingFlow() {
           {currentStep === 10 && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-[58px] font-extrabold text-[#21062E] tracking-[-2.61px]">Learn from People<br />Who’ve Been There</h1>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Learn from People<br />Who’ve Been There</h1>
                 <p className="text-[#69616D] text-base mt-2">Book a session with a mentor who understands your technology track.</p>
               </div>
 
-              <div className="p-8 bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[30px] shadow-xl flex justify-between items-center relative overflow-hidden">
+              <div className="p-6 md:p-8 bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[30px] shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
                 <div className="space-y-2">
                   <span className="px-3 py-1 bg-[#FFF7E6] text-[#CBBBD5] text-[9px] font-bold rounded-full">ILLUSTRATIVE PROFILES & AVAILABILITY</span>
                   <h2 className="text-[22px] font-normal">Frontend Development mentorship</h2>
@@ -1012,18 +1034,18 @@ export default function OnboardingFlow() {
                   </div>
                 </div>
 
-                <div className="md:col-span-4 bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-lg space-y-4 sticky top-24">
+                <div className="md:col-span-4 bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-lg space-y-4 md:sticky md:top-24">
                   <span className="text-[9px] font-bold text-[#8B5DB0] uppercase block">SESSION SUMMARY</span>
                   <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">MENTOR</span><h5 className="text-xs font-normal text-[#111827]">{formData.selectedMentor}</h5></div>
                   <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">DATE & TIME</span><h5 className="text-xs font-normal text-[#111827]">Choose a date · Choose a slot</h5></div>
                   <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">TRACK</span><h5 className="text-xs font-normal text-[#111827]">Selected track</h5></div>
                   <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">TOPIC</span><h5 className="text-xs font-normal text-[#111827]">Add your topic</h5></div>
-                  <div className="flex items-center gap-2 text-[9px] text-[#6B7280] pt-1"><span>⏰</span><p>Sessions are 45 minutes. Maximum two upcoming sessions at a time.</p></div>
+                  <div className="flex items-center gap-2 text-[9px] text-[#6B7280] pt-1"><img src={clockMutedIcon} alt="" aria-hidden="true" width={14} height={14} /><p>Sessions are 45 minutes. Maximum two upcoming sessions at a time.</p></div>
                   <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Confirm Booking</button>
                 </div>
               </div>
 
-              <div className="flex justify-end items-center gap-4 pt-6 border-t border-[#E8E2EC]">
+              <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
                 <button onClick={() => setCurrentStep(9)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button disabled className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
                   Confirm Booking →
@@ -1036,12 +1058,12 @@ export default function OnboardingFlow() {
       </main>
 
       {/* Footer */}
-      <footer className="flex flex-row items-center justify-between px-[72px] h-[130px] bg-gradient-to-tr from-[#22023C] via-[#22023C] to-[#8B5DB0]/30 text-white">
-        <div className="flex items-center gap-3">
+      <footer className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 px-4 md:px-[72px] py-8 md:py-0 md:h-[130px] bg-gradient-to-tr from-[#22023C] via-[#22023C] to-[#8B5DB0]/30 text-white">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] rounded-[13px_13px_13px_4px] flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-sm">ih</span>
           </div>
-          <span className="font-bold text-xl">InternsHub</span>
+          <span className="font-bold text-xl text-white">Interns<span className="text-[#4C0585]">Hub</span></span>
           <span className="text-[11px] text-[#D7C8DF] pl-3 border-l border-white/20">From Student to a Tech Career.</span>
         </div>
         <span className="text-[9px] text-[#9F8DAC]">Modern Onboarding v6.0 · Interactive product demo</span>
