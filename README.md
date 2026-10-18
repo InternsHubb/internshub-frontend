@@ -51,19 +51,13 @@ The platform focuses purely on standalone Frontend UI screens, built using React
    ```bash
    git checkout dev
    git pull origin dev
-Create and switch to your assigned feature branch:
+   ```
 
-Amr: git checkout -b feature/landing-page
-
-Abdallah: git checkout -b feature/internship-page
-
-Ali: git checkout -b feature/auth-main
-
-Youssef: git checkout -b feature/auth-login
-
-Renad: git checkout -b feature/auth-forgot-password
-
-Nora: git checkout -b feature/auth-phone-otp
-
-Gamal: git checkout -b feature/onboarding-flow
-
+2. Create and switch to your assigned feature branch:
+   - Amr: `git checkout -b feature/landing-page`
+   - Abdallah: `git checkout -b feature/internship-page`
+   - Ali: `git checkout -b feature/auth-main`
+   - Youssef: `git checkout -b feature/auth-login`
+   - Renad: `git checkout -b feature/auth-forgot-password`
+   - Nora: `git checkout -b feature/auth-phone-otp`
+   - Gamal: `git checkout -b feature/onboarding-flow`
