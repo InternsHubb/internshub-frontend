@@ -15,11 +15,72 @@ import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
 import uploadPurpleIcon from '../../assets/onboarding/upload-purple.svg';
 import uploadWhiteIcon from '../../assets/onboarding/upload-white.svg';
 import walletPurpleIcon from '../../assets/onboarding/wallet-purple.svg';
+import arrowRightWhiteIcon from '../../assets/onboarding/arrow-right-white.svg';
+import checkWhiteLgIcon from '../../assets/onboarding/check-white-lg.svg';
+import lockPurpleSmIcon from '../../assets/onboarding/lock-purple-sm.svg';
+import shieldPurpleSmIcon from '../../assets/onboarding/shield-purple-sm.svg';
+import shieldWhiteLgIcon from '../../assets/onboarding/shield-white-lg.svg';
+
+type ResultState = 'assigned' | 'pending' | 'incomplete';
+
+// Step 08 result states, one per Figma frame (Level Assigned / Human Review / Attempt Incomplete)
+const RESULT_STATES: Record<ResultState, {
+  tab: string;
+  panelBg: string;
+  tileBg: string;
+  tileShadow: string;
+  icon: string;
+  badge: string;
+  badgeClass: string;
+  title: string;
+  description: string;
+  action: string;
+}> = {
+  assigned: {
+    tab: 'Level assigned',
+    panelBg: 'bg-[linear-gradient(139deg,#EAF8F0_6%,#F9FDFB_94%)]',
+    tileBg: 'bg-[linear-gradient(145deg,#299766_6%,#16794A_94%)]',
+    tileShadow: 'drop-shadow-[0_15px_17px_rgba(22,121,74,0.2)]',
+    icon: checkWhiteLgIcon,
+    badge: 'TECHNICAL INTERVIEW',
+    badgeClass: 'bg-[#EAF8F0] text-[#16794A]',
+    title: 'Recommended level: [Assessment output]',
+    description: 'Your level will appear here after the assessment and review process completes.',
+    action: 'Continue to Squad'
+  },
+  pending: {
+    tab: 'Pending review',
+    panelBg: 'bg-[linear-gradient(141deg,#EFEDF1_6%,#FBFAFB_94%)]',
+    tileBg: 'bg-[linear-gradient(145deg,#8D8491_6%,#625A66_94%)]',
+    tileShadow: 'drop-shadow-[0_15px_17px_rgba(98,90,102,0.16)]',
+    icon: shieldWhiteLgIcon,
+    badge: 'HUMAN REVIEW',
+    badgeClass: 'bg-[#F1EEF2] text-[#685F6D]',
+    title: 'Your result is being reviewed',
+    description: 'We’ll show the next-step timeline when reviewer data is available. No result is assumed.',
+    action: 'View Enrollment Summary'
+  },
+  incomplete: {
+    tab: 'Incomplete',
+    panelBg: 'bg-[linear-gradient(141deg,#FCE9E7_6%,#FFF9F8_94%)]',
+    tileBg: 'bg-[linear-gradient(145deg,#D75349_6%,#B42318_94%)]',
+    tileShadow: 'drop-shadow-[0_15px_17px_rgba(180,35,24,0.18)]',
+    icon: shieldWhiteLgIcon,
+    badge: 'ATTEMPT INCOMPLETE',
+    badgeClass: 'bg-[#FEF0EF] text-[#B42318]',
+    title: 'Your interview needs another step',
+    description: 'Resume eligibility, 48-hour retake timing, and remaining attempts will be calculated from actual attempt data.',
+    action: 'View Attempt Details'
+  }
+};
+
+const RESULT_STATE_ORDER: ResultState[] = ['assigned', 'pending', 'incomplete'];
 
 export default function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
-  const [resultState, setResultState] = useState<'assigned' | 'pending' | 'incomplete'>('assigned');
+  const [resultState, setResultState] = useState<ResultState>('assigned');
+  const activeResult = RESULT_STATES[resultState];
   const [formData, setFormData] = useState({
     selectedPackage: '6 Months',
     selectedTrack: 'Frontend Development',
@@ -700,72 +761,110 @@ export default function OnboardingFlow() {
                 <p className="text-[#69616D] text-base">A clear, supportive view of your interview outcome and next steps.</p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <button onClick={() => setResultState('assigned')} className={`px-4 py-2 rounded-full text-xs font-bold transition ${resultState === 'assigned' ? 'bg-[#3A0353] text-white' : 'bg-white text-[#6B7280] border border-[#E8E2EC]'}`}>Level assigned</button>
-                <button onClick={() => setResultState('pending')} className={`px-4 py-2 rounded-full text-xs font-bold transition ${resultState === 'pending' ? 'bg-[#3A0353] text-white' : 'bg-white text-[#6B7280] border border-[#E8E2EC]'}`}>Pending review</button>
-                <button onClick={() => setResultState('incomplete')} className={`px-4 py-2 rounded-full text-xs font-bold transition ${resultState === 'incomplete' ? 'bg-[#3A0353] text-white' : 'bg-white text-[#6B7280] border border-[#E8E2EC]'}`}>Incomplete</button>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#22023C] via-[#22023C] to-[#400B63] text-white rounded-[34px] shadow-2xl p-6 md:p-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="hidden md:flex absolute -left-20 top-1/2 -translate-y-1/2 w-[380px] h-[260px] border border-white/10 rounded-[157px] pointer-events-none items-center justify-center">
-                  <div className="w-[280px] h-[180px] border border-white/10 rounded-[120px] flex items-center justify-center">
-                    <div className="w-[105px] h-[105px] bg-white transform -rotate-8 rounded-[36px_36px_36px_10px] shadow-2xl flex items-center justify-center text-[#4C0585] text-3xl font-bold">
-                      ✓
-                    </div>
-                  </div>
+              <div className="!mt-9 bg-white/90 border border-[#3A0353]/8 rounded-[18px] shadow-[0_6px_20px_rgba(34,2,60,0.04)] px-4 py-[13px] flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                <div className="flex items-center gap-[11px] flex-1 min-w-0">
+                  <div className="w-10 h-10 shrink-0 bg-[#3A0353] rounded-[13px_13px_13px_4px] flex items-center justify-center"><img src={shieldWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
+                  <p className="text-[11px] leading-[16.5px] text-[#111827]"><span className="text-[#8B5DB0] tracking-[0.8px] mr-2">ASSESSMENT PATH</span>Technical Interview</p>
                 </div>
-
-                <div className="md:ml-[320px] space-y-4 flex-grow">
-                  <span className="px-3 py-1 bg-[#EAF8F0] text-[#16794A] text-[9px] font-bold rounded-full tracking-[0.72px]">
-                    TECHNICAL INTERVIEW
-                  </span>
-
-                  <h2 className="text-[34px] font-extrabold leading-tight tracking-tight">
-                    Recommended level: [Assessment output]
-                  </h2>
-
-                  <p className="text-xs text-[#D9CCE1]">
-                    Your level will appear here after the assessment and review process completes.
-                  </p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-                    <div className="p-3 bg-white/5 border border-white/12 rounded-[12px]">
-                      <span className="text-[8px] text-[#BFAEC9] uppercase block">Selected package</span>
-                      <p className="text-[10px] text-white font-medium mt-1">Dynamic package months</p>
-                    </div>
-                    <div className="p-3 bg-white/5 border border-white/12 rounded-[12px]">
-                      <span className="text-[8px] text-[#BFAEC9] uppercase block">Selected track</span>
-                      <p className="text-[10px] text-white font-medium mt-1">Dynamic track</p>
-                    </div>
-                    <div className="p-3 bg-white/5 border border-white/12 rounded-[12px]">
-                      <span className="text-[8px] text-[#BFAEC9] uppercase block">Result source</span>
-                      <p className="text-[10px] text-white font-medium mt-1">Demo placeholder</p>
-                    </div>
+                <div className="flex flex-wrap items-center gap-3 md:gap-6">
+                  <div className="md:border-l border-[#E8E2EC] md:pl-5 min-w-[130px] flex flex-col gap-1">
+                    <span className="text-[8px] leading-[12px] tracking-[0.8px] text-[#8B5DB0]">PACKAGE</span>
+                    <span className="text-[11px] leading-[16.5px] text-[#111827]">Dynamic months</span>
                   </div>
-
-                  <div className="pt-2">
-                    <button onClick={() => setCurrentStep(9)} className="px-7 py-3 bg-white text-[#3A0353] font-bold text-xs rounded-[13px] shadow flex items-center gap-2">
-                      Continue to Squad →
-                    </button>
+                  <div className="border-l border-[#E8E2EC] pl-5 min-w-[130px] flex flex-col gap-1">
+                    <span className="text-[8px] leading-[12px] tracking-[0.8px] text-[#8B5DB0]">TRACK</span>
+                    <span className="text-[11px] leading-[16.5px] text-[#111827]">Dynamic track</span>
                   </div>
+                  <span className="px-2.5 py-1.5 bg-[#F3E9FA] text-[#5C1D87] text-[9px] font-bold tracking-[0.72px] rounded-full whitespace-nowrap">DEMO RESULT VIEW</span>
                 </div>
               </div>
 
-              <div className="bg-white/90 p-5 rounded-[18px] border border-[#E8E2EC] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 pt-2">
                 <div>
-                  <h4 className="text-sm font-normal text-[#111827]">Need a result reviewed?</h4>
-                  <p className="text-[10px] text-[#6B7280] mt-0.5">Appeals are available within seven days. A different reviewer makes the final appeal decision.</p>
+                  <p className="text-[9px] font-bold tracking-[0.9px] text-[#8B5DB0] pb-[5px]">PREVIEW RESULT STATES</p>
+                  <p className="text-[10px] leading-[15px] text-[#6B7280]">Choose a state to preview how each outcome is communicated.</p>
                 </div>
-                <button className="px-5 py-2.5 bg-white border border-[#CCB8D8] text-[#3A0353] text-xs font-bold rounded-[13px]">
-                  View appeal policy
-                </button>
+                <div role="tablist" aria-label="Result state" className="self-start sm:self-auto inline-flex gap-[3px] p-1 bg-[#F4F1F5] border border-[#E8E2EC] rounded-[13px]">
+                  {RESULT_STATE_ORDER.map((state) => {
+                    const isActive = resultState === state;
+                    return (
+                      <button
+                        key={state}
+                        type="button"
+                        role="tab"
+                        aria-selected={isActive}
+                        onClick={() => setResultState(state)}
+                        className={`min-h-[36px] px-3.5 rounded-[9px] text-[10px] leading-[15px] whitespace-nowrap transition ${isActive ? 'bg-white text-[#3A0353] shadow-[0_5px_7px_rgba(34,2,60,0.08)]' : 'text-[#6B7280] hover:text-[#3A0353]'}`}
+                      >
+                        {RESULT_STATES[state].tab}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
-                <button onClick={() => setCurrentStep(7)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(9)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
-                  Continue to Squad →
-                </button>
+              <div role="tabpanel" aria-label={activeResult.tab} className="!mt-[14px] bg-white border border-[#3A0353]/8 rounded-[30px] shadow-[0_22px_65px_rgba(34,2,60,0.09)] p-3 grid grid-cols-1 md:grid-cols-[330px_1fr] md:min-h-[410px] overflow-hidden">
+                <div className={`${activeResult.panelBg} rounded-[22px] p-9 flex flex-col items-center justify-center text-center`}>
+                  <div className="w-[126px] h-[126px] bg-white/70 rounded-full flex items-center justify-center">
+                    <div className={`w-[88px] h-[88px] -rotate-5 rounded-[27px_27px_27px_9px] flex items-center justify-center ${activeResult.tileBg} ${activeResult.tileShadow}`}>
+                      <img src={activeResult.icon} alt="" aria-hidden="true" width={38} height={38} />
+                    </div>
+                  </div>
+                  <p className="pt-6 pb-1.5 text-[9px] font-bold tracking-[1.35px] text-[#3A0353]">ASSESSMENT OUTCOME</p>
+                  <p className="w-[210px] text-[9px] leading-[13.5px] text-[#6B7280]">Based on the selected package and actual review output.</p>
+                </div>
+
+                <div className="px-3 py-8 sm:px-8 md:px-12 md:py-[42px] flex flex-col items-start justify-center">
+                  <span className={`px-2.5 py-1.5 text-[9px] font-bold tracking-[0.72px] rounded-full ${activeResult.badgeClass}`}>{activeResult.badge}</span>
+                  <h2 className="max-w-[650px] pt-[17px] pb-3 text-[28px] leading-[34px] sm:text-[36px] sm:leading-[43.2px] font-extrabold tracking-[-0.035em] text-[#111827]">{activeResult.title}</h2>
+                  <p className="pb-6 text-xs leading-[21px] text-[#5C5C5C]">{activeResult.description}</p>
+                  <div className="pb-[26px] w-full max-w-[560px] grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div className="bg-[#FAF9FB] border border-[#E8E2EC] rounded-[12px] px-4 py-3.5 flex flex-col gap-[5px]">
+                      <span className="text-[8px] leading-[12px] text-[#8B5DB0]">PACKAGE</span>
+                      <span className="text-[11px] leading-[16.5px] text-[#111827]">Dynamic months</span>
+                    </div>
+                    <div className="bg-[#FAF9FB] border border-[#E8E2EC] rounded-[12px] px-4 py-3.5 flex flex-col gap-[5px]">
+                      <span className="text-[8px] leading-[12px] text-[#8B5DB0]">TRACK</span>
+                      <span className="text-[11px] leading-[16.5px] text-[#111827]">Dynamic track</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4">
+                    {resultState === 'assigned' ? (
+                      <button type="button" onClick={() => setCurrentStep(9)} className="min-h-[50px] px-6 flex items-center gap-[9px] rounded-[13px] bg-[linear-gradient(166deg,#4C0585_0%,#3A0353_100%)] text-white text-[13px] font-bold tracking-[0.13px] shadow-[0_10px_11px_rgba(58,3,83,0.18)]">
+                        {activeResult.action}
+                        <img src={arrowRightWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />
+                      </button>
+                    ) : (
+                      <button type="button" disabled aria-disabled="true" title="Not available yet: this destination is not implemented" className="min-h-[50px] px-6 flex items-center gap-[9px] rounded-[13px] bg-[linear-gradient(166deg,#4C0585_0%,#3A0353_100%)] text-white text-[13px] font-bold tracking-[0.13px] shadow-[0_10px_11px_rgba(58,3,83,0.18)] opacity-60 cursor-not-allowed">
+                        {activeResult.action}
+                        <img src={arrowRightWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />
+                      </button>
+                    )}
+                    <small className="max-w-[210px] text-[8px] leading-[11.6px] text-[#6B7280]">No score, level, or reasoning is fabricated.</small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="!mt-[14px] grid grid-cols-1 md:grid-cols-2 gap-3">
+                <article className="bg-white/90 border border-[#3A0353]/8 rounded-[16px] min-h-[92px] px-[18px] py-[17px] flex items-center gap-[13px]">
+                  <div className="w-[38px] h-[38px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={shieldPurpleSmIcon} alt="" aria-hidden="true" width={17} height={20} /></div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[11px] leading-[16.5px] font-normal text-[#111827]">Appeal within seven days</h4>
+                    <p className="pt-[5px] text-[9px] leading-[13.5px] text-[#6B7280]">A different reviewer makes the final decision.</p>
+                  </div>
+                  <button type="button" className="shrink-0 min-h-[38px] px-[15px] bg-white border border-[#CCB8D8] rounded-[13px] text-[9px] font-bold tracking-[0.09px] text-[#3A0353]">Appeal policy</button>
+                </article>
+                <article className="bg-white/90 border border-[#3A0353]/8 rounded-[16px] min-h-[92px] px-[18px] py-[17px] flex items-center gap-[13px]">
+                  <div className="w-[38px] h-[38px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={lockPurpleSmIcon} alt="" aria-hidden="true" width={17} height={20} /></div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[11px] leading-[16.5px] font-normal text-[#111827]">Your interview privacy</h4>
+                    <p className="pt-[5px] text-[9px] leading-[13.5px] text-[#6B7280]">Recordings are deleted 90 days after the final decision; scores and transcripts are retained.</p>
+                  </div>
+                </article>
+              </div>
+
+              <div className="!mt-4">
+                <button type="button" onClick={() => setCurrentStep(7)} className="min-h-[50px] px-6 text-[13px] font-bold tracking-[0.13px] text-[#5C1D87]">Back to device check</button>
               </div>
             </div>
           )}
