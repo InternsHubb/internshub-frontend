@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import InternshipPage from './pages/InternshipPage';
 import PhoneOTP from './pages/auth/PhoneOTP';
-import AuthMain from './pages/auth/AuthMain';
+import Login from './pages/auth/Login';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import OnboardingFlow from './pages/onboarding/OnboardingFlow';
 import RegisterScreen from './components/RegisterScreen';
@@ -47,7 +47,7 @@ export const App: React.FC = () => {
   }
 
   if (currentPath === AUTH_PATH || currentPath.startsWith('/auth')) {
-    return <AuthMain />;
+    return <Login />;
   }
 
   return <LandingPage />;
