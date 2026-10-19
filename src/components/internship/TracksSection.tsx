@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import arrowRightPurple from '../../assets/internship/arrow-right-purple.svg'
 import { CategoryFilters, TrackSearchForm } from './FilterBar'
 import TrackCard from './TrackCard'
@@ -10,18 +12,23 @@ interface TracksSectionProps {
   onSeeAllTracks: () => void
 }
 
-function matchesQuery(track: Track, query: string): boolean {
+// Searches the text the user actually sees, so queries work in the current language.
+function matchesQuery(track: Track, query: string, t: TFunction): boolean {
   const normalized = query.trim().toLowerCase()
   if (!normalized) return true
-  return [track.title, track.tag, track.instructor].some((value) => value.toLowerCase().includes(normalized))
+  const base = `internshipPage.tracks.items.${track.contentKey}`
+  return [t(`${base}.title`), t(`${base}.tag`), t(`${base}.instructor`)].some((value) =>
+    value.toLowerCase().includes(normalized),
+  )
 }
 
 function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
+  const { t } = useTranslation()
   const [query, setQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<TrackFilter>('all')
 
   const visibleTracks = TRACKS.filter(
-    (track) => (activeFilter === 'all' || track.category === activeFilter) && matchesQuery(track, query),
+    (track) => (activeFilter === 'all' || track.category === activeFilter) && matchesQuery(track, query, t),
   )
 
   const resetFilters = () => {
@@ -37,11 +44,9 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
             id="choose-track-heading"
             className="text-[28px] leading-9 font-extrabold text-[#111827] sm:text-4xl sm:leading-10"
           >
-            Choose Your Track
+            {t('internshipPage.tracks.title')}
           </h2>
-          <p className="pt-1 text-base leading-7 text-[#6b7280] sm:text-lg">
-            Pick your package and track. We place you in a squad automatically after your interview is confirmed.
-          </p>
+          <p className="pt-1 text-base leading-7 text-[#6b7280] sm:text-lg">{t('internshipPage.tracks.description')}</p>
         </div>
         <TrackSearchForm query={query} onQueryChange={setQuery} />
       </div>
@@ -49,11 +54,11 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
       <CategoryFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
 
       <p className="sr-only" aria-live="polite">
-        {visibleTracks.length} tracks shown
+        {t('internshipPage.tracks.shown', { value: visibleTracks.length })}
       </p>
 
       {visibleTracks.length > 0 ? (
-        <ul className="grid grid-cols-1 justify-center gap-x-8 gap-y-[45px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[repeat(4,298px)]">
+        <ul className="grid grid-cols-1 justify-center gap-x-8 gap-y-[45px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleTracks.map((track) => (
             <li key={track.id} className="flex justify-center">
               <TrackCard track={track} onSelect={onSelectTrack} />
@@ -62,14 +67,14 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
         </ul>
       ) : (
         <div className="flex flex-col items-center gap-4 rounded-[30px] bg-white px-6 py-12 text-center">
-          <p className="text-lg font-bold text-[#111827]">No tracks match your search</p>
-          <p className="text-base text-[#6b7280]">Try another keyword or category.</p>
+          <p className="text-lg font-bold text-[#111827]">{t('internshipPage.tracks.emptyTitle')}</p>
+          <p className="text-base text-[#6b7280]">{t('internshipPage.tracks.emptyHint')}</p>
           <button
             type="button"
             onClick={resetFilters}
             className="rounded-full border-2 border-[#5a198f]/60 px-6 py-3 text-sm font-semibold text-[#5a198f] hover:bg-[#ebdef9]"
           >
-            Clear filters
+            {t('internshipPage.tracks.clearFilters')}
           </button>
         </div>
       )}
@@ -79,7 +84,7 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
         onClick={onSeeAllTracks}
         className="mx-auto mt-[13px] flex items-center gap-2 rounded-full border-2 border-[rgba(90,25,143,0.6)] px-7 py-4 text-base leading-6 font-semibold text-[#5a198f] shadow-[0_0_45px_0_rgba(0,0,0,0.54)] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5a198f]"
       >
-        See all tracks
+        {t('internshipPage.tracks.seeAll')}
         <img alt="" src={arrowRightPurple} className="rtl:-scale-x-100" />
       </button>
     </section>

@@ -6,9 +6,21 @@ import { ROUTES } from '@/constants/routes'
 
 interface NavbarProps {
   activeSection?: string
+  // Prefix for the landing-section anchors. Pages other than the landing page pass
+  // ROUTES.home so "#courses" becomes "/#courses" and leads back to that section.
+  sectionLinkBase?: string
+  // Width/padding of the inner row. Pages with a wider content container pass theirs
+  // so the logo and actions line up with the page content below.
+  containerClassName?: string
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
+const DEFAULT_CONTAINER = 'max-w-[1240px] mx-auto px-4 sm:px-6'
+
+export const Navbar: React.FC<NavbarProps> = ({
+  activeSection = 'home',
+  sectionLinkBase = '',
+  containerClassName = DEFAULT_CONTAINER,
+}) => {
   const { t, i18n } = useTranslation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isRtl = i18n.dir() === 'rtl'
@@ -19,23 +31,23 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
   }
 
   const navLinks = [
-    { id: 'home', label: t('nav.home'), href: '#home' },
-    { id: 'courses', label: t('nav.courses'), href: '#courses' },
+    { id: 'home', label: t('nav.home'), href: `${sectionLinkBase}#home` },
+    { id: 'courses', label: t('nav.courses'), href: `${sectionLinkBase}#courses` },
     // The Internship item opens its own page; the rest scroll to landing sections.
     { id: 'internship', label: t('nav.internship'), href: ROUTES.internship, isRoute: true },
-    { id: 'mentorship', label: t('nav.mentorship'), href: '#mentorship' },
-    { id: 'pricing', label: t('nav.pricing'), href: '#pricing' },
-    { id: 'about', label: t('nav.about'), href: '#about' },
+    { id: 'mentorship', label: t('nav.mentorship'), href: `${sectionLinkBase}#mentorship` },
+    { id: 'pricing', label: t('nav.pricing'), href: `${sectionLinkBase}#pricing` },
+    { id: 'about', label: t('nav.about'), href: `${sectionLinkBase}#about` },
   ]
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-100/60 transition-colors euveka-nav-enter">
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+      <div className={containerClassName}>
         <div className="flex items-center justify-between h-[99px]">
           {/* Logo (Figma node 1002:933) */}
           <div className="flex-shrink-0 flex items-center">
             <a
-              href="#home"
+              href={`${sectionLinkBase}#home`}
               className="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 rounded-lg"
             >
               <span className="text-[26px] sm:text-[24px] font-bold tracking-tight text-[#5a198f] font-sans">
