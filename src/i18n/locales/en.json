@@ -139,5 +139,153 @@
     "linkContact": "Contact Us",
     "linkPrivacy": "Privacy Policy",
     "copyright": "EdTech. All rights reserved by SpaceTech."
+  },
+  "internshipPage": {
+    "hero": {
+      "badge": "INTERNSHIP PROGRAM",
+      "titleLine1": "Real Projects.",
+      "titleLine2": "Real <accent>Teams.</accent>",
+      "titleLine3": "Real Experience.",
+      "description": "Join an Agile squad, work on real projects, and gain hands-on experience with the guidance of a Senior Team Leader. Build your skills, collaborate with your team, and prepare for your career.",
+      "cta": "Start Now",
+      "imageAlt": "Four interns collaborating around a laptop"
+    },
+    "whyChooseUs": {
+      "eyebrow": "WHY CHOOSE US",
+      "title": "Weekly Sprints: Real tasks & PRs",
+      "subtitle": "Follow a clear path"
+    },
+    "steps": {
+      "signup": {
+        "title": "Sign Up & CV",
+        "description": "Verify email & phone, upload your CV, pick package and track."
+      },
+      "interview": {
+        "title": "AI Interview",
+        "description": "Desktop only: camera, mic and screen share. Level set by AI."
+      },
+      "squad": {
+        "title": "Pay & Join a Squad",
+        "description": "Pay after your result. Squad starts when full, led by a Senior."
+      },
+      "certify": {
+        "title": "Sprint & Certify",
+        "description": "Weekly sprints, Senior-approved PRs, then a verifiable certificate."
+      }
+    },
+    "tracks": {
+      "title": "Choose Your Track",
+      "description": "Pick your package and track. We place you in a squad automatically after your interview is confirmed.",
+      "searchLabel": "Search tracks",
+      "searchPlaceholder": "Search tracks...",
+      "searchButton": "Search",
+      "filtersLabel": "Filter tracks by category",
+      "filters": {
+        "all": "All",
+        "frontend": "Frontend",
+        "backend": "Backend",
+        "mobile": "Mobile",
+        "data": "Data"
+      },
+      "shown": "{{value}} tracks shown",
+      "emptyTitle": "No tracks match your search",
+      "emptyHint": "Try another keyword or category.",
+      "clearFilters": "Clear filters",
+      "seeAll": "See all tracks",
+      "items": {
+        "designSystems": {
+          "title": "Advanced Design Systems & Component Libraries",
+          "tag": "UI/UX Design",
+          "instructor": "Senior Alaa Khamis"
+        },
+        "react": {
+          "title": "React & Redux: From Basics to Advanced",
+          "tag": "Frontend Development",
+          "instructor": "Instructor Mia Chen"
+        },
+        "agile": {
+          "title": "Mastering Agile & Lean Methodologies",
+          "tag": "Product Management",
+          "instructor": "Lead Jordan Smith"
+        }
+      },
+      "card": {
+        "rated": "Rated",
+        "duration": "Duration",
+        "level": "Level",
+        "lessonsLabel": "Lessons",
+        "hours_one": "{{count}} hour",
+        "hours_other": "{{count}} hours",
+        "lessons_one": "{{count}} lesson",
+        "lessons_other": "{{count}} lessons",
+        "squadMembers": "{{value}} squad members",
+        "select": "Select Track",
+        "levels": {
+          "beginner": "Beginner",
+          "intermediate": "Intermediate",
+          "advanced": "Advanced"
+        }
+      }
+    },
+    "promo": {
+      "title": "Not sure which track is for you?",
+      "description": "12-month plans start with a short Orientation interview to check the track fits you.",
+      "cta": "Start Now"
+    },
+    "testimonials": {
+      "eyebrow": "Testimonials",
+      "title": "What Our Interns Say",
+      "descriptionLine1": "Real stories from learners who started their journey with us and achieved real results.",
+      "descriptionLine2": "Read their experiences and start your own journey.",
+      "rated": "Rated {{rating}} out of 5",
+      "items": {
+        "lina": {
+          "quote": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
+          "name": "Lina S.",
+          "role": "Marketing Intern"
+        },
+        "jason": {
+          "quote": "I appreciated the mentorship from senior staff; their guidance helped me grow both technically and professionally.",
+          "name": "Jason M.",
+          "role": "Software Engineering Intern"
+        },
+        "priya": {
+          "quote": "The team was welcoming and inclusive, creating an environment where I felt comfortable asking questions and contributing ideas.",
+          "name": "Priya K.",
+          "role": "Design Intern"
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "QUESTIONS",
+      "title": "Frequently Asked Questions",
+      "description": "Everything you need to know before you start.",
+      "items": {
+        "whoCanJoin": {
+          "question": "Who can join InternsHub?",
+          "answer": "Anyone aged 18 or older. Verify your email and phone, upload your CV, and choose a package and a track."
+        },
+        "uploadCv": {
+          "question": "Do I need to upload a CV?",
+          "answer": "Yes. Uploading your CV is part of the sign-up step, before you pick your package and track."
+        },
+        "aiInterview": {
+          "question": "How does the AI interview work?",
+          "answer": "The interview runs on desktop only and uses your camera, microphone and screen share. Your level is set by AI."
+        },
+        "whenPay": {
+          "question": "When do I pay?",
+          "answer": "You pay after you receive your interview result."
+        },
+        "packageStart": {
+          "question": "When does my package time start?",
+          "answer": "Your squad starts once it is full, led by a Senior Team Leader."
+        },
+        "certificates": {
+          "question": "Which certificates will I get?",
+          "answer": "After your weekly sprints and Senior-approved PRs, you receive a verifiable certificate."
+        }
+      }
+    }
   }
 }
