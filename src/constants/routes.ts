@@ -7,6 +7,8 @@ export const ROUTES = {
   authRegister: '/auth/register',
   forgotPassword: '/auth/forgot-password',
   phoneOtp: '/auth/phone-otp',
+  // Must match the redirect URI registered in the Azure app registration.
+  microsoftCallback: '/auth/microsoft/callback',
 } as const;
 
 // Legacy hash links (e.g. "/#signup") that used to open the Register screen.

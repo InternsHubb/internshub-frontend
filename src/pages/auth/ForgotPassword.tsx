@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ROUTES } from "@/constants/routes";
+import { requestPasswordReset } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 // ---------- [0] Design tokens (From Figma) ----------
 const C = {
@@ -42,13 +44,13 @@ const buttonShadow = "0 9px 20px rgba(54, 0, 79, 0.20)";
 
 // ---------- [1] Validation Rules ----------
 const forgotSchema = z.object({
-  email: z.string().min(1, "required").email("invalid"),
+  email: z.string().trim().min(1, "required").email("invalid"),
 });
 type ForgotForm = z.infer<typeof forgotSchema>;
 // idle = Default / Email Required / Invalid Email (Determined from errors)
 type Status = "idle" | "submitting" | "success" | "error";
-
-const SHOW_PROTOTYPE_LINK = true;
+// Which banner text to show when the request fails.
+type SubmitError = "network" | "server";
 
 // ---------- [2] Texts (Arabic/English) ----------
 const text = {
@@ -74,14 +76,14 @@ const text = {
     back: "Back to login",
     securityNote:
       "For your security, the response is the same whether or not the email is registered.",
-    prototype: "Prototype: preview submission error",
     trouble: "Still having trouble?",
     help: "Visit Help Center",
 
     submitErrorTitle: "We couldn't submit your request",
-    submitErrorBody: "Something went wrong. No email was sent. Please try again.",
+    submitErrorBody: "Something went wrong on our side, so we can't confirm a reset email was sent. Please try again in a moment.",
+    submitErrorNetwork: "We couldn't reach the server. Check your connection and try again.",
 
-    successLabel: "REQUEST COMPLETE · DEMO",
+    successLabel: "REQUEST SENT",
     successTitle: "Check your email",
     successBefore: "If an account matches ",
     successAfter:
@@ -114,14 +116,14 @@ const text = {
     sending: "جارٍ الإرسال...",
     back: "العودة لتسجيل الدخول",
     securityNote: "لأمانك، الرد واحد سواء كان البريد مسجلًا أو لا.",
-    prototype: "نموذج تجريبي: معاينة خطأ الإرسال",
     trouble: "ما زلت تواجه مشكلة؟",
     help: "زيارة مركز المساعدة",
 
     submitErrorTitle: "لم نتمكن من إرسال طلبك",
-    submitErrorBody: "حدث خطأ ما ولم يتم إرسال أي رسالة. حاول مرة أخرى.",
+    submitErrorBody: "حدث خطأ من جهتنا، لذا لا يمكننا تأكيد إرسال بريد إعادة التعيين. حاول مرة أخرى بعد قليل.",
+    submitErrorNetwork: "تعذّر الوصول إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.",
 
-    successLabel: "تم الطلب · نسخة تجريبية",
+    successLabel: "تم إرسال الطلب",
     successTitle: "تحقق من بريدك الإلكتروني",
     successBefore: "إذا كان هناك حساب مرتبط بـ ",
     successAfter:
@@ -326,6 +328,7 @@ export default function ForgotPassword() {
   const t = text[lang];
 
   const [status, setStatus] = useState<Status>("idle");
+  const [submitError, setSubmitError] = useState<SubmitError>("server");
 
   const {
     register,
@@ -335,11 +338,17 @@ export default function ForgotPassword() {
     formState: { errors },
   } = useForm<ForgotForm>({ resolver: zodResolver(forgotSchema) });
 
-  // Simulate transmission (no backend)
-  const onSubmit = async () => {
+  // POST /api/auth/forgotPassword. The backend answers the same way for registered and unknown
+  // emails, so success only means the request was accepted.
+  const onSubmit = async ({ email }: ForgotForm) => {
     setStatus("submitting");
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    setStatus("success");
+    try {
+      await requestPasswordReset(email);
+      setStatus("success");
+    } catch (error) {
+      setSubmitError(error instanceof ApiError && error.status === 0 ? "network" : "server");
+      setStatus("error");
+    }
   };
 
   const tryAnother = () => {
@@ -402,7 +411,9 @@ export default function ForgotPassword() {
                       <AlertIcon />
                       <div>
                         <p className="text-[14px] font-semibold leading-[20px]">{t.submitErrorTitle}</p>
-                        <p className="text-[12px] leading-[16px]">{t.submitErrorBody}</p>
+                        <p className="text-[12px] leading-[16px]">
+                          {submitError === "network" ? t.submitErrorNetwork : t.submitErrorBody}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -457,18 +468,6 @@ export default function ForgotPassword() {
                     <p className="text-[12px] leading-[16px]" style={{ color: C.gray600 }}>{t.securityNote}</p>
                   </div>
 
-                  {SHOW_PROTOTYPE_LINK && (
-                    <div className="mt-4 text-center">
-                      <button
-                        type="button"
-                        onClick={() => setStatus("error")}
-                        className="text-[11px] leading-[16px] underline underline-offset-2"
-                        style={{ color: C.gray500 }}
-                      >
-                        {t.prototype}
-                      </button>
-                    </div>
-                  )}
                 </form>
               )}
             </div>
