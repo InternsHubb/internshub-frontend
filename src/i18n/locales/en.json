@@ -271,7 +271,14 @@
     "linkFaq": "FAQ",
     "linkContact": "Contact Us",
     "linkPrivacy": "Privacy Policy",
-    "copyright": "EdTech. All rights reserved by SpaceTech."
+    "copyright": "EdTech. All rights reserved by SpaceTech.",
+    "socialLabel": "Follow us",
+    "newsletterTitle": "Start Learning Today",
+    "newsletterBody": "Join a community of curious learners and get the latest courses, tips, and opportunities straight to your inbox.",
+    "newsletterEmailLabel": "Email address",
+    "newsletterPlaceholder": "Your email address",
+    "newsletterCta": "Join Now",
+    "newsletterInvalidEmail": "Enter a valid email address."
   },
   "internshipPage": {
     "hero": {
