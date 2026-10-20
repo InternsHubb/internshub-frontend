@@ -20,15 +20,13 @@ import RegisterCheckEmail, { type RegisterCheckEmailReason } from '@/components/
 import RegisterLayout from '@/components/auth/RegisterLayout';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
-import { ApiError } from '@/lib/api/client';
 import { login, register as registerAccount } from '@/lib/api/auth';
-import { registerErrorResult } from '@/lib/auth/errorMessages';
+import { isEmailNotConfirmedError, registerErrorResult } from '@/lib/auth/errorMessages';
 import LegalModal from './LegalModal';
 
 const NATIONAL_ID_LENGTH = 14;
 const PASSWORD_MIN_LENGTH = 8;
 const PHONE_PATTERN = /^\d{10,11}$/;
-const HTTP_UNAUTHORIZED = 401;
 
 // Mirrors the backend's ASP.NET Identity password policy (RequiredLength 8, upper, lower, digit,
 // non-alphanumeric), so most weak passwords are caught before the request.
@@ -167,9 +165,7 @@ export default function RegisterScreen() {
     try {
       await login(credentials);
     } catch (error) {
-      const needsConfirmation =
-        error instanceof ApiError && error.status === HTTP_UNAUTHORIZED && error.problem?.detail === 'NotAllowed';
-      setCompleted({ email: values.email, reason: needsConfirmation ? 'confirm' : 'signInFailed' });
+      setCompleted({ email: values.email, reason: isEmailNotConfirmedError(error) ? 'confirm' : 'signInFailed' });
       return;
     }
 

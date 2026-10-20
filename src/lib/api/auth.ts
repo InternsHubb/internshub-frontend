@@ -60,6 +60,26 @@ export async function signInWithMicrosoft(idToken: string): Promise<void> {
   saveSession(body);
 }
 
+// Asks the backend to text a sign-in code. `phoneNumber` must be in international (E.164) format,
+// e.g. +201001234567; the backend rejects anything else with 400.
+export function sendPhoneSignInCode(phoneNumber: string): Promise<void> {
+  return apiRequest<void>('/api/auth/otp/send', { method: 'POST', body: { phoneNumber } });
+}
+
+// Exchanges the texted code for a session. A wrong or expired code is answered with 401. The
+// OpenAPI document does not describe the success body, so the session is only stored when it
+// carries the standard token fields.
+export async function signInWithPhoneCode(phoneNumber: string, code: string): Promise<void> {
+  const body = await apiRequest<unknown>('/api/auth/otp/verify', {
+    method: 'POST',
+    body: { phoneNumber, code },
+  });
+  if (!isAccessTokenResponse(body)) {
+    throw new ApiError(500, null, 'Phone sign-in response did not include tokens');
+  }
+  saveSession(body);
+}
+
 // The backend has no single-session logout endpoint; dropping the tokens signs this browser out.
 export function logout(): void {
   clearSession();

@@ -14,14 +14,19 @@ function commonErrorKey(error: unknown): string | null {
   return null;
 }
 
+// ASP.NET Identity puts the sign-in result in `detail`: Failed, NotAllowed, LockedOut, ...
+// NotAllowed means the account exists but its email is not confirmed yet.
+export function isEmailNotConfirmedError(error: unknown): boolean {
+  return error instanceof ApiError && error.status === HTTP_UNAUTHORIZED && error.problem?.detail === 'NotAllowed';
+}
+
 export function loginErrorKey(error: unknown): string {
   const common = commonErrorKey(error);
   if (common) return common;
 
   const apiError = error as ApiError;
-  // ASP.NET Identity puts the sign-in result in `detail`: Failed, NotAllowed, LockedOut, ...
   const detail = apiError.problem?.detail ?? '';
-  if (apiError.status === HTTP_UNAUTHORIZED && detail === 'NotAllowed') {
+  if (isEmailNotConfirmedError(error)) {
     return 'auth.login.errors.emailNotConfirmed';
   }
   if (apiError.status === HTTP_UNAUTHORIZED && detail === 'LockedOut') {
@@ -43,6 +48,22 @@ export function externalSignInErrorKey(error: unknown, provider: ExternalProvide
   }
   if (error instanceof ApiError) return `auth.login.errors.${provider}Rejected`;
   return `auth.login.errors.${provider}Failed`;
+}
+
+const HTTP_TOO_MANY_REQUESTS = 429;
+
+export type PhoneOtpError = 'phoneInvalid' | 'codeInvalid' | 'tooMany' | 'network' | 'server' | 'rejected';
+
+// Failures from POST /api/auth/otp/send and /api/auth/otp/verify. The backend answers 400 when the
+// number is not in international format and 401 when the code is wrong or expired.
+export function phoneOtpError(error: unknown): PhoneOtpError {
+  if (!(error instanceof ApiError)) return 'server';
+  if (error.status === 0) return 'network';
+  if (error.status === HTTP_TOO_MANY_REQUESTS) return 'tooMany';
+  if (error.status >= HTTP_SERVER_ERROR) return 'server';
+  if (error.status === HTTP_BAD_REQUEST && error.errorCodes.includes('phoneNumber')) return 'phoneInvalid';
+  if (error.status === HTTP_UNAUTHORIZED) return 'codeInvalid';
+  return 'rejected';
 }
 
 export type RegisterErrorResult = {

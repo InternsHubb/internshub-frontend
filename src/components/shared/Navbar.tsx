@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Menu, X, Globe, ArrowRight, ArrowLeft } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
+import { useAuth } from '@/hooks/useAuth'
 
 interface NavbarProps {
   activeSection?: string
@@ -24,8 +25,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   const { t, i18n } = useTranslation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const { status, signOut } = useAuth()
   const isHome = location.pathname === ROUTES.home
   const isRtl = i18n.dir() === 'rtl'
+  // 'loading' means a stored session is being checked: it is still a signed-in browser.
+  const isSignedIn = status !== 'anonymous'
+
+  const handleSignOut = () => {
+    setMobileMenuOpen(false)
+    signOut()
+    navigate(ROUTES.home, { replace: true })
+  }
 
   const toggleLanguage = () => {
     const nextLang = i18n.language === 'ar' ? 'en' : 'ar'
@@ -115,21 +126,41 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>{t('nav.toggleLanguage')}</span>
             </button>
 
-            {/* Log In Link (Figma node 1002:949) */}
-            <Link
-              to={ROUTES.login}
-              className="text-[16px] font-medium text-[#2d3748] hover:text-[#5a198f] transition-colors px-1"
-            >
-              {t('nav.login')}
-            </Link>
+            {isSignedIn ? (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="text-[16px] font-medium text-[#2d3748] hover:text-[#5a198f] transition-colors px-1"
+                >
+                  {t('nav.signOut')}
+                </button>
+                <Link
+                  to={ROUTES.onboarding}
+                  className="inline-flex items-center justify-center px-6 py-2.5 text-[14px] sm:text-[15px] font-semibold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow-xs hover:shadow transition-all duration-200"
+                >
+                  <span>{t('nav.account')}</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Log In Link (Figma node 1002:949) */}
+                <Link
+                  to={ROUTES.login}
+                  className="text-[16px] font-medium text-[#2d3748] hover:text-[#5a198f] transition-colors px-1"
+                >
+                  {t('nav.login')}
+                </Link>
 
-            {/* Sign Up Free Button (Figma node 1002:951) */}
-            <Link
-              to={ROUTES.register}
-              className="inline-flex items-center justify-center px-6 py-2.5 text-[14px] sm:text-[15px] font-semibold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow-xs hover:shadow transition-all duration-200"
-            >
-              <span>{t('nav.signUp')}</span>
-            </Link>
+                {/* Sign Up Free Button (Figma node 1002:951) */}
+                <Link
+                  to={ROUTES.register}
+                  className="inline-flex items-center justify-center px-6 py-2.5 text-[14px] sm:text-[15px] font-semibold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow-xs hover:shadow transition-all duration-200"
+                >
+                  <span>{t('nav.signUp')}</span>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu & Language Toggle */}
@@ -186,19 +217,29 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
 
             <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col gap-3">
+              {isSignedIn ? (
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="w-full text-center py-2.5 text-sm font-semibold text-slate-700 hover:text-[#5a198f] rounded-xl"
+                >
+                  {t('nav.signOut')}
+                </button>
+              ) : (
+                <Link
+                  to={ROUTES.login}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 text-sm font-semibold text-slate-700 hover:text-[#5a198f] rounded-xl"
+                >
+                  {t('nav.login')}
+                </Link>
+              )}
               <Link
-                to={ROUTES.login}
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center py-2.5 text-sm font-semibold text-slate-700 hover:text-[#5a198f] rounded-xl"
-              >
-                {t('nav.login')}
-              </Link>
-              <Link
-                to={ROUTES.register}
+                to={isSignedIn ? ROUTES.onboarding : ROUTES.register}
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full inline-flex items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow"
               >
-                <span>{t('nav.signUp')}</span>
+                <span>{isSignedIn ? t('nav.account') : t('nav.signUp')}</span>
                 {isRtl ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
               </Link>
             </div>

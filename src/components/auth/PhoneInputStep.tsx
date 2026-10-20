@@ -10,6 +10,7 @@ interface Props {
   countryCode: string;
   setCountryCode: (value: string) => void;
   error: string;
+  isSending: boolean;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onBackToLogin: () => void;
 }
@@ -20,6 +21,7 @@ export default function PhoneInputStep({
   countryCode,
   setCountryCode,
   error,
+  isSending,
   onSubmit,
   onBackToLogin,
 }: Props) {
@@ -47,7 +49,7 @@ export default function PhoneInputStep({
         </p>
       </div>
 
-      <form className="phone-login-form" onSubmit={onSubmit}>
+      <form className="phone-login-form" onSubmit={onSubmit} noValidate>
         <label htmlFor="phone-number">Phone number</label>
 
         <div className={`phone-input-wrapper ${error ? 'has-error' : ''}`}>
@@ -88,8 +90,8 @@ export default function PhoneInputStep({
           </p>
         )}
 
-        <button type="submit" className="send-code-button">
-          <span>Send verification code</span>
+        <button type="submit" className="send-code-button" disabled={isSending} aria-busy={isSending}>
+          <span>{isSending ? 'Sending code…' : 'Send verification code'}</span>
           <img src={arrowRightWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />
         </button>
       </form>
@@ -105,7 +107,7 @@ export default function PhoneInputStep({
 
       <div className="privacy-note">
         <img src={shieldCheckPurpleIcon} alt="" aria-hidden="true" width={17} height={20} />
-        <p>Prototype only. No real SMS message will be sent.</p>
+        <p>We use your number only to text you this sign-in code.</p>
       </div>
     </>
   );

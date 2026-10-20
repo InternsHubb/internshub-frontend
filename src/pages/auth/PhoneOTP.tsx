@@ -1,34 +1,96 @@
-
 import './PhoneOTP.css';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
+import { useAuth } from '@/hooks/useAuth';
+import { sendPhoneSignInCode, signInWithPhoneCode } from '@/lib/api/auth';
+import { phoneOtpError, type PhoneOtpError } from '@/lib/auth/errorMessages';
+import { postSignInPath, redirectFromState } from '@/lib/auth/redirect';
 import PhoneInputStep from '../../components/auth/PhoneInputStep';
 import OtpVerificationStep from '../../components/auth/OtpVerificationStep';
-import SuccessStep from '../../components/auth/SuccessStep';
 import lockWhiteIcon from '../../assets/auth/lock-white.svg';
 import shieldCheckGreenIcon from '../../assets/auth/shield-check-green.svg';
 
+const CODE_LENGTH = 6;
+const RESEND_COOLDOWN_SECONDS = 60;
+const SECOND_MS = 1000;
+// E.164: "+", a country code that does not start with 0, then up to 15 digits in total.
+const E164_PATTERN = /^\+[1-9]\d{7,14}$/;
+
+const ERROR_MESSAGES: Record<PhoneOtpError, string> = {
+  phoneInvalid: 'Enter a valid mobile number for the selected country.',
+  codeInvalid: 'That code is not valid or has expired. Check the SMS or request a new code.',
+  tooMany: 'Too many attempts. Please wait a few minutes and try again.',
+  network: "We couldn't reach InternsHub. Check your connection and try again.",
+  server: 'Something went wrong on our side. Please try again shortly.',
+  rejected: "We couldn't complete that request. Please try again.",
+};
+
+// The backend only accepts international format (+201001234567). Local numbers are usually typed
+// with the trunk prefix (01001234567), which is dropped after the country code.
+function toInternationalNumber(countryCode: string, localNumber: string): string | null {
+  const digits = localNumber.replace(/\D/g, '').replace(/^0+/, '');
+  const value = `${countryCode}${digits}`;
+  return E164_PATTERN.test(value) ? value : null;
+}
+
+const emptyCode = () => Array<string>(CODE_LENGTH).fill('');
+
 export default function PhoneOTP() {
   const navigate = useNavigate();
-  const [step, setStep] = useState<'phone' | 'otp' | 'success'>('phone');
+  const location = useLocation();
+  const { reloadUser } = useAuth();
+  const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+20');
+  // The number the code was sent to, in the exact format the backend received it.
+  const [sentTo, setSentTo] = useState('');
   const [error, setError] = useState('');
-  const [otpValues, setOtpValues] = useState<string[]>(Array(6).fill(''));
+  const [otpError, setOtpError] = useState('');
+  const [otpValues, setOtpValues] = useState<string[]>(emptyCode);
+  const [isSending, setIsSending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [resendIn, setResendIn] = useState(0);
+  const [resendNotice, setResendNotice] = useState('');
 
-  const handlePhoneSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (resendIn <= 0) return undefined;
+    const timer = window.setTimeout(() => setResendIn((seconds) => seconds - 1), SECOND_MS);
+    return () => window.clearTimeout(timer);
+  }, [resendIn]);
+
+  const requestCode = async (number: string): Promise<boolean> => {
+    setIsSending(true);
+    try {
+      await sendPhoneSignInCode(number);
+      setResendIn(RESEND_COOLDOWN_SECONDS);
+      return true;
+    } catch (err) {
+      const message = ERROR_MESSAGES[phoneOtpError(err)];
+      if (step === 'phone') setError(message);
+      else setOtpError(message);
+      return false;
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handlePhoneSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSending) return;
 
-    const digits = phoneNumber.replace(/\D/g, '');
-
-    if (digits.length < 8) {
-      setError('Please enter a valid phone number');
+    const number = toInternationalNumber(countryCode, phoneNumber);
+    if (!number) {
+      setError(ERROR_MESSAGES.phoneInvalid);
       return;
     }
 
     setError('');
-    setOtpValues(Array(6).fill(''));
+    if (!(await requestCode(number))) return;
+    setSentTo(number);
+    setOtpValues(emptyCode());
+    setOtpError('');
+    setResendNotice('');
     setStep('otp');
   };
 
@@ -38,21 +100,57 @@ export default function PhoneOTP() {
     const nextOtp = [...otpValues];
     nextOtp[index] = value.slice(-1);
     setOtpValues(nextOtp);
+    setOtpError('');
 
-    if (value && index < 5) {
+    if (value && index < CODE_LENGTH - 1) {
       document.getElementById(`otp-input-${index + 1}`)?.focus();
     }
   };
 
-  const handleVerify = () => {
-    if (otpValues.every((digit) => digit !== '')) {
-      setStep('success');
+  // Pasting the code from the SMS fills every box at once.
+  const handleOtpPaste = (text: string) => {
+    const digits = text.replace(/\D/g, '').slice(0, CODE_LENGTH);
+    if (!digits) return;
+    setOtpValues(emptyCode().map((_, index) => digits[index] ?? ''));
+    setOtpError('');
+    document.getElementById(`otp-input-${Math.min(digits.length, CODE_LENGTH - 1)}`)?.focus();
+  };
+
+  const handleVerify = async () => {
+    if (isVerifying) return;
+    if (otpValues.some((digit) => digit === '')) {
+      setOtpError(`Enter all ${CODE_LENGTH} digits of the code we sent.`);
+      return;
+    }
+
+    setOtpError('');
+    setIsVerifying(true);
+    try {
+      await signInWithPhoneCode(sentTo, otpValues.join(''));
+    } catch (err) {
+      setIsVerifying(false);
+      setOtpError(ERROR_MESSAGES[phoneOtpError(err)]);
+      return;
+    }
+    const user = await reloadUser();
+    navigate(redirectFromState(location.state) ?? postSignInPath(user), { replace: true });
+  };
+
+  const handleResend = async () => {
+    if (isSending || resendIn > 0) return;
+    setOtpError('');
+    setResendNotice('');
+    if (await requestCode(sentTo)) {
+      setOtpValues(emptyCode());
+      setResendNotice('A new code is on its way.');
     }
   };
 
   const handleChangePhone = () => {
-    setOtpValues(Array(6).fill(''));
+    setOtpValues(emptyCode());
     setError('');
+    setOtpError('');
+    setResendNotice('');
     setStep('phone');
   };
 
@@ -140,6 +238,7 @@ export default function PhoneOTP() {
               countryCode={countryCode}
               setCountryCode={setCountryCode}
               error={error}
+              isSending={isSending}
               onSubmit={handlePhoneSubmit}
               onBackToLogin={() => navigate(ROUTES.login)}
             />
@@ -147,16 +246,19 @@ export default function PhoneOTP() {
 
           {step === 'otp' && (
             <OtpVerificationStep
-              phoneNumber={`${countryCode} ${phoneNumber}`}
+              phoneNumber={sentTo}
               otpValues={otpValues}
+              error={otpError}
+              notice={resendNotice}
+              isVerifying={isVerifying}
+              isResending={isSending}
+              resendIn={resendIn}
               onOtpChange={handleOtpChange}
+              onOtpPaste={handleOtpPaste}
               onVerify={handleVerify}
+              onResend={handleResend}
               onChangePhone={handleChangePhone}
             />
-          )}
-
-          {step === 'success' && (
-            <SuccessStep onBackToLogin={handleChangePhone} />
           )}
         </div>
 
