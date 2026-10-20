@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal'
-import { Navbar } from '../components/landing/Navbar'
+import { Navbar } from '../components/shared/Navbar'
 import { Hero } from '../components/landing/Hero'
 import { LearningJourney } from '../components/landing/LearningJourney'
 import { ExperienceSection } from '../components/landing/ExperienceSection'
