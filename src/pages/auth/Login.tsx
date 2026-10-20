@@ -19,10 +19,11 @@ import {
   fieldShellClass,
 } from '@/components/auth/AuthFormParts';
 import LoginLayout from '@/components/auth/LoginLayout';
+import ResendConfirmation from '@/components/auth/ResendConfirmation';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { login, signInWithGoogle } from '@/lib/api/auth';
-import { externalSignInErrorKey, loginErrorKey } from '@/lib/auth/errorMessages';
+import { externalSignInErrorKey, isEmailNotConfirmedError, loginErrorKey } from '@/lib/auth/errorMessages';
 import { GoogleSignInError, requestGoogleIdToken } from '@/lib/auth/googleIdentity';
 import { MicrosoftSignInError, startMicrosoftSignIn } from '@/lib/auth/microsoftIdentity';
 import { postSignInPath, redirectFromState } from '@/lib/auth/redirect';
@@ -58,6 +59,9 @@ export default function Login() {
     () => (location.state as LoginLocationState | null)?.errorKey ?? null,
   );
   const [isGoogleBusy, setIsGoogleBusy] = useState(false);
+  // Set when the login was refused because this address is not confirmed yet, so the user can ask
+  // for a new confirmation email from here instead of only after sign-up.
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
 
   const {
     register,
@@ -86,10 +90,12 @@ export default function Login() {
 
   const onSubmit = async (values: LoginForm) => {
     setFormErrorKey(null);
+    setUnconfirmedEmail(null);
     try {
       await login({ email: values.email, password: values.password });
     } catch (error) {
       setFormErrorKey(loginErrorKey(error));
+      if (isEmailNotConfirmedError(error)) setUnconfirmedEmail(values.email);
       return;
     }
     await finishSignIn();
@@ -122,6 +128,11 @@ export default function Login() {
   return (
     <LoginLayout>
       {formErrorKey ? <FormAlert title={t('auth.login.errorTitle')} message={t(formErrorKey)} /> : null}
+      {unconfirmedEmail ? (
+        <div className="mb-4">
+          <ResendConfirmation key={unconfirmedEmail} email={unconfirmedEmail} />
+        </div>
+      ) : null}
 
       <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)} noValidate>
         <label htmlFor="login-email" className={FIELD_LABEL}>

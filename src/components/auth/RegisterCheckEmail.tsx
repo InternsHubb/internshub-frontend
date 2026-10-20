@@ -1,11 +1,8 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
-import { resendConfirmationEmail } from '@/lib/api/auth';
-import { genericErrorKey } from '@/lib/auth/errorMessages';
-import { FormAlert } from './AuthFormParts';
+import ResendConfirmation from './ResendConfirmation';
 
 // Why the new account could not be signed in straight away:
 // - confirm: the backend answered "NotAllowed", i.e. the email must be confirmed first.
@@ -17,33 +14,12 @@ type RegisterCheckEmailProps = {
   reason: RegisterCheckEmailReason;
 };
 
-type ResendState = 'idle' | 'sending' | 'sent';
-
 export default function RegisterCheckEmail({ email, reason }: RegisterCheckEmailProps) {
   const { t } = useTranslation();
-  const [resendState, setResendState] = useState<ResendState>('idle');
-  const [resendErrorKey, setResendErrorKey] = useState<string | null>(null);
-
-  const handleResend = async () => {
-    setResendErrorKey(null);
-    setResendState('sending');
-    try {
-      await resendConfirmationEmail(email);
-      setResendState('sent');
-    } catch (error) {
-      setResendState('idle');
-      setResendErrorKey(genericErrorKey(error));
-    }
-  };
-
   const isConfirm = reason === 'confirm';
 
   return (
     <section aria-live="polite" className="flex flex-col gap-4">
-      {resendErrorKey ? (
-        <FormAlert title={t('auth.register.resendFailedTitle')} message={t(resendErrorKey)} />
-      ) : null}
-
       <div className="rounded-xl border border-[#cfe8da] bg-[#f3faf6] px-4 py-3.5">
         <p className="text-[13px] font-bold text-[#16794a]">
           {t(isConfirm ? 'auth.register.successTitle' : 'auth.register.createdTitle')}
@@ -53,21 +29,7 @@ export default function RegisterCheckEmail({ email, reason }: RegisterCheckEmail
         </p>
       </div>
 
-      {resendState === 'sent' ? (
-        <p role="status" className="text-xs text-[#16794a]">
-          {t('auth.register.resent')}
-        </p>
-      ) : null}
-
-      <button
-        type="button"
-        onClick={handleResend}
-        disabled={resendState !== 'idle'}
-        aria-busy={resendState === 'sending'}
-        className="inline-flex min-h-12 w-full items-center justify-center rounded-[13px] border border-[#ccb8d8] bg-white px-4 text-[13px] font-bold text-ink-deep transition hover:bg-[#faf6fc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {resendState === 'sending' ? t('auth.register.resending') : t('auth.register.resend')}
-      </button>
+      <ResendConfirmation email={email} />
 
       <Link
         to={ROUTES.login}

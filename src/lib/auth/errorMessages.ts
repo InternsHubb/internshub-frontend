@@ -14,14 +14,19 @@ function commonErrorKey(error: unknown): string | null {
   return null;
 }
 
+// ASP.NET Identity puts the sign-in result in `detail`: Failed, NotAllowed, LockedOut, ...
+// NotAllowed means the account exists but its email is not confirmed yet.
+export function isEmailNotConfirmedError(error: unknown): boolean {
+  return error instanceof ApiError && error.status === HTTP_UNAUTHORIZED && error.problem?.detail === 'NotAllowed';
+}
+
 export function loginErrorKey(error: unknown): string {
   const common = commonErrorKey(error);
   if (common) return common;
 
   const apiError = error as ApiError;
-  // ASP.NET Identity puts the sign-in result in `detail`: Failed, NotAllowed, LockedOut, ...
   const detail = apiError.problem?.detail ?? '';
-  if (apiError.status === HTTP_UNAUTHORIZED && detail === 'NotAllowed') {
+  if (isEmailNotConfirmedError(error)) {
     return 'auth.login.errors.emailNotConfirmed';
   }
   if (apiError.status === HTTP_UNAUTHORIZED && detail === 'LockedOut') {
