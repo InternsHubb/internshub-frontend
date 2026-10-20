@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Layers, Award } from 'lucide-react'
 
@@ -6,52 +6,55 @@ export const PricingSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.language === 'ar'
 
-  const plans = [
-    {
-      id: '3m',
-      name: t('pricing.plan3mName'),
-      price: '3499',
-      unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
-      icon: Layers,
-      features: [
-        t('pricing.plan3mFeature1'),
-        t('pricing.plan3mFeature2'),
-        t('pricing.plan3mFeature3'),
-      ],
-      btnText: t('pricing.plan3mBtn'),
-      isPopular: false,
-    },
-    {
-      id: '6m',
-      name: t('pricing.plan6mName'),
-      price: '5499',
-      unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
-      icon: Award,
-      features: [
-        t('pricing.plan6mFeature1'),
-        t('pricing.plan6mFeature2'),
-        t('pricing.plan6mFeature3'),
-        t('pricing.plan6mFeature4'),
-      ],
-      btnText: t('pricing.plan6mBtn'),
-      isPopular: true,
-    },
-    {
-      id: '12m',
-      name: t('pricing.plan12mName'),
-      price: '3499',
-      unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
-      icon: Layers,
-      features: [
-        t('pricing.plan12mFeature1'),
-        t('pricing.plan12mFeature2'),
-        t('pricing.plan12mFeature3'),
-        t('pricing.plan12mFeature4'),
-      ],
-      btnText: t('pricing.plan12mBtn'),
-      isPopular: false,
-    },
-  ]
+  const plans = useMemo(
+    () => [
+      {
+        id: '3m',
+        name: t('pricing.plan3mName'),
+        price: '3499',
+        unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
+        icon: Layers,
+        features: [
+          t('pricing.plan3mFeature1'),
+          t('pricing.plan3mFeature2'),
+          t('pricing.plan3mFeature3'),
+        ],
+        btnText: t('pricing.plan3mBtn'),
+        isPopular: false,
+      },
+      {
+        id: '6m',
+        name: t('pricing.plan6mName'),
+        price: '5499',
+        unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
+        icon: Award,
+        features: [
+          t('pricing.plan6mFeature1'),
+          t('pricing.plan6mFeature2'),
+          t('pricing.plan6mFeature3'),
+          t('pricing.plan6mFeature4'),
+        ],
+        btnText: t('pricing.plan6mBtn'),
+        isPopular: true,
+      },
+      {
+        id: '12m',
+        name: t('pricing.plan12mName'),
+        price: '3499',
+        unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
+        icon: Layers,
+        features: [
+          t('pricing.plan12mFeature1'),
+          t('pricing.plan12mFeature2'),
+          t('pricing.plan12mFeature3'),
+          t('pricing.plan12mFeature4'),
+        ],
+        btnText: t('pricing.plan12mBtn'),
+        isPopular: false,
+      },
+    ],
+    [t, isRtl],
+  )
 
   return (
     <section id="pricing" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">

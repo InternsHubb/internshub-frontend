@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Menu, X, Globe, ArrowRight, ArrowLeft } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 
 interface NavbarProps {
@@ -23,6 +23,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { t, i18n } = useTranslation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const location = useLocation()
+  const isHome = location.pathname === ROUTES.home
   const isRtl = i18n.dir() === 'rtl'
 
   const toggleLanguage = () => {
@@ -30,16 +32,29 @@ export const Navbar: React.FC<NavbarProps> = ({
     i18n.changeLanguage(nextLang)
   }
 
-  const navLinks = [
-    { id: 'home', label: t('nav.home'), href: `${sectionLinkBase}#home` },
-    { id: 'courses', label: t('nav.courses'), href: `${sectionLinkBase}#courses` },
-    // The Internship item opens its own page; the rest scroll to landing sections.
-    { id: 'internship', label: t('nav.internship'), href: ROUTES.internship, isRoute: true },
-    { id: 'mentorship', label: t('nav.mentorship'), href: `${sectionLinkBase}#mentorship` },
-    { id: 'pricing', label: t('nav.pricing'), href: `${sectionLinkBase}#pricing` },
-    { id: 'about', label: t('nav.about'), href: `${sectionLinkBase}#about` },
-    { id: 'contact', label: t('nav.contact'), href: `${sectionLinkBase}#contact` },
-  ]
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (isHome) {
+      e.preventDefault()
+      if (window.location.hash) {
+        window.history.pushState(null, '', ROUTES.home)
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const navLinks = useMemo(
+    () => [
+      { id: 'home', label: t('nav.home'), href: ROUTES.home, isRoute: true },
+      { id: 'courses', label: t('nav.courses'), href: `${sectionLinkBase}#courses` },
+      // The Internship item opens its own page; the rest scroll to landing sections.
+      { id: 'internship', label: t('nav.internship'), href: ROUTES.internship, isRoute: true },
+      { id: 'mentorship', label: t('nav.mentorship'), href: `${sectionLinkBase}#mentorship` },
+      { id: 'pricing', label: t('nav.pricing'), href: `${sectionLinkBase}#pricing` },
+      { id: 'about', label: t('nav.about'), href: `${sectionLinkBase}#about` },
+      { id: 'contact', label: t('nav.contact'), href: `${sectionLinkBase}#contact` },
+    ],
+    [t, sectionLinkBase],
+  )
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-100/60 transition-colors euveka-nav-enter">
@@ -47,14 +62,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between h-[99px]">
           {/* Logo (Figma node 1002:933) */}
           <div className="flex-shrink-0 flex items-center">
-            <a
-              href={`${sectionLinkBase}#home`}
+            <Link
+              to={ROUTES.home}
+              onClick={handleHomeClick}
               className="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 rounded-lg"
             >
               <span className="text-[26px] sm:text-[24px] font-bold tracking-tight text-[#5a198f] font-sans">
                 EdTech
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation Links (Figma node 1002:935) */}
@@ -70,7 +86,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'text-[#2d3748] hover:text-[#5a198f] font-medium'
               }`
               return link.isRoute ? (
-                <Link key={link.id} to={link.href} className={className}>
+                <Link
+                  key={link.id}
+                  to={link.href}
+                  onClick={link.id === 'home' ? handleHomeClick : undefined}
+                  className={className}
+                >
                   {link.label}
                 </Link>
               ) : (
@@ -147,13 +168,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'text-[#5a198f] font-bold bg-purple-50'
                   : 'text-slate-700 hover:text-[#5a198f] hover:bg-purple-50/50'
               }`
-              const closeMenu = () => setMobileMenuOpen(false)
+              const handleClick = (e: React.MouseEvent) => {
+                setMobileMenuOpen(false)
+                if (link.id === 'home') {
+                  handleHomeClick(e)
+                }
+              }
               return link.isRoute ? (
-                <Link key={link.id} to={link.href} onClick={closeMenu} className={className}>
+                <Link key={link.id} to={link.href} onClick={handleClick} className={className}>
                   {link.label}
                 </Link>
               ) : (
-                <a key={link.id} href={link.href} onClick={closeMenu} className={className}>
+                <a key={link.id} href={link.href} onClick={handleClick} className={className}>
                   {link.label}
                 </a>
               )

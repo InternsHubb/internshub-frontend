@@ -1,64 +1,67 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const CourseSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.language === 'ar'
 
-  const courseList = [
-    {
-      id: 'course-1',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-1.png',
-    },
-    {
-      id: 'course-2',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-2.png',
-    },
-    {
-      id: 'course-3',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-3.png',
-    },
-    {
-      id: 'course-4',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-4.png',
-    },
-  ]
+  const courseList = useMemo(
+    () => [
+      {
+        id: 'course-1',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-1.webp',
+      },
+      {
+        id: 'course-2',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-2.webp',
+      },
+      {
+        id: 'course-3',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-3.webp',
+      },
+      {
+        id: 'course-4',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-4.webp',
+      },
+    ],
+    [isRtl],
+  )
 
   return (
     <section id="courses" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
@@ -111,6 +114,7 @@ export const CourseSection: React.FC = () => {
                 alt={course.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
+                decoding="async"
                 width={297}
                 height={141}
               />
@@ -153,6 +157,7 @@ export const CourseSection: React.FC = () => {
                     alt={course.instructor}
                     className="size-[23px] rounded-full object-cover shrink-0"
                     loading="lazy"
+                    decoding="async"
                     width={23}
                     height={23}
                   />

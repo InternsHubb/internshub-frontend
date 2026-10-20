@@ -31,6 +31,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 100px;
   font-family: var(--font-sans);
 }
 
@@ -221,6 +222,42 @@ html[dir="rtl"] {
   will-change: transform, opacity;
 }
 
+/* Mentor Rotating Outer Circle and Orbiting Badges */
+@keyframes experienceCircleSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes experienceBadgeCounter {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.experience-circle-spin {
+  animation: experienceCircleSpin 30s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.experience-circle-spin:hover,
+.experience-circle-spin:hover .experience-badge-counter {
+  animation-play-state: paused;
+}
+
+.experience-badge-counter {
+  animation: experienceBadgeCounter 30s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
 /* ==========================================================================
    Smooth Scroll Reveal Animations
    ========================================================================== */
@@ -265,10 +302,11 @@ html[dir="rtl"] {
 .reveal-delay-400 { transition-delay: 400ms; }
 .reveal-delay-500 { transition-delay: 500ms; }
 
-/* Revealed Active State */
+/* Revealed Active State: Releases GPU composite layer to free memory after transition */
 .reveal-on-scroll.is-revealed {
   opacity: 1;
   transform: translateY(0) translateX(0) scale(1);
+  will-change: auto;
 }
 
 /* Internship page motion: load-in reveals, scroll reveals and ambient float.
@@ -354,7 +392,9 @@ html[dir="rtl"] {
   .hero-blob-peach,
   .hero-blob-coral,
   .hero-blob-purple,
-  .hero-glow-breath {
+  .hero-glow-breath,
+  .experience-circle-spin,
+  .experience-badge-counter {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

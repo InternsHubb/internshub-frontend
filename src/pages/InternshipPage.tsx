@@ -18,9 +18,9 @@ function scrollToTracks() {
 }
 
 // Mock handlers: these become navigation / API calls once onboarding and the backend exist.
-function handleSelectTrack(_trackId: string) {}
+function handleSelectTrack(_trackId: string) { }
 
-function handleSeeAllTracks() {}
+function handleSeeAllTracks() { }
 
 // Arabic switches to the project's Cairo stack (font-arabic), as html[dir=rtl] does on the landing page.
 const PAGE_FONT = "font-['Plus_Jakarta_Sans_Variable',sans-serif] rtl:font-arabic"

@@ -1,68 +1,71 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const InternshipSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.language === 'ar'
 
-  const tracks = [
-    {
-      id: 'track-1',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-1.png',
-      applicantBadge: '+6',
-    },
-    {
-      id: 'track-2',
-      title: isRtl ? 'رياكت وريدكس: من الأساسيات إلى الاحتراف' : 'React & Redux: From Basics to Advanced',
-      category: isRtl ? 'تطوير واجهات المستخدم' : 'Frontend Development',
-      instructor: isRtl ? 'المدربة ميا تشن' : 'Instructor Mia Chen',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.8',
-      reviews: '(3,012)',
-      duration: isRtl ? '25 ساعة' : '25 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '50 درساً' : '50 lessons',
-      thumbnail: '/images/course-thumb-2.png',
-      applicantBadge: '+7',
-    },
-    {
-      id: 'track-3',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-3.png',
-      applicantBadge: '+6',
-    },
-    {
-      id: 'track-4',
-      title: isRtl ? 'إتقان منهجيات أجايل ولين في فرق العمل' : 'Mastering Agile & Lean Methodologies',
-      category: isRtl ? 'إدارة المنتجات' : 'Product Management',
-      instructor: isRtl ? 'القائد جوردان سميث' : 'Lead Jordan Smith',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.9',
-      reviews: '(2,134)',
-      duration: isRtl ? '18 ساعة' : '18 hours',
-      level: isRtl ? 'متوسط' : 'Intermediate',
-      lessons: isRtl ? '35 درساً' : '35 lessons',
-      thumbnail: '/images/course-thumb-4.png',
-      applicantBadge: '+4',
-    },
-  ]
+  const tracks = useMemo(
+    () => [
+      {
+        id: 'track-1',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-1.webp',
+        applicantBadge: '+6',
+      },
+      {
+        id: 'track-2',
+        title: isRtl ? 'رياكت وريدكس: من الأساسيات إلى الاحتراف' : 'React & Redux: From Basics to Advanced',
+        category: isRtl ? 'تطوير واجهات المستخدم' : 'Frontend Development',
+        instructor: isRtl ? 'المدربة ميا تشن' : 'Instructor Mia Chen',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.8',
+        reviews: '(3,012)',
+        duration: isRtl ? '25 ساعة' : '25 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '50 درساً' : '50 lessons',
+        thumbnail: '/images/course-thumb-2.webp',
+        applicantBadge: '+7',
+      },
+      {
+        id: 'track-3',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-3.webp',
+        applicantBadge: '+6',
+      },
+      {
+        id: 'track-4',
+        title: isRtl ? 'إتقان منهجيات أجايل ولين في فرق العمل' : 'Mastering Agile & Lean Methodologies',
+        category: isRtl ? 'إدارة المنتجات' : 'Product Management',
+        instructor: isRtl ? 'القائد جوردان سميث' : 'Lead Jordan Smith',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.9',
+        reviews: '(2,134)',
+        duration: isRtl ? '18 ساعة' : '18 hours',
+        level: isRtl ? 'متوسط' : 'Intermediate',
+        lessons: isRtl ? '35 درساً' : '35 lessons',
+        thumbnail: '/images/course-thumb-4.webp',
+        applicantBadge: '+4',
+      },
+    ],
+    [isRtl],
+  )
 
   return (
     <section id="internship" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
@@ -115,6 +118,7 @@ export const InternshipSection: React.FC = () => {
                 alt={track.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
+                decoding="async"
                 width={297}
                 height={155}
               />
@@ -140,6 +144,7 @@ export const InternshipSection: React.FC = () => {
                     alt={track.instructor}
                     className="size-[23px] rounded-full object-cover shrink-0"
                     loading="lazy"
+                    decoding="async"
                     width={23}
                     height={23}
                   />

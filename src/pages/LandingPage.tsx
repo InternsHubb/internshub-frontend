@@ -10,6 +10,7 @@ import { CourseSection } from '../components/landing/CourseSection'
 import { InternshipSection } from '../components/landing/InternshipSection'
 import { PricingSection } from '../components/landing/PricingSection'
 import { TestimonialsSection } from '../components/landing/TestimonialsSection'
+import { VideoShowcase } from '../components/landing/VideoShowcase'
 import { Footer } from '../components/landing/Footer'
 
 export const LandingPage: React.FC = () => {
@@ -36,7 +37,7 @@ export const LandingPage: React.FC = () => {
   }, [i18n])
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col selection:bg-purple-200 selection:text-purple-950">
+    <div id="home" className="min-h-screen bg-white text-slate-900 flex flex-col selection:bg-purple-200 selection:text-purple-950">
       <Navbar activeSection="home" />
       <div className={`flex flex-col flex-grow ${animClass}`}>
         <main className="flex-grow">
@@ -48,6 +49,7 @@ export const LandingPage: React.FC = () => {
           <InternshipSection />
           <PricingSection />
           <TestimonialsSection />
+          <VideoShowcase />
         </main>
         <Footer />
       </div>

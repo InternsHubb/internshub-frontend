@@ -45,13 +45,10 @@ export function useScrollReveal({
 
     const elements = document.querySelectorAll(selector)
     elements.forEach((el) => {
-      // Immediately reveal elements that are already above or inside the initial viewport
-      const rect = el.getBoundingClientRect()
-      if (rect.top < window.innerHeight - 30 && rect.bottom > 0) {
-        el.classList.add(revealedClass)
-      } else {
-        observer.observe(el)
+      if (el.classList.contains(revealedClass)) {
+        return
       }
+      observer.observe(el)
     })
 
     return () => {

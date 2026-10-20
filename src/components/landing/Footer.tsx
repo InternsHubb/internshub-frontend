@@ -1,69 +1,67 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation()
   const currentYear = new Date().getFullYear()
 
-  const linksCompany = [
-    { label: t('footer.linkAbout'), href: '#about' },
-    { label: t('footer.linkBlog'), href: '#blog' },
-    { label: t('footer.linkCareers'), href: '#careers' },
-    { label: t('footer.linkPartners'), href: '#partners' },
-  ]
+  const linksCompany = useMemo(
+    () => [
+      { label: t('footer.linkAbout'), href: '#about' },
+      { label: t('footer.linkBlog'), href: '#blog' },
+      { label: t('footer.linkCareers'), href: '#careers' },
+      { label: t('footer.linkPartners'), href: '#partners' },
+    ],
+    [t],
+  )
 
-  const linksCourses = [
-    { label: t('footer.linkAllCourses'), href: '#all-courses' },
-    { label: t('footer.linkLearningPaths'), href: '#paths' },
-    { label: t('footer.linkInstructors'), href: '#mentors' },
-    { label: t('footer.linkFreeCourses'), href: '#free' },
-  ]
+  const linksCourses = useMemo(
+    () => [
+      { label: t('footer.linkAllCourses'), href: '#all-courses' },
+      { label: t('footer.linkLearningPaths'), href: '#paths' },
+      { label: t('footer.linkInstructors'), href: '#mentors' },
+      { label: t('footer.linkFreeCourses'), href: '#free' },
+    ],
+    [t],
+  )
 
-  const linksSupport = [
-    { label: t('footer.linkHelp'), href: '#help' },
-    { label: t('footer.linkFaq'), href: '#faq' },
-    { label: t('footer.linkContact'), href: '#contact' },
-  ]
+  const linksSupport = useMemo(
+    () => [
+      { label: t('footer.linkHelp'), href: '#help' },
+      { label: t('footer.linkFaq'), href: '#faq' },
+      { label: t('footer.linkContact'), href: '#contact' },
+    ],
+    [t],
+  )
 
   return (
-    <div className="relative mt-24 overflow-x-clip w-full">
-      <footer id="contact" className="w-full bg-[#22023c] text-white pt-[96px] sm:pt-[104px] lg:pt-[112px] pb-12 sm:pb-16 px-6 sm:px-12 lg:px-16 relative">
-        {/* Exact Figma Vector 12 (node 1002:1015) layered in front of background */}
-        <div className="max-w-[1440px] mx-auto absolute inset-x-0 top-0 pointer-events-none">
-          <div
-            className="absolute flex items-center justify-center w-[1200px] sm:w-[1500px] lg:w-[1852.277px] h-[120px] sm:h-[150px] lg:h-[184.229px] pointer-events-none select-none z-10"
-            style={{
-              top: '-92px',
-              right: '-70.28px',
-            }}
-            data-node-id="1002:1015"
-            data-name="Vector 12"
-          >
-            <div className="flex-none rotate-[1.32deg]">
-              <div className="relative w-[1200px] sm:w-[1500px] lg:w-[1849.5px] h-[92px] sm:h-[115px] lg:h-[141.5px]">
-                <div className="absolute inset-[-36.12%_-3.11%_-56.41%_-3.39%]">
-                  <img
-                    alt=""
-                    className="block max-w-none size-full select-none pointer-events-none"
-                    src="/images/footer-wave-ribbon.svg"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+    <div className="relative mt-16 sm:mt-24 w-full">
+      <footer id="contact" className="w-full bg-[#22023c] text-white py-12 sm:py-16 px-6 sm:px-12 lg:px-16 relative">
         {/* Content Container in normal document flow */}
         <div className="max-w-[1240px] mx-auto relative z-20">
           {/* 4 Column Navigation Grid (Figma node 1002:956) */}
           <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between items-start gap-10 lg:gap-8 pb-12 border-b border-white/10 reveal-on-scroll">
             {/* Column 1: Brand Info (Figma node 1002:957) */}
             <div className="w-full sm:w-[252px] shrink-0 text-start">
-              <a href="#home" className="inline-block mb-4 sm:mb-5">
+              <Link
+                to={ROUTES.home}
+                onClick={(e) => {
+                  if (window.location.pathname === ROUTES.home) {
+                    e.preventDefault()
+                    if (window.location.hash) {
+                      window.history.pushState(null, '', ROUTES.home)
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }
+                }}
+                className="inline-block mb-4 sm:mb-5"
+              >
                 <span className="text-[16px] font-extrabold tracking-[0.14px] text-white leading-[24px]">
                   {t('footer.colEdtech')}
                 </span>
-              </a>
+              </Link>
               <p className="text-[16px] font-medium text-white/90 leading-[26px]">
                 {t('footer.brandDescription')}
               </p>

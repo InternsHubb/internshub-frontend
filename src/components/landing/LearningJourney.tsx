@@ -1,36 +1,39 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const LearningJourney: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.language === 'ar'
 
-  const steps = [
-    {
-      number: '1',
-      title: t('journey.step1Title'),
-      desc: t('journey.step1Desc'),
-      lineType: 'solid' as const,
-    },
-    {
-      number: '2',
-      title: t('journey.step2Title'),
-      desc: t('journey.step2Desc'),
-      lineType: 'dashed' as const,
-    },
-    {
-      number: '3',
-      title: t('journey.step3Title'),
-      desc: t('journey.step3Desc'),
-      lineType: 'dashed' as const,
-    },
-    {
-      number: '4',
-      title: t('journey.step4Title'),
-      desc: t('journey.step4Desc'),
-      lineType: 'none' as const,
-    },
-  ]
+  const steps = useMemo(
+    () => [
+      {
+        number: '1',
+        title: t('journey.step1Title'),
+        desc: t('journey.step1Desc'),
+        lineType: 'solid' as const,
+      },
+      {
+        number: '2',
+        title: t('journey.step2Title'),
+        desc: t('journey.step2Desc'),
+        lineType: 'dashed' as const,
+      },
+      {
+        number: '3',
+        title: t('journey.step3Title'),
+        desc: t('journey.step3Desc'),
+        lineType: 'dashed' as const,
+      },
+      {
+        number: '4',
+        title: t('journey.step4Title'),
+        desc: t('journey.step4Desc'),
+        lineType: 'none' as const,
+      },
+    ],
+    [t]
+  )
 
   return (
     <section className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 py-6 sm:py-10">

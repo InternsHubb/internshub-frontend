@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from 'react';
 import {
   Navigate,
   Outlet,
@@ -6,14 +7,22 @@ import {
   useLocation,
 } from 'react-router-dom';
 
-import RegisterScreen from '@/components/RegisterScreen';
 import { REGISTER_HASHES, ROUTES } from '@/constants/routes';
-import InternshipPage from '@/pages/InternshipPage';
 import LandingPage from '@/pages/LandingPage';
-import ForgotPassword from '@/pages/auth/ForgotPassword';
-import Login from '@/pages/auth/Login';
-import PhoneOTP from '@/pages/auth/PhoneOTP';
-import OnboardingFlow from '@/pages/onboarding/OnboardingFlow';
+
+// Code-split secondary heavy routes so home page bundle remains lightweight
+const InternshipPage = lazy(() => import('@/pages/InternshipPage'));
+const OnboardingFlow = lazy(() => import('@/pages/onboarding/OnboardingFlow'));
+const RegisterScreen = lazy(() => import('@/components/RegisterScreen'));
+const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'));
+const Login = lazy(() => import('@/pages/auth/Login'));
+const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
+
+const PageFallback: React.FC = () => (
+  <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="size-8 rounded-full border-3 border-purple-600 border-t-transparent animate-spin" />
+  </div>
+);
 
 function RootLayout() {
   const { hash } = useLocation();
@@ -23,10 +32,16 @@ function RootLayout() {
     return <Navigate to={ROUTES.register} replace />;
   }
 
+  if (hash === '#home') {
+    return <Navigate to={ROUTES.home} replace />;
+  }
+
   return (
     <>
       <ScrollRestoration />
-      <Outlet />
+      <Suspense fallback={<PageFallback />}>
+        <Outlet />
+      </Suspense>
     </>
   );
 }
