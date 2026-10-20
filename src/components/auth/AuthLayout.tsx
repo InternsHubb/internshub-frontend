@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import defaultBrandImage from '../../assets/auth-brand-image.jpg';
+import defaultBrandImage from '../../assets/auth-brand-image.webp';
 
 export type AuthLayoutBrand = {
   eyebrow: string;

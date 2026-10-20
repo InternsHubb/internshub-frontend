@@ -7,6 +7,7 @@
     "mentorship": "Mentorship",
     "pricing": "Pricing",
     "about": "About Us",
+    "contact": "Contact Us",
     "login": "Log In",
     "signUp": "Sign Up Free",
     "toggleLanguage": "العربية",
@@ -119,6 +120,16 @@
     "quote5": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
     "user5Name": "Lina S.",
     "user5Role": "Marketing Intern"
+  },
+  "videoShowcase": {
+    "badge": "Discover EdTech",
+    "title": "Know More About EdTech",
+    "subtitle": "Take a look inside our platform, collaborative community, and how we help learners turn practical skills into thriving tech careers.",
+    "playLabel": "Watch Overview",
+    "duration": "25 sec video",
+    "feature1": "Real Workplace Simulation",
+    "feature2": "1-on-1 Expert Mentorship",
+    "feature3": "Verified Experience Certificates"
   },
   "footer": {
     "brandDescription": "A learning platform that helps you build practical skills from zero to pro, with clear paths and real projects.",

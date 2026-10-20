@@ -6,7 +6,7 @@ import heroBadgeBolt from '../../assets/internship/hero-badge-bolt.svg'
 import heroBlobOrange from '../../assets/internship/hero-blob-orange.svg'
 import heroBlobPurple from '../../assets/internship/hero-blob-purple.svg'
 import heroBlobSand from '../../assets/internship/hero-blob-sand.svg'
-import heroTeam from '../../assets/internship/hero-team.png'
+import heroTeam from '../../assets/internship/hero-team.webp'
 
 interface HeroProps {
   onStart: () => void

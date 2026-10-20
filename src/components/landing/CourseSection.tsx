@@ -1,69 +1,72 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const CourseSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.language === 'ar'
 
-  const courseList = [
-    {
-      id: 'course-1',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-1.png',
-    },
-    {
-      id: 'course-2',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-2.png',
-    },
-    {
-      id: 'course-3',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-3.png',
-    },
-    {
-      id: 'course-4',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-4.png',
-    },
-  ]
+  const courseList = useMemo(
+    () => [
+      {
+        id: 'course-1',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-1.webp',
+      },
+      {
+        id: 'course-2',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-2.webp',
+      },
+      {
+        id: 'course-3',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-3.webp',
+      },
+      {
+        id: 'course-4',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'إلينا فاسكيز' : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-4.webp',
+      },
+    ],
+    [isRtl],
+  )
 
   return (
     <section id="courses" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
       {/* Section Header with CTA on right (Figma node 1002:1224) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 sm:mb-16">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 sm:mb-16 reveal-on-scroll">
         <div className="text-start max-w-[926px]">
           <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
             {t('courses.title')}
@@ -90,11 +93,20 @@ export const CourseSection: React.FC = () => {
 
       {/* 4 Course Cards Grid (Figma node 1002:1234) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {courseList.map((course) => (
-          <div
-            key={course.id}
-            className="group bg-white rounded-[11.6px] border border-[#e5e7eb] shadow-[0px_2.9px_11.6px_0px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col justify-between"
-          >
+        {courseList.map((course, idx) => {
+          const delayClass =
+            idx === 0
+              ? 'reveal-delay-100'
+              : idx === 1
+              ? 'reveal-delay-200'
+              : idx === 2
+              ? 'reveal-delay-300'
+              : 'reveal-delay-400'
+          return (
+            <div key={course.id} className={`reveal-on-scroll ${delayClass} h-full`}>
+              <div
+                className="group bg-white rounded-[11.6px] border border-[#e5e7eb] shadow-[0px_2.9px_11.6px_0px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col justify-between h-full"
+              >
             {/* Thumbnail Header with Category Tag (Figma node 1002:1236) */}
             <div className="relative h-[141px] w-full overflow-hidden bg-slate-900 shrink-0">
               <img
@@ -102,6 +114,7 @@ export const CourseSection: React.FC = () => {
                 alt={course.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
+                decoding="async"
                 width={297}
                 height={141}
               />
@@ -144,6 +157,7 @@ export const CourseSection: React.FC = () => {
                     alt={course.instructor}
                     className="size-[23px] rounded-full object-cover shrink-0"
                     loading="lazy"
+                    decoding="async"
                     width={23}
                     height={23}
                   />
@@ -178,9 +192,11 @@ export const CourseSection: React.FC = () => {
                   {t('courses.enrollBtn')}
                 </a>
               </div>
+              </div>
             </div>
           </div>
-        ))}
+        )
+      })}
       </div>
     </section>
   )

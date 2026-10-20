@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -7,65 +7,69 @@ export const TestimonialsSection: React.FC = () => {
   const isRtl = i18n.language === 'ar'
   const containerRef = useRef<HTMLDivElement>(null)
   const animFrameRef = useRef<number | null>(null)
+  const cachedRectRef = useRef<{ left: number; width: number } | null>(null)
 
-  const reviewList = [
-    {
-      id: 'rev-1',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote1'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-    {
-      id: 'rev-2',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote2'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-    {
-      id: 'rev-3',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote3'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-    {
-      id: 'rev-4',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote4'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-    {
-      id: 'rev-5',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote5'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-    {
-      id: 'rev-6',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote1'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-    {
-      id: 'rev-7',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote2'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-    {
-      id: 'rev-8',
-      name: isRtl ? 'لينا س.' : 'Lina S.',
-      role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
-      quote: t('testimonials.quote3'),
-      avatar: '/images/testimonial-avatar-lina.png',
-    },
-  ]
+  const reviewList = useMemo(
+    () => [
+      {
+        id: 'rev-1',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote1'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+      {
+        id: 'rev-2',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote2'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+      {
+        id: 'rev-3',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote3'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+      {
+        id: 'rev-4',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote4'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+      {
+        id: 'rev-5',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote5'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+      {
+        id: 'rev-6',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote1'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+      {
+        id: 'rev-7',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote2'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+      {
+        id: 'rev-8',
+        name: isRtl ? 'لينا س.' : 'Lina S.',
+        role: isRtl ? 'متدربة تسويق' : 'Marketing Intern',
+        quote: t('testimonials.quote3'),
+        avatar: '/images/testimonial-avatar-lina.webp',
+      },
+    ],
+    [isRtl, t],
+  )
 
   const stopScroll = () => {
     if (animFrameRef.current !== null) {
@@ -96,12 +100,23 @@ export const TestimonialsSection: React.FC = () => {
     }
   }
 
+  const handleMouseEnter = () => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect()
+      cachedRectRef.current = { left: rect.left, width: rect.width }
+    }
+  }
+
   // Handle continuous movement when user hovers on the last comment from the right or the left
+  // Uses cachedRectRef to avoid forced synchronous reflow on every mousemove event
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return
-    const rect = containerRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const width = rect.width
+    if (!cachedRectRef.current && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect()
+      cachedRectRef.current = { left: rect.left, width: rect.width }
+    }
+    if (!cachedRectRef.current) return
+    const { left, width } = cachedRectRef.current
+    const x = e.clientX - left
 
     // Rightmost zone (hovering on the last comment from the right)
     if (x > width * 0.78) {
@@ -118,6 +133,7 @@ export const TestimonialsSection: React.FC = () => {
   }
 
   const handleMouseLeave = () => {
+    cachedRectRef.current = null
     stopScroll()
   }
 
@@ -128,7 +144,7 @@ export const TestimonialsSection: React.FC = () => {
   return (
     <section className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
       {/* Section Header (Figma node 1002:1885) */}
-      <div className="text-start mb-12 sm:mb-16">
+      <div className="text-start mb-12 sm:mb-16 reveal-on-scroll">
         <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
           {t('testimonials.title')}
         </h2>
@@ -138,7 +154,7 @@ export const TestimonialsSection: React.FC = () => {
       </div>
 
       {/* Interactive Carousel Wrapper (Figma node 1002:1888) */}
-      <div className="relative w-full group">
+      <div className="relative w-full group reveal-on-scroll reveal-delay-150">
         {/* Soft edge fade masks */}
         <div className="pointer-events-none absolute inset-y-0 start-0 w-12 sm:w-16 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 end-0 w-12 sm:w-16 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
@@ -170,6 +186,7 @@ export const TestimonialsSection: React.FC = () => {
         {/* Scrollable Track - hovering on the last comment from right or left triggers motion */}
         <div
           ref={containerRef}
+          onMouseEnter={handleMouseEnter}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           className="flex gap-[16px] items-stretch overflow-x-auto scrollbar-none py-4 px-6 select-none cursor-grab active:cursor-grabbing"
@@ -229,6 +246,7 @@ export const TestimonialsSection: React.FC = () => {
                   alt={item.name}
                   className="size-[48px] rounded-full object-cover shrink-0"
                   loading="lazy"
+                  decoding="async"
                   width={48}
                   height={48}
                 />

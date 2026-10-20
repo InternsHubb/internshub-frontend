@@ -13,7 +13,7 @@ function PromoBanner({ onStart }: PromoBannerProps) {
   return (
     <section
       aria-labelledby="promo-banner-heading"
-      className="relative overflow-hidden rounded-[30px] bg-gradient-to-r from-[rgba(162,102,188,0.2)] to-[rgba(178,148,203,0.9)]"
+      className="relative overflow-hidden rounded-[30px] bg-gradient-to-r from-[rgba(162,102,188,0.2)] to-[rgba(178,148,203,0.9)] reveal-on-scroll reveal-scale"
     >
       {/* Gradient + six wave vectors from the Figma banner export (text layers removed). */}
       <img

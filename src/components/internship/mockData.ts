@@ -1,12 +1,12 @@
 // Mock content for the Internship page. Replace with API data once the backend is available.
 // Visible text lives in the locale files under `internshipPage`; entries here hold the ids that pick it.
-import trackFrontend from '../../assets/internship/track-frontend.jpg'
-import trackProduct from '../../assets/internship/track-product.jpg'
-import trackUiux from '../../assets/internship/track-uiux.jpg'
-import trackUiux2 from '../../assets/internship/track-uiux-2.jpg'
-import testimonialJason from '../../assets/internship/testimonial-jason.jpg'
-import testimonialLina from '../../assets/internship/testimonial-lina.jpg'
-import testimonialPriya from '../../assets/internship/testimonial-priya.jpg'
+import trackFrontend from '../../assets/internship/track-frontend.webp'
+import trackProduct from '../../assets/internship/track-product.webp'
+import trackUiux from '../../assets/internship/track-uiux.webp'
+import trackUiux2 from '../../assets/internship/track-uiux-2.webp'
+import testimonialJason from '../../assets/internship/testimonial-jason.webp'
+import testimonialLina from '../../assets/internship/testimonial-lina.webp'
+import testimonialPriya from '../../assets/internship/testimonial-priya.webp'
 
 export type TrackCategory = 'frontend' | 'backend' | 'mobile' | 'data' | 'design' | 'product'
 

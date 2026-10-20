@@ -1,15 +1,102 @@
-import React from 'react'
+import type { CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
+import { revealDelay } from '@/lib/motion'
+import heroBlobOrange from '@/assets/internship/hero-blob-orange.svg'
+import heroBlobPurple from '@/assets/internship/hero-blob-purple.svg'
+import heroBlobSand from '@/assets/internship/hero-blob-sand.svg'
+import heroStudents from '@/assets/internship/hero-team.webp'
+
+interface BlobShape {
+  src: string
+  // Bounding box inside the artwork, in % of the artwork size (from Figma).
+  box: CSSProperties
+  // Rotation/skew reproduced from Figma; cq units resolve against the bounding box.
+  shape: CSSProperties
+  // Ambient float cycle; blobs use different lengths so they drift out of sync.
+  floatDuration: string
+}
+
+const BLOBS: ReadonlyArray<BlobShape> = [
+  {
+    src: heroBlobSand,
+    box: { insetInlineStart: '32.47%', top: '6.2%', width: '67.54%', height: '69.29%' },
+    shape: {
+      height: 'hypot(-16.0071cqw, 84.4461cqh)',
+      width: 'hypot(83.9929cqw, 15.5539cqh)',
+      transform: 'rotate(8.35deg) skewX(-5.11deg)',
+    },
+    floatDuration: '11s',
+  },
+  {
+    src: heroBlobOrange,
+    box: { insetInlineStart: '25.13%', top: '0.59%', width: '58.25%', height: '60.07%' },
+    shape: {
+      height: 'hypot(0.958403cqw, 99.0734cqh)',
+      width: 'hypot(99.0416cqw, -0.926566cqh)',
+      transform: 'rotate(-0.43deg) skewX(0.27deg)',
+    },
+    floatDuration: '9s',
+  },
+  {
+    src: heroBlobPurple,
+    box: { insetInlineStart: '0%', top: '0%', width: '79.86%', height: '81.35%' },
+    shape: {
+      height: 'hypot(38.3701cqw, 62.4331cqh)',
+      width: 'hypot(61.6299cqw, -37.5669cqh)',
+      transform: 'rotate(-25.61deg) skewX(12.4deg)',
+    },
+    floatDuration: '13s',
+  },
+]
+
+function HeroArtwork() {
+  const { t } = useTranslation()
+
+  return (
+    <div className="relative aspect-[872/673] w-full">
+      {BLOBS.map((blob, index) => (
+        <div
+          key={blob.src}
+          aria-hidden="true"
+          className="ih-enter-zoom absolute flex items-center justify-center"
+          style={{ containerType: 'size', ...blob.box, ...revealDelay(150 + index * 120) }}
+        >
+          <div className="flex-none" style={blob.shape}>
+            <img
+              alt=""
+              src={blob.src}
+              className="ih-float block size-full max-w-none"
+              style={{ '--ih-float-duration': blob.floatDuration } as CSSProperties}
+            />
+          </div>
+        </div>
+      ))}
+      <div
+        aria-hidden="true"
+        className="absolute -end-[11%] -top-[15%] h-1/2 w-[39%] rounded-full bg-[#e7bffe] opacity-30 blur-[29px]"
+      />
+      <img
+        src={heroStudents}
+        alt={t('hero.imageAlt')}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        className="ih-enter-zoom absolute start-[52.77%] top-[43.78%] h-[63.1%] w-[73.07%] -translate-x-1/2 -translate-y-1/2 rotate-[4deg] rounded-[24px] object-cover sm:rounded-[40px] xl:rounded-[51px] rtl:translate-x-1/2 shadow-[0px_18px_40px_-10px_rgba(58,4,83,0.18),0px_8px_20px_-4px_rgba(198,147,253,0.25)]"
+        style={revealDelay(450)}
+      />
+    </div>
+  )
+}
 
 export const Hero: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.dir() === 'rtl'
 
   return (
-    <section id="home" className="relative overflow-hidden pt-6 pb-14 lg:pt-10 lg:pb-20">
+    <section className="relative overflow-hidden pt-6 pb-14 lg:pt-10 lg:pb-20">
       {/* Soft Ambient Background Glows matching Figma layer 1002:1022 & 1002:1034 */}
       <div
         aria-hidden="true"
@@ -68,147 +155,10 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Hero Visual with exact background patterns, tuned purple glow, and image from Figma (node 1002:1030) */}
+          {/* Right Column: Hero Visual with exact animation from internship page */}
           <div className="w-full lg:flex-1 relative flex justify-center lg:justify-end items-center py-0 lg:-mt-8 xl:-mt-12 lg:-ms-8 xl:-ms-16">
-            <div
-              className="relative w-full max-w-[620px] sm:max-w-[720px] lg:max-w-[820px] xl:max-w-[880px] 2xl:max-w-[920px] aspect-[872/673] select-none"
-              dir="ltr"
-            >
-              {/* Vector 1: Peach / Gold Organic Pattern (Figma node 1002:1031) */}
-              <div
-                aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[1]"
-                style={{
-                  left: '32.44%',
-                  top: '6.20%',
-                  width: '67.56%',
-                  height: '69.33%',
-                }}
-              >
-                <div
-                  className="w-[85%] h-[87%] flex-none"
-                  style={{
-                    transform: 'rotate(8.35deg) skewX(-5.11deg)',
-                  }}
-                >
-                  <img
-                    src="/images/hero-vector-peach.svg"
-                    alt=""
-                    className="w-full h-full object-contain pointer-events-none"
-                    draggable={false}
-                  />
-                </div>
-              </div>
-
-              {/* Vector 2: Orange / Coral Top Wave Pattern (Figma node 1002:1032) */}
-              <div
-                aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[2]"
-                style={{
-                  left: '25.12%',
-                  top: '0.59%',
-                  width: '58.26%',
-                  height: '60.15%',
-                }}
-              >
-                <div
-                  className="w-[99%] h-[99%] flex-none"
-                  style={{
-                    transform: 'rotate(-0.43deg) skewX(0.27deg)',
-                  }}
-                >
-                  <img
-                    src="/images/hero-vector-purple-top.svg"
-                    alt=""
-                    className="w-full h-full object-contain pointer-events-none"
-                    draggable={false}
-                  />
-                </div>
-              </div>
-
-              {/* Vector 3: Rich Purple Left Petal Pattern (Figma node 1002:1033) */}
-              <div
-                aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[3]"
-                style={{
-                  left: '0%',
-                  top: '0%',
-                  width: '79.91%',
-                  height: '81.39%',
-                }}
-              >
-                <div
-                  className="w-[68.3%] h-[79.3%] flex-none"
-                  style={{
-                    transform: 'rotate(-25.6deg) scaleY(0.98) skewX(12.41deg)',
-                  }}
-                >
-                  <img
-                    src="/images/hero-vector-purple-left.svg"
-                    alt=""
-                    className="w-full h-full object-contain pointer-events-none"
-                    draggable={false}
-                  />
-                </div>
-              </div>
-
-              {/* Soft Bottom-Left Ambient Purple Glow matching Figma node 1002:1034 (opacity 20%, blur 29px) */}
-              <div
-                aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[4]"
-                style={{
-                  left: '0%',
-                  top: '54.39%',
-                  width: '34.54%',
-                  height: '45.61%',
-                }}
-              >
-                <div
-                  className="w-full h-full flex-none"
-                  style={{ transform: 'rotate(-2.19deg)' }}
-                >
-                  <div className="w-[96%] h-[96%] bg-[#c693fd]/20 blur-[29px] rounded-full" />
-                </div>
-              </div>
-
-              {/* Container: Photo & Top-Right Glow (Figma node 1002:1035) */}
-              <div
-                className="absolute flex items-center justify-center z-[5]"
-                style={{
-                  left: '17.67%',
-                  top: '8.66%',
-                  width: '70.30%',
-                  height: '70.36%',
-                }}
-              >
-                <div
-                  className="relative w-full h-full flex items-center justify-center"
-                  style={{ transform: 'rotate(-2.19deg)' }}
-                >
-                  {/* Ambient Glow Top Right matching Figma node 1002:1036 (opacity 30%, blur 29px) */}
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -top-[18%] -right-[12%] w-[58%] h-[72%] bg-[#e7bffe]/30 blur-[29px] rounded-full -z-10"
-                  />
-
-                  {/* Main Students Image with Refined Soft Purple Drop Shadow (Figma node 1002:1038) */}
-                  <div
-                    className="w-[104%] h-[90%] flex items-center justify-center flex-none"
-                    style={{ transform: 'rotate(6.28deg)' }}
-                  >
-                    <div className="w-full h-full rounded-[28px] sm:rounded-[38px] lg:rounded-[51px] overflow-hidden shadow-[0px_18px_40px_-10px_rgba(58,4,83,0.18),0px_8px_20px_-4px_rgba(198,147,253,0.25)] bg-slate-100/50">
-                      <img
-                        src="/images/hero-students-figma.png"
-                        alt={t('hero.imageAlt')}
-                        className="w-full h-full object-cover object-center pointer-events-none rounded-[28px] sm:rounded-[38px] lg:rounded-[51px]"
-                        loading="eager"
-                        width={637}
-                        height={425}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="relative w-full max-w-[620px] sm:max-w-[720px] lg:max-w-[820px] xl:max-w-[880px] 2xl:max-w-[920px]">
+              <HeroArtwork />
             </div>
           </div>
         </div>

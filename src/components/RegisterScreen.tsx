@@ -2,7 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import LegalModal from './LegalModal';
-import studentImage from '../assets/Image (Students beginning a collaborative technology journey).png';
+import studentImage from '../assets/video-poster.webp';
 
 const NATIONAL_ID_LENGTH = 14;
 

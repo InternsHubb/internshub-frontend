@@ -9,6 +9,7 @@ import WhyChooseUs from '../components/internship/WhyChooseUs'
 import { PAGE_CONTAINER } from '../components/internship/layout'
 import { Navbar } from '../components/shared/Navbar'
 import { ROUTES } from '@/constants/routes'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const TRACKS_SECTION_ID = 'choose-your-track'
 
@@ -17,14 +18,16 @@ function scrollToTracks() {
 }
 
 // Mock handlers: these become navigation / API calls once onboarding and the backend exist.
-function handleSelectTrack(_trackId: string) {}
+function handleSelectTrack(_trackId: string) { }
 
-function handleSeeAllTracks() {}
+function handleSeeAllTracks() { }
 
 // Arabic switches to the project's Cairo stack (font-arabic), as html[dir=rtl] does on the landing page.
 const PAGE_FONT = "font-['Plus_Jakarta_Sans_Variable',sans-serif] rtl:font-arabic"
 
 function InternshipPage() {
+  useScrollReveal()
+
   return (
     <div
       className={`min-h-svh overflow-x-clip bg-[#f4f0f8] text-base tracking-normal text-[#111827] scheme-light ${PAGE_FONT}`}

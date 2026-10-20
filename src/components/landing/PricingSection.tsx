@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Layers, Award } from 'lucide-react'
 
@@ -6,57 +6,60 @@ export const PricingSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.language === 'ar'
 
-  const plans = [
-    {
-      id: '3m',
-      name: t('pricing.plan3mName'),
-      price: '3499',
-      unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
-      icon: Layers,
-      features: [
-        t('pricing.plan3mFeature1'),
-        t('pricing.plan3mFeature2'),
-        t('pricing.plan3mFeature3'),
-      ],
-      btnText: t('pricing.plan3mBtn'),
-      isPopular: false,
-    },
-    {
-      id: '6m',
-      name: t('pricing.plan6mName'),
-      price: '5499',
-      unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
-      icon: Award,
-      features: [
-        t('pricing.plan6mFeature1'),
-        t('pricing.plan6mFeature2'),
-        t('pricing.plan6mFeature3'),
-        t('pricing.plan6mFeature4'),
-      ],
-      btnText: t('pricing.plan6mBtn'),
-      isPopular: true,
-    },
-    {
-      id: '12m',
-      name: t('pricing.plan12mName'),
-      price: '3499',
-      unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
-      icon: Layers,
-      features: [
-        t('pricing.plan12mFeature1'),
-        t('pricing.plan12mFeature2'),
-        t('pricing.plan12mFeature3'),
-        t('pricing.plan12mFeature4'),
-      ],
-      btnText: t('pricing.plan12mBtn'),
-      isPopular: false,
-    },
-  ]
+  const plans = useMemo(
+    () => [
+      {
+        id: '3m',
+        name: t('pricing.plan3mName'),
+        price: '3499',
+        unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
+        icon: Layers,
+        features: [
+          t('pricing.plan3mFeature1'),
+          t('pricing.plan3mFeature2'),
+          t('pricing.plan3mFeature3'),
+        ],
+        btnText: t('pricing.plan3mBtn'),
+        isPopular: false,
+      },
+      {
+        id: '6m',
+        name: t('pricing.plan6mName'),
+        price: '5499',
+        unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
+        icon: Award,
+        features: [
+          t('pricing.plan6mFeature1'),
+          t('pricing.plan6mFeature2'),
+          t('pricing.plan6mFeature3'),
+          t('pricing.plan6mFeature4'),
+        ],
+        btnText: t('pricing.plan6mBtn'),
+        isPopular: true,
+      },
+      {
+        id: '12m',
+        name: t('pricing.plan12mName'),
+        price: '3499',
+        unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
+        icon: Layers,
+        features: [
+          t('pricing.plan12mFeature1'),
+          t('pricing.plan12mFeature2'),
+          t('pricing.plan12mFeature3'),
+          t('pricing.plan12mFeature4'),
+        ],
+        btnText: t('pricing.plan12mBtn'),
+        isPopular: false,
+      },
+    ],
+    [t, isRtl],
+  )
 
   return (
     <section id="pricing" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
       {/* Section Header (Figma node 1002:1728) - second line stays on one line */}
-      <div className="text-start mb-12 sm:mb-16">
+      <div className="text-start mb-12 sm:mb-16 reveal-on-scroll">
         <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
           {t('pricing.title')}
         </h2>
@@ -67,14 +70,20 @@ export const PricingSection: React.FC = () => {
 
       {/* 3 Pricing Cards Grid (Figma node 1002:1731) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4">
-        {plans.map((plan) => {
+        {plans.map((plan, idx) => {
           const Icon = plan.icon
+          const delayClass =
+            idx === 0
+              ? 'reveal-delay-100'
+              : idx === 1
+              ? 'reveal-delay-200'
+              : 'reveal-delay-300'
 
           return (
-            <div
-              key={plan.id}
-              className="group relative bg-white hover:bg-[#fdfbff] border border-[#b2b2b2] hover:border-[#5a198f] hover:border-2 rounded-[50px] px-5 sm:px-6 py-8 sm:py-10 flex flex-col justify-between transition-all duration-300 hover:shadow-[0px_16px_40px_rgba(90,25,143,0.22)] hover:-translate-y-2 h-full"
-            >
+            <div key={plan.id} className={`reveal-on-scroll ${delayClass} h-full`}>
+              <div
+                className="group relative bg-white hover:bg-[#fdfbff] border border-[#b2b2b2] hover:border-[#5a198f] hover:border-2 rounded-[50px] px-5 sm:px-6 py-8 sm:py-10 flex flex-col justify-between transition-all duration-300 hover:shadow-[0px_16px_40px_rgba(90,25,143,0.22)] hover:-translate-y-2 h-full"
+              >
               {/* Floating MOST POPULAR Badge - appears ONLY on the middle card when hovered */}
               {plan.isPopular && (
                 <div className="absolute -top-[14px] left-1/2 -translate-x-1/2 rtl:translate-x-1/2 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none z-20">
@@ -135,8 +144,9 @@ export const PricingSection: React.FC = () => {
                 </a>
               </div>
             </div>
-          )
-        })}
+          </div>
+        )
+      })}
       </div>
     </section>
   )
