@@ -217,7 +217,7 @@
     "plan6mFeature4": "Course & Internship certificates",
     "plan6mBtn": "Get Started",
     "plan12mName": "12 Months",
-    "plan12mPrice": "3499 EGP/Month",
+    "plan12mPrice": "9,500 EGP/Package",
     "plan12mFeature1": "6 months of courses first",
     "plan12mFeature2": "Internship after the courses",
     "plan12mFeature3": "12 mentorship sessions",
@@ -271,7 +271,14 @@
     "linkFaq": "FAQ",
     "linkContact": "Contact Us",
     "linkPrivacy": "Privacy Policy",
-    "copyright": "EdTech. All rights reserved by SpaceTech."
+    "copyright": "EdTech. All rights reserved by SpaceTech.",
+    "socialLabel": "Follow us",
+    "newsletterTitle": "Start Learning Today",
+    "newsletterBody": "Join a community of curious learners and get the latest courses, tips, and opportunities straight to your inbox.",
+    "newsletterEmailLabel": "Email address",
+    "newsletterPlaceholder": "Your email address",
+    "newsletterCta": "Join Now",
+    "newsletterInvalidEmail": "Enter a valid email address."
   },
   "internshipPage": {
     "hero": {

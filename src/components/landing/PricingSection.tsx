@@ -40,8 +40,9 @@ export const PricingSection: React.FC = () => {
       {
         id: '12m',
         name: t('pricing.plan12mName'),
-        price: '3499',
-        unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
+        // One-time package price (same as onboarding), not monthly.
+        price: '9,500',
+        unit: isRtl ? 'ج.م/للباقة' : 'EGP/Package',
         icon: Layers,
         features: [
           t('pricing.plan12mFeature1'),

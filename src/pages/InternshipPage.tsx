@@ -1,12 +1,12 @@
 import '@fontsource-variable/plus-jakarta-sans'
 import FAQ from '../components/internship/FAQ'
 import Hero from '../components/internship/Hero'
-import InternshipFooter from '../components/internship/InternshipFooter'
 import PromoBanner from '../components/internship/PromoBanner'
 import Testimonials from '../components/internship/Testimonials'
 import TracksSection from '../components/internship/TracksSection'
 import WhyChooseUs from '../components/internship/WhyChooseUs'
 import { PAGE_CONTAINER } from '../components/internship/layout'
+import { Footer } from '../components/shared/Footer'
 import { Navbar } from '../components/shared/Navbar'
 import { ROUTES } from '@/constants/routes'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
@@ -61,7 +61,7 @@ function InternshipPage() {
           </div>
         </main>
 
-        <InternshipFooter />
+        <Footer />
       </div>
     </div>
   )
