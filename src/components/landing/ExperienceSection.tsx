@@ -35,7 +35,7 @@ export const ExperienceSection: React.FC = () => {
   return (
     <section className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16">
       {/* Section Header (Figma node 1002:1071) */}
-      <div className="text-start mb-12 sm:mb-16">
+      <div className="text-start mb-12 sm:mb-16 reveal-on-scroll">
         <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#161616] leading-tight mb-4">
           {isRtl ? (
             <>
@@ -57,13 +57,22 @@ export const ExperienceSection: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
         {/* Left Column: 4 Benefit Cards (Figma node 1002:1075) */}
         <div className="lg:col-span-6 flex flex-col gap-6 max-w-[507px] w-full">
-          {items.map((item) => (
-            <div
-              key={item.num}
-              className={`p-3 sm:p-3.5 rounded-[50px] border-2 border-[#cb8cfe] ${
-                item.dashed ? 'border-dashed' : 'border-solid'
-              } bg-white flex items-center gap-4 transition-all duration-200 hover:shadow-md hover:bg-purple-50/15`}
-            >
+          {items.map((item, idx) => {
+            const delayClass =
+              idx === 0
+                ? 'reveal-delay-100'
+                : idx === 1
+                ? 'reveal-delay-200'
+                : idx === 2
+                ? 'reveal-delay-300'
+                : 'reveal-delay-400'
+            return (
+              <div
+                key={item.num}
+                className={`p-3 sm:p-3.5 rounded-[50px] border-2 border-[#cb8cfe] ${
+                  item.dashed ? 'border-dashed' : 'border-solid'
+                } bg-white flex items-center gap-4 transition-all duration-200 hover:shadow-md hover:bg-purple-50/15 reveal-on-scroll ${delayClass}`}
+              >
               {/* Number Badge (Figma: size 50px, rounded 25px, bg #5a198f, font 17px ExtraBold) */}
               <div className="size-[50px] rounded-[25px] bg-[#5a198f] text-white font-extrabold text-[17px] flex items-center justify-center shrink-0 shadow-md shadow-[#5a198f]/20">
                 {item.num}
@@ -79,11 +88,12 @@ export const ExperienceSection: React.FC = () => {
                 </p>
               </div>
             </div>
-          ))}
+          )
+        })}
         </div>
 
         {/* Right Column: Visual Mentor Showcase matching Figma node 1002:1100 */}
-        <div className="lg:col-span-6 relative flex justify-center items-center py-4">
+        <div className="lg:col-span-6 relative flex justify-center items-center py-4 reveal-on-scroll reveal-scale reveal-delay-200">
           <div
             className="relative w-full max-w-[588px] aspect-[588/568] flex items-center justify-center select-none"
             dir="ltr"

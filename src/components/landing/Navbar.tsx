@@ -26,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
     { id: 'mentorship', label: t('nav.mentorship'), href: '#mentorship' },
     { id: 'pricing', label: t('nav.pricing'), href: '#pricing' },
     { id: 'about', label: t('nav.about'), href: '#about' },
+    { id: 'contact', label: t('nav.contact'), href: '#contact' },
   ]
 
   return (

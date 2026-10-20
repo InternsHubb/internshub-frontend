@@ -135,14 +135,166 @@ html[dir="rtl"] {
   will-change: opacity, transform;
 }
 
+/* Hero organic floating & breathing animations */
+@keyframes heroFloatBreath {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) scale(1.018);
+  }
+}
+
+@keyframes heroShadowPulse {
+  0%, 100% {
+    box-shadow: 0px 18px 40px -10px rgba(58, 4, 83, 0.18), 0px 8px 20px -4px rgba(198, 147, 253, 0.25);
+  }
+  50% {
+    box-shadow: 0px 28px 55px -10px rgba(58, 4, 83, 0.24), 0px 14px 28px -4px rgba(198, 147, 253, 0.35);
+  }
+}
+
+@keyframes heroBlobPeach {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6px, -8px, 0) scale(1.035);
+  }
+}
+
+@keyframes heroBlobCoral {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-4px, -6px, 0) scale(1.025);
+  }
+}
+
+@keyframes heroBlobPurple {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-7px, 6px, 0) scale(1.03);
+  }
+}
+
+@keyframes heroGlowBreath {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.08);
+  }
+}
+
+.hero-photo-float {
+  animation: heroFloatBreath 5.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+.hero-shadow-pulse {
+  animation: heroShadowPulse 5.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.hero-blob-peach {
+  animation: heroBlobPeach 7.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+.hero-blob-coral {
+  animation: heroBlobCoral 8.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+.hero-blob-purple {
+  animation: heroBlobPurple 6.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+.hero-glow-breath {
+  animation: heroGlowBreath 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   Smooth Scroll Reveal Animations
+   ========================================================================== */
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.reveal-scale {
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transition: opacity 850ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.reveal-left {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.reveal-right {
+  opacity: 0;
+  transform: translateX(36px);
+  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Staggered transition delays */
+.reveal-delay-75  { transition-delay: 75ms; }
+.reveal-delay-100 { transition-delay: 100ms; }
+.reveal-delay-150 { transition-delay: 150ms; }
+.reveal-delay-200 { transition-delay: 200ms; }
+.reveal-delay-250 { transition-delay: 250ms; }
+.reveal-delay-300 { transition-delay: 300ms; }
+.reveal-delay-350 { transition-delay: 350ms; }
+.reveal-delay-400 { transition-delay: 400ms; }
+.reveal-delay-500 { transition-delay: 500ms; }
+
+/* Revealed Active State */
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .euveka-nav-enter,
   .euveka-page-enter,
   .euveka-lang-fade-a,
-  .euveka-lang-fade-b {
+  .euveka-lang-fade-b,
+  .hero-photo-float,
+  .hero-shadow-pulse,
+  .hero-blob-peach,
+  .hero-blob-coral,
+  .hero-blob-purple,
+  .hero-glow-breath {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+    will-change: auto !important;
+  }
+
+  .reveal-on-scroll,
+  .reveal-on-scroll.reveal-scale,
+  .reveal-on-scroll.reveal-left,
+  .reveal-on-scroll.reveal-right {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
     will-change: auto !important;
   }
 }

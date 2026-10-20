@@ -77,7 +77,7 @@ export const Hero: React.FC = () => {
               {/* Vector 1: Peach / Gold Organic Pattern (Figma node 1002:1031) */}
               <div
                 aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[1]"
+                className="absolute pointer-events-none flex items-center justify-center z-[1] hero-blob-peach"
                 style={{
                   left: '32.44%',
                   top: '6.20%',
@@ -103,7 +103,7 @@ export const Hero: React.FC = () => {
               {/* Vector 2: Orange / Coral Top Wave Pattern (Figma node 1002:1032) */}
               <div
                 aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[2]"
+                className="absolute pointer-events-none flex items-center justify-center z-[2] hero-blob-coral"
                 style={{
                   left: '25.12%',
                   top: '0.59%',
@@ -129,7 +129,7 @@ export const Hero: React.FC = () => {
               {/* Vector 3: Rich Purple Left Petal Pattern (Figma node 1002:1033) */}
               <div
                 aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[3]"
+                className="absolute pointer-events-none flex items-center justify-center z-[3] hero-blob-purple"
                 style={{
                   left: '0%',
                   top: '0%',
@@ -155,7 +155,7 @@ export const Hero: React.FC = () => {
               {/* Soft Bottom-Left Ambient Purple Glow matching Figma node 1002:1034 (opacity 20%, blur 29px) */}
               <div
                 aria-hidden="true"
-                className="absolute pointer-events-none flex items-center justify-center z-[4]"
+                className="absolute pointer-events-none flex items-center justify-center z-[4] hero-glow-breath"
                 style={{
                   left: '0%',
                   top: '54.39%',
@@ -173,7 +173,7 @@ export const Hero: React.FC = () => {
 
               {/* Container: Photo & Top-Right Glow (Figma node 1002:1035) */}
               <div
-                className="absolute flex items-center justify-center z-[5]"
+                className="absolute flex items-center justify-center z-[5] hero-photo-float"
                 style={{
                   left: '17.67%',
                   top: '8.66%',
@@ -196,7 +196,7 @@ export const Hero: React.FC = () => {
                     className="w-[104%] h-[90%] flex items-center justify-center flex-none"
                     style={{ transform: 'rotate(6.28deg)' }}
                   >
-                    <div className="w-full h-full rounded-[28px] sm:rounded-[38px] lg:rounded-[51px] overflow-hidden shadow-[0px_18px_40px_-10px_rgba(58,4,83,0.18),0px_8px_20px_-4px_rgba(198,147,253,0.25)] bg-slate-100/50">
+                    <div className="w-full h-full rounded-[28px] sm:rounded-[38px] lg:rounded-[51px] overflow-hidden shadow-[0px_18px_40px_-10px_rgba(58,4,83,0.18),0px_8px_20px_-4px_rgba(198,147,253,0.25)] bg-slate-100/50 hero-shadow-pulse">
                       <img
                         src="/images/hero-students-figma.png"
                         alt={t('hero.imageAlt')}

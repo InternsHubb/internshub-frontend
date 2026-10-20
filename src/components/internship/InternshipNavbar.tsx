@@ -37,6 +37,7 @@ const NAV_LINKS: ReadonlyArray<NavLink> = [
   { label: 'Mentorship', href: '#' },
   { label: 'Pricing', href: '#' },
   { label: 'About Us', href: '#' },
+  { label: 'Contact Us', href: '/#contact' },
 ]
 
 const ACTIVE_LINK = 'Internship'

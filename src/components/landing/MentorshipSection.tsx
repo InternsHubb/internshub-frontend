@@ -8,7 +8,7 @@ export const MentorshipSection: React.FC = () => {
   return (
     <section id="mentorship" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
       {/* Section Header with CTA on right (Figma node 1002:1124) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 sm:mb-16">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 sm:mb-16 reveal-on-scroll">
         <div className="text-start max-w-[911px]">
           <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
             {t('mentorship.title')}
@@ -34,7 +34,7 @@ export const MentorshipSection: React.FC = () => {
       </div>
 
       {/* 4 Staggered Arched Mentor Cards (Figma node 1002:1134) */}
-      <div className="w-full overflow-x-auto pb-6 pt-2 scrollbar-none snap-x flex justify-start xl:justify-center">
+      <div className="w-full overflow-x-auto pb-6 pt-2 scrollbar-none snap-x flex justify-start xl:justify-center reveal-on-scroll reveal-delay-150">
         <div className="flex items-end justify-center min-w-max mx-auto" dir="ltr">
           {/* Card 1: Nadia Moazz (Figma node 1002:1135, height 720px) */}
           <div className="group bg-[#f7eeff] h-[720px] -mr-[1px] overflow-hidden relative rounded-tl-[167px] rounded-tr-[167px] shrink-0 w-[307px] transition-transform duration-300 hover:-translate-y-1">

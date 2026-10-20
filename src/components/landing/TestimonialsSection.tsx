@@ -128,7 +128,7 @@ export const TestimonialsSection: React.FC = () => {
   return (
     <section className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
       {/* Section Header (Figma node 1002:1885) */}
-      <div className="text-start mb-12 sm:mb-16">
+      <div className="text-start mb-12 sm:mb-16 reveal-on-scroll">
         <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
           {t('testimonials.title')}
         </h2>
@@ -138,7 +138,7 @@ export const TestimonialsSection: React.FC = () => {
       </div>
 
       {/* Interactive Carousel Wrapper (Figma node 1002:1888) */}
-      <div className="relative w-full group">
+      <div className="relative w-full group reveal-on-scroll reveal-delay-150">
         {/* Soft edge fade masks */}
         <div className="pointer-events-none absolute inset-y-0 start-0 w-12 sm:w-16 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 end-0 w-12 sm:w-16 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />

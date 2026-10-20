@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 import { Navbar } from '../components/landing/Navbar'
 import { Hero } from '../components/landing/Hero'
 import { LearningJourney } from '../components/landing/LearningJourney'
@@ -15,6 +16,8 @@ export const LandingPage: React.FC = () => {
   const { i18n } = useTranslation()
   const prevLangRef = useRef(i18n.language)
   const [animClass, setAnimClass] = useState('euveka-page-enter')
+
+  useScrollReveal({ dependencies: [animClass, i18n.language] })
 
   useEffect(() => {
     const handleLanguageChanged = (lng: string) => {

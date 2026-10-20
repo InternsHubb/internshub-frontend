@@ -34,7 +34,7 @@ export const LearningJourney: React.FC = () => {
 
   return (
     <section className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <div className="bg-white rounded-[30px] border border-slate-100 shadow-[0px_4px_25px_rgba(0,0,0,0.03)] relative overflow-hidden px-6 py-8 sm:px-8 lg:px-10 lg:py-8">
+      <div className="bg-white rounded-[30px] border border-slate-100 shadow-[0px_4px_25px_rgba(0,0,0,0.03)] relative overflow-hidden px-6 py-8 sm:px-8 lg:px-10 lg:py-8 reveal-on-scroll">
         {/* Soft Ambient Purple Glow in bottom-left corner matching Figma node 1002:1042 (opacity 20%, blur 29px) */}
         <div
           aria-hidden="true"
@@ -43,7 +43,7 @@ export const LearningJourney: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center relative z-10">
           {/* Left Title matching Figma node 1002:1041 */}
-          <div className="lg:col-span-4 text-start">
+          <div className="lg:col-span-4 text-start reveal-on-scroll reveal-delay-100">
             <h2 className="text-[22px] sm:text-[24px] font-extrabold leading-[1.35] text-[#060607] max-w-[340px]">
               {isRtl ? (
                 <>
@@ -62,11 +62,20 @@ export const LearningJourney: React.FC = () => {
           {/* Right 4 Steps matching Figma node 1002:1043 to 1002:1069 */}
           <div className="lg:col-span-8 relative">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-2 relative">
-              {steps.map((step) => (
-                <div
-                  key={step.number}
-                  className="flex flex-col items-start lg:items-center text-start lg:text-center relative group"
-                >
+              {steps.map((step, idx) => {
+                const delayClass =
+                  idx === 0
+                    ? 'reveal-delay-100'
+                    : idx === 1
+                    ? 'reveal-delay-200'
+                    : idx === 2
+                    ? 'reveal-delay-300'
+                    : 'reveal-delay-400'
+                return (
+                  <div
+                    key={step.number}
+                    className={`flex flex-col items-start lg:items-center text-start lg:text-center relative group reveal-on-scroll ${delayClass}`}
+                  >
                   {/* Step Connector Line on Desktop with exact Figma gradient for Step 1 -> 2 (Figma node 1002:1067) */}
                   {step.lineType !== 'none' &&
                     (step.lineType === 'solid' ? (
@@ -101,9 +110,10 @@ export const LearningJourney: React.FC = () => {
                     {step.desc}
                   </p>
                 </div>
-              ))}
-            </div>
+              )
+            })}
           </div>
+        </div>
         </div>
       </div>
     </section>

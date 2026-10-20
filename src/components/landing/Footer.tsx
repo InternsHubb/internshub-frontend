@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
 
   return (
     <div className="relative mt-24 overflow-x-clip w-full">
-      <footer className="w-full bg-[#22023c] text-white pt-[96px] sm:pt-[104px] lg:pt-[112px] pb-12 sm:pb-16 px-6 sm:px-12 lg:px-16 relative">
+      <footer id="contact" className="w-full bg-[#22023c] text-white pt-[96px] sm:pt-[104px] lg:pt-[112px] pb-12 sm:pb-16 px-6 sm:px-12 lg:px-16 relative">
         {/* Exact Figma Vector 12 (node 1002:1015) layered in front of background */}
         <div className="max-w-[1440px] mx-auto absolute inset-x-0 top-0 pointer-events-none">
           <div
@@ -56,7 +56,7 @@ export const Footer: React.FC = () => {
         {/* Content Container in normal document flow */}
         <div className="max-w-[1240px] mx-auto relative z-20">
           {/* 4 Column Navigation Grid (Figma node 1002:956) */}
-          <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between items-start gap-10 lg:gap-8 pb-12 border-b border-white/10">
+          <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between items-start gap-10 lg:gap-8 pb-12 border-b border-white/10 reveal-on-scroll">
             {/* Column 1: Brand Info (Figma node 1002:957) */}
             <div className="w-full sm:w-[252px] shrink-0 text-start">
               <a href="#home" className="inline-block mb-4 sm:mb-5">
@@ -128,7 +128,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Bottom Bar: Copyright & White Social Circles (Figma node 1002:995) */}
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 reveal-on-scroll reveal-delay-150">
             <p className="text-[16px] font-medium text-white/90 leading-[24px] text-center sm:text-start">
               © {currentYear} {t('footer.copyright')}
             </p>
