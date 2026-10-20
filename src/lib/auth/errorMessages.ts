@@ -50,6 +50,22 @@ export function externalSignInErrorKey(error: unknown, provider: ExternalProvide
   return `auth.login.errors.${provider}Failed`;
 }
 
+const HTTP_TOO_MANY_REQUESTS = 429;
+
+export type PhoneOtpError = 'phoneInvalid' | 'codeInvalid' | 'tooMany' | 'network' | 'server' | 'rejected';
+
+// Failures from POST /api/auth/otp/send and /api/auth/otp/verify. The backend answers 400 when the
+// number is not in international format and 401 when the code is wrong or expired.
+export function phoneOtpError(error: unknown): PhoneOtpError {
+  if (!(error instanceof ApiError)) return 'server';
+  if (error.status === 0) return 'network';
+  if (error.status === HTTP_TOO_MANY_REQUESTS) return 'tooMany';
+  if (error.status >= HTTP_SERVER_ERROR) return 'server';
+  if (error.status === HTTP_BAD_REQUEST && error.errorCodes.includes('phoneNumber')) return 'phoneInvalid';
+  if (error.status === HTTP_UNAUTHORIZED) return 'codeInvalid';
+  return 'rejected';
+}
+
 export type RegisterErrorResult = {
   // Banner message for the whole form, when the error is not tied to a field.
   formKey?: string;
