@@ -29,3 +29,8 @@ lerna-debug.log*
 *.sw?
 .vite
 .vercel
+
+# Environment files (keep the documented template)
+.env
+.env.*
+!.env.example
