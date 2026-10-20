@@ -2,11 +2,14 @@ import '@fontsource-variable/plus-jakarta-sans'
 import FAQ from '../components/internship/FAQ'
 import Hero from '../components/internship/Hero'
 import InternshipFooter from '../components/internship/InternshipFooter'
-import InternshipNavbar from '../components/internship/InternshipNavbar'
 import PromoBanner from '../components/internship/PromoBanner'
 import Testimonials from '../components/internship/Testimonials'
 import TracksSection from '../components/internship/TracksSection'
 import WhyChooseUs from '../components/internship/WhyChooseUs'
+import { PAGE_CONTAINER } from '../components/internship/layout'
+import { Navbar } from '../components/shared/Navbar'
+import { ROUTES } from '@/constants/routes'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const TRACKS_SECTION_ID = 'choose-your-track'
 
@@ -15,24 +18,33 @@ function scrollToTracks() {
 }
 
 // Mock handlers: these become navigation / API calls once onboarding and the backend exist.
-function handleSelectTrack(_trackId: string) {}
+function handleSelectTrack(_trackId: string) { }
 
-function handleSeeAllTracks() {}
+function handleSeeAllTracks() { }
+
+// Arabic switches to the project's Cairo stack (font-arabic), as html[dir=rtl] does on the landing page.
+const PAGE_FONT = "font-['Plus_Jakarta_Sans_Variable',sans-serif] rtl:font-arabic"
 
 function InternshipPage() {
+  useScrollReveal()
+
   return (
-    <div className="min-h-svh overflow-x-clip bg-[#f4f0f8] font-['Plus_Jakarta_Sans_Variable',sans-serif] text-base tracking-normal text-[#111827] scheme-light">
-      <InternshipNavbar />
+    <div className="min-h-svh overflow-x-clip bg-[#f4f0f8] scheme-light">
+      {/* Same Navbar as the landing page: own container, and it inherits the same typography as there,
+          so the page font below is scoped to the content. Only the active item and link base differ. */}
+      <Navbar activeSection="internship" sectionLinkBase={ROUTES.home} />
 
-      <main>
-        <Hero onStart={scrollToTracks} />
+      <div className={`text-base tracking-normal text-[#111827] ${PAGE_FONT}`}>
+        {/* Every section, the hero included, shares one container so they all start on the same edge. */}
+        <main className={`flex flex-col ${PAGE_CONTAINER}`}>
+          <Hero onStart={scrollToTracks} />
 
-        <div className="mx-auto flex max-w-[1322px] flex-col px-4 sm:px-10 xl:px-0">
           <div className="mt-12 xl:mt-0">
             <WhyChooseUs />
           </div>
 
-          <div id={TRACKS_SECTION_ID} className="mt-8 scroll-mt-6">
+          {/* Scroll margin = sticky navbar (99px) + 24px gap, so the heading isn't hidden under it. */}
+          <div id={TRACKS_SECTION_ID} className="mt-8 scroll-mt-[123px]">
             <TracksSection onSelectTrack={handleSelectTrack} onSeeAllTracks={handleSeeAllTracks} />
           </div>
 
@@ -47,10 +59,10 @@ function InternshipPage() {
           <div className="mt-[93px]">
             <FAQ />
           </div>
-        </div>
-      </main>
+        </main>
 
-      <InternshipFooter />
+        <InternshipFooter />
+      </div>
     </div>
   )
 }

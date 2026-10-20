@@ -1,14 +1,16 @@
-// TEMPORARY: local copy of the footer from the Internship Figma frame, including the "Vector 12" wave.
+// TEMPORARY: local copy of the footer from the Internship Figma frame, without the "Vector 12" wave ribbon.
 // Replace with the team's shared Footer once it lands on main.
-import footerWave from '../../assets/internship/footer-wave-vector-12.svg'
+// Labels reuse the landing Footer's `footer.*` translation keys.
+import { useTranslation } from 'react-i18next'
 import socialFacebook from '../../assets/internship/social-facebook.svg'
 import socialInstagram from '../../assets/internship/social-instagram.svg'
 import socialLinkedin from '../../assets/internship/social-linkedin.svg'
 import socialTwitter from '../../assets/internship/social-twitter.svg'
+import { PAGE_CONTAINER } from './layout'
 
 interface FooterColumn {
-  title: string
-  links: ReadonlyArray<string>
+  titleKey: string
+  linkKeys: ReadonlyArray<string>
 }
 
 interface SocialLink {
@@ -17,9 +19,15 @@ interface SocialLink {
 }
 
 const FOOTER_COLUMNS: ReadonlyArray<FooterColumn> = [
-  { title: 'Company', links: ['About Us', 'Blog', 'Careers', 'Partners'] },
-  { title: 'Courses', links: ['All Courses', 'Learning Paths', 'Instructors', 'Free Courses'] },
-  { title: 'Support', links: ['Help Center', 'FAQ', 'Contact Us'] },
+  {
+    titleKey: 'footer.colCompany',
+    linkKeys: ['footer.linkAbout', 'footer.linkBlog', 'footer.linkCareers', 'footer.linkPartners'],
+  },
+  {
+    titleKey: 'footer.colCourses',
+    linkKeys: ['footer.linkAllCourses', 'footer.linkLearningPaths', 'footer.linkInstructors', 'footer.linkFreeCourses'],
+  },
+  { titleKey: 'footer.colSupport', linkKeys: ['footer.linkHelp', 'footer.linkFaq', 'footer.linkContact'] },
 ]
 
 const SOCIAL_LINKS: ReadonlyArray<SocialLink> = [
@@ -30,36 +38,27 @@ const SOCIAL_LINKS: ReadonlyArray<SocialLink> = [
 ]
 
 function InternshipFooter() {
-  return (
-    <footer className="relative mt-[164px] bg-[#22023c]">
-      {/* Vector 12: 1849.5 x 141.5 at x = -357 in the 1440 frame, overlapping the footer top by 71px. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute start-[-24.79%] top-0 aspect-[1849.5/141.5] w-[128.44%] -translate-y-[50.2%]"
-      >
-        <div className="absolute inset-[-18.24%_-1.78%_-38.56%_-2.04%]">
-          <img alt="" src={footerWave} className="block size-full max-w-none" />
-        </div>
-      </div>
+  const { t } = useTranslation()
 
-      <div className="relative mx-auto max-w-[1440px] px-6 pt-[88px] pb-16 sm:px-16">
-        <div className="grid grid-cols-1 gap-10 border-b border-white/10 pb-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-[85px]">
+  return (
+    <footer className="relative mt-24 bg-[#22023c]">
+      <div className={`relative py-16 ${PAGE_CONTAINER}`}>
+        <div className="grid grid-cols-1 gap-10 border-b border-white/10 pb-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-[85px] reveal-on-scroll">
           <div className="flex flex-col gap-5">
-            <p className="text-base leading-6 font-extrabold text-white">EdTech</p>
+            <p className="text-base leading-6 font-extrabold text-white">{t('footer.colEdtech')}</p>
             <p className="max-w-[252px] text-base leading-[26px] font-medium text-white/60">
-              A learning platform that helps you build practical skills from zero to pro, with clear paths and real
-              projects.
+              {t('footer.brandDescription')}
             </p>
           </div>
 
           {FOOTER_COLUMNS.map((column) => (
-            <nav key={column.title} aria-label={column.title} className="flex flex-col gap-5">
-              <p className="text-base leading-6 font-extrabold text-white">{column.title}</p>
+            <nav key={column.titleKey} aria-label={t(column.titleKey)} className="flex flex-col gap-5">
+              <p className="text-base leading-6 font-extrabold text-white">{t(column.titleKey)}</p>
               <ul className="flex flex-col gap-3">
-                {column.links.map((link) => (
-                  <li key={link}>
+                {column.linkKeys.map((linkKey) => (
+                  <li key={linkKey}>
                     <a href="#" className="text-base leading-6 font-medium text-white/60 transition-colors hover:text-white">
-                      {link}
+                      {t(linkKey)}
                     </a>
                   </li>
                 ))}
@@ -68,9 +67,9 @@ function InternshipFooter() {
           ))}
         </div>
 
-        <div className="flex flex-col-reverse items-start gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col-reverse items-start gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between reveal-on-scroll reveal-delay-150">
           <p className="text-base leading-6 font-medium text-white/60">
-            © 2026 EdTech. All rights reserved by SpaceTech.
+            © 2026 {t('footer.copyright')}
           </p>
           <ul className="flex items-center gap-3">
             {SOCIAL_LINKS.map((social) => (

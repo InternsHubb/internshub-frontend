@@ -1,73 +1,76 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const InternshipSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const isRtl = i18n.language === 'ar'
 
-  const tracks = [
-    {
-      id: 'track-1',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-1.png',
-      applicantBadge: '+6',
-    },
-    {
-      id: 'track-2',
-      title: isRtl ? 'رياكت وريدكس: من الأساسيات إلى الاحتراف' : 'React & Redux: From Basics to Advanced',
-      category: isRtl ? 'تطوير واجهات المستخدم' : 'Frontend Development',
-      instructor: isRtl ? 'المدربة ميا تشن' : 'Instructor Mia Chen',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.8',
-      reviews: '(3,012)',
-      duration: isRtl ? '25 ساعة' : '25 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '50 درساً' : '50 lessons',
-      thumbnail: '/images/course-thumb-2.png',
-      applicantBadge: '+7',
-    },
-    {
-      id: 'track-3',
-      title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-      category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-      instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.7',
-      reviews: '(1,802)',
-      duration: isRtl ? '22 ساعة' : '22 hours',
-      level: isRtl ? 'متقدم' : 'Advanced',
-      lessons: isRtl ? '40 درساً' : '40 lessons',
-      thumbnail: '/images/course-thumb-3.png',
-      applicantBadge: '+6',
-    },
-    {
-      id: 'track-4',
-      title: isRtl ? 'إتقان منهجيات أجايل ولين في فرق العمل' : 'Mastering Agile & Lean Methodologies',
-      category: isRtl ? 'إدارة المنتجات' : 'Product Management',
-      instructor: isRtl ? 'القائد جوردان سميث' : 'Lead Jordan Smith',
-      instructorAvatar: '/images/course-avatar-elena.png',
-      rating: '4.9',
-      reviews: '(2,134)',
-      duration: isRtl ? '18 ساعة' : '18 hours',
-      level: isRtl ? 'متوسط' : 'Intermediate',
-      lessons: isRtl ? '35 درساً' : '35 lessons',
-      thumbnail: '/images/course-thumb-4.png',
-      applicantBadge: '+4',
-    },
-  ]
+  const tracks = useMemo(
+    () => [
+      {
+        id: 'track-1',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-1.webp',
+        applicantBadge: '+6',
+      },
+      {
+        id: 'track-2',
+        title: isRtl ? 'رياكت وريدكس: من الأساسيات إلى الاحتراف' : 'React & Redux: From Basics to Advanced',
+        category: isRtl ? 'تطوير واجهات المستخدم' : 'Frontend Development',
+        instructor: isRtl ? 'المدربة ميا تشن' : 'Instructor Mia Chen',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.8',
+        reviews: '(3,012)',
+        duration: isRtl ? '25 ساعة' : '25 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '50 درساً' : '50 lessons',
+        thumbnail: '/images/course-thumb-2.webp',
+        applicantBadge: '+7',
+      },
+      {
+        id: 'track-3',
+        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
+        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
+        instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.7',
+        reviews: '(1,802)',
+        duration: isRtl ? '22 ساعة' : '22 hours',
+        level: isRtl ? 'متقدم' : 'Advanced',
+        lessons: isRtl ? '40 درساً' : '40 lessons',
+        thumbnail: '/images/course-thumb-3.webp',
+        applicantBadge: '+6',
+      },
+      {
+        id: 'track-4',
+        title: isRtl ? 'إتقان منهجيات أجايل ولين في فرق العمل' : 'Mastering Agile & Lean Methodologies',
+        category: isRtl ? 'إدارة المنتجات' : 'Product Management',
+        instructor: isRtl ? 'القائد جوردان سميث' : 'Lead Jordan Smith',
+        instructorAvatar: '/images/course-avatar-elena.webp',
+        rating: '4.9',
+        reviews: '(2,134)',
+        duration: isRtl ? '18 ساعة' : '18 hours',
+        level: isRtl ? 'متوسط' : 'Intermediate',
+        lessons: isRtl ? '35 درساً' : '35 lessons',
+        thumbnail: '/images/course-thumb-4.webp',
+        applicantBadge: '+4',
+      },
+    ],
+    [isRtl],
+  )
 
   return (
     <section id="internship" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
       {/* Section Header with CTA on right (Figma node 1002:1460) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 sm:mb-16">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 sm:mb-16 reveal-on-scroll">
         <div className="text-start max-w-[884px]">
           <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
             {t('internship.title')}
@@ -94,11 +97,20 @@ export const InternshipSection: React.FC = () => {
 
       {/* 4 Internship Track Cards Grid (Figma node 1002:1470) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {tracks.map((track) => (
-          <div
-            key={track.id}
-            className="group bg-white rounded-[11.6px] border border-[#e5e7eb] shadow-[0px_2.9px_11.6px_0px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col justify-between"
-          >
+        {tracks.map((track, idx) => {
+          const delayClass =
+            idx === 0
+              ? 'reveal-delay-100'
+              : idx === 1
+              ? 'reveal-delay-200'
+              : idx === 2
+              ? 'reveal-delay-300'
+              : 'reveal-delay-400'
+          return (
+            <div key={track.id} className={`reveal-on-scroll ${delayClass} h-full`}>
+              <div
+                className="group bg-white rounded-[11.6px] border border-[#e5e7eb] shadow-[0px_2.9px_11.6px_0px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col justify-between h-full"
+              >
             {/* Thumbnail Header with Magenta/Pink Category Tag (Figma node 1002:1472) */}
             <div className="relative h-[155px] w-full overflow-hidden bg-slate-900 shrink-0">
               <img
@@ -106,6 +118,7 @@ export const InternshipSection: React.FC = () => {
                 alt={track.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
+                decoding="async"
                 width={297}
                 height={155}
               />
@@ -131,6 +144,7 @@ export const InternshipSection: React.FC = () => {
                     alt={track.instructor}
                     className="size-[23px] rounded-full object-cover shrink-0"
                     loading="lazy"
+                    decoding="async"
                     width={23}
                     height={23}
                   />
@@ -212,7 +226,9 @@ export const InternshipSection: React.FC = () => {
               </div>
             </div>
           </div>
-        ))}
+        </div>
+      )
+    })}
       </div>
     </section>
   )
