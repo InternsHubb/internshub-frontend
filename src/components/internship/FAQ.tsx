@@ -11,7 +11,12 @@ function FAQ() {
 
   return (
     <section aria-labelledby="faq-heading" className="flex flex-col gap-16">
-      <SectionHeading id="faq-heading" eyebrow={t('internshipPage.faq.eyebrow')} title={t('internshipPage.faq.title')}>
+      <SectionHeading
+        id="faq-heading"
+        eyebrow={t('internshipPage.faq.eyebrow')}
+        title={t('internshipPage.faq.title')}
+        className="reveal-on-scroll"
+      >
         {t('internshipPage.faq.description')}
       </SectionHeading>
 
@@ -19,7 +24,7 @@ function FAQ() {
         type="single"
         collapsible
         defaultValue={DEFAULT_OPEN_ITEM}
-        className="mx-auto flex w-full max-w-[768px] flex-col gap-4"
+        className="mx-auto flex w-full max-w-[768px] flex-col gap-4 reveal-on-scroll reveal-delay-150"
       >
         {FAQ_ITEMS.map((item) => (
           <AccordionPrimitive.Item

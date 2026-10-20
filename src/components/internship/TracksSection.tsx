@@ -38,7 +38,7 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
 
   return (
     <section aria-labelledby="choose-track-heading" className="flex flex-col gap-8">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-12 reveal-on-scroll">
         <div className="flex max-w-[823px] flex-col gap-3">
           <h2
             id="choose-track-heading"
@@ -51,7 +51,9 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
         <TrackSearchForm query={query} onQueryChange={setQuery} />
       </div>
 
-      <CategoryFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+      <div className="reveal-on-scroll reveal-delay-100">
+        <CategoryFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+      </div>
 
       <p className="sr-only" aria-live="polite">
         {t('internshipPage.tracks.shown', { value: visibleTracks.length })}
@@ -59,11 +61,23 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
 
       {visibleTracks.length > 0 ? (
         <ul className="grid grid-cols-1 justify-center gap-x-8 gap-y-[45px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {visibleTracks.map((track) => (
-            <li key={track.id} className="flex justify-center">
-              <TrackCard track={track} onSelect={onSelectTrack} />
-            </li>
-          ))}
+          {visibleTracks.map((track, idx) => {
+            const delayClass =
+              idx === 0
+                ? 'reveal-delay-100'
+                : idx === 1
+                ? 'reveal-delay-150'
+                : idx === 2
+                ? 'reveal-delay-200'
+                : idx === 3
+                ? 'reveal-delay-250'
+                : 'reveal-delay-300'
+            return (
+              <li key={track.id} className={`flex justify-center reveal-on-scroll ${delayClass}`}>
+                <TrackCard track={track} onSelect={onSelectTrack} />
+              </li>
+            )
+          })}
         </ul>
       ) : (
         <div className="flex flex-col items-center gap-4 rounded-[30px] bg-white px-6 py-12 text-center">

@@ -5,11 +5,12 @@ interface SectionHeadingProps {
   eyebrow: string
   title: string
   children: ReactNode
+  className?: string
 }
 
-function SectionHeading({ id, eyebrow, title, children }: SectionHeadingProps) {
+function SectionHeading({ id, eyebrow, title, children, className = '' }: SectionHeadingProps) {
   return (
-    <div className="flex flex-col items-center gap-3 text-center">
+    <div className={`flex flex-col items-center gap-3 text-center ${className}`.trim()}>
       <p className="text-sm leading-5 font-bold tracking-[0.35px] text-[#5a198f]">{eyebrow}</p>
       <h2 id={id} className="text-[28px] leading-9 font-extrabold text-[#111827] sm:text-4xl sm:leading-10">
         {title}

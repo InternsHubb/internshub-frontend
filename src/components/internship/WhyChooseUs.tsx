@@ -23,11 +23,11 @@ function WhyChooseUs() {
       ref={ref}
       aria-labelledby="why-choose-us-heading"
       className={cn(
-        'relative overflow-hidden rounded-[30px] bg-white px-6 py-8 transition-shadow duration-500 hover:shadow-[0_18px_40px_-18px_rgba(90,25,143,0.25)] lg:flex lg:min-h-[196px] lg:items-center lg:gap-14 lg:px-[35px] lg:py-4',
+        'relative overflow-hidden rounded-[30px] bg-white px-6 py-8 transition-shadow duration-500 hover:shadow-[0_18px_40px_-18px_rgba(90,25,143,0.25)] lg:flex lg:min-h-[196px] lg:items-center lg:gap-14 lg:px-[35px] lg:py-4 reveal-on-scroll',
         isInView && 'ih-in-view',
       )}
     >
-      <div className="ih-reveal relative flex shrink-0 flex-col gap-[22px] lg:w-[277px]" style={revealDelay(0)}>
+      <div className="ih-reveal reveal-on-scroll reveal-delay-100 relative flex shrink-0 flex-col gap-[22px] lg:w-[277px]" style={revealDelay(0)}>
         <h2 id="why-choose-us-heading" className="text-sm leading-5 font-bold tracking-[0.35px] text-[#5a198f]">
           {t('internshipPage.whyChooseUs.eyebrow')}
         </h2>
@@ -45,10 +45,18 @@ function WhyChooseUs() {
         {PROGRAM_STEPS.map((step, index) => {
           const connector = STEP_CONNECTORS[index]
           const delay = STEP_DELAY_START_MS + index * STEP_DELAY_GAP_MS
+          const delayClass =
+            index === 0
+              ? 'reveal-delay-100'
+              : index === 1
+              ? 'reveal-delay-200'
+              : index === 2
+              ? 'reveal-delay-300'
+              : 'reveal-delay-400'
           return (
             <li
               key={step.id}
-              className="ih-reveal group relative flex flex-col items-center text-center"
+              className={`ih-reveal reveal-on-scroll ${delayClass} group relative flex flex-col items-center text-center`}
               style={revealDelay(delay)}
             >
               <span className="flex size-[50px] items-center justify-center rounded-full bg-[#5a198f] text-[17px] font-extrabold text-white transition-[scale,box-shadow] duration-300 group-hover:scale-110 group-hover:shadow-[0_8px_20px_-4px_rgba(90,25,143,0.45)]">

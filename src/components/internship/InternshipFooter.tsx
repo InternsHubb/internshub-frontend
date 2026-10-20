@@ -43,7 +43,7 @@ function InternshipFooter() {
   return (
     <footer className="relative mt-24 bg-[#22023c]">
       <div className={`relative py-16 ${PAGE_CONTAINER}`}>
-        <div className="grid grid-cols-1 gap-10 border-b border-white/10 pb-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-[85px]">
+        <div className="grid grid-cols-1 gap-10 border-b border-white/10 pb-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-[85px] reveal-on-scroll">
           <div className="flex flex-col gap-5">
             <p className="text-base leading-6 font-extrabold text-white">{t('footer.colEdtech')}</p>
             <p className="max-w-[252px] text-base leading-[26px] font-medium text-white/60">
@@ -67,7 +67,7 @@ function InternshipFooter() {
           ))}
         </div>
 
-        <div className="flex flex-col-reverse items-start gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col-reverse items-start gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between reveal-on-scroll reveal-delay-150">
           <p className="text-base leading-6 font-medium text-white/60">
             © 2026 {t('footer.copyright')}
           </p>
