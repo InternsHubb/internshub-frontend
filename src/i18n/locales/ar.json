@@ -271,7 +271,14 @@
     "linkFaq": "الأسئلة الشائعة",
     "linkContact": "اتصل بنا",
     "linkPrivacy": "سياسة الخصوصية",
-    "copyright": "إدتك. جميع الحقوق محفوظة لـ SpaceTech."
+    "copyright": "إدتك. جميع الحقوق محفوظة لـ SpaceTech.",
+    "socialLabel": "تابعنا",
+    "newsletterTitle": "ابدأ التعلم اليوم",
+    "newsletterBody": "انضم إلى مجتمع من المتعلمين الشغوفين واحصل على أحدث الدورات والنصائح والفرص مباشرة في بريدك.",
+    "newsletterEmailLabel": "البريد الإلكتروني",
+    "newsletterPlaceholder": "بريدك الإلكتروني",
+    "newsletterCta": "انضم الآن",
+    "newsletterInvalidEmail": "أدخل بريدًا إلكترونيًا صحيحًا."
   },
   "internshipPage": {
     "hero": {

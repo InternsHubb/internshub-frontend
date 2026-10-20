@@ -11,7 +11,7 @@ import { InternshipSection } from '../components/landing/InternshipSection'
 import { PricingSection } from '../components/landing/PricingSection'
 import { TestimonialsSection } from '../components/landing/TestimonialsSection'
 import { VideoShowcase } from '../components/landing/VideoShowcase'
-import { Footer } from '../components/landing/Footer'
+import { Footer } from '../components/shared/Footer'
 
 export const LandingPage: React.FC = () => {
   const { i18n } = useTranslation()
