@@ -2,10 +2,15 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
 import arrowRightPurple from '../../assets/internship/arrow-right-purple.svg'
+import { ScrollReveal } from '../common/ScrollReveal'
 import { CategoryFilters, TrackSearchForm } from './FilterBar'
 import TrackCard from './TrackCard'
 import { TRACKS } from './mockData'
 import type { Track, TrackFilter } from './mockData'
+
+// Landing course cards stagger 100/200/300/400ms across a row of four; each row of tracks repeats that.
+const CARDS_PER_ROW = 4
+const CARD_STAGGER_MS = 100
 
 interface TracksSectionProps {
   onSelectTrack: (trackId: string) => void
@@ -61,23 +66,15 @@ function TracksSection({ onSelectTrack, onSeeAllTracks }: TracksSectionProps) {
 
       {visibleTracks.length > 0 ? (
         <ul className="grid grid-cols-1 justify-center gap-x-8 gap-y-[45px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {visibleTracks.map((track, idx) => {
-            const delayClass =
-              idx === 0
-                ? 'reveal-delay-100'
-                : idx === 1
-                ? 'reveal-delay-150'
-                : idx === 2
-                ? 'reveal-delay-200'
-                : idx === 3
-                ? 'reveal-delay-250'
-                : 'reveal-delay-300'
-            return (
-              <li key={track.id} className={`flex justify-center reveal-on-scroll ${delayClass}`}>
+          {visibleTracks.map((track, idx) => (
+            <li key={track.id} className="flex justify-center">
+              {/* Same reveal as the landing course cards. ScrollReveal keeps its state in React, so cards
+                  shown after a search or filter change still animate in and never get stuck hidden. */}
+              <ScrollReveal delay={((idx % CARDS_PER_ROW) + 1) * CARD_STAGGER_MS}>
                 <TrackCard track={track} onSelect={onSelectTrack} />
-              </li>
-            )
-          })}
+              </ScrollReveal>
+            </li>
+          ))}
         </ul>
       ) : (
         <div className="flex flex-col items-center gap-4 rounded-[30px] bg-white px-6 py-12 text-center">

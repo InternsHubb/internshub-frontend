@@ -29,38 +29,40 @@ function InternshipPage() {
   useScrollReveal()
 
   return (
-    <div
-      className={`min-h-svh overflow-x-clip bg-[#f4f0f8] text-base tracking-normal text-[#111827] scheme-light ${PAGE_FONT}`}
-    >
-      <Navbar activeSection="internship" sectionLinkBase={ROUTES.home} containerClassName={PAGE_CONTAINER} />
+    <div className="min-h-svh overflow-x-clip bg-[#f4f0f8] scheme-light">
+      {/* Same Navbar as the landing page: own container, and it inherits the same typography as there,
+          so the page font below is scoped to the content. Only the active item and link base differ. */}
+      <Navbar activeSection="internship" sectionLinkBase={ROUTES.home} />
 
-      {/* Every section, the hero included, shares one container so they all start on the same edge. */}
-      <main className={`flex flex-col ${PAGE_CONTAINER}`}>
-        <Hero onStart={scrollToTracks} />
+      <div className={`text-base tracking-normal text-[#111827] ${PAGE_FONT}`}>
+        {/* Every section, the hero included, shares one container so they all start on the same edge. */}
+        <main className={`flex flex-col ${PAGE_CONTAINER}`}>
+          <Hero onStart={scrollToTracks} />
 
-        <div className="mt-12 xl:mt-0">
-          <WhyChooseUs />
-        </div>
+          <div className="mt-12 xl:mt-0">
+            <WhyChooseUs />
+          </div>
 
-        {/* Scroll margin = sticky navbar (99px) + 24px gap, so the heading isn't hidden under it. */}
-        <div id={TRACKS_SECTION_ID} className="mt-8 scroll-mt-[123px]">
-          <TracksSection onSelectTrack={handleSelectTrack} onSeeAllTracks={handleSeeAllTracks} />
-        </div>
+          {/* Scroll margin = sticky navbar (99px) + 24px gap, so the heading isn't hidden under it. */}
+          <div id={TRACKS_SECTION_ID} className="mt-8 scroll-mt-[123px]">
+            <TracksSection onSelectTrack={handleSelectTrack} onSeeAllTracks={handleSeeAllTracks} />
+          </div>
 
-        <div className="mt-8">
-          <PromoBanner onStart={scrollToTracks} />
-        </div>
+          <div className="mt-8">
+            <PromoBanner onStart={scrollToTracks} />
+          </div>
 
-        <div className="mt-16 md:mt-2">
-          <Testimonials />
-        </div>
+          <div className="mt-16 md:mt-2">
+            <Testimonials />
+          </div>
 
-        <div className="mt-[93px]">
-          <FAQ />
-        </div>
-      </main>
+          <div className="mt-[93px]">
+            <FAQ />
+          </div>
+        </main>
 
-      <InternshipFooter />
+        <InternshipFooter />
+      </div>
     </div>
   )
 }
