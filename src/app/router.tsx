@@ -7,6 +7,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 
+import { RequireAuth } from '@/components/auth/RequireAuth';
 import { REGISTER_HASHES, ROUTES } from '@/constants/routes';
 import LandingPage from '@/pages/LandingPage';
 
@@ -17,6 +18,7 @@ const RegisterScreen = lazy(() => import('@/components/RegisterScreen'));
 const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'));
 const Login = lazy(() => import('@/pages/auth/Login'));
 const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
+const MicrosoftCallback = lazy(() => import('@/pages/auth/MicrosoftCallback'));
 
 const PageFallback: React.FC = () => (
   <div className="min-h-screen bg-white flex items-center justify-center">
@@ -53,11 +55,19 @@ export const router = createBrowserRouter([
       { path: ROUTES.home, element: <LandingPage /> },
       // Sub-paths keep rendering the Internship page, as before.
       { path: `${ROUTES.internship}/*`, element: <InternshipPage /> },
-      { path: ROUTES.onboarding, element: <OnboardingFlow /> },
+      {
+        path: ROUTES.onboarding,
+        element: (
+          <RequireAuth>
+            <OnboardingFlow />
+          </RequireAuth>
+        ),
+      },
       { path: ROUTES.register, element: <RegisterScreen /> },
       { path: ROUTES.authRegister, element: <RegisterScreen /> },
       { path: ROUTES.forgotPassword, element: <ForgotPassword /> },
       { path: ROUTES.phoneOtp, element: <PhoneOTP /> },
+      { path: ROUTES.microsoftCallback, element: <MicrosoftCallback /> },
       // Any other /auth path shows Login, as before.
       { path: `${ROUTES.login}/*`, element: <Login /> },
       { path: '*', element: <Navigate to={ROUTES.home} replace /> },

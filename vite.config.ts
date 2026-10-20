@@ -2,10 +2,24 @@ import { fileURLToPath, URL } from "node:url";
 
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 
-export default defineConfig({
+const DEFAULT_API_PROXY_TARGET = "https://internshub.runasp.net";
+
+export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
+  server: {
+    // The API only allows the production origin through CORS, so dev requests go through here.
+    // Deployed builds use the matching /api rewrite in vercel.json. `vite preview` reuses this proxy.
+    proxy: {
+      "/api": {
+        // API_PROXY_TARGET (no VITE_ prefix, so it never reaches the bundle) overrides the backend.
+        target: loadEnv(mode, process.cwd(), "").API_PROXY_TARGET || DEFAULT_API_PROXY_TARGET,
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -35,4 +49,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

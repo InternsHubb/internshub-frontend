@@ -26,7 +26,34 @@ export type AuthLayoutBrandImage = {
   alt: string;
 };
 
+// Login and Register share this layout; Figma gives them different column split, image shape and
+// form width.
+export type AuthLayoutVariant = 'login' | 'register';
+
+type VariantStyles = {
+  grid: string;
+  imageWrap: string;
+  image: string;
+  form: string;
+};
+
+const VARIANT_STYLES: Record<AuthLayoutVariant, VariantStyles> = {
+  login: {
+    grid: 'lg:grid-cols-[54fr_46fr]',
+    imageWrap: 'max-w-[549px] lg:mt-[50px]',
+    image: 'rounded-ss-[120px] rounded-se-[28px] rounded-es-[28px] rounded-ee-[100px] lg:h-[320px]',
+    form: 'max-w-[430px]',
+  },
+  register: {
+    grid: 'lg:grid-cols-[48fr_52fr]',
+    imageWrap: 'max-w-[481px] lg:mt-[38px] lg:mb-[51px]',
+    image: 'rounded-ss-[100px] rounded-se-[26px] rounded-es-[26px] rounded-ee-[82px] lg:h-[255px]',
+    form: 'max-w-[526px]',
+  },
+};
+
 export type AuthLayoutProps = {
+  variant?: AuthLayoutVariant;
   brand: AuthLayoutBrand;
   /**
    * undefined → default project brand image; null → no image;
@@ -47,10 +74,12 @@ const BRAND_GRADIENT =
   'bg-[linear-gradient(155deg,#22023c_0%,#3a0353_55%,#4c0585_82%,#5a198f_100%)]';
 
 function BrandPanel({
+  styles,
   brand,
   brandImage,
   brandExtra,
 }: {
+  styles: VariantStyles;
   brand: AuthLayoutBrand;
   brandImage: AuthLayoutBrandImage | null;
   brandExtra?: ReactNode;
@@ -71,16 +100,16 @@ function BrandPanel({
         className="pointer-events-none absolute -bottom-20 end-10 size-[20rem] rounded-full bg-glow/10"
       />
 
-      <div className="relative flex h-full flex-col justify-between gap-8 p-5 sm:p-8 lg:gap-10 lg:p-[58px]">
+      <div className="relative flex h-full flex-col gap-8 p-5 sm:p-8 lg:gap-0 lg:px-12 lg:pt-[34px] lg:pb-8">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <span
             aria-hidden="true"
-            className="grid size-9 place-items-center rounded-xl bg-white text-sm font-bold text-ink-deep"
+            className="grid size-[38px] place-items-center rounded-[13px] rounded-es-[4px] bg-white text-sm font-bold tracking-[-0.08em] text-ink-deep shadow-[0_10px_12px_rgba(0,0,0,0.18)]"
           >
             ih
           </span>
-          <span className="text-xl font-bold text-white lg:text-[25px]">
-            InternsHub
+          <span dir="ltr" className="text-xl font-bold text-white">
+            Interns<span className="text-[#d7b8e9]">Hub</span>
           </span>
           <span className="rounded-full border border-white/25 bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-[0.14em] text-onbrand-bright">
             EDTECH
@@ -88,12 +117,12 @@ function BrandPanel({
         </div>
 
         {brandImage ? (
-          <div className="mx-auto hidden w-full sm:block sm:w-[92%] lg:w-[90%]">
+          <div className={`hidden w-full sm:block ${styles.imageWrap}`}>
             <div className="relative">
               <img
                 src={brandImage.src}
                 alt={brandImage.alt}
-                className="h-52 w-full rounded-se-lg rounded-es-lg rounded-ss-[2.5rem] rounded-ee-[2.5rem] object-cover shadow-2xl sm:h-64 lg:aspect-[8/5] lg:h-auto"
+                className={`h-52 w-full -rotate-1 border border-white/25 object-cover shadow-[0_28px_65px_rgba(0,0,0,0.25)] sm:h-64 ${styles.image}`}
               />
               {brandExtra ? (
                 <div className="absolute inset-0 hidden lg:block">
@@ -106,7 +135,7 @@ function BrandPanel({
           <div className="hidden lg:block">{brandExtra}</div>
         ) : null}
 
-        <div className="flex flex-col gap-3 lg:gap-4">
+        <div className="flex flex-col gap-3 lg:mt-8 lg:gap-3.5">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent-soft">
             {brand.eyebrow}
           </p>
@@ -119,13 +148,11 @@ function BrandPanel({
         </div>
 
         {highlights.length > 0 ? (
-          <ul className="hidden flex-wrap items-center text-xs font-medium text-onbrand-soft sm:flex">
+          <ul className="mt-auto hidden flex-wrap items-center gap-[11px] lg:pt-8 text-[11px] tracking-[0.08em] text-onbrand-soft sm:flex">
             {highlights.map((word, index) => (
-              <li key={word} className="flex items-center gap-3">
+              <li key={word} className="flex items-center gap-[11px]">
                 {index > 0 ? (
-                  <span aria-hidden="true" className="text-onbrand-soft/70">
-                    —
-                  </span>
+                  <span aria-hidden="true" className="h-px w-[34px] bg-white/20" />
                 ) : null}
                 {word}
               </li>
@@ -137,13 +164,13 @@ function BrandPanel({
   );
 }
 
-function HelpRow({ help }: { help: AuthLayoutHelp }) {
+function HelpRow({ help, width }: { help: AuthLayoutHelp; width: string }) {
   return (
-    <div className="mx-auto flex w-full max-w-[430px] flex-wrap items-center justify-between gap-x-4 gap-y-1 pt-6 text-xs">
+    <div className={`mx-auto mt-[18px] flex w-full ${width} flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-[#e8e2ec] pt-[18px] text-[11px]`}>
       <span className="text-muted">{help.text}</span>
       <a
         href={help.href}
-        className="rounded-sm font-bold text-brand-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+        className="rounded-sm text-brand-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
       >
         {help.linkLabel}
       </a>
@@ -152,6 +179,7 @@ function HelpRow({ help }: { help: AuthLayoutHelp }) {
 }
 
 export function AuthLayout({
+  variant = 'login',
   brand,
   brandImage,
   brandExtra,
@@ -160,6 +188,7 @@ export function AuthLayout({
   help,
   children,
 }: AuthLayoutProps) {
+  const styles = VARIANT_STYLES[variant];
   const resolvedBrandImage =
     brandImage === null
       ? null
@@ -169,8 +198,9 @@ export function AuthLayout({
         });
 
   return (
-    <div className="flex min-h-dvh flex-col lg:grid lg:grid-cols-[54fr_46fr]">
+    <div className={`flex min-h-dvh flex-col lg:grid ${styles.grid}`}>
       <BrandPanel
+        styles={styles}
         brand={brand}
         brandImage={resolvedBrandImage}
         brandExtra={brandExtra}
@@ -183,29 +213,29 @@ export function AuthLayout({
         />
 
         <div className="relative flex flex-1 flex-col px-5 pt-8 pb-6 sm:px-10 lg:px-[59px] lg:pt-[38px] lg:pb-8">
-          <div className="mx-auto flex w-full max-w-[430px] flex-1 flex-col">
+          <div className={`mx-auto flex w-full ${styles.form} flex-1 flex-col justify-center`}>
             {progress ? <div className="mb-7">{progress}</div> : null}
 
             {header.eyebrow ? (
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
+              <p className="self-start rounded-lg bg-[#fff3e8] px-2.5 py-[7px] text-[10px] font-bold uppercase tracking-[0.14em] text-accent">
                 {header.eyebrow}
               </p>
             ) : null}
 
-            <h1 className="mt-2 text-[28px] font-extrabold leading-tight text-ink sm:text-[32px] lg:text-[36px]">
+            <h1 className="mt-3 text-[28px] font-extrabold leading-[1.15] tracking-[-0.035em] text-ink sm:text-[32px] lg:text-[34px]">
               {header.title}
             </h1>
 
             {header.description ? (
-              <p className="mt-2 text-xs leading-relaxed text-muted sm:text-[13px]">
+              <p className="mt-2 text-xs leading-relaxed text-muted">
                 {header.description}
               </p>
             ) : null}
 
-            <div className="mt-7 flex-1">{children}</div>
+            <div className="mt-[26px]">{children}</div>
           </div>
 
-          {help ? <HelpRow help={help} /> : null}
+          {help ? <HelpRow help={help} width={styles.form} /> : null}
         </div>
       </main>
     </div>

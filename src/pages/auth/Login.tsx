@@ -1,155 +1,220 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
+import googleIcon from '@/assets/auth/google.svg';
+import microsoftIcon from '@/assets/auth/microsoft.svg';
+import phoneIcon from '@/assets/auth/phone-purple.svg';
+import {
+  FIELD_INPUT,
+  FIELD_LABEL,
+  FieldError,
+  FormAlert,
+  PasswordToggle,
+  SubmitButton,
+  TEXT_LINK,
+  fieldShellClass,
+} from '@/components/auth/AuthFormParts';
 import LoginLayout from '@/components/auth/LoginLayout';
 import { ROUTES } from '@/constants/routes';
+import { useAuth } from '@/hooks/useAuth';
+import { login, signInWithGoogle } from '@/lib/api/auth';
+import { externalSignInErrorKey, loginErrorKey } from '@/lib/auth/errorMessages';
+import { GoogleSignInError, requestGoogleIdToken } from '@/lib/auth/googleIdentity';
+import { MicrosoftSignInError, startMicrosoftSignIn } from '@/lib/auth/microsoftIdentity';
+import { postSignInPath, redirectFromState } from '@/lib/auth/redirect';
 
-function EyeIcon({ hidden }: { hidden: boolean }) {
-  return hidden ? (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      className="size-5"
-    >
-      <path
-        d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9.9 5.2A10.8 10.8 0 0112 5c5 0 8.5 4.5 9.5 7-.4 1-1.3 2.3-2.6 3.5M6.2 6.2C3.9 7.7 2.7 9.8 2.5 12c.5 1.2 1.6 3.1 3.6 4.6A10.1 10.1 0 0012 19c1 0 2-.2 2.9-.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  ) : (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      className="size-5"
-    >
-      <path
-        d="M2.5 12s3.5-7 9.5-7 9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z"
-        strokeLinejoin="round"
-      />
-      <circle cx="12" cy="12" r="2.5" />
-    </svg>
-  );
-}
+// Messages are translation keys, resolved at render time so they follow the active language.
+const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, 'auth.common.errors.emailRequired')
+    .email('auth.common.errors.emailInvalid'),
+  password: z.string().min(1, 'auth.common.errors.passwordRequired'),
+});
+type LoginForm = z.infer<typeof loginSchema>;
+
+const SOCIAL_BUTTON =
+  'inline-flex min-h-12 items-center justify-center gap-[9px] rounded-[13px] border border-[#ccb8d8] bg-white px-3.5 text-[11px] font-bold tracking-[0.01em] text-ink-deep transition hover:bg-[#faf6fc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-60';
+
+// Shown when the Microsoft callback page sends the user back here with a failure.
+export type LoginLocationState = {
+  from?: string;
+  errorKey?: string;
+};
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { reloadUser } = useAuth();
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [formErrorKey, setFormErrorKey] = useState<string | null>(
+    () => (location.state as LoginLocationState | null)?.errorKey ?? null,
+  );
+  const [isGoogleBusy, setIsGoogleBusy] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema), mode: 'onSubmit', reValidateMode: 'onChange' });
+
+  const finishSignIn = async () => {
+    const user = await reloadUser();
+    navigate(redirectFromState(location.state) ?? postSignInPath(user), { replace: true });
+  };
+
+  // Leaves the app for the Microsoft sign-in page; MicrosoftCallback finishes the sign-in.
+  const handleMicrosoft = () => {
+    setFormErrorKey(null);
+    try {
+      startMicrosoftSignIn(redirectFromState(location.state));
+    } catch (error) {
+      setFormErrorKey(
+        error instanceof MicrosoftSignInError && error.reason === 'unavailable'
+          ? 'auth.login.errors.microsoftUnavailable'
+          : 'auth.login.errors.microsoftFailed',
+      );
+    }
+  };
+
+  const onSubmit = async (values: LoginForm) => {
+    setFormErrorKey(null);
+    try {
+      await login({ email: values.email, password: values.password });
+    } catch (error) {
+      setFormErrorKey(loginErrorKey(error));
+      return;
+    }
+    await finishSignIn();
+  };
+
+  const handleGoogle = async () => {
+    setFormErrorKey(null);
+    setIsGoogleBusy(true);
+    try {
+      const idToken = await requestGoogleIdToken();
+      await signInWithGoogle(idToken);
+    } catch (error) {
+      setIsGoogleBusy(false);
+      if (error instanceof GoogleSignInError) {
+        setFormErrorKey(
+          error.reason === 'unavailable' ? 'auth.login.errors.googleUnavailable' : 'auth.login.errors.googleFailed',
+        );
+      } else {
+        setFormErrorKey(externalSignInErrorKey(error, 'google'));
+      }
+      return;
+    }
+    await finishSignIn();
+  };
+
+  const isBusy = isSubmitting || isGoogleBusy;
+  const emailError = errors.email?.message;
+  const passwordError = errors.password?.message;
 
   return (
     <LoginLayout>
-      <form
-        className="flex flex-col gap-5"
-        onSubmit={(event) => event.preventDefault()}
-      >
-        <div>
-          <label
-            htmlFor="login-email"
-            className="mb-2 block text-xs font-semibold text-label"
-          >
-            Email address
-          </label>
+      {formErrorKey ? <FormAlert title={t('auth.login.errorTitle')} message={t(formErrorKey)} /> : null}
+
+      <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <label htmlFor="login-email" className={FIELD_LABEL}>
+          {t('auth.common.emailLabel')}
+        </label>
+        <div className={fieldShellClass(Boolean(emailError))}>
           <input
             id="login-email"
-            name="email"
             type="email"
+            dir="ltr"
             autoComplete="username"
-            placeholder="you@example.com"
-            required
-            className="h-12 w-full rounded-xl border border-[#e7e0eb] bg-white px-4 text-sm text-ink outline-none transition placeholder:text-[#9992a3] focus:border-[#8a48ad] focus:ring-4 focus:ring-purple-100"
+            placeholder={t('auth.common.emailPlaceholder')}
+            aria-invalid={Boolean(emailError)}
+            aria-describedby={emailError ? 'login-email-error' : undefined}
+            className={`${FIELD_INPUT} rtl:text-right`}
+            {...register('email')}
           />
         </div>
+        <FieldError id="login-email-error" message={emailError ? t(emailError) : undefined} />
 
-        <div>
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <label
-              htmlFor="login-password"
-              className="block text-xs font-semibold text-label"
-            >
-              Password
-            </label>
-            <Link
-              to={ROUTES.forgotPassword}
-              className="rounded-sm text-xs font-semibold text-brand-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          <div className="relative">
-            <input
-              id="login-password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              placeholder="Enter your password"
-              required
-              className="h-12 w-full rounded-xl border border-[#e7e0eb] bg-white px-4 pe-12 text-sm text-ink outline-none transition placeholder:text-[#9992a3] focus:border-[#8a48ad] focus:ring-4 focus:ring-purple-100"
-            />
-            <button
-              type="button"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-              aria-pressed={showPassword}
-              onClick={() => setShowPassword((visible) => !visible)}
-              className="absolute inset-y-0 end-0 inline-flex min-w-11 items-center justify-center rounded-e-xl text-muted hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-brand-primary"
-            >
-              <EyeIcon hidden={showPassword} />
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-xs text-label">
-            <input
-              type="checkbox"
-              name="remember"
-              className="size-4 rounded border-[#cfc5d8] accent-brand"
-            />
-            Remember me
+        <div className="mt-[15px] mb-2 flex items-center justify-between gap-3">
+          <label htmlFor="login-password" className="text-xs text-[#111827]">
+            {t('auth.common.passwordLabel')}
           </label>
-        </div>
-
-        <button
-          type="submit"
-          className="mt-1 inline-flex min-h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(105deg,#500a8a_0%,#400066_52%,#35004e_100%)] px-5 text-sm font-bold text-white shadow-[0_9px_20px_rgba(54,0,79,0.2)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
-        >
-          Log in
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="size-4 rtl:rotate-180"
-          >
-            <path
-              d="M5 12h14m-6-6 6 6-6 6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        <p className="pt-1 text-center text-xs text-muted">
-          New to InternsHub?{' '}
-          <Link
-            to={ROUTES.register}
-            className="rounded-sm font-bold text-brand-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
-          >
-            Create an account
+          <Link to={ROUTES.forgotPassword} className={`${TEXT_LINK} text-[11px]`}>
+            {t('auth.login.forgotPassword')}
           </Link>
-        </p>
+        </div>
+        <div className={fieldShellClass(Boolean(passwordError))}>
+          <input
+            id="login-password"
+            type={isPasswordVisible ? 'text' : 'password'}
+            autoComplete="current-password"
+            placeholder={t('auth.login.passwordPlaceholder')}
+            aria-invalid={Boolean(passwordError)}
+            aria-describedby={passwordError ? 'login-password-error' : undefined}
+            className={FIELD_INPUT}
+            {...register('password')}
+          />
+          <PasswordToggle
+            isVisible={isPasswordVisible}
+            onToggle={() => setIsPasswordVisible((visible) => !visible)}
+            showLabel={t('auth.common.showPassword')}
+            hideLabel={t('auth.common.hidePassword')}
+          />
+        </div>
+        <FieldError id="login-password-error" message={passwordError ? t(passwordError) : undefined} />
+
+        <div className="mt-5">
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            label={t('auth.login.submit')}
+            submittingLabel={t('auth.login.submitting')}
+          />
+        </div>
       </form>
+
+      <div className="flex items-center pt-[23px]" aria-hidden="true">
+        <span className="h-px flex-1 bg-[#e8e2ec]" />
+        <span className="px-3 text-[10px] tracking-[0.14em] text-[#9a919e]">{t('auth.login.divider')}</span>
+        <span className="h-px flex-1 bg-[#e8e2ec]" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-2.5 pt-[17px] sm:grid-cols-2">
+        <button type="button" onClick={handleGoogle} disabled={isBusy} className={SOCIAL_BUTTON}>
+          {isGoogleBusy ? (
+            <span
+              aria-hidden="true"
+              className="size-4 animate-spin rounded-full border-2 border-ink-deep border-t-transparent"
+            />
+          ) : (
+            <img alt="" src={googleIcon} className="size-4" />
+          )}
+          {t('auth.login.google')}
+        </button>
+        <Link to={ROUTES.phoneOtp} className={SOCIAL_BUTTON}>
+          <img alt="" src={phoneIcon} className="size-4" />
+          {t('auth.login.phoneOtp')}
+        </Link>
+      </div>
+
+      {/* Figma's full-width Microsoft row, enabled with the same treatment as the Google button. */}
+      <button type="button" onClick={handleMicrosoft} disabled={isBusy} className={`${SOCIAL_BUTTON} mt-2.5 w-full`}>
+        <img alt="" src={microsoftIcon} className="size-4" />
+        {t('auth.login.microsoft')}
+      </button>
+
+      <p className="pt-[22px] text-center text-[11px] text-muted">
+        {t('auth.login.newHere')}{' '}
+        <Link to={ROUTES.register} className={TEXT_LINK}>
+          {t('auth.login.createAccount')}
+        </Link>
+      </p>
     </LoginLayout>
   );
 }
