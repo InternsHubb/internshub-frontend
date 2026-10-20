@@ -97,7 +97,7 @@
       "successBody": "We created your account for {{email}}. Open the confirmation link we sent, then log in to continue.",
       "resend": "Resend confirmation email",
       "resending": "Sending...",
-      "resent": "Confirmation email sent again.",
+      "resent": "Request received. If this address still needs confirming, a new link is on its way. Check your inbox and spam folder.",
       "goToLogin": "Go to login",
       "createdTitle": "Your account was created",
       "createdBody": "We created your account for {{email}}, but couldn't sign you in automatically. Log in to continue. If you're asked to confirm your email, open the link we sent you first.",
