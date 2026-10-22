@@ -22,11 +22,14 @@ import {
 import { mediaActionKey, mediaDisplay, requiredChecksReady, screenActionKey, screenDisplay } from './deviceStatus';
 import type { CheckDisplay } from './deviceStatus';
 import { CameraPreview, DeviceSelect, MicMeter } from './devicePreview';
+import { FullscreenNotice } from './FullscreenNotice';
+import type { FullscreenInfo } from './FullscreenNotice';
 import { isScreenAccepted } from './useDeviceCheck';
 import type { DeviceCheckApi } from './useDeviceCheck';
 
 // "Device Check" (Figma 24:73): live camera preview, device pickers, microphone level and the
-// screen share, all from the same streams the Setup step opened. Continue needs all three ready.
+// screen share, all from the same streams the Setup step opened. Continue needs all three ready;
+// if the candidate left the fullscreen started on Setup, the same click re-enters it.
 
 type DevicePanelProps = { icon: LucideIcon; title: string; display: CheckDisplay; tools?: ReactNode; children: ReactNode };
 
@@ -56,9 +59,14 @@ export function CheckMessage({ display }: { display: CheckDisplay }) {
   );
 }
 
-type DeviceCheckProps = { devices: DeviceCheckApi; onBack: () => void; onContinue: () => void };
+type DeviceCheckProps = {
+  devices: DeviceCheckApi;
+  fullscreen: FullscreenInfo;
+  onBack: () => void;
+  onContinue: () => void;
+};
 
-export function DeviceCheck({ devices, onBack, onContinue }: DeviceCheckProps) {
+export function DeviceCheck({ devices, fullscreen, onBack, onContinue }: DeviceCheckProps) {
   const { t } = useTranslation();
   const k = (key: string) => t(`onboarding.interview.deviceCheck.${key}`);
   const { camera, microphone, screen } = devices;
@@ -147,6 +155,9 @@ export function DeviceCheck({ devices, onBack, onContinue }: DeviceCheckProps) {
           </DevicePanel>
         </div>
       </div>
+
+      {/* Fullscreen normally started with Start Interview; Continue re-enters it if it was left. */}
+      <FullscreenNotice fullscreen={fullscreen} actionLabel={k('continue')} intro={false} />
 
       <section className={`${CARD} flex flex-col gap-5 p-5 lg:flex-row lg:items-center lg:justify-between`}>
         <div className="min-w-0">

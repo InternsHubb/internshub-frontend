@@ -39,6 +39,8 @@ export function mediaDisplay(kind: MediaKind, check: MediaCheck): CheckDisplay {
       return CHECKING;
     case 'ready':
       return { tone: 'success', labelKey: `${PREFIX}.status.${kind}Ready` };
+    case 'muted':
+      return { tone: 'warning', labelKey: `${PREFIX}.status.interrupted`, messageKey: `${PREFIX}.failures.muted.${kind}` };
     case 'stopped':
       return { tone: 'danger', labelKey: `${PREFIX}.status.stopped`, messageKey: `${PREFIX}.failures.stopped.${kind}` };
     case 'failed':
@@ -67,6 +69,8 @@ export function screenDisplay(check: ScreenCheck): CheckDisplay {
         };
       }
       return { tone: 'warning', labelKey: `${PREFIX}.status.screenWrongSurface`, messageKey: `${PREFIX}.failures.wrongSurface` };
+    case 'muted':
+      return { tone: 'warning', labelKey: `${PREFIX}.status.interrupted`, messageKey: `${PREFIX}.failures.muted.screen` };
     case 'stopped':
       return { tone: 'danger', labelKey: `${PREFIX}.status.stopped`, messageKey: `${PREFIX}.failures.stopped.screen` };
     case 'failed':
@@ -88,9 +92,42 @@ export function connectionDisplay(check: ConnectionCheck): CheckDisplay {
   return NOT_CHECKED;
 }
 
+// Cause of a device outage for the integrity signals (research §11.4); null when the device is
+// available, undefined while a check is starting or idle (no change to report).
+export function mediaOutage(check: MediaCheck): string | null | undefined {
+  switch (check.status) {
+    case 'ready':
+      return null;
+    case 'muted':
+      return 'muted';
+    case 'stopped':
+      return 'ended';
+    case 'failed':
+      return check.reason === 'permission_denied' ? 'permission_denied' : 'acquire_failed';
+    default:
+      return undefined;
+  }
+}
+
+// A shared window or tab is still an active capture; the surface is recorded separately.
+export function screenOutage(check: ScreenCheck): string | null | undefined {
+  switch (check.status) {
+    case 'shared':
+      return null;
+    case 'muted':
+      return 'muted';
+    case 'stopped':
+      return 'ended';
+    case 'failed':
+      return check.reason === 'permission_denied' ? 'permission_denied' : 'acquire_failed';
+    default:
+      return undefined;
+  }
+}
+
 // Label for the button that (re)runs a camera or microphone check.
 export function mediaActionKey(kind: MediaKind, check: MediaCheck): string {
-  if (check.status === 'stopped') return `${PREFIX}.actions.reconnect_${kind}`;
+  if (check.status === 'stopped' || check.status === 'muted') return `${PREFIX}.actions.reconnect_${kind}`;
   if (check.status === 'failed') return `${PREFIX}.actions.retry`;
   if (check.status === 'ready') return `${PREFIX}.actions.checkAgain`;
   return `${PREFIX}.actions.runCheck`;
@@ -102,6 +139,6 @@ export function screenActionKey(check: ScreenCheck): string {
       ? `${PREFIX}.actions.shareAgain`
       : `${PREFIX}.actions.changeScreen`;
   }
-  if (check.status === 'stopped') return `${PREFIX}.actions.resumeSharing`;
+  if (check.status === 'stopped' || check.status === 'muted') return `${PREFIX}.actions.resumeSharing`;
   return `${PREFIX}.actions.shareScreen`;
 }

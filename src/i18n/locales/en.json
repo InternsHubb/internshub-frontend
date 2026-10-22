@@ -516,6 +516,7 @@
         "screenShared": "Full screen shared",
         "screenSharedUnknown": "Screen shared",
         "screenWrongSurface": "Not the entire screen",
+        "interrupted": "Interrupted",
         "stopped": "Stopped",
         "blocked": "Blocked",
         "notFound": "Not found",
@@ -554,6 +555,11 @@
           "camera": "Your camera has stopped. Check that it is connected, then select Reconnect camera.",
           "microphone": "Your microphone has stopped. Check that it is connected, then select Reconnect microphone.",
           "screen": "Screen sharing has stopped. Please share your entire screen so the interview can continue."
+        },
+        "muted": {
+          "camera": "Your camera has paused. Check that it isn't paused in your browser or turned off in your system settings, then select Reconnect camera.",
+          "microphone": "Your microphone has paused. Check that it isn't paused in your browser or muted in your system settings, then select Reconnect microphone.",
+          "screen": "Screen sharing has paused. Resume it from your browser, or select Share screen again and choose your entire screen."
         },
         "wrongSurface": "A window or tab was shared. Please share your entire screen so the interview can continue."
       },
@@ -680,7 +686,21 @@
         "deviceStatus": "Device status",
         "screenActive": "Full-screen sharing active",
         "pausedTitle": "Interview paused",
-        "pausedBody": "A required device has stopped. Restore it to continue the interview."
+        "pausedBody": "A required device has stopped. Restore it to continue the interview.",
+        "copyDisabled": "Copying, cutting and pasting are turned off in the question area during the interview."
+      },
+      "fullscreen": {
+        "noticeTitle": "The interview runs in fullscreen",
+        "noticeBody": "When you select {{action}}, the interview fills your screen and the browser hides its tabs and toolbars. If you leave fullscreen during the questions, for example with Esc, the question is hidden and the interview pauses until you return.",
+        "unsupportedTitle": "Fullscreen isn't available in this browser",
+        "unsupportedBody": "The interview will continue in a normal browser window.",
+        "requestFailedTitle": "Fullscreen didn't start",
+        "requestFailedBody": "Your browser didn't switch to fullscreen, so the interview hasn't started. Select {{action}} to try again. If it keeps happening, allow fullscreen for this site in your browser settings, or use another desktop browser.",
+        "warningTitle": "Please return to fullscreen",
+        "warningBody": "Please return to fullscreen to continue the interview. The question is hidden and the interview is paused until you do.",
+        "return": "Return to fullscreen",
+        "restoreFailed": "Fullscreen didn't start. Please select Return to fullscreen again.",
+        "statusLabel": "Fullscreen"
       },
       "sample": {
         "questions": {

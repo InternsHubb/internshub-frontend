@@ -27,10 +27,12 @@ import {
 } from './deviceStatus';
 import type { CheckDisplay } from './deviceStatus';
 import type { DeviceCheckApi } from './useDeviceCheck';
+import { FullscreenNotice } from './FullscreenNotice';
+import type { FullscreenInfo } from './FullscreenNotice';
 
 // Step 07 "Get Ready for Your Interview" (Figma 22:20176): real camera, microphone, screen and
 // network checks plus explicit consent. Start Interview stays disabled until all three required
-// checks pass and consent is given.
+// checks pass and consent is given; clicking it puts the interview into fullscreen.
 
 const MESSAGE_TONE: Record<PillTone, string> = {
   success: MUTED_TEXT,
@@ -76,12 +78,14 @@ function CheckCard({ icon, title, description, display, actionLabel, busy, onAct
 type InterviewSetupProps = {
   devices: DeviceCheckApi;
   consented: boolean;
+  fullscreen: FullscreenInfo;
   onConsentChange: (consented: boolean) => void;
   onBack: () => void;
+  // Requests fullscreen, so it must stay the direct click handler of Start Interview.
   onStart: () => void;
 };
 
-export function InterviewSetup({ devices, consented, onConsentChange, onBack, onStart }: InterviewSetupProps) {
+export function InterviewSetup({ devices, consented, fullscreen, onConsentChange, onBack, onStart }: InterviewSetupProps) {
   const { t } = useTranslation();
   const k = (key: string) => t(`onboarding.interview.setup.${key}`);
   const canStart = requiredChecksReady(devices) && consented;
@@ -185,6 +189,8 @@ export function InterviewSetup({ devices, consented, onConsentChange, onBack, on
         </dl>
         <p className={`mt-2 text-[11px] ${MUTED_TEXT}`}>{k('durationNote')}</p>
       </div>
+
+      <FullscreenNotice fullscreen={fullscreen} actionLabel={k('start')} />
 
       <div className="flex flex-col items-stretch gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
         {!canStart && <p className={`text-xs sm:me-auto ${MUTED_TEXT}`}>{k('startHint')}</p>}
