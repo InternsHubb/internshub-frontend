@@ -432,5 +432,64 @@
         }
       }
     }
+  },
+  "onboarding": {
+    "verify": {
+      "title": "Verify Your Account",
+      "subtitle": "Confirm your email and phone number to secure your account.",
+      "noticeTitle": "Email and phone verification are required",
+      "noticeBody": "You can continue to your profile now, but both must be verified before the AI interview or payment. Google and Microsoft sign-in don't skip this step.",
+      "badge": {
+        "pending": "Pending",
+        "verified": "Verified",
+        "unavailable": "Not available yet"
+      },
+      "codeDigit": "Digit {{index}} of {{total}}",
+      "sendCode": "Send code",
+      "resend": "Resend code",
+      "resendIn": "Resend code · {{seconds}}s",
+      "requestedFor": "Code requested for {{address}}",
+      "notConfirmedYet": "The code was accepted, but your account doesn't show as verified yet. Refresh the page in a moment.",
+      "retry": "Try again",
+      "back": "Back to Home",
+      "continue": "Continue to Profile →",
+      "email": {
+        "title": "Email verification",
+        "noEmail": "No email address on your account",
+        "instructions": "Open the confirmation email we sent you and click the link in it. Then come back to this page: your status updates when you return, or tap Check status.",
+        "noEmailHelp": "Your account has no email address yet, so there is no confirmation link to use.",
+        "checkStatus": "Check status",
+        "checking": "Checking…",
+        "verified": "Your email address is verified.",
+        "stillPending": "Your email still shows as not confirmed. Use the link in the confirmation email, then check again."
+      },
+      "phone": {
+        "title": "Phone verification",
+        "subtitle": "We'll text a 6-digit code to your phone.",
+        "addressLabel": "Mobile number",
+        "addressPlaceholder": "01001234567 or +201001234567",
+        "instructions": "Enter the 6-digit code from the SMS, then tap Verify Phone.",
+        "verify": "Verify Phone",
+        "verified": "Your phone number is verified.",
+        "requested": "Request accepted. SMS delivery is currently being fixed on our side, so the code may not arrive. If nothing arrives, try again later."
+      },
+      "nationalId": {
+        "title": "National ID verification",
+        "subtitle": "Egyptian National ID · 14 digits",
+        "instructions": "National ID verification will be added in a later update.",
+        "placeholder": "Enter 14-digit National ID",
+        "verify": "Verify National ID",
+        "unavailable": "Not available yet. Nothing is sent or verified here."
+      },
+      "errors": {
+        "network": "We couldn't reach the server. Check your connection and try again.",
+        "server": "Something went wrong on our side. Please try again in a moment.",
+        "tooMany": "Too many attempts. Please wait a minute and try again.",
+        "phoneInvalid": "Enter a valid mobile number, e.g. 01001234567 or +201001234567.",
+        "codeInvalid": "That code is not valid or has expired. Check it or request a new code.",
+        "rejected": "We couldn't complete that request. Please try again.",
+        "statusUnavailable": "We couldn't load your verification status."
+      }
+    }
   }
 }

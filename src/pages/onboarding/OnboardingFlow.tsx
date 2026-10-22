@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
+import { useAuth } from '@/hooks/useAuth';
+import { VerifyAccountStep } from './VerifyAccountStep';
 import calendarIcon from '../../assets/onboarding/calendar.svg';
 import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
-import idCardPurpleIcon from '../../assets/onboarding/id-card-purple.svg';
 import lockMutedIcon from '../../assets/onboarding/lock-muted.svg';
-import lockPurpleIcon from '../../assets/onboarding/lock-purple.svg';
 import lockWhiteIcon from '../../assets/onboarding/lock-white.svg';
 import receiptPurpleIcon from '../../assets/onboarding/receipt-purple.svg';
 import shieldGreenIcon from '../../assets/onboarding/shield-green.svg';
-import shieldPurpleIcon from '../../assets/onboarding/shield-purple.svg';
 import shieldWhiteIcon from '../../assets/onboarding/shield-white.svg';
 import shieldWhiteNarrowIcon from '../../assets/onboarding/shield-white-narrow.svg';
 import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
@@ -91,6 +90,10 @@ const RESULT_STATE_ORDER: ResultState[] = ['assigned', 'pending', 'incomplete'];
 
 export default function OnboardingFlow() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  // Step 01 counts as done only when the backend reports email and phone as confirmed, not when
+  // the user has moved past it. National ID has no backend check, so it is not part of this.
+  const isAccountVerified = user?.emailConfirmed === true && user.phoneNumberConfirmed === true;
   const [currentStep, setCurrentStep] = useState(1);
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
   const [resultState, setResultState] = useState<ResultState>('assigned');
@@ -279,7 +282,7 @@ export default function OnboardingFlow() {
           
           {stepsMeta.map((s, index) => {
             const stepNumber = index + 1;
-            const isCompleted = stepNumber < currentStep;
+            const isCompleted = stepNumber < currentStep && (stepNumber !== 1 || isAccountVerified);
             const isCurrent = stepNumber === currentStep;
 
             return (
@@ -321,94 +324,9 @@ export default function OnboardingFlow() {
 
           {/* STEP 1: Verify */}
           {currentStep === 1 && (
-            <div className="space-y-6">
-              <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Verify Your Account</h1>
-              <p className="text-[#69616D] text-base">Confirm your email, phone number and National ID to secure your account.</p>
-              
-              <div className="bg-[#FBF7FE] p-4 rounded-[14px] border border-[#4C0585]/10 flex items-start gap-3">
-                <div className="w-[22px] h-[22px] rounded-full border border-[#3A0353] flex items-center justify-center text-[#3A0353] text-xs font-serif italic">i</div>
-                <div className="text-xs text-[#3A0353]">
-                  <p className="font-bold">All three verifications are required, in order</p>
-                  <p className="text-[11px] mt-0.5">Google sign-in does not bypass email, phone and National ID verification before payment or AI interview.</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div className="bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start gap-3 mb-6">
-                      <div className="w-[42px] h-[42px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={shieldPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                      <div className="min-w-0 flex-1 pt-0.5">
-                        <h3 className="text-base font-normal text-[#111827]">Email verification</h3>
-                        <p className="text-[11px] text-[#6B7280] mt-1">Code sent to m***@gmail.com</p>
-                      </div>
-                      <span className="shrink-0 px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
-                    </div>
-                    <p className="text-[11px] text-[#111827] mb-3">Enter the 6-digit code we sent to your email address, then tap Verify Email.</p>
-                    <div className="flex gap-1.5 mb-5">
-                      {[...Array(6)].map((_, i) => (<input key={i} type="text" maxLength={1} className="w-11 min-w-0 shrink h-[52px] text-center border border-[#D9D1DD] rounded-[10px] text-base font-bold bg-[#FAF9FB] outline-none" />))}
-                    </div>
-                    <div className="mb-6"><a href="#resend" className="text-xs text-[#5C1D87] underline">Resend code · 00:24</a></div>
-                  </div>
-                  <div>
-                    <button className="min-h-[50px] px-6 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-[13px] rounded-[13px] shadow-[0_10px_22px_rgba(58,3,83,0.2)] mb-3">Verify Email</button>
-                    <p className="text-[10px] text-[#6B7280]">Demo only. No real message is sent or verified.</p>
-                  </div>
-                </div>
-
-                <div className="bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm opacity-70 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start gap-3 mb-6">
-                      <div className="w-[42px] h-[42px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={lockPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                      <div className="min-w-0 flex-1 pt-0.5">
-                        <h3 className="text-base font-normal text-[#111827]">Phone verification</h3>
-                        <p className="text-[11px] text-[#6B7280] mt-1">Code will be sent to +20 ••• ••• 4821</p>
-                      </div>
-                      <span className="shrink-0 px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
-                    </div>
-                    <p className="text-[11px] text-[#111827] mb-3">Enter the 6-digit code we send by SMS to your phone. Available after your email is verified.</p>
-                    <div className="flex gap-1.5 mb-5">
-                      {[...Array(6)].map((_, i) => (<input key={i} type="text" maxLength={1} disabled className="w-11 min-w-0 shrink h-[52px] text-center border border-[#D9D1DD] rounded-[10px] text-base bg-[#FAF9FB] outline-none" />))}
-                    </div>
-                    <div className="mb-6"><a href="#resend" className="text-xs text-[#5C1D87] underline">Resend code</a></div>
-                  </div>
-                  <div>
-                    <button disabled className="min-h-[50px] px-6 bg-[#ECEAED] text-[#9A939E] font-bold text-[13px] rounded-[13px] mb-3">Verify Phone</button>
-                    <p className="text-[10px] text-[#6B7280]">Demo only. No real message is sent or verified.</p>
-                  </div>
-                </div>
-
-                <div className="bg-white/92 p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm opacity-70 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start gap-3 mb-6">
-                      <div className="w-[42px] h-[42px] shrink-0 bg-[#F3E9FA] rounded-[12px] flex items-center justify-center"><img src={idCardPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                      <div className="min-w-0 flex-1 pt-0.5">
-                        <h3 className="text-base font-normal text-[#111827]">National ID verification</h3>
-                        <p className="text-[11px] text-[#6B7280] mt-1">Egyptian National ID · 14 digits</p>
-                      </div>
-                      <span className="shrink-0 px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Pending</span>
-                    </div>
-                    <p className="text-[11px] text-[#111827] mb-3">Enter your 14-digit National ID number to verify your identity. Available after your phone is verified.</p>
-                    <input type="text" disabled placeholder="Enter 14-digit National ID" className="w-full h-[52px] px-4 border border-[#D9D1DD] rounded-[10px] text-xs bg-[#FAF9FB] mb-5 outline-none" />
-                  </div>
-                  <div>
-                    <button disabled className="min-h-[50px] px-6 bg-[#ECEAED] text-[#9A939E] font-bold text-[13px] rounded-[13px] mb-3">Verify National ID</button>
-                    <p className="text-[10px] text-[#6B7280]">Demo only. No real message is sent or verified.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end items-center gap-4 pt-6">
-                <button 
-                  type="button"
-                  onClick={() => navigate(ROUTES.register)}
-                  className="font-bold text-sm text-[#5C1D87] hover:underline"
-                >
-                  Back to Register
-                </button>
-                <button onClick={() => setCurrentStep(2)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow">Continue to Profile →</button>
-              </div>
-            </div>
+            // Step 01 has no earlier step, and the sign-in pages replace their history entry, so
+            // "back" goes to the home page; the user stays signed in.
+            <VerifyAccountStep onBack={() => navigate(ROUTES.home)} onContinue={() => setCurrentStep(2)} />
           )}
 
           {/* STEP 2: Profile */}

@@ -100,6 +100,24 @@ export function registerErrorResult(error: unknown): RegisterErrorResult {
     : { formKey: 'auth.register.errors.rejected', fieldKeys: {} };
 }
 
+// Failures from POST /api/me/phone (send) and /api/me/phone/confirm. A 400 that names
+// `phoneNumber` means the number was refused; any other 400/401 on confirm is treated as a wrong or
+// expired code.
+export function phoneVerificationErrorKey(error: unknown, stage: 'send' | 'confirm'): string {
+  const prefix = 'onboarding.verify.errors';
+  if (!(error instanceof ApiError)) return `${prefix}.server`;
+  if (error.status === 0) return `${prefix}.network`;
+  if (error.status === HTTP_TOO_MANY_REQUESTS) return `${prefix}.tooMany`;
+  if (error.status >= HTTP_SERVER_ERROR) return `${prefix}.server`;
+  if (error.status === HTTP_BAD_REQUEST && error.errorCodes.includes('phoneNumber')) {
+    return `${prefix}.phoneInvalid`;
+  }
+  if (stage === 'confirm' && (error.status === HTTP_BAD_REQUEST || error.status === HTTP_UNAUTHORIZED)) {
+    return `${prefix}.codeInvalid`;
+  }
+  return `${prefix}.rejected`;
+}
+
 export function genericErrorKey(error: unknown): string {
   return commonErrorKey(error) ?? 'auth.common.errors.server';
 }
