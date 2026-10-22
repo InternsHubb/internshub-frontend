@@ -5,15 +5,17 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-import googleIcon from '@/assets/auth/google.svg';
 import microsoftIcon from '@/assets/auth/microsoft.svg';
 import phoneIcon from '@/assets/auth/phone-purple.svg';
 import {
+  AuthDivider,
   FIELD_INPUT,
   FIELD_LABEL,
   FieldError,
   FormAlert,
+  GoogleButton,
   PasswordToggle,
+  SOCIAL_BUTTON,
   SubmitButton,
   TEXT_LINK,
   fieldShellClass,
@@ -22,9 +24,9 @@ import LoginLayout from '@/components/auth/LoginLayout';
 import ResendConfirmation from '@/components/auth/ResendConfirmation';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
-import { login, signInWithGoogle } from '@/lib/api/auth';
-import { externalSignInErrorKey, isEmailNotConfirmedError, loginErrorKey } from '@/lib/auth/errorMessages';
-import { GoogleSignInError, requestGoogleIdToken } from '@/lib/auth/googleIdentity';
+import { useGoogleSignIn } from '@/hooks/useGoogleSignIn';
+import { login } from '@/lib/api/auth';
+import { isEmailNotConfirmedError, loginErrorKey } from '@/lib/auth/errorMessages';
 import { MicrosoftSignInError, startMicrosoftSignIn } from '@/lib/auth/microsoftIdentity';
 import { postSignInPath, redirectFromState } from '@/lib/auth/redirect';
 
@@ -38,9 +40,6 @@ const loginSchema = z.object({
   password: z.string().min(1, 'auth.common.errors.passwordRequired'),
 });
 type LoginForm = z.infer<typeof loginSchema>;
-
-const SOCIAL_BUTTON =
-  'inline-flex min-h-12 items-center justify-center gap-[9px] rounded-[13px] border border-[#ccb8d8] bg-white px-3.5 text-[11px] font-bold tracking-[0.01em] text-ink-deep transition hover:bg-[#faf6fc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-60';
 
 // Shown when the Microsoft callback page sends the user back here with a failure.
 export type LoginLocationState = {
@@ -58,7 +57,6 @@ export default function Login() {
   const [formErrorKey, setFormErrorKey] = useState<string | null>(
     () => (location.state as LoginLocationState | null)?.errorKey ?? null,
   );
-  const [isGoogleBusy, setIsGoogleBusy] = useState(false);
   // Set when the login was refused because this address is not confirmed yet, so the user can ask
   // for a new confirmation email from here instead of only after sign-up.
   const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
@@ -73,6 +71,8 @@ export default function Login() {
     const user = await reloadUser();
     navigate(redirectFromState(location.state) ?? postSignInPath(user), { replace: true });
   };
+
+  const google = useGoogleSignIn({ onError: setFormErrorKey, onSignedIn: finishSignIn });
 
   // Leaves the app for the Microsoft sign-in page; MicrosoftCallback finishes the sign-in.
   const handleMicrosoft = () => {
@@ -101,27 +101,12 @@ export default function Login() {
     await finishSignIn();
   };
 
-  const handleGoogle = async () => {
+  const handleGoogle = () => {
     setFormErrorKey(null);
-    setIsGoogleBusy(true);
-    try {
-      const idToken = await requestGoogleIdToken();
-      await signInWithGoogle(idToken);
-    } catch (error) {
-      setIsGoogleBusy(false);
-      if (error instanceof GoogleSignInError) {
-        setFormErrorKey(
-          error.reason === 'unavailable' ? 'auth.login.errors.googleUnavailable' : 'auth.login.errors.googleFailed',
-        );
-      } else {
-        setFormErrorKey(externalSignInErrorKey(error, 'google'));
-      }
-      return;
-    }
-    await finishSignIn();
+    void google.signIn();
   };
 
-  const isBusy = isSubmitting || isGoogleBusy;
+  const isBusy = isSubmitting || google.isBusy;
   const emailError = errors.email?.message;
   const passwordError = errors.password?.message;
 
@@ -190,24 +175,15 @@ export default function Login() {
         </div>
       </form>
 
-      <div className="flex items-center pt-[23px]" aria-hidden="true">
-        <span className="h-px flex-1 bg-[#e8e2ec]" />
-        <span className="px-3 text-[10px] tracking-[0.14em] text-[#9a919e]">{t('auth.login.divider')}</span>
-        <span className="h-px flex-1 bg-[#e8e2ec]" />
-      </div>
+      <AuthDivider label={t('auth.login.divider')} className="pt-[23px]" />
 
       <div className="grid grid-cols-1 gap-2.5 pt-[17px] sm:grid-cols-2">
-        <button type="button" onClick={handleGoogle} disabled={isBusy} className={SOCIAL_BUTTON}>
-          {isGoogleBusy ? (
-            <span
-              aria-hidden="true"
-              className="size-4 animate-spin rounded-full border-2 border-ink-deep border-t-transparent"
-            />
-          ) : (
-            <img alt="" src={googleIcon} className="size-4" />
-          )}
-          {t('auth.login.google')}
-        </button>
+        <GoogleButton
+          label={t('auth.login.google')}
+          isBusy={google.isBusy}
+          disabled={isBusy}
+          onClick={handleGoogle}
+        />
         <Link to={ROUTES.phoneOtp} className={SOCIAL_BUTTON}>
           <img alt="" src={phoneIcon} className="size-4" />
           {t('auth.login.phoneOtp')}

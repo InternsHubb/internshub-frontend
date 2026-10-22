@@ -6,12 +6,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 import chevronDown from '@/assets/auth/chevron-down-purple.svg';
+import phoneIcon from '@/assets/auth/phone-purple.svg';
 import {
+  AuthDivider,
   FIELD_INPUT,
   FIELD_LABEL,
   FieldError,
   FormAlert,
+  GoogleButton,
   PasswordToggle,
+  SOCIAL_BUTTON,
   SubmitButton,
   TEXT_LINK,
   fieldShellClass,
@@ -20,8 +24,10 @@ import RegisterCheckEmail, { type RegisterCheckEmailReason } from '@/components/
 import RegisterLayout from '@/components/auth/RegisterLayout';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
+import { useGoogleSignIn } from '@/hooks/useGoogleSignIn';
 import { login, register as registerAccount } from '@/lib/api/auth';
 import { isEmailNotConfirmedError, registerErrorResult } from '@/lib/auth/errorMessages';
+import { postSignInPath } from '@/lib/auth/redirect';
 import LegalModal from './LegalModal';
 
 const NATIONAL_ID_LENGTH = 14;
@@ -143,6 +149,20 @@ export default function RegisterScreen() {
     reValidateMode: 'onChange',
     defaultValues: { agreeTerms: false },
   });
+
+  // Same Google flow as Login: the backend signs in an existing account or creates a new one.
+  const google = useGoogleSignIn({
+    onError: setFormErrorKey,
+    onSignedIn: async () => {
+      const user = await reloadUser();
+      navigate(postSignInPath(user), { replace: true });
+    },
+  });
+
+  const handleGoogle = () => {
+    setFormErrorKey(null);
+    void google.signIn();
+  };
 
   // The register endpoint accepts only { email, password }. Full name, phone and national ID are
   // validated to match the design but are not sent: the API has no field for them at sign-up.
@@ -330,6 +350,22 @@ export default function RegisterScreen() {
           submittingLabel={t('auth.register.submitting')}
         />
       </form>
+
+      {/* Figma "Register · Default": alternative sign-up below the form, Google and phone side by
+          side. The phone button opens the existing Phone OTP page, the same entry point as Login. */}
+      <AuthDivider label={t('auth.register.divider')} className="mt-3.5" />
+      <div className="mt-3.5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <GoogleButton
+          label={t('auth.register.google')}
+          isBusy={google.isBusy}
+          disabled={isSubmitting || google.isBusy}
+          onClick={handleGoogle}
+        />
+        <Link to={ROUTES.phoneOtp} className={SOCIAL_BUTTON}>
+          <img alt="" src={phoneIcon} className="size-4" />
+          {t('auth.register.phoneOtp')}
+        </Link>
+      </div>
 
       <p className="mt-[15px] text-center text-[11px] text-muted">
         {t('auth.register.haveAccount')}{' '}
