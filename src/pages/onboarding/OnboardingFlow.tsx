@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { VerifyAccountStep } from './VerifyAccountStep';
+import { InterviewResultFlow } from './interview/InterviewResultFlow';
+import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
+import { interviewTypeFor, SAMPLE_RESUME } from './interview/mockInterview';
+import { INITIAL_INTERVIEW_PROGRESS } from './interview/types';
+import type { InterviewProgress, InterviewProgressPatch } from './interview/types';
 import calendarIcon from '../../assets/onboarding/calendar.svg';
 import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
@@ -75,17 +80,6 @@ const RESULT_STATES: Record<ResultState, {
   }
 };
 
-export type InterviewSubFlow = 
-  | 'ready'
-  | 'overview' 
-  | 'consent' 
-  | 'device-check' 
-  | 'live-question' 
-  | 'result' 
-  | 'appeal-form' 
-  | 'appeal-submitted' 
-  | 'appeal-decision';
-
 const RESULT_STATE_ORDER: ResultState[] = ['assigned', 'pending', 'incomplete'];
 
 export default function OnboardingFlow() {
@@ -104,20 +98,40 @@ export default function OnboardingFlow() {
     cvUploaded: false,
     selectedMentor: 'Amina M.'
   });
-  const [interviewSubFlow, setInterviewSubFlow] = useState<InterviewSubFlow>('ready');
-  const [consented, setConsented] = useState(false);
-  const [appealReason, setAppealReason] = useState('I have built advanced enterprise frontend systems using React and Redux Toolkit that reflect Mid-level proficiency.');
+  const [interview, setInterview] = useState<InterviewProgress>(INITIAL_INTERVIEW_PROGRESS);
+  const updateInterview = (patch: InterviewProgressPatch) => setInterview((current) => ({ ...current, ...patch }));
+  const interviewType = interviewTypeFor(formData.selectedPackage);
 
+  // The interview API isn't available yet, so finishing shows the sample outcome for this type.
+  const finishInterview = () => {
+    updateInterview({
+      screen: 'setup',
+      questionIndex: 0,
+      phase: 'answering',
+      outcome: interviewType === 'orientation' ? 'orientation' : 'result',
+    });
+    setCurrentStep(7);
+  };
+
+  // Resuming repeats the device check, then continues from the interrupted (sample) question.
+  const resumeInterview = () => {
+    updateInterview({ screen: 'device-check', questionIndex: SAMPLE_RESUME.questionIndex, phase: 'answering', outcome: null });
+    setCurrentStep(6);
+  };
+
+  // "Account" (index 0) is done before onboarding starts and is shown for the Figma numbering
+  // only; internal step numbers start at Verify = 1, so the displayed number is step + 1.
   const stepsMeta = [
-    { num: '01', title: 'Verify' },
-    { num: '02', title: 'Profile' },
-    { num: '03', title: 'Path' },
-    { num: '04', title: 'CV' },
-    { num: '05', title: 'Payment' },
-    { num: '06', title: 'Setup' },
-    { num: '07', title: 'Result' },
-    { num: '08', title: 'Squad' },
-    { num: '09', title: 'Mentorship' }
+    { num: '01', title: 'Account' },
+    { num: '02', title: 'Verify' },
+    { num: '03', title: 'Profile' },
+    { num: '04', title: 'Path' },
+    { num: '05', title: 'CV' },
+    { num: '06', title: 'Payment' },
+    { num: '07', title: 'Setup' },
+    { num: '08', title: 'Result' },
+    { num: '09', title: 'Squad' },
+    { num: '10', title: 'Mentorship' }
   ];
 
   // CV Review Screen View
@@ -281,13 +295,15 @@ export default function OnboardingFlow() {
         <div className="w-full max-w-[1120px] h-[85.6px] bg-white/86 border border-[#3A0353]/10 shadow-[0_8px_28px_rgba(34,2,60,0.06)] backdrop-blur-md rounded-[20px] flex items-center justify-between px-4 md:px-8 relative overflow-x-auto">
           
           {stepsMeta.map((s, index) => {
-            const stepNumber = index + 1;
-            const isCompleted = stepNumber < currentStep && (stepNumber !== 1 || isAccountVerified);
+            const stepNumber = index;
+            const isAccountStep = stepNumber === 0;
+            const isCompleted = isAccountStep || (stepNumber < currentStep && (stepNumber !== 1 || isAccountVerified));
             const isCurrent = stepNumber === currentStep;
 
             return (
               <React.Fragment key={s.num}>
                 <button
+                  disabled={isAccountStep}
                   onClick={() => setCurrentStep(stepNumber)}
                   className="flex shrink-0 flex-col items-center gap-[7px] focus:outline-none transition group z-10"
                 >
@@ -318,7 +334,7 @@ export default function OnboardingFlow() {
           
           <div className="inline-flex items-center px-3 py-1.5 bg-[#FFF3E8] rounded-[9px] mb-3">
             <span className="text-[11px] font-bold text-[#DD6F0D] tracking-[1.32px]">
-              STEP {String(currentStep).padStart(2, '0')} · INTERNSHUB ONBOARDING
+              STEP {String(currentStep + 1).padStart(2, '0')} · INTERNSHUB ONBOARDING
             </span>
           </div>
 
@@ -603,454 +619,34 @@ export default function OnboardingFlow() {
             </div>
           )}
 
-          {/* STEP 6: Setup & Integrated AI Interview Flow */}
+          {/* STEP 07: Setup and AI interview (frontend-only; see ./interview) */}
           {currentStep === 6 && (
-            <div className="space-y-6">
-              {/* Quick Sub-flow Navigation Bar */}
-              {interviewSubFlow !== 'ready' && (
-                <div className="bg-white/90 backdrop-blur-md border border-[#3A0353]/10 p-3 rounded-[18px] flex flex-wrap items-center justify-between gap-3 shadow-sm">
-                  <div className="flex items-center gap-2.5">
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#5C1D87] opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#5C1D87]"></span>
-                    </span>
-                    <span className="text-xs font-bold text-[#21062E]">AI Technical Interview</span>
-                    <span className="text-[10px] text-[#5C1D87] font-semibold bg-[#F3E9FA] px-2.5 py-0.5 rounded-full">
-                      {formData.selectedTrack}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 overflow-x-auto max-w-full text-[10px]">
-                    {[
-                      { id: 'ready', label: 'Setup Checklist' },
-                      { id: 'overview', label: '1. Overview' },
-                      { id: 'consent', label: '2. Consent' },
-                      { id: 'device-check', label: '3. Device Check' },
-                      { id: 'live-question', label: '4. Interview' },
-                      { id: 'result', label: '5. Result' },
-                      { id: 'appeal-form', label: '6. Appeal' },
-                      { id: 'appeal-decision', label: '7. Decision' }
-                    ].map((stepItem) => {
-                      const isActive = interviewSubFlow === stepItem.id;
-                      return (
-                        <button
-                          key={stepItem.id}
-                          type="button"
-                          onClick={() => setInterviewSubFlow(stepItem.id as InterviewSubFlow)}
-                          className={`px-3 py-1.5 rounded-[10px] font-bold transition whitespace-nowrap ${
-                            isActive
-                              ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white shadow-xs'
-                              : 'bg-[#F8F6FA] text-[#685F6D] hover:bg-[#F3E9FA] hover:text-[#5C1D87]'
-                          }`}
-                        >
-                          {stepItem.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* 0. SETUP: GET READY FOR YOUR INTERVIEW */}
-              {interviewSubFlow === 'ready' && (
-                <div className="space-y-6">
-                  <div>
-                    <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Get Ready for Your Interview</h1>
-                    <p className="text-[#69616D] text-base">Check your setup and review the recording requirements before starting.</p>
-                  </div>
-
-                  <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                    <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
-                    <div>
-                      <p className="font-bold">Please open InternsHub on your laptop to continue.</p>
-                      <p className="text-[11px] mt-0.5">The recorded interview is available on desktop or laptop only.</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {[
-                      { tile: 'CA', name: 'Camera', desc: 'Permission is required to continue' },
-                      { tile: 'MI', name: 'Microphone', desc: 'Permission is required to continue' },
-                      { tile: 'SC', name: 'Screen sharing', desc: 'Required during the recorded interview' },
-                      { tile: 'CO', name: 'Connection', desc: 'A stable connection helps prevent interruption' }
-                    ].map((item) => (
-                      <div key={item.name} className="bg-white p-5 rounded-[20px] border border-[#E8E2EC] relative shadow-xs flex flex-col justify-between h-[190px]">
-                        <div>
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="w-[42px] h-[42px] bg-[#F3E9FA] rounded-[12px] flex items-center justify-center text-xs font-bold text-[#5C1D87]">{item.tile}</div>
-                            <span className="px-2.5 py-1 bg-[#F1EEF2] text-[#685F6D] text-[9px] font-bold rounded-full">Not checked</span>
-                          </div>
-                          <h3 className="text-sm font-normal text-[#111827]">{item.name}</h3>
-                          <p className="text-[10px] text-[#6B7280] mt-1">{item.desc}</p>
-                        </div>
-                        <button onClick={() => setInterviewSubFlow('device-check')} className="text-xs font-bold text-[#5C1D87] text-left hover:underline">Run check</button>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="bg-white p-6 rounded-[28px] border border-[#3A0353]/10 shadow-sm space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-[52px] h-[52px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                      <div>
-                        <h3 className="text-lg font-normal text-[#111827]">Recording & privacy consent</h3>
-                        <p className="text-[11px] text-[#5C5C5C] mt-1 leading-relaxed">InternsHub records camera, microphone, and shared screen during the interview. Recordings are deleted 90 days after the final decision; scores and transcripts are retained.</p>
-                        <a href="#privacy" className="text-xs text-[#5C1D87] underline block mt-2">Read the Privacy Policy</a>
-                      </div>
-                    </div>
-                    <div className="border-t border-[#E8E2EC] pt-4 flex items-center gap-3 text-xs text-[#5C5C5C]">
-                      <input type="checkbox" id="consent" className="w-4 h-4 rounded" />
-                      <label htmlFor="consent">I understand the recording requirements and consent to this demo readiness flow.</label>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-5 rounded-[18px] border border-[#3A0353]/10 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                    <div className="border-r border-[#E8E2EC] pr-4"><span className="text-[10px] text-[#111827] font-bold block">Resume window</span><span className="text-[9px] text-[#6B7280]">Within one hour</span></div>
-                    <div className="border-r border-[#E8E2EC] pr-4"><span className="text-[10px] text-[#111827] font-bold block">Resume attempts</span><span className="text-[9px] text-[#6B7280]">Up to three</span></div>
-                    <div className="border-r border-[#E8E2EC] pr-4"><span className="text-[10px] text-[#111827] font-bold block">Incomplete attempt</span><span className="text-[9px] text-[#6B7280]">Retake after 48 hours, subject to attempt rules</span></div>
-                    <div><span className="text-[10px] text-[#111827] font-bold block">Attempt limit</span><span className="text-[9px] text-[#6B7280]">Three per track and interview type, then admin review</span></div>
-                  </div>
-                  <p className="text-[11px] text-[#6B7280]">Interview duration and question count are intentionally not shown because they remain open business decisions.</p>
-
-                  <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                    <button onClick={() => setCurrentStep(5)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                    <button onClick={() => setInterviewSubFlow('overview')} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2 hover:opacity-95">
-                      Start Interview →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* 1. AI INTERVIEW OVERVIEW */}
-              {interviewSubFlow === 'overview' && (
-                <div className="space-y-6">
-                  <div>
-                    <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">AI Interview</h1>
-                    <p className="text-[#69616D] text-base mt-1">Your enrollment payment is complete. Please review the requirements below and begin your session.</p>
-                  </div>
-
-                  <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#F3E9FA] text-[#5C1D87] rounded-[14px] flex items-center justify-center font-bold text-lg shadow-xs">🎯</div>
-                        <div>
-                          <h3 className="text-base font-bold text-[#111827]">Track Orientation • <span className="text-[#5C1D87] font-semibold">{formData.selectedTrack}</span></h3>
-                          <p className="text-xs text-[#6B7280]">AI Interview Assessment</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <span className="px-3 py-1 bg-[#F1EEF2] text-[#685F6D] text-[10px] font-bold rounded-full">Interview: Not Started</span>
-                        <span className="px-3 py-1 bg-[#EAF8F0] text-[#16794A] text-[10px] font-bold rounded-full">CV: Uploaded</span>
-                      </div>
-                    </div>
-
-                    <div className="p-4 bg-[#FAF5FE] border border-[#E8E2EC] rounded-[16px]">
-                      <span className="text-[9px] font-bold text-[#5C1D87] uppercase tracking-wider">SESSION STATUS</span>
-                      <h4 className="text-sm font-bold text-[#111827] mt-1">Ready to Begin — This 15-minute AI assessment will evaluate your track orientation.</h4>
-                    </div>
-
-                    <div className="p-4 bg-[#FAF5FE] border border-[#E8E2EC] rounded-[16px] text-xs text-[#5C1D87] leading-relaxed">
-                      <strong>Ensure a quiet environment and stable connection.</strong> You will be prompted to permit microphone, camera, and screen sharing before the interview begins.
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-[#E8E2EC]/70">
-                      <div>
-                        <h5 className="text-xs font-bold text-[#111827]">Ready to start?</h5>
-                        <p className="text-[11px] text-[#6B7280]">Click below to launch the proctored interview room whenever you are ready.</p>
-                      </div>
-                      <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-                        <button onClick={() => setInterviewSubFlow('ready')} className="text-xs font-bold text-[#5C1D87]">← Back to Setup</button>
-                        <button onClick={() => setInterviewSubFlow('consent')} className="px-6 py-3 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-xs rounded-[13px] shadow hover:opacity-95">Start Interview →</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-5 bg-white border border-[#E8E2EC] rounded-[18px] flex items-center gap-3 shadow-xs">
-                      <span className="p-3 bg-[#F3E9FA] rounded-xl text-[#5C1D87] text-base">💻</span>
-                      <div><h5 className="text-xs font-bold text-[#111827]">Desktop browser required</h5><p className="text-[10px] text-[#6B7280]">Chrome, Brave, Safari, or Edge</p></div>
-                    </div>
-                    <div className="p-5 bg-white border border-[#E8E2EC] rounded-[18px] flex items-center gap-3 shadow-xs">
-                      <span className="p-3 bg-[#F3E9FA] rounded-xl text-[#5C1D87] text-base">📹</span>
-                      <div><h5 className="text-xs font-bold text-[#111827]">Camera required</h5><p className="text-[10px] text-[#6B7280]">Continuous visual identity check</p></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 2. RECORDING CONSENT */}
-              {interviewSubFlow === 'consent' && (
-                <div className="space-y-6">
-                  <div>
-                    <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Recording Consent</h1>
-                    <p className="text-[#69616D] text-base mt-1">Review how your interview will be recorded before continuing.</p>
-                  </div>
-
-                  <div className="p-4 bg-[#FAF5FE] border border-[#E8E2EC] rounded-[16px] text-xs text-[#5C1D87] leading-relaxed">
-                    <strong>During your AI interview, your camera and shared screen will be recorded.</strong> Your spoken answers will also be transcribed and assessed as part of the interview.
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="p-5 bg-white border border-[#E8E2EC] rounded-[18px] shadow-xs space-y-1">
-                      <h4 className="text-xs font-bold text-[#111827]">Camera & Screen Recording</h4>
-                      <p className="text-[11px] text-[#6B7280] leading-relaxed">Your camera and shared screen are recorded during the interview.</p>
-                    </div>
-                    <div className="p-5 bg-white border border-[#E8E2EC] rounded-[18px] shadow-xs space-y-1">
-                      <h4 className="text-xs font-bold text-[#111827]">Voice Transcription</h4>
-                      <p className="text-[11px] text-[#6B7280] leading-relaxed">Your spoken answers are transcribed and scored as part of the assessment.</p>
-                    </div>
-                    <div className="p-5 bg-white border border-[#E8E2EC] rounded-[18px] shadow-xs space-y-1">
-                      <h4 className="text-xs font-bold text-[#111827]">Recording Retention</h4>
-                      <p className="text-[11px] text-[#6B7280] leading-relaxed">Interview recordings are deleted 90 days after the final decision. Scores and transcripts are retained.</p>
-                    </div>
-                  </div>
-
-                  <div className="p-5 bg-white border border-[#E8E2EC] rounded-[18px] flex items-center gap-3 shadow-xs">
-                    <input 
-                      type="checkbox" 
-                      id="consent-check" 
-                      checked={consented} 
-                      onChange={(e) => setConsented(e.target.checked)} 
-                      className="w-4 h-4 rounded text-[#5C1D87] accent-[#5C1D87] cursor-pointer" 
-                    />
-                    <label htmlFor="consent-check" className="text-xs text-[#111827] cursor-pointer select-none">
-                      I consent to the recording of my camera, screen, and interview audio for assessment and review.
-                    </label>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-4">
-                    <button onClick={() => setInterviewSubFlow('overview')} className="text-xs font-bold text-[#5C1D87]">Back</button>
-                    <button 
-                      onClick={() => setInterviewSubFlow('device-check')} 
-                      disabled={!consented} 
-                      className={`px-7 py-3 font-bold text-xs rounded-[13px] transition ${consented ? 'bg-[#4C0585] text-white shadow hover:bg-[#3A0353]' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
-                    >
-                      Continue to Interview →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* 3. DEVICE CHECK */}
-              {interviewSubFlow === 'device-check' && (
-                <div className="space-y-6">
-                  <div>
-                    <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Device Check</h1>
-                    <p className="text-[#69616D] text-base mt-1">Make sure your camera, microphone, and full-screen sharing are ready before starting your interview.</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-6 bg-white border border-[#E8E2EC] rounded-[24px] space-y-4 shadow-sm">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-xs font-bold text-[#111827]">Camera</h3>
-                        <span className="text-[10px] text-[#16794A] bg-[#EAF8F0] px-2.5 py-0.5 rounded-full font-bold">✓ Camera ready</span>
-                      </div>
-                      <div className="h-[200px] bg-slate-900 rounded-[14px] flex flex-col items-center justify-center text-white text-xs relative overflow-hidden">
-                        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl mb-2">📹</div>
-                        <span className="font-semibold">Live Camera Preview Feed</span>
-                        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-600/80 text-[9px] font-bold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                          <span>LIVE</span>
-                        </div>
-                      </div>
-                      <select className="w-full p-2.5 border border-[#E8E2EC] rounded-lg text-xs bg-slate-50 outline-none">
-                        <option>FaceTime HD Camera (Built-in)</option>
-                        <option>External USB Web Camera (1080p)</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div className="p-6 bg-white border border-[#E8E2EC] rounded-[24px] space-y-3 shadow-sm">
-                        <div className="flex justify-between items-center">
-                          <h3 className="text-xs font-bold text-[#111827]">Microphone</h3>
-                          <span className="text-[10px] text-[#16794A] bg-[#EAF8F0] px-2.5 py-0.5 rounded-full font-bold">✓ Microphone ready</span>
-                        </div>
-                        <select className="w-full p-2.5 border border-[#E8E2EC] rounded-lg text-xs bg-slate-50 outline-none">
-                          <option>MacBook Pro Microphone (Default Input)</option>
-                          <option>Headset Microphone</option>
-                        </select>
-                        <div className="space-y-1 pt-1">
-                          <div className="flex justify-between text-[9px] text-[#6B7280]">
-                            <span>Input Volume</span>
-                            <span>Optimal</span>
-                          </div>
-                          <div className="h-2 bg-purple-100 rounded-full overflow-hidden">
-                            <div className="w-3/4 h-full bg-gradient-to-r from-[#5C1D87] to-[#16794A]"></div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="p-6 bg-white border border-[#E8E2EC] rounded-[24px] space-y-3 shadow-sm">
-                        <div className="flex justify-between items-center">
-                          <h3 className="text-xs font-bold text-[#111827]">Full-Screen Sharing</h3>
-                          <span className="text-[10px] text-[#16794A] bg-[#EAF8F0] px-2.5 py-0.5 rounded-full font-bold">✓ Full screen shared</span>
-                        </div>
-                        <p className="text-[11px] text-[#6B7280] leading-relaxed">Share your entire screen to continue. Dual monitor setups must share the primary active display.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-4">
-                    <button onClick={() => setInterviewSubFlow('consent')} className="text-xs font-bold text-[#5C1D87]">← Back to Consent</button>
-                    <button onClick={() => setInterviewSubFlow('live-question')} className="px-7 py-3 bg-[#4C0585] text-white font-bold text-xs rounded-[13px] shadow hover:bg-[#3A0353]">Continue to Live Questions →</button>
-                  </div>
-                </div>
-              )}
-
-              {/* 4. LIVE TECHNICAL INTERVIEW */}
-              {interviewSubFlow === 'live-question' && (
-                <div className="space-y-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                      <h1 className="text-[28px] sm:text-[36px] font-extrabold text-[#21062E]">Technical Interview</h1>
-                      <p className="text-xs text-[#6B7280]">{formData.selectedTrack}</p>
-                    </div>
-                    <span className="self-start sm:self-auto px-3 py-1 bg-[#F3E9FA] text-[#5C1D87] text-[10px] font-bold rounded-full">STEP 3 OF 3 • INTERVIEW</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-                    <div className="md:col-span-2 space-y-4">
-                      <div className="p-6 bg-white border border-[#E8E2EC] rounded-[22px] space-y-3 shadow-sm">
-                        <span className="px-3 py-1 bg-[#F3E9FA] text-[#5C1D87] text-[10px] font-bold rounded-full">Question 3</span>
-                        <h3 className="text-lg font-bold text-[#111827]">How would you manage state in a large React application, and what factors would influence your approach?</h3>
-                      </div>
-
-                      <div className="p-6 bg-white border border-[#E8E2EC] rounded-[22px] space-y-4 shadow-sm">
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-xs font-bold text-[#111827]">Your Answer</h4>
-                          <span className="text-[10px] text-[#16794A] bg-[#EAF8F0] px-2.5 py-0.5 rounded-full font-bold">✓ Transcribed</span>
-                        </div>
-                        <div className="p-4 bg-[#FAF5FE] rounded-[14px] text-xs text-[#111827] leading-relaxed border border-[#E8E2EC]/50">
-                          In a large React application, I approach state management by categorizing state into local, global, server cache, and URL state. For local component state, standard useState and useReducer are usually sufficient. For remote server caching, tools like TanStack React Query reduce duplicate fetches and manage invalidation. When global client state is truly required across decoupled trees, lightweight stores such as Zustand or Redux Toolkit provide predictable mutations and seamless devtools debugging.
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between pt-2">
-                        <button onClick={() => setInterviewSubFlow('device-check')} className="px-6 py-2.5 bg-white border border-[#E8E2EC] text-xs font-bold rounded-xl text-[#5C1D87]">Back</button>
-                        <button onClick={() => setInterviewSubFlow('result')} className="px-6 py-2.5 bg-[#4C0585] text-white text-xs font-bold rounded-xl shadow hover:bg-[#3A0353]">Complete & View Result →</button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="p-5 bg-white border border-[#E8E2EC] rounded-[22px] text-center space-y-3 shadow-sm">
-                        <div className="h-[170px] bg-slate-900 rounded-[14px] flex flex-col items-center justify-center text-white text-xs font-bold relative overflow-hidden">
-                          <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-base mb-2">📹</div>
-                          <span>Camera On</span>
-                          <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-600/80 text-[8px] font-bold">
-                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                            <span>REC 04:12</span>
-                          </div>
-                        </div>
-                        <span className="text-[10px] text-[#16794A] font-bold block">● Full-screen sharing active</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 5. INTERVIEW RESULT */}
-              {interviewSubFlow === 'result' && (
-                <div className="space-y-6 max-w-xl mx-auto text-center py-6">
-                  <div className="w-16 h-16 bg-[#EAF8F0] text-[#16794A] rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-xs">🏆</div>
-                  <div>
-                    <h1 className="text-[32px] sm:text-[38px] font-extrabold text-[#21062E]">Your Interview Result</h1>
-                    <p className="text-xs text-[#6B7280] mt-1">Your Technical Interview result is ready.</p>
-                  </div>
-
-                  <div className="p-7 bg-white border border-[#E8E2EC] rounded-[24px] text-left space-y-4 shadow-sm">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-[#111827]">Technical Interview</span>
-                      <span className="text-[10px] text-[#16794A] bg-[#EAF8F0] px-2.5 py-0.5 rounded-full font-bold">Confirmed</span>
-                    </div>
-                    <div className="p-4 bg-[#FAF5FE] rounded-[16px] border border-[#E8E2EC]/60">
-                      <span className="text-[9px] text-[#5C1D87] uppercase font-bold tracking-wider">FINAL LEVEL</span>
-                      <h3 className="text-2xl font-bold text-[#5C1D87] mt-0.5">Junior</h3>
-                    </div>
-                    <p className="text-[11px] text-[#6B7280] leading-relaxed">This level will be used for your EdTech journey in the selected track ({formData.selectedTrack}).</p>
-                    <div className="flex flex-col gap-2 pt-2">
-                      <button onClick={() => setCurrentStep(8)} className="w-full py-3 bg-[#4C0585] text-white font-bold text-xs rounded-xl shadow hover:bg-[#3A0353]">Continue to Squad (Step 08) →</button>
-                      <button onClick={() => setCurrentStep(7)} className="w-full py-2.5 bg-white border border-[#E8E2EC] text-[#5C1D87] font-bold text-xs rounded-xl hover:bg-slate-50">View Detailed Assessment Breakdown</button>
-                    </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <button onClick={() => setInterviewSubFlow('appeal-form')} className="text-xs font-bold text-[#5C1D87] underline hover:text-[#3A0353]">Request Level Appeal</button>
-                    <p className="text-[10px] text-[#6B7280] mt-1">You can submit an appeal within 7 days of receiving your result.</p>
-                  </div>
-                </div>
-              )}
-
-              {/* 6. APPEAL FORM */}
-              {interviewSubFlow === 'appeal-form' && (
-                <div className="space-y-6 max-w-xl mx-auto py-2">
-                  <div>
-                    <h1 className="text-[32px] sm:text-[38px] font-extrabold text-[#21062E]">Appeal Interview Result</h1>
-                    <p className="text-xs text-[#6B7280] mt-1">Request a review of your confirmed Technical Interview level.</p>
-                  </div>
-
-                  <div className="p-7 bg-white border border-[#E8E2EC] rounded-[24px] space-y-4 shadow-sm text-left">
-                    <div className="flex justify-between items-center"><span className="text-xs font-bold text-[#111827]">Technical Interview</span><span className="text-[10px] text-[#16794A] bg-[#EAF8F0] px-2.5 py-0.5 rounded-full font-bold">Confirmed</span></div>
-                    <div className="p-3 bg-slate-50 border border-[#E8E2EC] rounded-xl text-xs text-[#5C1D87] font-bold">Current Level: Junior</div>
-                    
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#111827]">Why would you like this result reviewed?</label>
-                      <textarea 
-                        rows={4} 
-                        value={appealReason} 
-                        onChange={(e) => setAppealReason(e.target.value)} 
-                        className="w-full p-3.5 border border-[#E8E2EC] rounded-xl text-xs outline-none bg-slate-50 focus:border-[#5C1D87] focus:bg-white transition"
-                        placeholder="Provide details about your experience, projects, or context that may warrant a level reassessment..."
-                      />
-                    </div>
-
-                    <div className="flex gap-3 pt-2">
-                      <button onClick={() => setInterviewSubFlow('result')} className="px-5 py-3 bg-white border border-[#E8E2EC] text-[#5C1D87] font-bold text-xs rounded-xl hover:bg-slate-50">Back</button>
-                      <button onClick={() => setInterviewSubFlow('appeal-submitted')} className="flex-1 py-3 bg-[#4C0585] text-white font-bold text-xs rounded-xl shadow hover:bg-[#3A0353]">Submit Appeal</button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 7. APPEAL SUBMITTED */}
-              {interviewSubFlow === 'appeal-submitted' && (
-                <div className="text-center space-y-6 max-w-xl mx-auto py-10">
-                  <div className="w-16 h-16 bg-[#F3E9FA] text-[#5C1D87] rounded-full flex items-center justify-center mx-auto text-xl font-bold shadow-xs">⏳</div>
-                  <h1 className="text-[28px] sm:text-[34px] font-extrabold text-[#21062E]">Appeal Submitted</h1>
-                  <p className="text-xs text-[#6B7280]">Your request to review your Technical Interview result has been submitted.</p>
-                  <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
-                    <button onClick={() => setInterviewSubFlow('result')} className="px-5 py-3 bg-white border border-[#E8E2EC] text-[#5C1D87] font-bold text-xs rounded-xl hover:bg-slate-50">Back to Result</button>
-                    <button onClick={() => setInterviewSubFlow('appeal-decision')} className="px-6 py-3 bg-[#4C0585] text-white font-bold text-xs rounded-xl shadow hover:bg-[#3A0353]">View Appeal Decision Demo →</button>
-                  </div>
-                </div>
-              )}
-
-              {/* 8. APPEAL DECISION */}
-              {interviewSubFlow === 'appeal-decision' && (
-                <div className="text-center space-y-6 max-w-xl mx-auto py-8">
-                  <div className="w-16 h-16 bg-[#EAF8F0] text-[#16794A] rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-xs">✓</div>
-                  <h1 className="text-[28px] sm:text-[34px] font-extrabold text-[#21062E]">Appeal Decision Made</h1>
-                  <p className="text-xs text-[#6B7280]">Your appeal has been reviewed and a final decision has been made.</p>
-                  
-                  <div className="p-7 bg-white border border-[#E8E2EC] rounded-[24px] text-left space-y-4 shadow-sm">
-                    <div className="flex justify-between items-center"><span className="text-xs font-bold text-[#111827]">Technical Interview</span><span className="text-[10px] text-[#16794A] bg-[#EAF8F0] px-2.5 py-0.5 rounded-full font-bold">Final</span></div>
-                    <div className="flex flex-col sm:flex-row gap-3 items-center justify-center py-2">
-                      <div className="p-3 bg-slate-100 rounded-xl text-slate-400 line-through text-xs font-semibold">Junior (Initial)</div>
-                      <span className="text-[#5C1D87] font-bold">➔</span>
-                      <div className="p-3 bg-[#FAF5FE] border border-[#5C1D87] rounded-xl text-[#5C1D87] font-bold text-xs shadow-xs">Mid Software Engineer (Updated)</div>
-                    </div>
-                    <p className="text-[11px] text-[#6B7280] text-center">Your interview level has been updated following the appeal review.</p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
-                    <button onClick={() => setInterviewSubFlow('overview')} className="px-5 py-3 bg-white border border-[#E8E2EC] text-[#5C1D87] font-bold text-xs rounded-xl hover:bg-slate-50">Back to Interview</button>
-                    <button onClick={() => setCurrentStep(8)} className="px-7 py-3 bg-[#4C0585] text-white font-bold text-xs rounded-xl shadow hover:bg-[#3A0353]">Continue to Squad (Step 08) →</button>
-                  </div>
-                </div>
-              )}
-
-            </div>
+            <InterviewSetupFlow
+              progress={interview}
+              onChange={updateInterview}
+              type={interviewType}
+              track={formData.selectedTrack}
+              cvUploaded={formData.cvUploaded}
+              onExit={() => setCurrentStep(5)}
+              onFinish={finishInterview}
+            />
           )}
 
-          {/* STEP 7: Result */}
-          {currentStep === 7 && (
+          {/* STEP 08: Result. After an interview, its (sample) outcome; otherwise the result overview. */}
+          {currentStep === 7 && interview.outcome && (
+            <InterviewResultFlow
+              outcome={interview.outcome}
+              onOutcomeChange={(outcome) => updateInterview({ outcome })}
+              appealReason={interview.appealReason}
+              onAppealReasonChange={(appealReason) => updateInterview({ appealReason })}
+              type={interviewType}
+              track={formData.selectedTrack}
+              onContinue={() => setCurrentStep(8)}
+              onHome={() => navigate(ROUTES.home)}
+              onResume={resumeInterview}
+            />
+          )}
+          {currentStep === 7 && !interview.outcome && (
             <div className="space-y-6">
               <div>
                 <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Your Assessment Results</h1>
@@ -1150,7 +746,7 @@ export default function OnboardingFlow() {
                   </div>
                   <button 
                     type="button" 
-                    onClick={() => { setCurrentStep(6); setInterviewSubFlow('appeal-form'); }}
+                    onClick={() => updateInterview({ outcome: 'appeal-form' })}
                     className="shrink-0 min-h-[38px] px-[15px] bg-white border border-[#CCB8D8] rounded-[13px] text-[9px] font-bold tracking-[0.09px] text-[#3A0353] hover:bg-[#F3E9FA] transition"
                   >
                     Request Appeal
@@ -1166,8 +762,8 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="!mt-4 flex flex-wrap items-center gap-4">
-                <button type="button" onClick={() => { setCurrentStep(6); setInterviewSubFlow('ready'); }} className="min-h-[50px] px-6 text-[13px] font-bold tracking-[0.13px] text-[#5C1D87]">Back to device check</button>
-                <button type="button" onClick={() => { setCurrentStep(6); setInterviewSubFlow('overview'); }} className="min-h-[50px] px-6 text-[13px] font-bold tracking-[0.13px] text-[#5C1D87] underline">Review AI Interview</button>
+                <button type="button" onClick={() => { updateInterview({ screen: 'device-check' }); setCurrentStep(6); }} className="min-h-[50px] px-6 text-[13px] font-bold tracking-[0.13px] text-[#5C1D87]">Back to device check</button>
+                <button type="button" onClick={() => { updateInterview({ screen: 'overview' }); setCurrentStep(6); }} className="min-h-[50px] px-6 text-[13px] font-bold tracking-[0.13px] text-[#5C1D87] underline">Review AI Interview</button>
               </div>
             </div>
           )}
