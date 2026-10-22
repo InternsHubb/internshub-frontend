@@ -32,22 +32,45 @@ export type AuthLayoutVariant = 'login' | 'register';
 
 type VariantStyles = {
   grid: string;
+  // Panel padding: Figma puts the logo 34px (login) / 32px (register) from the top.
+  panel: string;
+  // Figma's brand fill: a diagonal gradient plus an orange glow top-right and a purple glow
+  // bottom-left, positioned as a share of the panel so they scale with it.
+  background: string;
+  // The image + copy column. Figma centres it in the panel; the logo and the bottom labels stay
+  // on the panel's padding.
+  column: string;
   imageWrap: string;
   image: string;
+  heading: string;
+  // Login's concentric ring behind the copy; Register has none.
+  hasRing: boolean;
   form: string;
 };
 
 const VARIANT_STYLES: Record<AuthLayoutVariant, VariantStyles> = {
   login: {
     grid: 'lg:grid-cols-[54fr_46fr]',
-    imageWrap: 'max-w-[549px] lg:mt-[50px]',
+    panel: 'lg:pt-[34px] lg:pb-8',
+    background:
+      'radial-gradient(circle 960px at 88% 14%, rgba(221,111,13,0.22) 0%, rgba(221,111,13,0) 37%), radial-gradient(circle 931px at 12% 82%, rgba(139,93,176,0.42) 0%, rgba(139,93,176,0) 55%), linear-gradient(135.66deg, #22023c 6.17%, #3a0353 62.27%, #4c0585 93.83%)',
+    column: 'max-w-[549px]',
+    imageWrap: 'lg:mt-[50px]',
     image: 'rounded-ss-[120px] rounded-se-[28px] rounded-es-[28px] rounded-ee-[100px] lg:h-[320px]',
+    heading: 'lg:text-[45px]',
+    hasRing: true,
     form: 'max-w-[430px]',
   },
   register: {
     grid: 'lg:grid-cols-[48fr_52fr]',
-    imageWrap: 'max-w-[481px] lg:mt-[38px] lg:mb-[51px]',
+    panel: 'lg:pt-8 lg:pb-[30px]',
+    background:
+      'radial-gradient(circle 924px at 88% 14%, rgba(221,111,13,0.22) 0%, rgba(221,111,13,0) 42%), radial-gradient(circle 915px at 10% 84%, rgba(139,93,176,0.45) 0%, rgba(139,93,176,0) 64%), linear-gradient(132.29deg, #22023c 6.17%, #3a0353 62.27%, #4c0585 93.83%)',
+    column: 'max-w-[481px]',
+    imageWrap: 'lg:mt-[38px] lg:mb-[51px]',
     image: 'rounded-ss-[100px] rounded-se-[26px] rounded-es-[26px] rounded-ee-[82px] lg:h-[255px]',
+    heading: 'lg:text-[41px]',
+    hasRing: false,
     form: 'max-w-[526px]',
   },
 };
@@ -70,9 +93,6 @@ export type AuthLayoutProps = {
 const DEFAULT_BRAND_IMAGE_ALT =
   'Students collaborating on a tech project';
 
-const BRAND_GRADIENT =
-  'bg-[linear-gradient(155deg,#22023c_0%,#3a0353_55%,#4c0585_82%,#5a198f_100%)]';
-
 function BrandPanel({
   styles,
   brand,
@@ -89,18 +109,10 @@ function BrandPanel({
   return (
     <aside
       aria-label="InternsHub brand"
-      className={`relative isolate overflow-hidden ${BRAND_GRADIENT}`}
+      className="relative isolate overflow-hidden"
+      style={{ background: styles.background }}
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-48 -end-40 size-[34rem] rounded-full bg-glow/15"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-20 end-10 size-[20rem] rounded-full bg-glow/10"
-      />
-
-      <div className="relative flex h-full flex-col gap-8 p-5 sm:p-8 lg:gap-0 lg:px-12 lg:pt-[34px] lg:pb-8">
+      <div className={`relative flex h-full flex-col gap-8 p-5 sm:p-8 lg:gap-0 lg:px-12 ${styles.panel}`}>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <span
             aria-hidden="true"
@@ -116,35 +128,44 @@ function BrandPanel({
           </span>
         </div>
 
-        {brandImage ? (
-          <div className={`hidden w-full sm:block ${styles.imageWrap}`}>
-            <div className="relative">
-              <img
-                src={brandImage.src}
-                alt={brandImage.alt}
-                className={`h-52 w-full -rotate-1 border border-white/25 object-cover shadow-[0_28px_65px_rgba(0,0,0,0.25)] sm:h-64 ${styles.image}`}
-              />
-              {brandExtra ? (
-                <div className="absolute inset-0 hidden lg:block">
-                  {brandExtra}
-                </div>
-              ) : null}
-            </div>
-          </div>
-        ) : brandExtra ? (
-          <div className="hidden lg:block">{brandExtra}</div>
-        ) : null}
+        <div className={`relative isolate flex w-full flex-col gap-8 lg:mx-auto lg:gap-0 ${styles.column}`}>
+          {styles.hasRing ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute start-[407px] top-[348px] -z-10 hidden size-[360px] rounded-full border border-white/10 shadow-[0_0_0_54px_rgba(255,255,255,0.02),0_0_0_108px_rgba(255,255,255,0.02)] lg:block"
+            />
+          ) : null}
 
-        <div className="flex flex-col gap-3 lg:mt-8 lg:gap-3.5">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent-soft">
-            {brand.eyebrow}
-          </p>
-          <h2 className="max-w-[22ch] whitespace-pre-line text-3xl font-extrabold leading-[1.12] text-white sm:text-4xl lg:text-[42px]">
-            {brand.title}
-          </h2>
-          <p className="hidden max-w-[48ch] text-xs leading-relaxed text-onbrand sm:block sm:text-sm">
-            {brand.description}
-          </p>
+          {brandImage ? (
+            <div className={`hidden w-full sm:block ${styles.imageWrap}`}>
+              <div className="relative">
+                <img
+                  src={brandImage.src}
+                  alt={brandImage.alt}
+                  className={`h-52 w-full -rotate-1 border border-white/25 object-cover shadow-[0_28px_65px_rgba(0,0,0,0.25)] sm:h-64 ${styles.image}`}
+                />
+                {brandExtra ? (
+                  <div className="absolute inset-0 hidden lg:block">
+                    {brandExtra}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ) : brandExtra ? (
+            <div className="hidden lg:block">{brandExtra}</div>
+          ) : null}
+
+          <div className="flex flex-col gap-3 lg:mt-8 lg:gap-3.5">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent-soft">
+              {brand.eyebrow}
+            </p>
+            <h2 className={`max-w-[22ch] whitespace-pre-line text-3xl font-extrabold leading-[1.08] tracking-[-0.045em] text-white sm:text-4xl ${styles.heading}`}>
+              {brand.title}
+            </h2>
+            <p className="hidden max-w-[48ch] text-xs leading-relaxed text-onbrand sm:block sm:text-sm">
+              {brand.description}
+            </p>
+          </div>
         </div>
 
         {highlights.length > 0 ? (

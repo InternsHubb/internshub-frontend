@@ -1,4 +1,5 @@
 import arrowRightWhite from '../../assets/auth/arrow-right-white.svg';
+import googleIcon from '../../assets/auth/google.svg';
 
 // Field shell shared by the Login and Register forms (Figma: #faf9fb fill, #e3dce6 border, 12px radius).
 const FIELD_SHELL =
@@ -8,6 +9,10 @@ export const FIELD_INPUT =
 export const FIELD_LABEL = 'mb-2 block text-xs tracking-[0.02em] text-label';
 export const TEXT_LINK =
   'rounded-sm text-brand-link underline underline-offset-2 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary';
+
+// Outlined alternative sign-in button (Figma: #ccb8d8 border, 13px radius, 48px tall).
+export const SOCIAL_BUTTON =
+  'inline-flex min-h-12 items-center justify-center gap-[9px] rounded-[13px] border border-[#ccb8d8] bg-white px-3.5 text-[11px] font-bold tracking-[0.01em] text-ink-deep transition hover:bg-[#faf6fc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-60';
 
 export function fieldShellClass(hasError: boolean, extra = ''): string {
   const state = hasError ? 'border-[#e2aaa5] bg-[#fff8f7]' : 'border-[#e3dce6] bg-[#faf9fb]';
@@ -99,6 +104,46 @@ export function FormAlert({ title, message }: FormAlertProps) {
         <p className="text-xs leading-5">{message}</p>
       </div>
     </div>
+  );
+}
+
+type AuthDividerProps = {
+  label: string;
+  className?: string;
+};
+
+// Figma "OR CONTINUE WITH" / "OR SIGN UP WITH" rule between the form and the other sign-in options.
+export function AuthDivider({ label, className = '' }: AuthDividerProps) {
+  return (
+    <div className={`flex items-center ${className}`} aria-hidden="true">
+      <span className="h-px flex-1 bg-[#e8e2ec]" />
+      <span className="px-3 text-[10px] tracking-[0.14em] text-[#9a919e]">{label}</span>
+      <span className="h-px flex-1 bg-[#e8e2ec]" />
+    </div>
+  );
+}
+
+type GoogleButtonProps = {
+  label: string;
+  isBusy: boolean;
+  disabled: boolean;
+  onClick: () => void;
+  className?: string;
+};
+
+export function GoogleButton({ label, isBusy, disabled, onClick, className = '' }: GoogleButtonProps) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} className={`${SOCIAL_BUTTON} ${className}`}>
+      {isBusy ? (
+        <span
+          aria-hidden="true"
+          className="size-4 animate-spin rounded-full border-2 border-ink-deep border-t-transparent"
+        />
+      ) : (
+        <img alt="" src={googleIcon} className="size-4" />
+      )}
+      {label}
+    </button>
   );
 }
 
