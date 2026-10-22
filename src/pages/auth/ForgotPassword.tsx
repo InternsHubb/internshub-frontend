@@ -67,11 +67,10 @@ const text = {
 
     label: "ACCOUNT RECOVERY",
     title: "Forgot your password?",
-    subtitle:
-      "Enter the email address associated with your account and we'll send you instructions to reset your password.",
+    subtitle:"Enter the email address associated with your account and we'll send a one-time reset code to your inbox.",  
     emailLabel: "Email address",
     emailPlaceholder: "Enter your email",
-    send: "Send reset link",
+    send: "Send reset code",
     sending: "Sending...",
     back: "Back to login",
     securityNote:
@@ -80,15 +79,16 @@ const text = {
     help: "Visit Help Center",
 
     submitErrorTitle: "We couldn't submit your request",
-    submitErrorBody: "Something went wrong on our side, so we can't confirm a reset email was sent. Please try again in a moment.",
+    submitErrorBody: "Something went wrong. No email was sent. Please try again.",
     submitErrorNetwork: "We couldn't reach the server. Check your connection and try again.",
 
     successLabel: "REQUEST SENT",
     successTitle: "Check your email",
     successBefore: "If an account matches ",
-    successAfter:
-      ", reset instructions will appear in that inbox. For privacy, we don't confirm whether an address is registered.",
+    successAfter:", a one-time 6-digit reset code will be sent to that inbox. For privacy, we don't confirm whether an address is registered.",
     tryAnother: "Try another email address",
+    enterCode: "Enter reset code",
+    
 
     errors: {
       required: "Email address is required.",
@@ -109,10 +109,10 @@ const text = {
     label: "استعادة الحساب",
     title: "نسيت كلمة المرور؟",
     subtitle:
-      "اكتب البريد الإلكتروني المرتبط بحسابك وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",
+      "اكتب البريد الإلكتروني المرتبط بحسابك وسنرسل رمز إعادة تعيين لمرة واحدة إلى بريدك.",
     emailLabel: "البريد الإلكتروني",
     emailPlaceholder: "أدخل بريدك الإلكتروني",
-    send: "إرسال رابط الاستعادة",
+    send:  "إرسال رمز الاستعادة",
     sending: "جارٍ الإرسال...",
     back: "العودة لتسجيل الدخول",
     securityNote: "لأمانك، الرد واحد سواء كان البريد مسجلًا أو لا.",
@@ -120,15 +120,16 @@ const text = {
     help: "زيارة مركز المساعدة",
 
     submitErrorTitle: "لم نتمكن من إرسال طلبك",
-    submitErrorBody: "حدث خطأ من جهتنا، لذا لا يمكننا تأكيد إرسال بريد إعادة التعيين. حاول مرة أخرى بعد قليل.",
+    submitErrorBody: "حدث خطأ ما. لم يتم إرسال أي بريد. حاول مرة أخرى.",
     submitErrorNetwork: "تعذّر الوصول إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.",
 
     successLabel: "تم إرسال الطلب",
     successTitle: "تحقق من بريدك الإلكتروني",
     successBefore: "إذا كان هناك حساب مرتبط بـ ",
     successAfter:
-      "، ستظهر تعليمات إعادة التعيين في هذا البريد. حفاظًا على الخصوصية، لا نؤكد ما إذا كان البريد مسجلًا.",
+       "، سيصل رمز إعادة تعيين من 6 أرقام لمرة واحدة إلى هذا البريد. حفاظًا على الخصوصية، لا نؤكد ما إذا كان البريد مسجلًا.",
     tryAnother: "جرّب بريدًا إلكترونيًا آخر",
+    enterCode: "إدخال رمز الاستعادة",
 
     errors: {
       required: "البريد الإلكتروني مطلوب.",
