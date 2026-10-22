@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { MUTE_DEBOUNCE_MS } from './integrity/policy';
 
 // Pre-flight checks for the camera, microphone, screen sharing and network, using only browser
 // APIs. Nothing captured here is recorded or sent anywhere; streams live only for previews and
@@ -21,6 +22,9 @@ export type MediaCheck =
   | { status: 'idle' }
   | { status: 'checking' }
   | { status: 'ready'; deviceId: string }
+  // The source stopped delivering media for a while (browser pause, OS interruption); it may
+  // come back on its own.
+  | { status: 'muted'; deviceId: string }
   | { status: 'stopped' }
   | { status: 'failed'; reason: DeviceFailure };
 
@@ -30,6 +34,7 @@ export type ScreenCheck =
   | { status: 'idle' }
   | { status: 'checking' }
   | { status: 'shared'; surface: DisplaySurface }
+  | { status: 'muted'; surface: DisplaySurface }
   | { status: 'stopped' }
   | { status: 'failed'; reason: DeviceFailure };
 
@@ -95,7 +100,8 @@ function stopStream(stream: MediaStream | null): void {
   stream?.getTracks().forEach((track) => track.stop());
 }
 
-type Streams = { camera: MediaStream | null; microphone: MediaStream | null; screen: MediaStream | null };
+type CaptureKind = 'camera' | 'microphone' | 'screen';
+type Streams = Record<CaptureKind, MediaStream | null>;
 type Meter = { context: AudioContext; frame: number };
 
 export function useDeviceCheck() {
@@ -111,6 +117,39 @@ export function useDeviceCheck() {
   const streams = useRef<Streams>({ camera: null, microphone: null, screen: null });
   const meter = useRef<Meter | null>(null);
   const mounted = useRef(true);
+  const muteTimers = useRef<Record<CaptureKind, number | null>>({ camera: null, microphone: null, screen: null });
+
+  const clearMuteTimer = useCallback((kind: CaptureKind) => {
+    const id = muteTimers.current[kind];
+    if (id !== null) window.clearTimeout(id);
+    muteTimers.current[kind] = null;
+  }, []);
+
+  // `mute` means the source is not delivering media (research §4.2). It is debounced so Safari's
+  // spurious mute/unmute flicker doesn't pause the interview (§4.6). Silence is never a mute: a
+  // live, unmuted microphone with a quiet room is working (§4.5).
+  const watchMute = useCallback(
+    (kind: CaptureKind, track: MediaStreamTrack, stream: MediaStream, onMute: () => void, onUnmute: () => void) => {
+      const isCurrent = () => mounted.current && streams.current[kind] === stream;
+      const schedule = () => {
+        clearMuteTimer(kind);
+        muteTimers.current[kind] = window.setTimeout(() => {
+          muteTimers.current[kind] = null;
+          if (isCurrent() && track.muted) onMute();
+        }, MUTE_DEBOUNCE_MS);
+      };
+      track.addEventListener('mute', () => {
+        if (isCurrent()) schedule();
+      });
+      track.addEventListener('unmute', () => {
+        if (!isCurrent()) return;
+        clearMuteTimer(kind);
+        onUnmute();
+      });
+      if (track.muted) schedule();
+    },
+    [clearMuteTimer],
+  );
 
   const stopMeter = useCallback(() => {
     if (!meter.current) return;
@@ -186,22 +225,32 @@ export function useDeviceCheck() {
           return;
         }
         stopStream(streams.current.camera);
+        clearMuteTimer('camera');
         streams.current.camera = stream;
         const [track] = stream.getVideoTracks();
+        const id = track.getSettings().deviceId ?? '';
         track.addEventListener('ended', () => {
           if (streams.current.camera !== stream) return;
+          clearMuteTimer('camera');
           streams.current.camera = null;
           setCameraStream(null);
           setCamera({ status: 'stopped' });
         });
+        watchMute(
+          'camera',
+          track,
+          stream,
+          () => setCamera({ status: 'muted', deviceId: id }),
+          () => setCamera((current) => (current.status === 'muted' ? { status: 'ready', deviceId: id } : current)),
+        );
         setCameraStream(stream);
-        setCamera({ status: 'ready', deviceId: track.getSettings().deviceId ?? '' });
+        setCamera({ status: 'ready', deviceId: id });
         void refreshDevices();
       } catch (error) {
         if (mounted.current) setCamera({ status: 'failed', reason: failureFrom(error) });
       }
     },
-    [refreshDevices],
+    [clearMuteTimer, refreshDevices, watchMute],
   );
 
   const checkMicrophone = useCallback(
@@ -222,22 +271,32 @@ export function useDeviceCheck() {
           return;
         }
         stopStream(streams.current.microphone);
+        clearMuteTimer('microphone');
         streams.current.microphone = stream;
         const [track] = stream.getAudioTracks();
+        const id = track.getSettings().deviceId ?? '';
         track.addEventListener('ended', () => {
           if (streams.current.microphone !== stream) return;
+          clearMuteTimer('microphone');
           streams.current.microphone = null;
           stopMeter();
           setMicrophone({ status: 'stopped' });
         });
+        watchMute(
+          'microphone',
+          track,
+          stream,
+          () => setMicrophone({ status: 'muted', deviceId: id }),
+          () => setMicrophone((current) => (current.status === 'muted' ? { status: 'ready', deviceId: id } : current)),
+        );
         startMeter(stream);
-        setMicrophone({ status: 'ready', deviceId: track.getSettings().deviceId ?? '' });
+        setMicrophone({ status: 'ready', deviceId: id });
         void refreshDevices();
       } catch (error) {
         if (mounted.current) setMicrophone({ status: 'failed', reason: failureFrom(error) });
       }
     },
-    [refreshDevices, startMeter, stopMeter],
+    [clearMuteTimer, refreshDevices, startMeter, stopMeter, watchMute],
   );
 
   const shareScreen = useCallback(async () => {
@@ -257,18 +316,28 @@ export function useDeviceCheck() {
         return;
       }
       stopStream(streams.current.screen);
+      clearMuteTimer('screen');
       streams.current.screen = stream;
       const [track] = stream.getVideoTracks();
+      const surface = surfaceOf(track);
       track.addEventListener('ended', () => {
         if (streams.current.screen !== stream) return;
+        clearMuteTimer('screen');
         streams.current.screen = null;
         setScreen({ status: 'stopped' });
       });
-      setScreen({ status: 'shared', surface: surfaceOf(track) });
+      watchMute(
+        'screen',
+        track,
+        stream,
+        () => setScreen({ status: 'muted', surface }),
+        () => setScreen((current) => (current.status === 'muted' ? { status: 'shared', surface } : current)),
+      );
+      setScreen({ status: 'shared', surface });
     } catch (error) {
       if (mounted.current) setScreen({ status: 'failed', reason: failureFrom(error) });
     }
-  }, []);
+  }, [clearMuteTimer, watchMute]);
 
   // `navigator.onLine` only says the device has a network. It says nothing about whether the
   // interview service is reachable, and the UI does not claim that.
@@ -303,18 +372,25 @@ export function useDeviceCheck() {
     streams.current.camera = null;
     streams.current.microphone = null;
     streams.current.screen = null;
+    clearMuteTimer('camera');
+    clearMuteTimer('microphone');
+    clearMuteTimer('screen');
     stopMeter();
     setCameraStream(null);
     setCamera({ status: 'idle' });
     setMicrophone({ status: 'idle' });
     setScreen({ status: 'idle' });
-  }, [stopMeter]);
+  }, [clearMuteTimer, stopMeter]);
 
   useEffect(() => {
     mounted.current = true;
     const current = streams.current;
+    const timers = muteTimers.current;
     return () => {
       mounted.current = false;
+      Object.values(timers).forEach((id) => {
+        if (id !== null) window.clearTimeout(id);
+      });
       stopStream(current.camera);
       stopStream(current.microphone);
       stopStream(current.screen);
