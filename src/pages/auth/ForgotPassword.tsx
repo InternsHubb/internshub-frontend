@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ROUTES } from "@/constants/routes";
 import { requestPasswordReset } from "@/lib/api/auth";
-import { ApiError } from "@/lib/api/client";
+import { passwordResetError } from "@/lib/auth/errorMessages";
 import ResetCodeStep from "@/components/auth/forgot-password/ResetCodeStep";
+import type { ResetCodeError } from "@/components/auth/forgot-password/ResetCodeStep";
 import NewPasswordStep from "@/components/auth/forgot-password/NewPasswordStep";
 
 // ---------- [0] Design tokens (From Figma) ----------
@@ -53,7 +54,7 @@ type ForgotForm = z.infer<typeof forgotSchema>;
 // idle = Default / Email Required / Invalid Email (Determined from errors)
 type Status = "idle" | "submitting" | "success" | "error";
 // Which banner text to show when the request fails.
-type SubmitError = "network" | "server";
+type SubmitError = "network" | "tooMany" | "server";
 
 // ---------- [2] Texts (Arabic/English) ----------
 const text = {
@@ -87,12 +88,14 @@ const text = {
       "Something went wrong. No email was sent. Please try again.",
     submitErrorNetwork:
       "We couldn't reach the server. Check your connection and try again.",
+    submitErrorTooMany:
+      "Too many requests. No email was sent. Please wait a few minutes and try again.",
 
     successLabel: "REQUEST SENT",
     successTitle: "Check your email",
     successBefore: "If an account matches ",
     successAfter:
-      ", a one-time 6-digit reset code will be sent to that inbox. For privacy, we don't confirm whether an address is registered.",
+      ", a one-time reset code will be sent to that inbox. For privacy, we don't confirm whether an address is registered.",
     tryAnother: "Try another email address",
     enterCode: "Enter reset code",
 
@@ -129,12 +132,14 @@ const text = {
     submitErrorBody: "حدث خطأ ما. لم يتم إرسال أي بريد. حاول مرة أخرى.",
     submitErrorNetwork:
       "تعذّر الوصول إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.",
+    submitErrorTooMany:
+      "طلبات كثيرة. لم يتم إرسال أي بريد. انتظر بضع دقائق ثم حاول مرة أخرى.",
 
     successLabel: "تم إرسال الطلب",
     successTitle: "تحقق من بريدك الإلكتروني",
     successBefore: "إذا كان هناك حساب مرتبط بـ ",
     successAfter:
-      "، سيصل رمز إعادة تعيين من 6 أرقام لمرة واحدة إلى هذا البريد. حفاظًا على الخصوصية، لا نؤكد ما إذا كان البريد مسجلًا.",
+      "، سيصل رمز إعادة تعيين لمرة واحدة إلى هذا البريد. حفاظًا على الخصوصية، لا نؤكد ما إذا كان البريد مسجلًا.",
     tryAnother: "جرّب بريدًا إلكترونيًا آخر",
     enterCode: "إدخال رمز الاستعادة",
 
@@ -492,6 +497,7 @@ export default function ForgotPassword() {
   const [step, setStep] = useState<"email" | "code" | "newPassword">("email");
   const [sentEmail, setSentEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
+  const [codeError, setCodeError] = useState<ResetCodeError | null>(null);
 
   // POST /api/auth/forgotPassword. The backend answers the same way for registered and unknown
   // emails, so success only means the request was accepted.
@@ -502,11 +508,17 @@ export default function ForgotPassword() {
       setSentEmail(email);
       setStatus("success");
     } catch (error) {
-      setSubmitError(
-        error instanceof ApiError && error.status === 0 ? "network" : "server",
-      );
+      const kind = passwordResetError(error);
+      setSubmitError(kind === "network" || kind === "tooMany" ? kind : "server");
       setStatus("error");
     }
+  };
+
+  // The code is only checked by POST /api/auth/resetPassword, so a rejected code returns here.
+  const handleInvalidCode = () => {
+    setResetCode("");
+    setCodeError("invalid");
+    setStep("code");
   };
 
   const tryAnother = () => {
@@ -553,8 +565,11 @@ export default function ForgotPassword() {
                 <ResetCodeStep
                   email={sentEmail}
                   lang={lang}
-                  onVerified={(code) => {
+                  initialCode={resetCode}
+                  initialError={codeError}
+                  onSubmit={(code) => {
                     setResetCode(code);
+                    setCodeError(null);
                     setStep("newPassword");
                   }}
                 />
@@ -563,7 +578,8 @@ export default function ForgotPassword() {
                   email={sentEmail}
                   code={resetCode}
                   lang={lang}
-                  onDone={() => navigate(ROUTES.login)} 
+                  onInvalidCode={handleInvalidCode}
+                  onDone={() => navigate(ROUTES.login, { replace: true })}
                 />
               ) : status === "success" ? (
                 <SuccessView
@@ -616,7 +632,9 @@ export default function ForgotPassword() {
                         <p className="text-[12px] leading-[16px]">
                           {submitError === "network"
                             ? t.submitErrorNetwork
-                            : t.submitErrorBody}
+                            : submitError === "tooMany"
+                              ? t.submitErrorTooMany
+                              : t.submitErrorBody}
                         </p>
                       </div>
                     </div>
