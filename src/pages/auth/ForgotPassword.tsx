@@ -563,7 +563,7 @@ export default function ForgotPassword() {
                   email={sentEmail}
                   code={resetCode}
                   lang={lang}
-                  onDone={() => navigate(ROUTES.login)} // TODO: اسألي عن شاشة ما بعد التحديث
+                  onDone={() => navigate(ROUTES.login)} 
                 />
               ) : status === "success" ? (
                 <SuccessView
