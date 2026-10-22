@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ROUTES } from "@/constants/routes";
 import { requestPasswordReset } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import ResetCodeStep from "@/components/auth/forgot-password/ResetCodeStep";
+import NewPasswordStep from "@/components/auth/forgot-password/NewPasswordStep";
 
 // ---------- [0] Design tokens (From Figma) ----------
 const C = {
@@ -39,7 +41,8 @@ const rightBg = [
   "linear-gradient(145deg, #FAF8FB 0%, #F5F0F8 55%, #FFFFFF 100%)",
 ].join(", ");
 
-const buttonBg = "linear-gradient(105deg, #500A8A 0%, #400066 52%, #35004E 100%)";
+const buttonBg =
+  "linear-gradient(105deg, #500A8A 0%, #400066 52%, #35004E 100%)";
 const buttonShadow = "0 9px 20px rgba(54, 0, 79, 0.20)";
 
 // ---------- [1] Validation Rules ----------
@@ -68,10 +71,10 @@ const text = {
     label: "ACCOUNT RECOVERY",
     title: "Forgot your password?",
     subtitle:
-      "Enter the email address associated with your account and we'll send you instructions to reset your password.",
+      "Enter the email address associated with your account and we'll send a one-time reset code to your inbox.",
     emailLabel: "Email address",
     emailPlaceholder: "Enter your email",
-    send: "Send reset link",
+    send: "Send reset code",
     sending: "Sending...",
     back: "Back to login",
     securityNote:
@@ -80,15 +83,18 @@ const text = {
     help: "Visit Help Center",
 
     submitErrorTitle: "We couldn't submit your request",
-    submitErrorBody: "Something went wrong on our side, so we can't confirm a reset email was sent. Please try again in a moment.",
-    submitErrorNetwork: "We couldn't reach the server. Check your connection and try again.",
+    submitErrorBody:
+      "Something went wrong. No email was sent. Please try again.",
+    submitErrorNetwork:
+      "We couldn't reach the server. Check your connection and try again.",
 
     successLabel: "REQUEST SENT",
     successTitle: "Check your email",
     successBefore: "If an account matches ",
     successAfter:
-      ", reset instructions will appear in that inbox. For privacy, we don't confirm whether an address is registered.",
+      ", a one-time 6-digit reset code will be sent to that inbox. For privacy, we don't confirm whether an address is registered.",
     tryAnother: "Try another email address",
+    enterCode: "Enter reset code",
 
     errors: {
       required: "Email address is required.",
@@ -109,10 +115,10 @@ const text = {
     label: "استعادة الحساب",
     title: "نسيت كلمة المرور؟",
     subtitle:
-      "اكتب البريد الإلكتروني المرتبط بحسابك وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",
+      "اكتب البريد الإلكتروني المرتبط بحسابك وسنرسل رمز إعادة تعيين لمرة واحدة إلى بريدك.",
     emailLabel: "البريد الإلكتروني",
     emailPlaceholder: "أدخل بريدك الإلكتروني",
-    send: "إرسال رابط الاستعادة",
+    send: "إرسال رمز الاستعادة",
     sending: "جارٍ الإرسال...",
     back: "العودة لتسجيل الدخول",
     securityNote: "لأمانك، الرد واحد سواء كان البريد مسجلًا أو لا.",
@@ -120,15 +126,17 @@ const text = {
     help: "زيارة مركز المساعدة",
 
     submitErrorTitle: "لم نتمكن من إرسال طلبك",
-    submitErrorBody: "حدث خطأ من جهتنا، لذا لا يمكننا تأكيد إرسال بريد إعادة التعيين. حاول مرة أخرى بعد قليل.",
-    submitErrorNetwork: "تعذّر الوصول إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.",
+    submitErrorBody: "حدث خطأ ما. لم يتم إرسال أي بريد. حاول مرة أخرى.",
+    submitErrorNetwork:
+      "تعذّر الوصول إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.",
 
     successLabel: "تم إرسال الطلب",
     successTitle: "تحقق من بريدك الإلكتروني",
     successBefore: "إذا كان هناك حساب مرتبط بـ ",
     successAfter:
-      "، ستظهر تعليمات إعادة التعيين في هذا البريد. حفاظًا على الخصوصية، لا نؤكد ما إذا كان البريد مسجلًا.",
+      "، سيصل رمز إعادة تعيين من 6 أرقام لمرة واحدة إلى هذا البريد. حفاظًا على الخصوصية، لا نؤكد ما إذا كان البريد مسجلًا.",
     tryAnother: "جرّب بريدًا إلكترونيًا آخر",
+    enterCode: "إدخال رمز الاستعادة",
 
     errors: {
       required: "البريد الإلكتروني مطلوب.",
@@ -139,24 +147,76 @@ const text = {
 type Text = typeof text.en;
 
 // ---------- [3] Icons ----------
-const ShieldIcon = ({ size = 16, color = "currentColor" }: { size?: number; color?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" aria-hidden="true">
-    <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" strokeLinejoin="round" />
+const ShieldIcon = ({
+  size = 16,
+  color = "currentColor",
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+    aria-hidden="true"
+  >
+    <path
+      d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"
+      strokeLinejoin="round"
+    />
     <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 const ArrowIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="rtl:rotate-180" aria-hidden="true">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    className="rtl:rotate-180"
+    aria-hidden="true"
+  >
+    <path
+      d="M5 12h14M13 6l6 6-6 6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 const BackArrowIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="rtl:rotate-180" aria-hidden="true">
-    <path d="M19 12H5M11 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    className="rtl:rotate-180"
+    aria-hidden="true"
+  >
+    <path
+      d="M19 12H5M11 6l-6 6 6 6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 const AlertIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-[2px] shrink-0" aria-hidden="true">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    className="mt-[2px] shrink-0"
+    aria-hidden="true"
+  >
     <circle cx="12" cy="12" r="9" />
     <path d="M12 7v6M12 16v1" strokeLinecap="round" />
   </svg>
@@ -176,19 +236,31 @@ function BrandPanel({ t }: { t: Text }) {
 
       {/* logo */}
       <div className="relative flex items-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-[16px] font-extrabold leading-[20px]" style={{ color: C.purple }}>
+        <span
+          className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-[16px] font-extrabold leading-[20px]"
+          style={{ color: C.purple }}
+        >
           ih
         </span>
-        <span className="text-[24px] font-bold leading-[32px]" style={{ letterSpacing: "-1px" }}>
+        <span
+          className="text-[24px] font-bold leading-[32px]"
+          style={{ letterSpacing: "-1px" }}
+        >
           {t.brand}
         </span>
-        <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold leading-[16px]" style={{ letterSpacing: "1px" }}>
+        <span
+          className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold leading-[16px]"
+          style={{ letterSpacing: "1px" }}
+        >
           {t.brandTag}
         </span>
       </div>
 
       {/* illustration */}
-      <div className="relative mx-auto h-[293px] w-[504px] max-w-full" dir="ltr">
+      <div
+        className="relative mx-auto h-[293px] w-[504px] max-w-full"
+        dir="ltr"
+      >
         {/* envelope */}
         <div
           className="absolute left-0 top-0 h-[232px] w-[336px] rounded-[24px]"
@@ -198,18 +270,44 @@ function BrandPanel({ t }: { t: Text }) {
             boxShadow: "0 24px 48px rgba(20, 0, 40, 0.35)",
           }}
         >
-          <svg className="absolute inset-0" width="336" height="232" viewBox="0 0 336 232" fill="none" aria-hidden="true">
-            <path d="M16 16 L168 124 L320 16" stroke="#E4D9F4" strokeWidth="2" />
-            <path d="M16 216 L130 124 M320 216 L206 124" stroke="#EEE6F8" strokeWidth="2" />
+          <svg
+            className="absolute inset-0"
+            width="336"
+            height="232"
+            viewBox="0 0 336 232"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M16 16 L168 124 L320 16"
+              stroke="#E4D9F4"
+              strokeWidth="2"
+            />
+            <path
+              d="M16 216 L130 124 M320 216 L206 124"
+              stroke="#EEE6F8"
+              strokeWidth="2"
+            />
           </svg>
           <div className="absolute left-[49px] top-[37px] h-[10px] w-[222px] rounded-full bg-[#E2D6F3]" />
           <div className="absolute left-[49px] top-[59px] h-[10px] w-[222px] rounded-full bg-[#E9DFF6]" />
           <div className="absolute left-[49px] top-[81px] h-[10px] w-[140px] rounded-full bg-[#EEE7F8]" />
           <div
             className="absolute left-[132px] top-[120px] flex h-[72px] w-[72px] items-center justify-center rounded-[20px] border-2 border-white/70"
-            style={{ background: "linear-gradient(160deg, #6D28D9 0%, #4A0E8A 100%)", boxShadow: "0 10px 20px rgba(74, 14, 138, 0.4)" }}
+            style={{
+              background: "linear-gradient(160deg, #6D28D9 0%, #4A0E8A 100%)",
+              boxShadow: "0 10px 20px rgba(74, 14, 138, 0.4)",
+            }}
           >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" aria-hidden="true">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
               <rect x="5" y="11" width="14" height="9" rx="2" />
               <path d="M8 11V8a4 4 0 018 0v3" strokeLinecap="round" />
             </svg>
@@ -219,19 +317,35 @@ function BrandPanel({ t }: { t: Text }) {
         {/* floating card */}
         <div
           className="absolute left-[172px] top-[227px] flex h-[66px] w-[332px] items-center gap-3 rounded-[20px] border border-white/60 px-5"
-          style={{ background: "rgba(248, 244, 253, 0.95)", boxShadow: "0 16px 32px rgba(20, 0, 40, 0.3)" }}
+          style={{
+            background: "rgba(248, 244, 253, 0.95)",
+            boxShadow: "0 16px 32px rgba(20, 0, 40, 0.3)",
+          }}
         >
           <ShieldIcon size={20} color={C.green} />
           <div>
-            <p className="text-[13px] font-semibold leading-[18px]" style={{ color: "#1F2937" }}>{t.cardTitle}</p>
-            <p className="text-[11px] leading-[16px]" style={{ color: C.gray500 }}>{t.cardBody}</p>
+            <p
+              className="text-[13px] font-semibold leading-[18px]"
+              style={{ color: "#1F2937" }}
+            >
+              {t.cardTitle}
+            </p>
+            <p
+              className="text-[11px] leading-[16px]"
+              style={{ color: C.gray500 }}
+            >
+              {t.cardBody}
+            </p>
           </div>
         </div>
       </div>
 
       {/* hero copy */}
       <div className="relative">
-        <p className="mb-4 text-[12px] font-semibold leading-[16px]" style={{ color: C.gold, letterSpacing: "2px" }}>
+        <p
+          className="mb-4 text-[12px] font-semibold leading-[16px]"
+          style={{ color: C.gold, letterSpacing: "2px" }}
+        >
           {t.heroLabel}
         </p>
         <h2 className="text-[44px] font-extrabold leading-[1.08] tracking-[-2px]">
@@ -239,13 +353,17 @@ function BrandPanel({ t }: { t: Text }) {
           <br />
           {t.heroTitleLines[1]}
         </h2>
-        <p className="mt-4 max-w-[620px] text-[14px] leading-[20px] text-white/75">{t.heroBody}</p>
+        <p className="mt-4 max-w-[620px] text-[14px] leading-[20px] text-white/75">
+          {t.heroBody}
+        </p>
 
         <div className="mt-[56px] flex items-center gap-4 text-[12px] leading-[16px] text-white/70">
           {t.footerWords.map((w, i) => (
             <span key={w} className="flex items-center gap-4">
               {w}
-              {i < t.footerWords.length - 1 && <span className="h-px w-10 bg-white/30" />}
+              {i < t.footerWords.length - 1 && (
+                <span className="h-px w-10 bg-white/30" />
+              )}
             </span>
           ))}
         </div>
@@ -255,7 +373,17 @@ function BrandPanel({ t }: { t: Text }) {
 }
 
 // ---------- [5] Success screen ----------
-function SuccessView({ email, t, onRetry }: { email: string; t: Text; onRetry: () => void }) {
+function SuccessView({
+  email,
+  t,
+  onRetry,
+  onEnterCode,
+}: {
+  email: string;
+  t: Text;
+  onRetry: () => void;
+  onEnterCode: () => void;
+}) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   // As soon as the screen appears, move the focus to the title (keyboard + screen reader)
@@ -267,14 +395,32 @@ function SuccessView({ email, t, onRetry }: { email: string; t: Text; onRetry: (
     <div className="text-center">
       <div
         className="mx-auto flex h-[136px] w-[136px] items-center justify-center rounded-[40px] bg-white"
-        style={{ boxShadow: "0 8px 24px rgba(21, 128, 61, 0.15)", border: "1px solid #DCF2E4" }}
+        style={{
+          boxShadow: "0 8px 24px rgba(21, 128, 61, 0.15)",
+          border: "1px solid #DCF2E4",
+        }}
       >
         <div
           className="flex h-[104px] w-[104px] items-center justify-center rounded-[28px]"
-          style={{ background: "linear-gradient(160deg, #22A559 0%, #15803D 100%)", boxShadow: "0 10px 20px rgba(21, 128, 61, 0.3)" }}
+          style={{
+            background: "linear-gradient(160deg, #22A559 0%, #15803D 100%)",
+            boxShadow: "0 10px 20px rgba(21, 128, 61, 0.3)",
+          }}
         >
-          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" aria-hidden="true">
-            <path d="M5 12.5l4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            width="44"
+            height="44"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="2.5"
+            aria-hidden="true"
+          >
+            <path
+              d="M5 12.5l4.5 4.5L19 7.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
       </div>
@@ -295,20 +441,25 @@ function SuccessView({ email, t, onRetry }: { email: string; t: Text; onRetry: (
         {t.successTitle}
       </h1>
 
-      <p className="mx-auto mt-4 max-w-[520px] text-[14px] leading-[24px]" style={{ color: C.gray600 }}>
+      <p
+        className="mx-auto mt-4 max-w-[520px] text-[14px] leading-[24px]"
+        style={{ color: C.gray600 }}
+      >
         {t.successBefore}
-        <span className="font-medium text-gray-900" dir="ltr">{email}</span>
+        <span className="font-medium text-gray-900" dir="ltr">
+          {email}
+        </span>
         {t.successAfter}
       </p>
-
-      <Link
-        to={ROUTES.login}
+      <button
+        type="button"
+        onClick={onEnterCode}
         className="mx-auto mt-[88px] flex h-14 w-[252px] items-center justify-center gap-2 rounded-xl text-[14px] font-semibold text-white focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-300"
         style={{ background: buttonBg, boxShadow: buttonShadow }}
       >
-        {t.back}
+        {t.enterCode}
         <ArrowIcon />
-      </Link>
+      </button>
       <button
         type="button"
         onClick={onRetry}
@@ -337,6 +488,10 @@ export default function ForgotPassword() {
     reset,
     formState: { errors },
   } = useForm<ForgotForm>({ resolver: zodResolver(forgotSchema) });
+  const navigate = useNavigate();
+  const [step, setStep] = useState<"email" | "code" | "newPassword">("email");
+  const [sentEmail, setSentEmail] = useState("");
+  const [resetCode, setResetCode] = useState("");
 
   // POST /api/auth/forgotPassword. The backend answers the same way for registered and unknown
   // emails, so success only means the request was accepted.
@@ -344,9 +499,12 @@ export default function ForgotPassword() {
     setStatus("submitting");
     try {
       await requestPasswordReset(email);
+      setSentEmail(email);
       setStatus("success");
     } catch (error) {
-      setSubmitError(error instanceof ApiError && error.status === 0 ? "network" : "server");
+      setSubmitError(
+        error instanceof ApiError && error.status === 0 ? "network" : "server",
+      );
       setStatus("error");
     }
   };
@@ -371,33 +529,71 @@ export default function ForgotPassword() {
     >
       <BrandPanel t={t} />
 
-      <section className="flex min-h-screen flex-col px-6 py-8 sm:px-10 lg:px-[60px] xl:px-[72px]"
-      style={{ background: rightBg }}>
+      <section
+        className="flex min-h-screen flex-col px-6 py-8 sm:px-10 lg:px-[60px] xl:px-[72px]"
+        style={{ background: rightBg }}
+      >
         {/* mobile logo  */}
         <div className="mb-8 flex items-center gap-3 lg:hidden">
-          <span className="flex h-10 w-10 items-center justify-center rounded-[10px] text-[14px] font-extrabold text-white" style={{ background: C.purple }}>
+          <span
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] text-[14px] font-extrabold text-white"
+            style={{ background: C.purple }}
+          >
             ih
           </span>
-          <span className="text-[20px] font-bold" style={{ color: C.ink }}>{t.brand}</span>
+          <span className="text-[20px] font-bold" style={{ color: C.ink }}>
+            {t.brand}
+          </span>
         </div>
 
         <div className="mx-auto flex w-full max-w-[520px] flex-1 flex-col">
           <div className="flex flex-1 items-center">
             <div className="w-full">
-              {status === "success" ? (
-                <SuccessView email={getValues("email")} t={t} onRetry={tryAnother} />
+              {step === "code" ? (
+                <ResetCodeStep
+                  email={sentEmail}
+                  lang={lang}
+                  onVerified={(code) => {
+                    setResetCode(code);
+                    setStep("newPassword");
+                  }}
+                />
+              ) : step === "newPassword" ? (
+                <NewPasswordStep
+                  email={sentEmail}
+                  code={resetCode}
+                  lang={lang}
+                  onDone={() => navigate(ROUTES.login)} 
+                />
+              ) : status === "success" ? (
+                <SuccessView
+                  email={getValues("email")}
+                  t={t}
+                  onRetry={tryAnother}
+                  onEnterCode={() => setStep("code")}
+                />
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                   <p
                     className="inline-block rounded-[9px] px-[11px] py-[5px] text-[10px] font-bold leading-[15px] tracking-[1px]"
-                    style={{ background: C.pillBg, color: C.pillText, letterSpacing: "1px" }}
+                    style={{
+                      background: C.pillBg,
+                      color: C.pillText,
+                      letterSpacing: "1px",
+                    }}
                   >
                     {t.label}
                   </p>
-                  <h1 className="mt-4 text-[36px] font-extrabold leading-[1.2] tracking-[-1.5px]" style={{ color: C.ink }}>
+                  <h1
+                    className="mt-4 text-[36px] font-extrabold leading-[1.2] tracking-[-1.5px]"
+                    style={{ color: C.ink }}
+                  >
                     {t.title}
                   </h1>
-                  <p className="mt-3 text-[12px] leading-[20px]" style={{ color: C.gray600 }}>
+                  <p
+                    className="mt-3 text-[12px] leading-[20px]"
+                    style={{ color: C.gray600 }}
+                  >
                     {t.subtitle}
                   </p>
 
@@ -406,19 +602,31 @@ export default function ForgotPassword() {
                     <div
                       role="alert"
                       className="mt-6 flex gap-3 rounded-xl border p-4"
-                      style={{ background: "#FEF2F2", borderColor: "#FECACA", color: C.redDark }}
+                      style={{
+                        background: "#FEF2F2",
+                        borderColor: "#FECACA",
+                        color: C.redDark,
+                      }}
                     >
                       <AlertIcon />
                       <div>
-                        <p className="text-[14px] font-semibold leading-[20px]">{t.submitErrorTitle}</p>
+                        <p className="text-[14px] font-semibold leading-[20px]">
+                          {t.submitErrorTitle}
+                        </p>
                         <p className="text-[12px] leading-[16px]">
-                          {submitError === "network" ? t.submitErrorNetwork : t.submitErrorBody}
+                          {submitError === "network"
+                            ? t.submitErrorNetwork
+                            : t.submitErrorBody}
                         </p>
                       </div>
                     </div>
                   )}
 
-                  <label htmlFor="email" className="mb-2 mt-8 block text-[12px] font-medium leading-[20px]" style={{ color: C.gray700 }}>
+                  <label
+                    htmlFor="email"
+                    className="mb-2 mt-8 block text-[12px] font-medium leading-[20px]"
+                    style={{ color: C.gray700 }}
+                  >
                     {t.emailLabel}
                   </label>
                   <input
@@ -438,7 +646,12 @@ export default function ForgotPassword() {
                     {...register("email")}
                   />
                   {errorMessage && (
-                    <p id="email-error" role="alert" className="mt-[9px] text-[11px] leading-[16px]" style={{ color: C.red }}>
+                    <p
+                      id="email-error"
+                      role="alert"
+                      className="mt-[9px] text-[11px] leading-[16px]"
+                      style={{ color: C.red }}
+                    >
                       {errorMessage}
                     </p>
                   )}
@@ -454,7 +667,11 @@ export default function ForgotPassword() {
                   </button>
 
                   <div className="mt-6 text-center">
-                    <Link to={ROUTES.login} className="inline-flex items-center gap-2 text-[12px] leading-[16px] hover:underline" style={{ color: C.gray600 }}>
+                    <Link
+                      to={ROUTES.login}
+                      className="inline-flex items-center gap-2 text-[12px] leading-[16px] hover:underline"
+                      style={{ color: C.gray600 }}
+                    >
                       <BackArrowIcon />
                       {t.back}
                     </Link>
@@ -464,18 +681,31 @@ export default function ForgotPassword() {
                     className="mt-6 flex items-center gap-3 rounded-xl border px-4 py-4"
                     style={{ background: C.noteBg, borderColor: C.noteBorder }}
                   >
-                    <span style={{ color: C.purple }}><ShieldIcon size={18} /></span>
-                    <p className="text-[12px] leading-[16px]" style={{ color: C.gray600 }}>{t.securityNote}</p>
+                    <span style={{ color: C.purple }}>
+                      <ShieldIcon size={18} />
+                    </span>
+                    <p
+                      className="text-[12px] leading-[16px]"
+                      style={{ color: C.gray600 }}
+                    >
+                      {t.securityNote}
+                    </p>
                   </div>
-
                 </form>
               )}
             </div>
           </div>
 
-          <footer className="flex items-center justify-between border-t pb-6 pt-4 text-[12px] leading-[16px]" style={{ borderColor: "#EEEAF5" }}>
+          <footer
+            className="flex items-center justify-between border-t pb-6 pt-4 text-[12px] leading-[16px]"
+            style={{ borderColor: "#EEEAF5" }}
+          >
             <span style={{ color: C.gray500 }}>{t.trouble}</span>
-            <a href="/help" className="font-medium hover:underline" style={{ color: C.purple }}>
+            <a
+              href="/help"
+              className="font-medium hover:underline"
+              style={{ color: C.purple }}
+            >
               {t.help}
             </a>
           </footer>
