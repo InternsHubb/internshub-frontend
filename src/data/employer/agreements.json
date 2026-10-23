@@ -1,0 +1,19 @@
+﻿{
+  "id": "agreement-merna-adel",
+  "applicationId": "app-merna-adel",
+  "parties": {
+    "employer": {
+      "id": "party-employer",
+      "kind": "employer",
+      "name": "DesignCraft Agency",
+      "signedBy": "Sarah Mahmoud",
+      "status": "signed"
+    },
+    "student": {
+      "id": "party-student",
+      "kind": "student",
+      "name": "Merna Adel",
+      "status": "pending"
+    }
+  }
+}

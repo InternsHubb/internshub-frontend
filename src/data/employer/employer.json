@@ -1,0 +1,29 @@
+{
+  "profile": {
+    "id": "employer-novatech",
+    "companyName": "NovaTech Solutions",
+    "companyInitials": "N",
+    "viewerName": "Sarah Mahmoud",
+    "viewerInitials": "SM",
+    "viewerRole": "HR",
+    "online": true
+  },
+  "candidate": {
+    "id": "merna-adel",
+    "name": "Merna Adel",
+    "initials": "MA",
+    "matchPercent": 87,
+    "cohort": 12
+  },
+  "opportunity": {
+    "id": "uiux-designcraft",
+    "title": "UI/UX Designer",
+    "company": "DesignCraft Agency",
+    "companyInitials": "DC",
+    "location": "Alexandria",
+    "typeKey": "internship",
+    "modeKey": "hybrid",
+    "durationMonths": 3,
+    "startDate": "2026-11-01"
+  }
+}

@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 import { RequireAuth } from '@/components/auth/RequireAuth';
-import { REGISTER_HASHES, ROUTES } from '@/constants/routes';
+import { EMPLOYER_ROUTES, REGISTER_HASHES, ROUTES } from '@/constants/routes';
 import LandingPage from '@/pages/LandingPage';
 
 // Code-split secondary heavy routes so home page bundle remains lightweight
@@ -19,6 +19,35 @@ const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'));
 const Login = lazy(() => import('@/pages/auth/Login'));
 const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
 const MicrosoftCallback = lazy(() => import('@/pages/auth/MicrosoftCallback'));
+const EmployerLayout = lazy(() =>
+  import('@/components/employer/EmployerLayout').then((module) => ({ default: module.EmployerLayout })),
+);
+const EmployerPipelinePage = lazy(() =>
+  import('@/pages/employer/PipelinePage').then((module) => ({ default: module.PipelinePage })),
+);
+const EmployerScheduleInterviewPage = lazy(() =>
+  import('@/pages/employer/ScheduleInterviewPage').then((module) => ({
+    default: module.ScheduleInterviewPage,
+  })),
+);
+const EmployerDecisionPage = lazy(() =>
+  import('@/pages/employer/EmployerDecisionPage').then((module) => ({
+    default: module.EmployerDecisionPage,
+  })),
+);
+const EmployerDecisionSubmittedPage = lazy(() =>
+  import('@/pages/employer/DecisionSubmittedPage').then((module) => ({
+    default: module.DecisionSubmittedPage,
+  })),
+);
+const EmployerAgreementPage = lazy(() =>
+  import('@/pages/employer/PartnerAgreementPage').then((module) => ({
+    default: module.PartnerAgreementPage,
+  })),
+);
+const EmployerCompletionPage = lazy(() =>
+  import('@/pages/employer/CompletionPage').then((module) => ({ default: module.CompletionPage })),
+);
 
 const PageFallback: React.FC = () => (
   <div className="min-h-screen bg-white flex items-center justify-center">
@@ -62,6 +91,27 @@ export const router = createBrowserRouter([
             <OnboardingFlow />
           </RequireAuth>
         ),
+      },
+      {
+        path: EMPLOYER_ROUTES.root,
+        element: (
+          <RequireAuth>
+            <EmployerLayout />
+          </RequireAuth>
+        ),
+        children: [
+          { index: true, element: <Navigate to={EMPLOYER_ROUTES.pipeline} replace /> },
+          { path: 'pipeline', element: <EmployerPipelinePage /> },
+          { path: 'interviews/:applicationId/schedule', element: <EmployerScheduleInterviewPage /> },
+          { path: 'applications/:applicationId/decision', element: <EmployerDecisionPage /> },
+          {
+            path: 'applications/:applicationId/decision/submitted',
+            element: <EmployerDecisionSubmittedPage />,
+          },
+          { path: 'applications/:applicationId/agreement', element: <EmployerAgreementPage /> },
+          { path: 'completion', element: <EmployerCompletionPage /> },
+          { path: '*', element: <Navigate to={EMPLOYER_ROUTES.pipeline} replace /> },
+        ],
       },
       { path: ROUTES.register, element: <RegisterScreen /> },
       { path: ROUTES.authRegister, element: <RegisterScreen /> },
