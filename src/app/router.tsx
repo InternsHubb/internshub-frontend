@@ -8,6 +8,10 @@ import {
 } from 'react-router-dom';
 
 import { RequireAuth } from '@/components/auth/RequireAuth';
+import { RequiredCoursesCard } from '@/components/dashboard/RequiredCoursesCard';
+import type { DashboardRouteHandle } from '@/components/layout/DashboardLayout';
+import { CoursesSearch } from '@/pages/dashboard/courses/CoursesSearch';
+import { InternshipSidebarFooter } from '@/pages/dashboard/internship/InternshipSidebarFooter';
 import { REGISTER_HASHES, ROUTES } from '@/constants/routes';
 import LandingPage from '@/pages/LandingPage';
 
@@ -19,6 +23,12 @@ const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'));
 const Login = lazy(() => import('@/pages/auth/Login'));
 const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
 const MicrosoftCallback = lazy(() => import('@/pages/auth/MicrosoftCallback'));
+const DashboardLayout = lazy(() => import('@/components/layout/DashboardLayout'));
+const DashboardHome = lazy(() => import('@/pages/dashboard/home/DashboardHome'));
+const InternshipDashboard = lazy(() => import('@/pages/dashboard/internship/InternshipDashboard'));
+const ProjectPage = lazy(() => import('@/pages/dashboard/internship/ProjectPage'));
+const CoursesPage = lazy(() => import('@/pages/dashboard/courses/CoursesPage'));
+const PlansPage = lazy(() => import('@/pages/dashboard/courses/PlansPage'));
 
 const PageFallback: React.FC = () => (
   <div className="min-h-screen bg-white flex items-center justify-center">
@@ -55,6 +65,31 @@ export const router = createBrowserRouter([
       { path: ROUTES.home, element: <LandingPage /> },
       // Sub-paths keep rendering the Internship page, as before.
       { path: `${ROUTES.internship}/*`, element: <InternshipPage /> },
+      {
+        path: ROUTES.dashboard,
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <DashboardHome /> },
+          {
+            path: 'internship',
+            element: <InternshipDashboard />,
+            handle: { sidebarFooter: InternshipSidebarFooter } satisfies DashboardRouteHandle,
+          },
+          {
+            path: 'internship/project',
+            element: <ProjectPage />,
+            handle: { sidebarFooter: RequiredCoursesCard } satisfies DashboardRouteHandle,
+          },
+          {
+            path: 'courses',
+            handle: { topNavSearch: CoursesSearch } satisfies DashboardRouteHandle,
+            children: [
+              { index: true, element: <CoursesPage /> },
+              { path: 'plans', element: <PlansPage /> },
+            ],
+          },
+        ],
+      },
       {
         path: ROUTES.onboarding,
         element: (
