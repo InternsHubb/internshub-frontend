@@ -668,7 +668,7 @@
         "continue": "Continue"
       },
       "session": {
-        "progress": "Question {{current}} of {{total}}",
+        "stageBadge": "Step 3 of 3 • Interview",
         "question": "Question {{number}}",
         "currentQuestion": "Current question",
         "voiceResponse": "Voice Response",

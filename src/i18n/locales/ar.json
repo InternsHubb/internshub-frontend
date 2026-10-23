@@ -676,7 +676,7 @@
         "continue": "متابعة"
       },
       "session": {
-        "progress": "السؤال {{current}} من {{total}}",
+        "stageBadge": "الخطوة 3 من 3 • المقابلة",
         "question": "السؤال {{number}}",
         "currentQuestion": "السؤال الحالي",
         "voiceResponse": "الإجابة الصوتية",
