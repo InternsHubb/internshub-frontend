@@ -1,0 +1,26 @@
+{
+  "filters": [
+    { "id": "all", "count": 8 },
+    { "id": "applied", "count": 3 },
+    { "id": "screening", "count": 2 },
+    { "id": "interview", "count": 1 },
+    { "id": "decision", "count": 1 },
+    { "id": "agreement", "count": 1 }
+  ],
+  "records": [
+    {
+      "id": "app-merna-adel",
+      "candidateId": "merna-adel",
+      "opportunityId": "uiux-designcraft",
+      "stage": "interview",
+      "interview": {
+        "date": "2026-10-30",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "timezone": "EET",
+        "mode": "Google Meet",
+        "status": "scheduled"
+      }
+    }
+  ]
+}

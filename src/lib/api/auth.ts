@@ -24,6 +24,15 @@ export function requestPasswordReset(email: string): Promise<void> {
   return apiRequest<void>('/api/auth/forgotPassword', { method: 'POST', body: { email } });
 }
 
+// Checks the emailed reset code and sets the new password in one call; there is no separate
+// endpoint to verify the code first. A wrong or expired code answers 400 `InvalidToken`.
+export function resetPassword(email: string, resetCode: string, newPassword: string): Promise<void> {
+  return apiRequest<void>('/api/auth/resetPassword', {
+    method: 'POST',
+    body: { email, resetCode, newPassword },
+  });
+}
+
 export function resendConfirmationEmail(email: string): Promise<void> {
   return apiRequest<void>('/api/auth/resendConfirmationEmail', {
     method: 'POST',

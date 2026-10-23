@@ -100,6 +100,40 @@ export function registerErrorResult(error: unknown): RegisterErrorResult {
     : { formKey: 'auth.register.errors.rejected', fieldKeys: {} };
 }
 
+// Failures from POST /api/me/phone (send) and /api/me/phone/confirm. A 400 that names
+// `phoneNumber` means the number was refused; any other 400/401 on confirm is treated as a wrong or
+// expired code.
+export function phoneVerificationErrorKey(error: unknown, stage: 'send' | 'confirm'): string {
+  const prefix = 'onboarding.verify.errors';
+  if (!(error instanceof ApiError)) return `${prefix}.server`;
+  if (error.status === 0) return `${prefix}.network`;
+  if (error.status === HTTP_TOO_MANY_REQUESTS) return `${prefix}.tooMany`;
+  if (error.status >= HTTP_SERVER_ERROR) return `${prefix}.server`;
+  if (error.status === HTTP_BAD_REQUEST && error.errorCodes.includes('phoneNumber')) {
+    return `${prefix}.phoneInvalid`;
+  }
+  if (stage === 'confirm' && (error.status === HTTP_BAD_REQUEST || error.status === HTTP_UNAUTHORIZED)) {
+    return `${prefix}.codeInvalid`;
+  }
+  return `${prefix}.rejected`;
+}
+
+export type PasswordResetError = 'network' | 'tooMany' | 'server' | 'invalidCode' | 'weakPassword' | 'rejected';
+
+// Failures from POST /api/auth/forgotPassword and /api/auth/resetPassword. Identity answers
+// `InvalidToken` for a wrong or expired code and also for an unknown or unconfirmed email, so the
+// message never reveals whether an account exists. Password policy failures arrive as `Password*`.
+export function passwordResetError(error: unknown): PasswordResetError {
+  if (!(error instanceof ApiError)) return 'server';
+  if (error.status === 0) return 'network';
+  if (error.status === HTTP_TOO_MANY_REQUESTS) return 'tooMany';
+  if (error.status >= HTTP_SERVER_ERROR) return 'server';
+  const codes = error.errorCodes;
+  if (codes.includes('InvalidToken')) return 'invalidCode';
+  if (codes.some((code) => code.startsWith('Password'))) return 'weakPassword';
+  return 'rejected';
+}
+
 export function genericErrorKey(error: unknown): string {
   return commonErrorKey(error) ?? 'auth.common.errors.server';
 }

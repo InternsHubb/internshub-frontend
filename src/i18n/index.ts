@@ -1,7 +1,22 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import arTranslation from './locales/ar.json'
+import employerAr from './locales/employer.ar.json'
+import employerEn from './locales/employer.en.json'
 import enTranslation from './locales/en.json'
+import recruitmentAr from './locales/recruitment.ar.json'
+import recruitmentEn from './locales/recruitment.en.json'
+
+const mergeTranslations = (
+  base: Record<string, unknown>,
+  employer: Record<string, unknown>,
+  recruitment: unknown,
+): Record<string, unknown> => ({
+  ...base,
+  ...employer,
+  nav: { ...(base.nav as Record<string, unknown> | undefined), ...(employer.nav as Record<string, unknown> | undefined) },
+  recruitment,
+})
 
 const getInitialLanguage = (): string => {
   if (typeof window !== 'undefined' && window.localStorage) {
@@ -19,8 +34,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { translation: enTranslation },
-      ar: { translation: arTranslation },
+      en: { translation: mergeTranslations(enTranslation, employerEn, recruitmentEn) },
+      ar: { translation: mergeTranslations(arTranslation, employerAr, recruitmentAr) },
     },
     lng: initialLanguage,
     fallbackLng: 'en',
