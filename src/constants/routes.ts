@@ -22,6 +22,18 @@ export const ROUTES = {
   employer: '/employer',
 } as const;
 
+export const EMPLOYER_ROUTES = {
+  root: '/employer',
+  pipeline: '/employer/pipeline',
+  scheduleInterview: (applicationId: string) =>
+    `/employer/interviews/${encodeURIComponent(applicationId)}/schedule`,
+  decision: (applicationId: string) => `/employer/applications/${encodeURIComponent(applicationId)}/decision`,
+  decisionSubmitted: (applicationId: string) =>
+    `/employer/applications/${encodeURIComponent(applicationId)}/decision/submitted`,
+  agreement: (applicationId: string) =>
+    `/employer/applications/${encodeURIComponent(applicationId)}/agreement`,
+  completion: '/employer/completion',
+} as const;
 export const recruitmentApplicationPath = (applicationId: string) =>
   `${ROUTES.recruitmentApplications}/${applicationId}`;
 

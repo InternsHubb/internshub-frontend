@@ -33,6 +33,35 @@ const ForgotPassword = lazy(
 );
 const Login = lazy(() => import('@/pages/auth/Login'));
 const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
+const MicrosoftCallback = lazy(() => import('@/pages/auth/MicrosoftCallback'));
+const EmployerLayout = lazy(() =>
+  import('@/components/employer/EmployerLayout').then((module) => ({ default: module.EmployerLayout })),
+);
+const EmployerPipelinePage = lazy(() =>
+  import('@/pages/employer/PipelinePage').then((module) => ({ default: module.PipelinePage })),
+);
+const EmployerScheduleInterviewPage = lazy(() =>
+  import('@/pages/employer/ScheduleInterviewPage').then((module) => ({
+    default: module.ScheduleInterviewPage,
+  })),
+);
+const EmployerDecisionPage = lazy(() =>
+  import('@/pages/employer/EmployerDecisionPage').then((module) => ({
+    default: module.EmployerDecisionPage,
+  })),
+);
+const EmployerDecisionSubmittedPage = lazy(() =>
+  import('@/pages/employer/DecisionSubmittedPage').then((module) => ({
+    default: module.DecisionSubmittedPage,
+  })),
+);
+const EmployerAgreementPage = lazy(() =>
+  import('@/pages/employer/PartnerAgreementPage').then((module) => ({
+    default: module.PartnerAgreementPage,
+  })),
+);
+const EmployerCompletionPage = lazy(() =>
+  import('@/pages/employer/CompletionPage').then((module) => ({ default: module.CompletionPage })),
 const MicrosoftCallback = lazy(
   () => import('@/pages/auth/MicrosoftCallback')
 );
@@ -256,27 +285,24 @@ export const router = createBrowserRouter(
         ),
       },
       {
-        path: ROUTES.recruitment,
+        path: EMPLOYER_ROUTES.root,
         element: (
           <RequireAuth>
-            <RecruitmentLayout />
+            <EmployerLayout />
           </RequireAuth>
         ),
         children: [
-          { index: true, element: <Navigate to={ROUTES.recruitmentEligibility} replace /> },
-          { path: 'eligibility', element: <EligibilityPage /> },
-          { path: 'talent-directory', element: <TalentDirectoryConsentPage /> },
+          { index: true, element: <Navigate to={EMPLOYER_ROUTES.pipeline} replace /> },
+          { path: 'pipeline', element: <EmployerPipelinePage /> },
+          { path: 'interviews/:applicationId/schedule', element: <EmployerScheduleInterviewPage /> },
+          { path: 'applications/:applicationId/decision', element: <EmployerDecisionPage /> },
           {
-            path: 'applications',
-            element: (
-              <Navigate
-                to={recruitmentApplicationPath(DEFAULT_APPLICATION_ID)}
-                replace
-              />
-            ),
+            path: 'applications/:applicationId/decision/submitted',
+            element: <EmployerDecisionSubmittedPage />,
           },
-          { path: 'applications/:applicationId', element: <ApplicationDetailsPage /> },
-          { path: 'agreements/:agreementId', element: <AgreementDetailsPage /> },
+          { path: 'applications/:applicationId/agreement', element: <EmployerAgreementPage /> },
+          { path: 'completion', element: <EmployerCompletionPage /> },
+          { path: '*', element: <Navigate to={EMPLOYER_ROUTES.pipeline} replace /> },
         ],
       },
       { path: ROUTES.register, element: <RegisterScreen /> },
