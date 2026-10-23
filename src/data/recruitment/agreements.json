@@ -1,0 +1,33 @@
+[
+  {
+    "id": "agr-designcraft-ui-ux",
+    "applicationId": "designcraft-ui-ux",
+    "status": "waiting-employer",
+    "job": {
+      "title": "UI/UX Designer",
+      "company": "DesignCraft Agency",
+      "companyInitials": "DC",
+      "location": "Alexandria",
+      "employmentType": "internship",
+      "workMode": "hybrid",
+      "durationMonths": 3,
+      "startDate": "2026-11-01"
+    },
+    "parties": [
+      {
+        "id": "student",
+        "name": "Merna Adel",
+        "role": "student",
+        "status": "signed",
+        "signedAt": "2026-10-28"
+      },
+      {
+        "id": "employer",
+        "name": "DesignCraft Agency",
+        "role": "employer",
+        "status": "pending",
+        "signedAt": null
+      }
+    ]
+  }
+]
