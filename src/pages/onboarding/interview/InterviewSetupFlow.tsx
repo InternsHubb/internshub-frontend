@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { RefObject } from 'react';
 import { DeviceCheck } from './DeviceCheck';
 import { InterviewOverview } from './InterviewOverview';
 import { InterviewSession } from './InterviewSession';
@@ -16,8 +17,9 @@ import type { InterviewProgress, InterviewProgressPatch, InterviewType, SetupScr
 // This component owns the camera, microphone and screen streams, so they stay open across these
 // screens (no repeated permission prompts) and stop as soon as the user leaves Step 07.
 //
-// Fullscreen: the Start Interview click on Get Ready puts this component's container into
-// fullscreen (element fullscreen — the closest a page can get to the browser's F11 mode), and it
+// Fullscreen: the Start Interview click on Get Ready puts the onboarding page area around this
+// component (navbar, progress bar and content; `fullscreenTarget`) into fullscreen (element
+// fullscreen — the closest a page can get to the browser's F11 mode), and it
 // stays on through Overview, Consent, Device Check and the questions. If the candidate left it on
 // the way, Device Check's Continue click re-enters it. Finishing or leaving Step 07 exits it.
 // The integrity monitor runs only on the question screens.
@@ -28,22 +30,32 @@ type InterviewSetupFlowProps = {
   type: InterviewType;
   track: string;
   cvUploaded: boolean;
+  // The element that goes fullscreen; it stays mounted for the whole of Step 07.
+  fullscreenTarget: RefObject<HTMLDivElement | null>;
   onExit: () => void;
   onFinish: () => void;
 };
 
-export function InterviewSetupFlow({ progress, onChange, type, track, cvUploaded, onExit, onFinish }: InterviewSetupFlowProps) {
+export function InterviewSetupFlow({
+  progress,
+  onChange,
+  type,
+  track,
+  cvUploaded,
+  fullscreenTarget,
+  onExit,
+  onFinish,
+}: InterviewSetupFlowProps) {
   const devices = useDeviceCheck();
   const { screen, questionIndex, phase } = progress;
   const { monitor, snapshot } = useIntegrityMonitor(screen === 'session');
-  const container = useRef<HTMLDivElement>(null);
   const [fullscreenFailedOn, setFullscreenFailedOn] = useState<SetupScreen | null>(null);
   const { camera, microphone, screen: screenShare } = devices;
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
-    container.current?.scrollTo({ top: 0 });
-  }, [screen]);
+    fullscreenTarget.current?.scrollTo({ top: 0 });
+  }, [screen, fullscreenTarget]);
 
   // Device outages during the questions become integrity intervals.
   useEffect(() => {
@@ -69,7 +81,7 @@ export function InterviewSetupFlow({ progress, onChange, type, track, cvUploaded
   // browser still sees the user gesture. Moves on only once the container really is fullscreen
   // (or the browser has no Fullscreen API, which falls back to a normal window).
   const continueInFullscreen = async (from: SetupScreen, next: InterviewProgressPatch) => {
-    const result = await monitor.enterFullscreen(container.current);
+    const result = await monitor.enterFullscreen(fullscreenTarget.current);
     if (result === 'failed' && FULLSCREEN_MODE === 'required') {
       setFullscreenFailedOn(from);
       return;
@@ -143,7 +155,7 @@ export function InterviewSetupFlow({ progress, onChange, type, track, cvUploaded
           <InterviewSession
             devices={devices}
             integrity={snapshot}
-            onReturnToFullscreen={async () => (await monitor.enterFullscreen(container.current)) === 'entered'}
+            onReturnToFullscreen={async () => (await monitor.enterFullscreen(fullscreenTarget.current)) === 'entered'}
             withAppPrompt={(prompt) => monitor.withAppPrompt(prompt)}
             type={type}
             track={track}
@@ -158,14 +170,5 @@ export function InterviewSetupFlow({ progress, onChange, type, track, cvUploaded
     }
   };
 
-  // In fullscreen the browser sizes this element to the whole screen (UA styles); these styles
-  // add the page background, padding and scrolling. Out of fullscreen it is a plain wrapper.
-  return (
-    <div
-      ref={container}
-      className="[&:fullscreen]:overflow-y-auto [&:fullscreen]:bg-[#faf6fb] [&:fullscreen]:px-4 [&:fullscreen]:py-6 sm:[&:fullscreen]:px-8 lg:[&:fullscreen]:py-10"
-    >
-      <div className="mx-auto w-full max-w-[1200px]">{renderScreen()}</div>
-    </div>
-  );
+  return <div className="mx-auto w-full max-w-[1200px]">{renderScreen()}</div>;
 }

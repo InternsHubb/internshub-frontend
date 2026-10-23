@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
+import { OnboardingHeader } from './OnboardingHeader';
 import { VerifyAccountStep } from './VerifyAccountStep';
 import { InterviewResultFlow } from './interview/InterviewResultFlow';
 import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
@@ -101,6 +102,17 @@ export default function OnboardingFlow() {
   const [interview, setInterview] = useState<InterviewProgress>(INITIAL_INTERVIEW_PROGRESS);
   const updateInterview = (patch: InterviewProgressPatch) => setInterview((current) => ({ ...current, ...patch }));
   const interviewType = interviewTypeFor(formData.selectedPackage);
+  // Holds the navbar, progress bar and step content (not the footer); the interview's Start
+  // Interview click puts this in fullscreen.
+  const interviewPage = useRef<HTMLDivElement>(null);
+
+  // Page chrome per Figma frame: Get Ready keeps the onboarding layout; the interview screens
+  // (Overview → questions) and the outcome screens use the profile header and have no footer or
+  // step label; only the Result outcome keeps the progress bar.
+  const onInterviewScreens = currentStep === 6 && interview.screen !== 'setup';
+  const onOutcomeScreens = currentStep === 7 && interview.outcome !== null;
+  const usesProfileLayout = onInterviewScreens || onOutcomeScreens;
+  const showProgressBar = !onOutcomeScreens || interview.outcome === 'result';
 
   // The interview API isn't available yet, so finishing shows the sample outcome for this type.
   const finishInterview = () => {
@@ -273,24 +285,14 @@ export default function OnboardingFlow() {
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#F8F6FA] bg-[radial-gradient(circle_at_8%_2%,rgba(139,93,176,0.12),transparent_26%),radial-gradient(circle_at_96%_20%,rgba(221,111,13,0.06),transparent_25%)] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] overflow-x-hidden">
-      
-      {/* Header */}
-      <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-4 md:px-[72px] h-[72px] bg-white/82 border-b border-[#3A0353]/10 shadow-[0_1px_0_rgba(58,3,83,0.04)] backdrop-blur-md">
-        <div className="flex items-center gap-2.5">
-          <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] shadow-[0_8px_18px_rgba(58,3,83,0.2)] rounded-[13px_13px_13px_4px] flex items-center justify-center relative">
-            <span className="text-white font-bold text-sm tracking-[-1.12px]">ih</span>
-          </div>
-          <span className="font-bold text-xl text-[#111827]">Interns<span className="text-[#4C0585]">Hub</span></span>
-          <span className="bg-[#F7F0FB] text-[#5C1D87] text-[10px] font-bold px-2.5 py-1 rounded-full tracking-[1.6px]">EDTECH</span>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <span className="hidden sm:inline text-xs text-[#6B7280]">Demo onboarding</span>
-          <button className="text-[#5C1D87] font-bold text-[13px] hover:underline">Need help?</button>
-        </div>
-      </header>
+      <div
+        ref={interviewPage}
+        className="flex-grow flex flex-col [&:fullscreen]:overflow-y-auto [&:fullscreen]:bg-[#F8F6FA]"
+      >
+      <OnboardingHeader variant={usesProfileLayout ? 'profile' : 'brand'} />
 
       {/* Progress Navigation Bar */}
+      {showProgressBar && (
       <div className="w-full flex justify-center pt-[18px] px-4">
         <div className="w-full max-w-[1120px] h-[85.6px] bg-white/86 border border-[#3A0353]/10 shadow-[0_8px_28px_rgba(34,2,60,0.06)] backdrop-blur-md rounded-[20px] flex items-center justify-between px-4 md:px-8 relative overflow-x-auto">
           
@@ -327,16 +329,19 @@ export default function OnboardingFlow() {
           })}
         </div>
       </div>
+      )}
 
       {/* Main Content Area */}
       <main className="flex-grow flex justify-center px-4 md:px-6 pt-10 md:pt-[72px] pb-16 md:pb-[100px]">
         <div className="w-full max-w-[1240px] min-w-0">
-          
+
+          {!usesProfileLayout && (
           <div className="inline-flex items-center px-3 py-1.5 bg-[#FFF3E8] rounded-[9px] mb-3">
             <span className="text-[11px] font-bold text-[#DD6F0D] tracking-[1.32px]">
               STEP {String(currentStep + 1).padStart(2, '0')} · INTERNSHUB ONBOARDING
             </span>
           </div>
+          )}
 
           {/* STEP 1: Verify */}
           {currentStep === 1 && (
@@ -627,6 +632,7 @@ export default function OnboardingFlow() {
               type={interviewType}
               track={formData.selectedTrack}
               cvUploaded={formData.cvUploaded}
+              fullscreenTarget={interviewPage}
               onExit={() => setCurrentStep(5)}
               onFinish={finishInterview}
             />
@@ -1054,8 +1060,10 @@ export default function OnboardingFlow() {
 
         </div>
       </main>
+      </div>
 
-      {/* Footer */}
+      {/* Footer (outside the fullscreen area; the interview and outcome screens have none in Figma) */}
+      {!usesProfileLayout && (
       <footer className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 px-4 md:px-[72px] py-8 md:py-0 md:h-[130px] bg-gradient-to-tr from-[#22023C] via-[#22023C] to-[#8B5DB0]/30 text-white">
         <div className="flex flex-wrap items-center gap-3">
           <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] rounded-[13px_13px_13px_4px] flex items-center justify-center shadow-lg">
@@ -1066,6 +1074,7 @@ export default function OnboardingFlow() {
         </div>
         <span className="text-[9px] text-[#9F8DAC]">Modern Onboarding v6.0 · Interactive product demo</span>
       </footer>
+      )}
 
     </div>
   );

@@ -6,6 +6,7 @@ import {
   CARD,
   ForwardArrow,
   GRADIENT_BG,
+  GRADIENT_TEXT,
   MUTED_TEXT,
   Notice,
   PrimaryButton,
@@ -154,7 +155,13 @@ export function InterviewSession({
           <h1 className={`text-2xl font-semibold tracking-[-0.02em] ${TITLE_TEXT}`}>{t(`onboarding.interview.types.${type}`)}</h1>
           <p className={`text-sm ${BODY_TEXT}`}>{track}</p>
         </div>
-        <StatusPill tone="brand">{k('progress', { current: questionIndex + 1, total })}</StatusPill>
+        {/* Interview stage, not question progress. Figma shows it on the answered frame only. */}
+        {answered && (
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#f5e5f9] bg-[#fbf0fe] px-[15px] py-[7px]">
+            <span aria-hidden="true" className={`h-2 w-2 rounded-full ${GRADIENT_BG}`} />
+            <span className={`text-xs font-semibold uppercase leading-4 tracking-[0.6px] ${GRADIENT_TEXT}`}>{k('stageBadge')}</span>
+          </span>
+        )}
       </div>
 
       {devicesPaused && <PausedBanner devices={devices} withAppPrompt={withAppPrompt} />}
