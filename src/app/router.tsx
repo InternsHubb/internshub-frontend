@@ -20,6 +20,17 @@ const Login = lazy(() => import('@/pages/auth/Login'));
 const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
 const MicrosoftCallback = lazy(() => import('@/pages/auth/MicrosoftCallback'));
 
+// Mentorship feature code-split routes
+const MentorshipLayout = lazy(() => import('@/pages/mentorship/MentorshipLayout'));
+const MentorshipDashboard = lazy(() => import('@/pages/mentorship/MentorshipDashboard'));
+const MentorsPage = lazy(() => import('@/pages/mentorship/MentorsPage'));
+const MentorProfilePage = lazy(() => import('@/pages/mentorship/MentorProfilePage'));
+const ConfirmBookingPage = lazy(() => import('@/pages/mentorship/ConfirmBookingPage'));
+const BookingSuccessPage = lazy(() => import('@/pages/mentorship/BookingSuccessPage'));
+const SessionDetailsPage = lazy(() => import('@/pages/mentorship/SessionDetailsPage'));
+const SessionCancelledPage = lazy(() => import('@/pages/mentorship/SessionCancelledPage'));
+const SessionFeedbackPage = lazy(() => import('@/pages/mentorship/SessionFeedbackPage'));
+
 const PageFallback: React.FC = () => (
   <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="size-8 rounded-full border-3 border-purple-600 border-t-transparent animate-spin" />
@@ -70,6 +81,21 @@ export const router = createBrowserRouter([
       { path: ROUTES.microsoftCallback, element: <MicrosoftCallback /> },
       // Any other /auth path shows Login, as before.
       { path: `${ROUTES.login}/*`, element: <Login /> },
+      // Mentorship routes
+      {
+        path: ROUTES.mentorship,
+        element: <MentorshipLayout />,
+        children: [
+          { index: true, element: <MentorshipDashboard /> },
+          { path: 'mentors', element: <MentorsPage /> },
+          { path: 'mentors/:id', element: <MentorProfilePage /> },
+          { path: 'book/confirm', element: <ConfirmBookingPage /> },
+          { path: 'book/success', element: <BookingSuccessPage /> },
+          { path: 'sessions/:id', element: <SessionDetailsPage /> },
+          { path: 'sessions/:id/cancelled', element: <SessionCancelledPage /> },
+          { path: 'sessions/:id/feedback', element: <SessionFeedbackPage /> },
+        ],
+      },
       { path: '*', element: <Navigate to={ROUTES.home} replace /> },
     ],
   },
