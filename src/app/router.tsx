@@ -242,12 +242,60 @@ export const router = createBrowserRouter(
     },
   ],
   {
-    future: {
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
-      v7_relativeSplatPath: true,
-      v7_skipActionErrorRevalidation: true,
-    },
-  }
-);
+    element: <RootLayout />,
+    children: [
+      { path: ROUTES.home, element: <LandingPage /> },
+      // Sub-paths keep rendering the Internship page, as before.
+      { path: `${ROUTES.internship}/*`, element: <InternshipPage /> },
+      {
+        path: ROUTES.onboarding,
+        element: (
+          <RequireAuth>
+            <OnboardingFlow />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: ROUTES.recruitment,
+        element: (
+          <RequireAuth>
+            <RecruitmentLayout />
+          </RequireAuth>
+        ),
+        children: [
+          { index: true, element: <Navigate to={ROUTES.recruitmentEligibility} replace /> },
+          { path: 'eligibility', element: <EligibilityPage /> },
+          { path: 'talent-directory', element: <TalentDirectoryConsentPage /> },
+          {
+            path: 'applications',
+            element: (
+              <Navigate
+                to={recruitmentApplicationPath(DEFAULT_APPLICATION_ID)}
+                replace
+              />
+            ),
+          },
+          { path: 'applications/:applicationId', element: <ApplicationDetailsPage /> },
+          { path: 'agreements/:agreementId', element: <AgreementDetailsPage /> },
+        ],
+      },
+      { path: ROUTES.register, element: <RegisterScreen /> },
+      { path: ROUTES.authRegister, element: <RegisterScreen /> },
+      { path: ROUTES.forgotPassword, element: <ForgotPassword /> },
+      { path: ROUTES.phoneOtp, element: <PhoneOTP /> },
+      { path: ROUTES.microsoftCallback, element: <MicrosoftCallback /> },
+      // Any other /auth path shows Login, as before.
+      { path: `${ROUTES.login}/*`, element: <Login /> },
+      { path: '*', element: <Navigate to={ROUTES.home} replace /> },
+    ],
+  },
+], {
+  // Opt into React Router v7 behavior now; this also silences its dev warnings.
+  future: {
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+    v7_relativeSplatPath: true,
+    v7_skipActionErrorRevalidation: true,
+  },
+});
