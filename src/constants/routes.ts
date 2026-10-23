@@ -8,6 +8,12 @@ export const ROUTES = {
   forgotPassword: '/auth/forgot-password',
   phoneOtp: '/auth/phone-otp',
   microsoftCallback: '/auth/microsoft/callback',
+  // Student dashboard (shared sidebar layout).
+  dashboard: '/dashboard',
+  dashboardInternship: '/dashboard/internship',
+  dashboardProject: '/dashboard/internship/project',
+  dashboardCourses: '/dashboard/courses',
+  dashboardPlans: '/dashboard/courses/plans',
   employer: '/employer',
 } as const;
 

@@ -442,6 +442,77 @@
     }
   },
   "onboarding": {
+    "path": {
+      "priceAmount": "{{value}} ج.م",
+      "tracksHeading": "اختر مسارك التقني",
+      "catalogNote": "الكتالوج تديره InternsHub",
+      "trackRequired": "اختر مسارًا تقنيًا للمتابعة.",
+      "tracks": {
+        "frontend": {
+          "name": "تطوير الواجهات الأمامية",
+          "tech": "React",
+          "description": "ابنِ منتجات ويب متقنة وسهلة الوصول."
+        },
+        "backend": {
+          "name": "تطوير الواجهات الخلفية",
+          "tech": "ASP.NET / Node.js",
+          "description": "صمّم واجهات برمجية وخدمات موثوقة."
+        },
+        "mobile": {
+          "name": "تطوير تطبيقات الجوال",
+          "tech": "Flutter",
+          "description": "أنشئ تجارب جوال متعددة المنصات."
+        },
+        "data": {
+          "name": "هندسة البيانات",
+          "tech": "Data Engineering",
+          "description": "شكّل مسارات بيانات يمكن الاعتماد عليها."
+        }
+      },
+      "title": "اختر طريقك إلى مسيرة تقنية",
+      "subtitle": "اختر مدة البرنامج والمسار التقني المناسبين لأهدافك.",
+      "packagesHeading": "اختر باقتك",
+      "popular": "المسار الأكثر اختيارًا",
+      "currency": "ج.م",
+      "perPackage": "/ للباقة",
+      "choose": "اختر {{name}}",
+      "selected": "تم الاختيار",
+      "packageRequired": "اختر باقة للمتابعة.",
+      "back": "رجوع",
+      "confirm": "تأكيد المسار",
+      "packages": {
+        "threeMonths": {
+          "name": "3 أشهر",
+          "tag": "تركيز على التدريب",
+          "features": {
+            "one": "تدريب عملي",
+            "two": "3 جلسات إرشاد · مقترحة",
+            "three": "شهادة التدريب",
+            "four": "الدورات غير مشمولة"
+          }
+        },
+        "sixMonths": {
+          "name": "6 أشهر",
+          "tag": "مسار متوازن",
+          "features": {
+            "one": "الدورات المنشورة بعد الدفع",
+            "two": "تدريب عملي",
+            "three": "6 جلسات إرشاد · مقترحة",
+            "four": "شهادة الدورات وشهادة التدريب"
+          }
+        },
+        "twelveMonths": {
+          "name": "12 شهرًا",
+          "tag": "مسار تعلّم كامل",
+          "features": {
+            "one": "مسار تعلّم موحّد لمدة 6 أشهر",
+            "two": "الإرشاد يبدأ من الدفع",
+            "three": "مقابلة توجيه استشارية",
+            "four": "مرحلة الفريق تلي مرحلة التعلّم"
+          }
+        }
+      }
+    },
     "verify": {
       "title": "تأكيد حسابك",
       "subtitle": "أكّد بريدك الإلكتروني ورقم هاتفك لحماية حسابك.",
@@ -826,6 +897,350 @@
           "isFinal": "قرار الاعتراض هذا نهائي."
         }
       }
+    }
+  },
+  "dashboard": {
+    "home": {
+      "eyebrow": "من طالب إلى مسيرة تقنية",
+      "greeting": {
+        "morning": "صباح الخير يا {{name}}.",
+        "afternoon": "مساء الخير يا {{name}}.",
+        "evening": "مساء الخير يا {{name}}.",
+        "morningNoName": "صباح الخير.",
+        "afternoonNoName": "مساء الخير.",
+        "eveningNoName": "مساء الخير."
+      },
+      "modulesAway_zero": "أنت جاهز للمقابلة التقنية. حافظ على استمرارك.",
+      "modulesAway_one": "تبقّت وحدة واحدة على مقابلتك التقنية. حافظ على استمرارك.",
+      "modulesAway_two": "تبقّت وحدتان على مقابلتك التقنية. حافظ على استمرارك.",
+      "modulesAway_few": "تبقّت {{count}} وحدات على مقابلتك التقنية. حافظ على استمرارك.",
+      "modulesAway_many": "تبقّت {{count}} وحدة على مقابلتك التقنية. حافظ على استمرارك.",
+      "modulesAway_other": "تبقّت {{count}} وحدة على مقابلتك التقنية. حافظ على استمرارك.",
+      "continueLearning": "تابع التعلّم",
+      "levels": {
+        "junior": "مبتدئ",
+        "mid": "متوسط",
+        "senior": "متقدّم"
+      },
+      "journey": {
+        "label": "رحلة تعلّمك",
+        "status": {
+          "done": "مكتملة",
+          "current": "الخطوة الحالية",
+          "upcoming": "قادمة"
+        },
+        "payment": "الدفع",
+        "paymentCaption": "تم",
+        "aiInterview": "مقابلة الذكاء الاصطناعي",
+        "aiInterviewCaption": "المستوى: {{level}}",
+        "courses": "الدورات",
+        "coursesCaption": "{{done}} من {{total}} وحدات",
+        "technicalInterview": "المقابلة التقنية",
+        "technicalInterviewCaption": "بعد الدورات",
+        "internship": "التدريب",
+        "internshipCaption": "مشروع الفريق",
+        "recruitment": "التوظيف",
+        "recruitmentCaption": "حسب الدرجة"
+      },
+      "todayTask": {
+        "eyebrow": "مهمة اليوم",
+        "due": "التسليم الليلة · {{time}}",
+        "open": "افتح مهمة اليوم"
+      },
+      "nextSession": {
+        "eyebrow": "الجلسة القادمة",
+        "title": "جلسة فردية مع {{name}}",
+        "join": "انضم",
+        "joinUnavailable": "الانضمام إلى الجلسات غير متاح بعد."
+      },
+      "interview": {
+        "title": "نتيجة المقابلة",
+        "metrics": {
+          "technicalAccuracy": "الدقة التقنية",
+          "communication": "التواصل",
+          "problemSolving": "حل المشكلات",
+          "depth": "العمق مقابل السطحية"
+        },
+        "focus": "مجال التركيز: تعمّق في «لماذا» وليس «ماذا» فقط. مهام الوحدة {{module}} تستهدف ذلك."
+      },
+      "hub": {
+        "title": "مركزك",
+        "subtitle": "أربع خدمات ورحلة واحدة",
+        "courses": {
+          "title": "الدورات",
+          "status": "قيد التقدّم",
+          "detail": "{{course}} · الوحدة {{module}}",
+          "progressLabel": "تقدّم الدورة",
+          "complete": "مكتمل {{value}}%"
+        },
+        "internship": {
+          "title": "التدريب",
+          "status": "مقفل",
+          "detail": "يُفتح بعد مقابلتك التقنية",
+          "extra": "فريق من 10 · مشروع حقيقي · إشراف من خبير"
+        },
+        "mentorship": {
+          "title": "الإرشاد",
+          "status": "نشط",
+          "senior": "الخبير: {{name}}",
+          "next": "الجلسة الفردية القادمة · {{date}}"
+        },
+        "recruitment": {
+          "title": "التوظيف",
+          "status": "حسب الدرجة",
+          "detail": "يُفتح بدرجة نهائية قوية",
+          "extra": "يُشارك ملفك مع شركاء التوظيف"
+        }
+      },
+      "squad": {
+        "title": "فريقك",
+        "viewAll": "عرض الكل ({{count}})",
+        "you": "(أنت)"
+      }
+    },
+    "sidebar": {
+      "navLabel": "التنقل في لوحة التحكم",
+      "drawerDescription": "تصفح أقسام لوحة تحكم التدريب.",
+      "close": "إغلاق القائمة",
+      "toggle": "فتح القائمة أو طيها",
+      "toggleShortcut": "فتح القائمة أو طيها (Ctrl/Cmd + B)",
+      "dashboard": "لوحة التحكم",
+      "internship": "التدريب العملي",
+      "mySquad": "فريقي",
+      "courses": "الدورات",
+      "recruitment": "التوظيف",
+      "sprints": "دورات العمل",
+      "progress": "التقدم",
+      "chat": "المحادثات",
+      "certificate": "الشهادة"
+    },
+    "topNav": {
+      "search": "بحث",
+      "searchPlaceholder": "ابحث..."
+    },
+    "journey": {
+      "courses": "الدورات",
+      "label": "رحلة التدريب العملي",
+      "technicalInterview": "المقابلة التقنية",
+      "waitingForSquad": "بانتظار الفريق",
+      "squadReady": "الفريق جاهز (قبل البدء)",
+      "project": "المشروع",
+      "done": "مكتمل"
+    },
+    "common": {
+      "percent": "{{value}} ٪"
+    },
+    "coursesStage": {
+      "inProgress": {
+        "title": "رحلة تدريبك تبدأ من هنا!",
+        "description": "أكمل دوراتك المطلوبة لتفتح الخطوة التالية نحو تدريبك.",
+        "stage1": "المرحلة 1 - الدورات",
+        "requiredTrack": "دورات المسار المطلوبة",
+        "continueLearning": "تابع تعلّم دوراتك المطلوبة.",
+        "stage2": "المرحلة 2 — التدريب",
+        "stage2Locked": "تُفتح بعد إكمال الدورات المطلوبة",
+        "stage2Hint": "يصبح تدريبك وفريقك متاحين هنا.",
+        "stage3": "المرحلة 3 — التخرّج",
+        "stage3Locked": "المرحلة الأخيرة",
+        "stage3Hint": "احصل على شهادات الدورات والتدريب والإرشاد.",
+        "cta": "تابع دوراتك"
+      },
+      "completed": {
+        "title": "أحسنت! لقد أكملت دوراتك",
+        "description": "أكملت كل دوراتك المطلوبة! حان الآن وقت المقابلة التقنية",
+        "cta": "ابدأ المقابلة التقنية",
+        "unavailable": "المقابلة التقنية غير متاحة من لوحة التحكم بعد."
+      }
+    },
+    "requiredCourses": {
+      "status": {
+        "locked": "مغلق",
+        "lockedInterview": "مغلق - أجرِ المقابلة التقنية",
+        "lockedReview": "مغلق - المقابلة قيد المراجعة",
+        "unlocked": "مفتوح"
+      },
+      "title": "التقدم في الدورات المطلوبة",
+      "locked": "مقفلة - أجرِ المقابلة التقنية"
+    },
+    "project": {
+      "yourProject": "مشروعك",
+      "durationLabel": "مدة المشروع:",
+      "durationValue_zero": "لا توجد دورات عمل",
+      "durationValue_one": "دورة عمل واحدة · أسبوع لكل دورة",
+      "durationValue_two": "دورتا عمل · أسبوع لكل دورة",
+      "durationValue_few": "{{count}} دورات عمل · أسبوع لكل دورة",
+      "durationValue_many": "{{count}} دورة عمل · أسبوع لكل دورة",
+      "durationValue_other": "{{count}} دورة عمل · أسبوع لكل دورة",
+      "startsSoon": "كل شيء جاهز. سيبدأ المشرف المشروع قريبًا.",
+      "active": "نشط",
+      "teamLabel": "فريق المشروع",
+      "teamLeader": "قائد الفريق"
+    },
+    "review": {
+      "title": "المقابلة قيد المراجعة",
+      "description": "مقابلتك قيد المراجعة. يمكنك توقع تحديث خلال 7 أيام.",
+      "expected": "متوقع خلال 7 أيام"
+    },
+    "waiting": {
+      "title": "تدريبي العملي",
+      "finding": "جارٍ <purple>تشكيل فريقك</purple>",
+      "inProgress": "قيد التنفيذ",
+      "description": "نحن نجهز فريقك. سنبلغك عندما يصبح فريقك جاهزًا.",
+      "avatars": "فريقك القادم",
+      "track": "المسار",
+      "packageLabel": "الباقة",
+      "level": "المستوى",
+      "levels": {
+        "intermediate": "متوسط"
+      },
+      "months_zero": "{{count}} شهر",
+      "months_one": "شهر واحد",
+      "months_two": "شهران",
+      "months_few": "{{count}} أشهر",
+      "months_many": "{{count}} شهرًا",
+      "months_other": "{{count}} شهر",
+      "since": "في الانتظار منذ {{date}}",
+      "day": "اليوم {{day}} من الانتظار",
+      "nextTitle": "ماذا يحدث بعد ذلك؟",
+      "package": {
+        "timeline": {
+          "title": "الجدول الزمني <purple>لباقتك</purple>",
+          "description": "تبدأ مدة باقتك عندما يبدأ فريقك. لا تُستهلك مدة الباقة أثناء الانتظار."
+        },
+        "active": {
+          "title": "<purple>باقتك</purple> نشطة",
+          "description": "مدة باقتك سارية منذ تاريخ الدفع."
+        }
+      },
+      "next": {
+        "forming": {
+          "title": "{{number}}. تشكيل الفريق",
+          "description": "نعمل على ضمك إلى الفريق المناسب."
+        },
+        "setup": {
+          "title": "{{number}}. المشرف يجهز المشروع",
+          "description": "يجهز المشرف المشروع لفريقك."
+        },
+        "starts": {
+          "title": "{{number}}. انطلاق فريقك",
+          "description": "تعرف على فريقك وابدأ مشروع التدريب العملي."
+        }
+      }
+    },
+    "github": {
+      "usernameLabel": "اسم المستخدم على GitHub",
+      "save": "حفظ اسم المستخدم",
+      "edit": "تعديل اسم المستخدم",
+      "add": {
+        "title": "أضف اسم المستخدم على GitHub",
+        "hint": "أضفه الآن لتوفير الوقت عندما يصبح فريقك جاهزًا."
+      },
+      "invalid": {
+        "title": "اسم المستخدم غير صالح",
+        "hint": "يرجى إدخال اسم مستخدم صالح",
+        "error": "اسم المستخدم غير صالح، عدّله الآن!"
+      },
+      "saved": {
+        "title": "تم حفظ اسم المستخدم على GitHub!",
+        "hint": "تم حفظ اسم المستخدم بنجاح. أنت جاهز للخطوة التالية."
+      }
+    },
+    "squad": {
+      "title": "<purple>فريقك</purple>",
+      "description": "تعرف على فريقك، واستكشف مشروعك، وأكمل قائمة استعداداتك قبل بدء المشروع.",
+      "seniorTitle": "مشرفك",
+      "seniorRole": "الدور: قائد الفريق",
+      "readinessTitle": "جاهزية <purple>الفريق</purple>",
+      "seatsFilled": "المقاعد المشغولة",
+      "membersReady": "الأعضاء الجاهزون",
+      "seats": "{{value}}/{{max}} مقاعد",
+      "ready": "جاهز",
+      "emptySeatName": "العضو {{number}}",
+      "emptySeatTrack": "المسار {{number}}",
+      "emptySeatGithub": "اسم المستخدم",
+      "emptySeatEmail": "عنوان Gmail",
+      "github": "GitHub",
+      "gmail": "Gmail",
+      "notice": {
+        "pressReady": "لا يمكن لفريقك البدء حتى تضغط على «جاهز».",
+        "youAreReady": "أنت جاهز. بانتظار بقية الفريق والمشرف.",
+        "allSet": "كل شيء جاهز. سيبدأ المشرف المشروع قريبًا."
+      }
+    },
+    "layout": {
+      "loading": "جارٍ التحميل"
+    },
+    "sprint": {
+      "title": "السبرنت {{number}}",
+      "dates": "{{start}} - {{end}}",
+      "daysLeft_zero": "لم يتبقَّ أي يوم",
+      "daysLeft_one": "تبقّى يوم واحد",
+      "daysLeft_two": "تبقّى يومان",
+      "daysLeft_few": "تبقّى {{count}} أيام",
+      "daysLeft_many": "تبقّى {{count}} يومًا",
+      "daysLeft_other": "تبقّى {{count}} يوم",
+      "goalLabel": "هدف السبرنت",
+      "tasksDone": "أُنجزت {{done}} من {{total}} مهمة",
+      "progressLabel": "تقدّم السبرنت",
+      "stats": {
+        "total": "إجمالي المهام",
+        "completed": "المهام المكتملة",
+        "remaining": "المهام المتبقية",
+        "storyPoints": "نقاط القصة"
+      }
+    },
+    "links": {
+      "title": "روابط المشروع",
+      "edit": "تعديل رابطي",
+      "editUnavailable": "تعديل الروابط غير متاح بعد."
+    },
+    "tasks": {
+      "title": "مهامي في هذا السبرنت",
+      "topTasks": "أهم مهامي",
+      "taskNumber": "مهمة #{{id}}",
+      "taskNumberSpaced": "مهمة # {{id}}",
+      "status": {
+        "todo": "للتنفيذ",
+        "inProgress": "قيد التنفيذ",
+        "inReview": "قيد المراجعة"
+      }
+    },
+    "board": {
+      "title": "لوحة المهام",
+      "columns": {
+        "todo": "مهام للتنفيذ",
+        "inProgress": "مهام قيد التنفيذ",
+        "inReview": "مهام قيد المراجعة",
+        "completed": "مهام مكتملة"
+      }
+    },
+    "courses": {
+      "search": {
+        "label": "ابحث في الدورات",
+        "placeholder": "ابحث عن الدورات والموضوعات والمدرّبين...",
+        "filter": "تصفية الدورات",
+        "close": "إغلاق",
+        "lockedTitle": "لا يمكنك البحث الآن!",
+        "lockedDescription": "الدورات غير مشمولة في باقتك الحالية لمدة 3 أشهر."
+      },
+      "empty": {
+        "title": "الدورات غير مشمولة في خطتك",
+        "description": "الدورات غير مشمولة في باقتك الحالية لمدة 3 أشهر.",
+        "upgradeDescription": "الدورات غير مشمولة في باقتك الحالية لمدة 3 أشهر. رقِّ خطتك لتحصل على كل الدورات وتواصل رحلة تعلّمك.",
+        "viewPlans": "عرض خطط الترقية"
+      }
+    },
+    "plans": {
+      "perMonth": "ج.م/شهرياً",
+      "startNow": "ابدأ الآن",
+      "currentBadge": "خطتك الحالية",
+      "currentPlan": "خطتك الحالية",
+      "upgradeNow": "رقِّ الآن",
+      "upgradePriceTitle": "سعر الترقية",
+      "amount": "{{value}} ج.م",
+      "upgradePriceHint": "ادفع الفرق فقط للترقية من باقتك الحالية.",
+      "upgradeWithPrice": "رقِّ الآن - {{value}} ج.م",
+      "paymentUnavailable": "الدفع الإلكتروني غير متاح بعد، لذلك لم تتغيّر خطتك."
     }
   }
 }

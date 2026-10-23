@@ -1,4 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
+import { initialsOf } from '@/lib/initials';
 
 // Onboarding navbar. `brand` is the InternsHub header (Figma "Step 07 Device Check", 22:20176);
 // `profile` is the interview header (Figma "Top Nav", 24:454) with the signed-in user's avatar,
@@ -17,15 +18,6 @@ function BrandMark() {
       <span className="bg-[#F7F0FB] text-[#5C1D87] text-[10px] font-bold px-2.5 py-1 rounded-full tracking-[1.6px]">EDTECH</span>
     </div>
   );
-}
-
-// Two letters from the first and last word of the name, or from the parts of the email's local part.
-function initialsOf(text: string, isEmail: boolean): string {
-  const source = isEmail ? text.split('@')[0] : text;
-  const parts = source.split(isEmail ? /[._+-]+/ : /\s+/).filter(Boolean);
-  const first = Array.from(parts[0] ?? '')[0] ?? '';
-  const last = parts.length > 1 ? (Array.from(parts[parts.length - 1])[0] ?? '') : '';
-  return `${first}${last}`.toLocaleUpperCase();
 }
 
 function UserProfile() {

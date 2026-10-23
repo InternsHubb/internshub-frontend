@@ -9,6 +9,10 @@ import {
 } from 'react-router-dom';
 
 import { RequireAuth } from '@/components/auth/RequireAuth';
+import { RequiredCoursesCard } from '@/components/dashboard/RequiredCoursesCard';
+import type { DashboardRouteHandle } from '@/components/layout/DashboardLayout';
+import { CoursesSearch } from '@/pages/dashboard/courses/CoursesSearch';
+import { InternshipSidebarFooter } from '@/pages/dashboard/internship/InternshipSidebarFooter';
 import {
   EMPLOYER_ROUTES,
   REGISTER_HASHES,
@@ -32,6 +36,14 @@ const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
 const MicrosoftCallback = lazy(
   () => import('@/pages/auth/MicrosoftCallback')
 );
+
+// Student dashboard pages
+const DashboardLayout = lazy(() => import('@/components/layout/DashboardLayout'));
+const DashboardHome = lazy(() => import('@/pages/dashboard/home/DashboardHome'));
+const InternshipDashboard = lazy(() => import('@/pages/dashboard/internship/InternshipDashboard'));
+const ProjectPage = lazy(() => import('@/pages/dashboard/internship/ProjectPage'));
+const CoursesPage = lazy(() => import('@/pages/dashboard/courses/CoursesPage'));
+const PlansPage = lazy(() => import('@/pages/dashboard/courses/PlansPage'));
 
 // Employer Recruitment Flow pages
 const EmployerLayout = lazy(
@@ -107,6 +119,34 @@ export const router = createBrowserRouter(
           path: `${ROUTES.internship}/*`,
           element: <InternshipPage />,
         },
+
+        // Student dashboard
+        {
+          path: ROUTES.dashboard,
+          element: <DashboardLayout />,
+          children: [
+            { index: true, element: <DashboardHome /> },
+            {
+              path: 'internship',
+              element: <InternshipDashboard />,
+              handle: { sidebarFooter: InternshipSidebarFooter } satisfies DashboardRouteHandle,
+            },
+            {
+              path: 'internship/project',
+              element: <ProjectPage />,
+              handle: { sidebarFooter: RequiredCoursesCard } satisfies DashboardRouteHandle,
+            },
+            {
+              path: 'courses',
+              handle: { topNavSearch: CoursesSearch } satisfies DashboardRouteHandle,
+              children: [
+                { index: true, element: <CoursesPage /> },
+                { path: 'plans', element: <PlansPage /> },
+              ],
+            },
+          ],
+        },
+
         {
           path: ROUTES.onboarding,
           element: (
