@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Layers, Award } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 
+import { formatPackagePrice } from '@/constants/packages'
+
 export const PricingSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -14,7 +16,7 @@ export const PricingSection: React.FC = () => {
       {
         id: '3m',
         name: t('pricing.plan3mName'),
-        price: '3499',
+        price: formatPackagePrice('3m', 'en-US'),
         unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
         icon: Layers,
         features: [
@@ -28,7 +30,7 @@ export const PricingSection: React.FC = () => {
       {
         id: '6m',
         name: t('pricing.plan6mName'),
-        price: '5499',
+        price: formatPackagePrice('6m', 'en-US'),
         unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
         icon: Award,
         features: [
@@ -44,7 +46,7 @@ export const PricingSection: React.FC = () => {
         id: '12m',
         name: t('pricing.plan12mName'),
         // One-time package price (same as onboarding), not monthly.
-        price: '9,500',
+        price: formatPackagePrice('12m', 'en-US'),
         unit: isRtl ? 'ج.م/للباقة' : 'EGP/Package',
         icon: Layers,
         features: [
