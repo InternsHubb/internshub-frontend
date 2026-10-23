@@ -7,9 +7,24 @@ export const ROUTES = {
   authRegister: '/auth/register',
   forgotPassword: '/auth/forgot-password',
   phoneOtp: '/auth/phone-otp',
-  // Must match the redirect URI registered in the Azure app registration.
   microsoftCallback: '/auth/microsoft/callback',
+  employer: '/employer',
 } as const;
 
-// Legacy hash links (e.g. "/#signup") that used to open the Register screen.
-export const REGISTER_HASHES: ReadonlyArray<string> = ['#signup', '#register'];
+export const REGISTER_HASHES: ReadonlyArray<string> = [
+  '#signup',
+  '#register',
+];
+
+export const EMPLOYER_ROUTES = {
+  dashboard: '/employer/dashboard',
+  talent: '/employer/talent',
+  candidate: (id: string | number = ':candidateId') =>
+    `/employer/talent/${id}`,
+  shortlist: '/employer/shortlist',
+  pipeline: '/employer/pipeline',
+  interviews: '/employer/interviews',
+  completion: '/employer/completion',
+  sendOpportunity: '/employer/send-opportunity',
+  opportunitySent: '/employer/opportunity-sent',
+} as const;
