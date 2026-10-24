@@ -15,6 +15,9 @@ import type {
   PipelineData,
 } from './types';
 
+// Employer decision/agreement flow (PR #32) data: local JSON from src/data/employer, not an
+// API. Read by the lib/employer/*Service modules (which the pages call) and by the PR #32
+// EmployerSidebar / EmployerTopbar. The legacy PR #30 prototype does not use this module.
 export const employerProfile = employerJson.profile as EmployerProfile;
 export const employerCandidate = employerJson.candidate as Candidate;
 export const employerOpportunity = employerJson.opportunity as Opportunity;
