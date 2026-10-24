@@ -57,9 +57,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     () => [
       { id: 'home', label: t('nav.home'), href: ROUTES.home, isRoute: true },
       { id: 'courses', label: t('nav.courses'), href: `${sectionLinkBase}#courses` },
-      // The Internship item and Mentorship item open their own pages.
+      // The Internship item opens its own page; the rest scroll to landing sections.
       { id: 'internship', label: t('nav.internship'), href: ROUTES.internship, isRoute: true },
-      { id: 'mentorship', label: t('nav.mentorship'), href: ROUTES.mentorship, isRoute: true },
+      { id: 'mentorship', label: t('nav.mentorship'), href: `${sectionLinkBase}#mentorship` },
       { id: 'pricing', label: t('nav.pricing'), href: `${sectionLinkBase}#pricing` },
       { id: 'about', label: t('nav.about'), href: `${sectionLinkBase}#about` },
       { id: 'contact', label: t('nav.contact'), href: `${sectionLinkBase}#contact` },

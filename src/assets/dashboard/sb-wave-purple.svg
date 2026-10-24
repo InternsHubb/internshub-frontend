@@ -1,9 +1,0 @@
-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="256" height="224" viewBox="0 0 256 224" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path id="Theme Wave &#226;&#128;&#148; Purple" d="M0 224V40C18 20 52 0 88 0C140 1 176 46 214 76C232 90 246 98 256 100V224H0Z" fill="url(#paint0_linear_0_344)"/>
-<defs>
-<linearGradient id="paint0_linear_0_344" x1="128" y1="0" x2="128" y2="224" gradientUnits="userSpaceOnUse">
-<stop stop-color="#9A6BC0"/>
-<stop offset="1" stop-color="#8B5DB0"/>
-</linearGradient>
-</defs>
-</svg>
