@@ -29,10 +29,11 @@ export function PlanCard({ id, name, price, badgeIcon, checkIcon, features, tone
     <article
       aria-labelledby={titleId}
       className={cn(
-        'relative flex w-full max-w-[382px] flex-col rounded-[36px] px-4 pb-8 pt-8 sm:px-5',
+        // Subtle hover lift (4px, 200ms); off for reduced motion.
+        'relative flex w-full max-w-[382px] flex-col rounded-[36px] px-4 pb-8 pt-8 transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-5',
         isPopular
-          ? 'border-[3px] border-[#7a3d9c] bg-[#fcf8ff] shadow-[0_10px_30px_rgba(90,26,143,0.12)]'
-          : 'border border-[#a6a6a6] bg-white',
+          ? 'border-[3px] border-[#7a3d9c] bg-[#fcf8ff] shadow-[0_10px_30px_rgba(90,26,143,0.12)] hover:shadow-[0_14px_34px_rgba(90,26,143,0.18)]'
+          : 'border border-[#a6a6a6] bg-white hover:shadow-[0_10px_30px_rgba(90,26,143,0.10)]',
       )}
     >
       <span

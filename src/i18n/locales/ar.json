@@ -1016,7 +1016,12 @@
     },
     "topNav": {
       "search": "بحث",
-      "searchPlaceholder": "ابحث..."
+      "searchPlaceholder": "ابحث...",
+      "notifications": "الإشعارات",
+      "notificationsUnavailable": "الإشعارات غير متاحة بعد.",
+      "darkMode": "داكن",
+      "darkModeLabel": "الوضع الداكن",
+      "darkModeUnavailable": "الوضع الداكن غير متاح بعد."
     },
     "journey": {
       "courses": "الدورات",
