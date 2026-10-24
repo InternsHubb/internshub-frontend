@@ -1,3 +1,8 @@
+// Single source of truth for app URLs, shared by every flow and by src/app/router.tsx.
+// Each export below must be declared exactly once: when merging branches, combine keys into
+// the existing object instead of adding a second `export const` with the same name (a
+// duplicate declaration does not compile). Flows: public/auth, student dashboard (dashboard*),
+// student recruitment (recruitment*, PR #31), employer (EMPLOYER_ROUTES).
 export const ROUTES = {
   home: '/',
   internship: '/internship',
@@ -12,6 +17,7 @@ export const ROUTES = {
   authRegister: '/auth/register',
   forgotPassword: '/auth/forgot-password',
   phoneOtp: '/auth/phone-otp',
+  // Must match the redirect URI registered in the Azure app registration.
   microsoftCallback: '/auth/microsoft/callback',
   // Student dashboard (shared sidebar layout).
   dashboard: '/dashboard',
@@ -22,18 +28,6 @@ export const ROUTES = {
   employer: '/employer',
 } as const;
 
-export const EMPLOYER_ROUTES = {
-  root: '/employer',
-  pipeline: '/employer/pipeline',
-  scheduleInterview: (applicationId: string) =>
-    `/employer/interviews/${encodeURIComponent(applicationId)}/schedule`,
-  decision: (applicationId: string) => `/employer/applications/${encodeURIComponent(applicationId)}/decision`,
-  decisionSubmitted: (applicationId: string) =>
-    `/employer/applications/${encodeURIComponent(applicationId)}/decision/submitted`,
-  agreement: (applicationId: string) =>
-    `/employer/applications/${encodeURIComponent(applicationId)}/agreement`,
-  completion: '/employer/completion',
-} as const;
 export const recruitmentApplicationPath = (applicationId: string) =>
   `${ROUTES.recruitmentApplications}/${applicationId}`;
 
@@ -42,20 +36,30 @@ export const recruitmentAgreementPath = (agreementId: string) =>
 
 // Legacy hash links (e.g. "/#signup") that used to open the Register screen.
 export const REGISTER_HASHES: ReadonlyArray<string> = ['#signup', '#register'];
-export const REGISTER_HASHES: ReadonlyArray<string> = [
-  '#signup',
-  '#register',
-];
 
+// Shared by both employer flows, so keys are added here, never in a second object. The router
+// gives /employer, `pipeline` and `completion` to the PR #32 decision/agreement flow; the legacy
+// PR #30 prototype also links to those two keys, which therefore open PR #32 pages. Keys under
+// "Legacy prototype" are routed only by the legacy group in router.tsx.
 export const EMPLOYER_ROUTES = {
+  root: '/employer',
+  pipeline: '/employer/pipeline',
+  completion: '/employer/completion',
+  // Decision / agreement flow (PR #32).
+  scheduleInterview: (applicationId: string) =>
+    `/employer/interviews/${encodeURIComponent(applicationId)}/schedule`,
+  decision: (applicationId: string) => `/employer/applications/${encodeURIComponent(applicationId)}/decision`,
+  decisionSubmitted: (applicationId: string) =>
+    `/employer/applications/${encodeURIComponent(applicationId)}/decision/submitted`,
+  agreement: (applicationId: string) =>
+    `/employer/applications/${encodeURIComponent(applicationId)}/agreement`,
+  // Legacy prototype (PR #30).
   dashboard: '/employer/dashboard',
   talent: '/employer/talent',
   candidate: (id: string | number = ':candidateId') =>
     `/employer/talent/${id}`,
   shortlist: '/employer/shortlist',
-  pipeline: '/employer/pipeline',
   interviews: '/employer/interviews',
-  completion: '/employer/completion',
   sendOpportunity: '/employer/send-opportunity',
   opportunitySent: '/employer/opportunity-sent',
 } as const;

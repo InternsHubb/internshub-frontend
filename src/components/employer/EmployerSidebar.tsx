@@ -1,187 +1,168 @@
 import {
-  ArrowLeft,
-  Calendar,
-  CheckCircle2,
-  GraduationCap,
-  Home,
-  Layers,
-  Star,
+  ArrowRight,
+  Bookmark,
+  CalendarDays,
+  CircleCheck,
+  GitBranch,
+  LayoutDashboard,
   Users,
+  type LucideIcon,
 } from 'lucide-react';
-import { Link, NavLink } from 'react-router-dom';
-import { EMPLOYER_ROUTES } from '@/constants/routes';
+import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 
-const items = [
-  {
-    label: 'Dashboard',
-    to: EMPLOYER_ROUTES.dashboard,
-    icon: Home,
-  },
-  {
-    label: 'Talent Directory',
-    to: EMPLOYER_ROUTES.talent,
-    icon: Users,
-  },
-  {
-    label: 'Shortlist',
-    to: EMPLOYER_ROUTES.shortlist,
-    icon: Star,
-    badge: 3,
-  },
-  {
-    label: 'Pipeline',
-    to: EMPLOYER_ROUTES.pipeline,
-    icon: Layers,
-    badge: 4,
-  },
-  {
-    label: 'Interviews',
-    to: EMPLOYER_ROUTES.interviews,
-    icon: Calendar,
-    badge: 1,
-  },
-  {
-    label: 'Completion',
-    to: EMPLOYER_ROUTES.completion,
-    icon: CheckCircle2,
-  },
+import { EMPLOYER_ROUTES, ROUTES } from '@/constants/routes';
+import { employerProfile } from '@/lib/employer/data';
+import { cn } from '@/lib/cn';
+
+// Sidebar of the employer decision/agreement flow (PR #32); used only by
+// components/employer/EmployerLayout. Named export, i18n labels, profile from local JSON
+// (lib/employer/data). The legacy PR #30 prototype has its own default-export sidebar in
+// ./legacy/EmployerSidebar.tsx: both once shared this path and a merge overwrote this file,
+// so keep the two in separate files.
+// Items without `to` (dashboard, talent directory, shortlist, interviews) render as disabled
+// buttons: this flow has no screens for them (interviews can still show as active while
+// scheduling). The legacy prototype's pages at those URLs are not linked from here.
+type NavItem = {
+  id: string;
+  labelKey: string;
+  icon: LucideIcon;
+  to?: string;
+  disabled?: boolean;
+  badge?: boolean;
+};
+
+const mainNav: NavItem[] = [
+  { id: 'dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard, disabled: true },
+  { id: 'talent', labelKey: 'nav.talentDirectory', icon: Users, disabled: true },
+  { id: 'shortlist', labelKey: 'nav.shortlist', icon: Bookmark, disabled: true, badge: true },
+  { id: 'pipeline', labelKey: 'nav.pipeline', icon: GitBranch, to: EMPLOYER_ROUTES.pipeline, badge: true },
+  { id: 'interviews', labelKey: 'nav.interviews', icon: CalendarDays, badge: true },
+  { id: 'completion', labelKey: 'nav.completion', icon: CircleCheck, to: EMPLOYER_ROUTES.completion },
 ];
 
-export default function EmployerSidebar() {
+const activeItemClass =
+  'bg-[linear-gradient(90deg,#3A0353_0%,#804A8A_100%)] text-white shadow-[0_8px_18px_rgba(21,1,30,0.17)]';
+const idleItemClass = 'text-[#EDE6F3] hover:bg-white/8';
+
+export function EmployerSidebar() {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
+
+  const pipelineActive = pathname.startsWith(EMPLOYER_ROUTES.pipeline);
+  const interviewsActive =
+    pathname.startsWith('/employer/interviews') ||
+    (pathname.startsWith('/employer/applications') && pathname.includes('/decision'));
+  const completionActive =
+    pathname.startsWith(EMPLOYER_ROUTES.completion) ||
+    (pathname.startsWith('/employer/applications') && pathname.includes('/agreement'));
+
   return (
-    <aside className="fixed bottom-4 left-4 top-4 z-30 hidden w-[250px] flex-col justify-between overflow-hidden rounded-[36px] bg-[#3B0454] px-4 pb-4 pt-5 text-white shadow-2xl lg:flex">
-      
-      {/* Brand & Navigation */}
-      <div className="relative z-10">
-        {/* Brand Header */}
-        <Link
-          to={EMPLOYER_ROUTES.dashboard}
-          className="flex items-center gap-2.5 px-1"
-        >
-          <GraduationCap
-            size={24}
-            strokeWidth={2.2}
-            className="shrink-0 text-white"
-          />
-          <span className="whitespace-nowrap text-[17px] font-bold tracking-tight text-white">
-            Interns HUB
+    <aside className="relative flex w-full shrink-0 flex-col overflow-hidden rounded-[32px] bg-[#3B0454] px-4 pb-4 pt-6 text-white lg:mt-2 lg:h-[calc(100vh-48px)] lg:min-h-[720px] lg:w-64">
+      <div className="flex items-center gap-2.5 ps-1">
+        <span className="flex size-[30px] items-center justify-center rounded-[10px_10px_10px_3px] bg-[linear-gradient(135deg,#C9A8E0_0%,#804A8A_100%)] text-[11px] font-extrabold tracking-[-0.8px] text-white shadow-[0_8px_16px_rgba(21,1,30,0.18)]">
+          ih
+        </span>
+        <span>
+          <span className="block text-[13px] font-bold leading-tight tracking-[-0.3px]">
+            Interns <span className="font-extrabold">HUB</span>
           </span>
-        </Link>
+          <span className="mt-0.5 block text-[10px] leading-tight text-[#EDE6F3]/70">
+            {t('brand.portal')}
+          </span>
+        </span>
+      </div>
 
-        <p className="mt-0.5 px-1 text-[11.5px] font-normal text-purple-200/60">
-          Employer Portal
-        </p>
+      <div className="mt-5 flex items-center gap-2.5 rounded-[14px] border border-white/15 bg-white/10 px-3.5 py-3">
+        <span className="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#C9A8E0_0%,#804A8A_100%)] text-[10px] font-bold">
+          {employerProfile.viewerInitials}
+          {employerProfile.online ? (
+            <span className="absolute -end-0.5 bottom-0 size-2 rounded-full border border-[#3B0454] bg-[#33D473]" />
+          ) : null}
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate text-[10px] font-bold text-white">{employerProfile.companyName}</span>
+          <span className="mt-0.5 block truncate text-[9px] text-[#EDE6F3]">
+            {employerProfile.viewerName} • {employerProfile.viewerRole}
+          </span>
+        </span>
+      </div>
 
-        {/* Company Profile Card */}
-        <div className="mt-4 flex items-center gap-3 rounded-[18px] border border-white/10 bg-white/[0.08] p-2.5 backdrop-blur-md">
-          {/* Avatar NT */}
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#BA8EC9] via-[#9F65B5] to-[#783792] text-[11px] font-bold tracking-wide text-white shadow-sm">
-            NT
-          </div>
+      <p className="mt-5 ps-2 text-[8px] font-bold tracking-[1.3px] text-[#EDE6F3]/60 uppercase">
+        {t('brand.recruitment')}
+      </p>
 
-          {/* Details */}
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[12.5px] font-semibold leading-tight text-white">
-              NovaTech Solutions
-            </p>
-            <p className="mt-0.5 truncate text-[10.5px] text-purple-200/70 leading-tight">
-              Sarah Mahmoud · HR
-            </p>
-          </div>
+      <nav aria-label={t('brand.recruitment')} className="mt-2 grid grid-cols-2 gap-1 lg:block">
+        {mainNav.map((item) => {
+          const Icon = item.icon;
+          const isPipeline = item.id === 'pipeline' && pipelineActive;
+          const isInterviews = item.id === 'interviews' && interviewsActive;
+          const isCompletion = item.id === 'completion' && completionActive;
+          const active = isPipeline || isInterviews || isCompletion;
 
-          {/* Active Status Dot */}
-          <span className="size-2 shrink-0 rounded-full bg-[#22C55E] shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-        </div>
+          const content = (
+            <>
+              <Icon className="size-4 shrink-0" strokeWidth={1.7} />
+              <span className="min-w-0 flex-1 truncate text-start text-[11px]">{t(item.labelKey)}</span>
+              {item.badge ? (
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'h-[18px] w-[22px] shrink-0 rounded-full',
+                    active ? 'bg-white/22' : 'bg-white/14',
+                  )}
+                />
+              ) : null}
+            </>
+          );
 
-        {/* Navigation Heading */}
-        <p className="mb-2.5 mt-5 px-1 text-[10px] font-semibold tracking-[0.18em] text-[#9A76AB] uppercase">
-          RECRUITMENT
-        </p>
+          const className = cn(
+            'flex h-10 w-full items-center gap-3 rounded-[11px] ps-4 pe-2.5 transition',
+            active ? activeItemClass : idleItemClass,
+            item.disabled ? 'cursor-not-allowed opacity-55' : '',
+          );
 
-        {/* Navigation Links */}
-        <nav className="flex flex-col gap-1">
-          {items.map(({ label, to, icon: Icon, badge }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={label === 'Dashboard'}
-              className={({ isActive }) =>
-                `relative flex min-h-[38px] items-center gap-3 rounded-[14px] px-3 py-2 text-[13px] transition-all duration-150 ${
-                  isActive
-                    ? 'bg-white/[0.18] font-semibold text-white shadow-sm backdrop-blur-sm'
-                    : 'text-white/80 hover:bg-white/[0.07] hover:text-white'
-                }`
-              }
+          if (item.to && !item.disabled) {
+            return (
+              <Link
+                key={item.id}
+                to={item.to}
+                aria-current={active ? 'page' : undefined}
+                className={className}
+              >
+                {content}
+              </Link>
+            );
+          }
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              disabled
+              aria-disabled="true"
+              aria-current={active ? 'page' : undefined}
+              className={cn(className, !active ? 'cursor-default opacity-55' : 'cursor-default')}
             >
-              {({ isActive }) => (
-                <>
-                  {/* Left Active Purple Indicator */}
-                  {isActive && (
-                    <span className="absolute -left-2.5 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-[#8B5CF6]" />
-                  )}
+              {content}
+            </button>
+          );
+        })}
+      </nav>
 
-                  <Icon
-                    size={17}
-                    strokeWidth={1.8}
-                    className="shrink-0"
-                  />
-
-                  <span className="min-w-0 flex-1 whitespace-nowrap">
-                    {label}
-                  </span>
-
-                  {/* Badge Counter */}
-                  {badge !== undefined && (
-                    <span className="flex h-4 min-w-[18px] shrink-0 items-center justify-center rounded-full bg-white/[0.16] px-1.5 text-[10px] font-semibold text-white/95">
-                      {badge}
-                    </span>
-                  )}
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
-      </div>
-
-      {/* Bottom Decorative Landscape Waves (Vector SVG) */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[225px] overflow-hidden">
-        <svg
-          className="absolute inset-x-0 bottom-0 h-full w-full"
-          viewBox="0 0 268 220"
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          {/* Layer 1: Back Light Yellow / Cream Wave */}
-          <path
-            d="M30 160 C 110 160, 150 55, 230 45 C 248 42, 260 50, 268 55 L 268 220 L 0 220 L 0 160 Z"
-            fill="#FAD9A5"
-          />
-          {/* Layer 2: Middle Purple / Lilac Wave */}
-          <path
-            d="M0 95 C 55 45, 115 55, 165 115 C 205 160, 235 180, 268 195 L 268 220 L 0 220 Z"
-            fill="#9566BA"
-          />
-          {/* Layer 3: Front Warm Amber / Orange Wave */}
-          <path
-            d="M0 148 C 45 125, 115 122, 168 148 C 215 172, 245 168, 268 162 L 268 220 L 0 220 Z"
-            fill="#F8A761"
-          />
-        </svg>
-      </div>
-
-      {/* Switch to Student view Button */}
-      <div className="relative z-10 mt-auto pt-2">
+      <div className="relative mt-auto pt-5">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-[-16px] bottom-[-16px] h-56 bg-[radial-gradient(circle_at_70%_10%,rgba(190,130,218,0.36),transparent_58%),radial-gradient(circle_at_20%_75%,rgba(128,74,138,0.6),transparent_55%)]"
+        />
         <Link
-          to="/"
-          className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-[#421155]/95 px-3 text-[12.5px] font-medium text-white shadow-lg shadow-black/20 transition-colors hover:bg-[#521769]"
+          to={ROUTES.internship}
+          className="relative flex min-h-14 w-full items-center justify-center gap-2 rounded-[14px] border border-white/35 bg-[linear-gradient(135deg,#6A2A8A_0%,#3B0454_100%)] px-3 text-[10px] font-bold text-[#EDE6F3] shadow-[0_12px_28px_rgba(21,1,30,0.22)] transition hover:brightness-110"
         >
-          <ArrowLeft size={15} strokeWidth={2} className="shrink-0" />
-          <span className="whitespace-nowrap">
-            Switch to Student view
-          </span>
+          <span>{t('sidebar.switchToStudent')}</span>
+          <ArrowRight className="size-4 rtl:rotate-180" strokeWidth={1.8} />
         </Link>
       </div>
-
     </aside>
   );
 }
