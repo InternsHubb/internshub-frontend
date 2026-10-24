@@ -1004,7 +1004,12 @@
     },
     "topNav": {
       "search": "Search",
-      "searchPlaceholder": "Search..."
+      "searchPlaceholder": "Search...",
+      "notifications": "Notifications",
+      "notificationsUnavailable": "Notifications are not available yet.",
+      "darkMode": "Dark",
+      "darkModeLabel": "Dark mode",
+      "darkModeUnavailable": "Dark mode is not available yet."
     },
     "journey": {
       "courses": "Courses",
