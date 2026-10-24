@@ -17,6 +17,13 @@ export function RequireAuth({ children }: RequireAuthProps) {
   const { status } = useAuth();
   const location = useLocation();
 
+  // Local-only preview for frontend work while the verification backend is unavailable.
+  // The flag is ignored by production builds, so deployed routes remain protected.
+  const localPreview = import.meta.env.DEV &&
+    new URLSearchParams(location.search).get('preview') === '1';
+
+  if (localPreview) return <>{children}</>;
+
   if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white" role="status" aria-label="Loading">

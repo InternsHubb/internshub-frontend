@@ -1,4 +1,4 @@
-import { Bell, Menu, Moon } from 'lucide-react';
+import { Bell, Languages, Menu, Moon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -10,7 +10,8 @@ type RecruitmentTopBarProps = {
 };
 
 export function RecruitmentTopBar({ onOpenMenu }: RecruitmentTopBarProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const nextLanguage = i18n.resolvedLanguage === 'ar' ? 'en' : 'ar';
 
   return (
     <header className="flex h-20 items-center justify-between gap-3 px-4 sm:px-6">
@@ -35,6 +36,16 @@ export function RecruitmentTopBar({ onOpenMenu }: RecruitmentTopBarProps) {
       </div>
 
       <div className="ms-auto flex items-center gap-2.5 sm:gap-3">
+        <button
+          type="button"
+          onClick={() => void i18n.changeLanguage(nextLanguage)}
+          className="inline-flex h-11 items-center gap-2 rounded-full border border-[#E7E4EF] bg-white px-3 text-sm font-semibold text-[#3B3650] shadow-sm transition hover:bg-[#F8F7FC]"
+          aria-label={nextLanguage === 'ar' ? 'Switch to Arabic' : 'Switch to English'}
+        >
+          <Languages className="size-4" aria-hidden="true" />
+          <span>{nextLanguage === 'ar' ? 'العربية' : 'English'}</span>
+        </button>
+
         <button
           type="button"
           className="relative flex size-12 items-center justify-center rounded-full border border-[#E7E4EF] bg-white text-[#3B3650] shadow-[0_1px_2px_rgba(21,19,38,0.04)] transition hover:bg-[#F8F7FC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2"

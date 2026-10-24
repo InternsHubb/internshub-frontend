@@ -107,9 +107,9 @@ export function RecruitmentSidebar({ mobileOpen, onClose }: RecruitmentSidebarPr
         aria-label={t('recruitment.nav.recruitment')}
       >
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[285px] overflow-hidden" aria-hidden="true">
-          <div className="absolute -bottom-24 -left-24 h-[220px] w-[430px] rotate-[-15deg] rounded-[50%] bg-[#8B5CE2]" />
-          <div className="absolute -bottom-24 left-[108px] h-[245px] w-[340px] rotate-[18deg] rounded-[50%] bg-[#F5A85F]" />
-          <div className="absolute -bottom-32 -left-16 h-[180px] w-[440px] rotate-[-9deg] rounded-[50%] bg-[#7650CF]" />
+          <div className="absolute -bottom-24 -start-24 h-[220px] w-[430px] rotate-[-15deg] rounded-[50%] bg-[#8B5CE2]" />
+          <div className="absolute -bottom-24 start-[108px] h-[245px] w-[340px] rotate-[18deg] rounded-[50%] bg-[#F5A85F]" />
+          <div className="absolute -bottom-32 -start-16 h-[180px] w-[440px] rotate-[-9deg] rounded-[50%] bg-[#7650CF]" />
         </div>
         <div className="relative z-10 flex items-center justify-between gap-2 px-1">
           <Link to={ROUTES.home} className="flex min-w-0 items-center gap-2.5" onClick={onClose}>
@@ -244,7 +244,7 @@ export function RecruitmentSidebar({ mobileOpen, onClose }: RecruitmentSidebarPr
                 style={{ width: `${score}%` }}
               />
             </div>
-            <p className="mt-3 flex items-center gap-2 text-[12px] leading-5 text-white"><span className="size-2 shrink-0 rounded-full bg-[#39E77D]" />Eligible · Profile visible</p>
+            <p className="mt-3 flex items-center gap-2 text-[12px] leading-5 text-white"><span className="size-2 shrink-0 rounded-full bg-[#39E77D]" />{t('recruitment.shell.profileVisible')}</p>
           </div>
         </div>
       </aside>
