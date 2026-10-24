@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 
 // Internship journey header (Figma "Header" in the "3 months" frames, and with the extra
 // "Courses" step in the "6 and 12 months" frames): done steps are green, the current step is
-// the purple gradient with a lilac halo, later steps are outlined grey.
+// the purple gradient with a lilac halo, later steps are outlined grey color.
 
 const CIRCLE = 'relative z-10 flex size-[34px] items-center justify-center rounded-full border-[0.8px] text-[10px] leading-[15px]';
 const HALO = 'shadow-[0_0_0_5px_#f2e8f8,0_8px_16px_rgba(58,3,83,0.18)]';
