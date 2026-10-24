@@ -7,6 +7,13 @@ import enTranslation from './locales/en.json'
 import recruitmentAr from './locales/recruitment.ar.json'
 import recruitmentEn from './locales/recruitment.en.json'
 
+// Locale files by flow (each has an English and an Arabic file with the same keys):
+//   en/ar.json                public site, auth, onboarding and the student dashboard (`dashboard.*`)
+//   employer.en/ar.json       employer decision/agreement flow (PR #32), merged at the top level
+//   recruitment.en/ar.json    student recruitment flow (PR #31), nested under `recruitment`
+// The legacy employer prototype (PR #30) has hardcoded English text and no locale file.
+// Employer keys are spread over the base keys, so a new top-level employer key with the same
+// name as a base key would replace it; today only `nav` overlaps, and it is merged explicitly.
 const mergeEmployerTranslations = (
   base: typeof enTranslation,
   employer: typeof employerEn,
@@ -31,11 +38,21 @@ const initialLanguage = getInitialLanguage()
 i18n
   .use(initReactI18next)
   .init({
+    // Exactly one entry per language: add a flow's strings into these objects rather than
+    // declaring `en` / `ar` again (a repeated key silently replaces the earlier entry).
     resources: {
-      en: { translation: mergeEmployerTranslations(enTranslation, employerEn) },
-      ar: { translation: mergeEmployerTranslations(arTranslation, employerAr) },
-      en: { translation: { ...enTranslation, recruitment: recruitmentEn } },
-      ar: { translation: { ...arTranslation, recruitment: recruitmentAr } },
+      en: {
+        translation: {
+          ...mergeEmployerTranslations(enTranslation, employerEn),
+          recruitment: recruitmentEn,
+        },
+      },
+      ar: {
+        translation: {
+          ...mergeEmployerTranslations(arTranslation, employerAr),
+          recruitment: recruitmentAr,
+        },
+      },
     },
     lng: initialLanguage,
     fallbackLng: 'en',
