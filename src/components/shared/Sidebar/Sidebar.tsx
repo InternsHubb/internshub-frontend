@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { Dialog } from 'radix-ui';
 import { useTranslation } from 'react-i18next';
-import { Link, NavLink } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { Link, NavLink, matchPath, useLocation } from 'react-router-dom';
+import { ChevronDown, X } from 'lucide-react';
 
 import logoCap from '@/assets/dashboard/sb-logo-cap.svg';
 import collapsedWaves from '@/assets/dashboard/sb-collapsed-waves.svg';
@@ -13,19 +13,22 @@ import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/cn';
 
 import { useSidebar } from './SidebarContext';
-import { SIDEBAR_NAV_ITEMS, type SidebarNavItem } from './sidebarNav';
+import { SIDEBAR_NAV_ITEMS, type SidebarNavItem, type SidebarSubItem } from './sidebarNav';
 
-// Shared dashboard sidebar. Expanded state follows the Figma component "Sidebar" (256px,
-// e.g. in "internship plan 3 and 11", 31:32570); the icon-only state follows the collapsed
-// sidebar "Frame 10" (118px, 30:1415). Below lg it becomes a drawer (Radix Dialog).
-// `footer` is an optional slot rendered above the waves (e.g. the project page's
-// "Required Courses Progress" card); it is hidden while collapsed.
+// Shared sidebar of the student dashboard and the student recruitment flow. Expanded state
+// follows the Figma component "Sidebar" (256px, e.g. in "internship plan 3 and 11",
+// 31:32570); the icon-only state follows the collapsed sidebar "Frame 10" (118px, 30:1415).
+// Below lg it becomes a drawer (Radix Dialog). `items` defaults to SIDEBAR_NAV_ITEMS; an item
+// with `children` (Recruitment) expands into a nested menu, as in the recruitment frames.
+// `footer` is an optional slot rendered above the waves, set per layout or route: the
+// internship "Required Courses Progress" card or the recruitment "Composite Score" card. It is
+// hidden while collapsed.
 //
 // Both states render the same elements: only sizes, paddings and opacity change, on the
 // same curve and duration as the <aside> width, so the panel and the page beside it move
 // together instead of the panel content snapping to the new state on the first frame.
 
-type SidebarProps = { footer?: ReactNode };
+type SidebarProps = { footer?: ReactNode; items?: ReadonlyArray<SidebarNavItem> };
 
 const SIDEBAR_MOTION = 'duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none';
 const ACTIVE_ITEM = 'bg-linear-to-r from-[#3a0353] to-[#804a8a] font-semibold text-white shadow-sm rtl:bg-linear-to-l';
@@ -109,6 +112,94 @@ function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCo
   );
 }
 
+// Row of a nested menu (Figma "Dashboard", "Eligibility", ... under Recruitment): 16px
+// outline icon, 14px label and an optional count pill.
+function NavSubItem({ item, onNavigate }: { item: SidebarSubItem; onNavigate?: () => void }) {
+  const { t } = useTranslation();
+  const Icon = item.icon;
+  return (
+    <li>
+      <NavLink
+        to={item.to}
+        end={item.end}
+        onClick={onNavigate}
+        className={({ isActive }) =>
+          cn('flex h-8 w-full items-center gap-2.5 rounded-lg ps-3 pe-2 transition-colors', FOCUS_RING, isActive ? ACTIVE_ITEM : IDLE_ITEM)
+        }
+      >
+        <Icon className="size-4 shrink-0" aria-hidden={true} />
+        <span className="truncate text-sm leading-none">{t(item.labelKey)}</span>
+        {item.badge && (
+          <span className="ms-auto flex size-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-[11px] font-semibold text-white">
+            {item.badge}
+          </span>
+        )}
+      </NavLink>
+    </li>
+  );
+}
+
+// Item with a nested menu (Recruitment). Expanded, the row toggles the menu, which opens by
+// itself on any page under the group's route and stays as the user leaves it while on those
+// pages. In the icon-only rail there is no room for the menu, so the icon links to the group's
+// first page instead.
+function NavGroup({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCollapsed: boolean; onNavigate?: () => void }) {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const menuId = useId();
+  const isInGroup = item.to ? matchPath({ path: item.to, end: false }, pathname) !== null : false;
+  const [isOpen, setOpen] = useState(isInGroup);
+  // Entering the group from another page opens the menu (state adjusted during render).
+  const [wasInGroup, setWasInGroup] = useState(isInGroup);
+  if (isInGroup !== wasInGroup) {
+    setWasInGroup(isInGroup);
+    if (isInGroup) setOpen(true);
+  }
+
+  if (isCollapsed) {
+    return <NavItem item={{ ...item, children: undefined }} isCollapsed onNavigate={onNavigate} />;
+  }
+
+  return (
+    <li>
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls={menuId}
+        onClick={() => setOpen((open) => !open)}
+        className={cn(
+          'relative flex h-10 w-full items-center gap-3 rounded-lg ps-3 pe-2 text-start transition-colors',
+          FOCUS_RING,
+          isInGroup ? 'font-semibold text-white hover:bg-white/[0.07]' : IDLE_ITEM,
+        )}
+      >
+        <img src={item.icon} alt="" aria-hidden="true" className="size-[17px] shrink-0 object-contain" />
+        <span className="truncate text-sm leading-none">{t(item.labelKey)}</span>
+        <ChevronDown
+          aria-hidden="true"
+          className={cn('ms-auto size-4 shrink-0 opacity-70 transition-transform', SIDEBAR_MOTION, isOpen && 'rotate-180')}
+        />
+      </button>
+      {/* Folds open/closed (height + fade); `inert` keeps hidden links out of the tab order. */}
+      <div
+        id={menuId}
+        inert={!isOpen}
+        className={cn(
+          'grid transition-[grid-template-rows,opacity]',
+          SIDEBAR_MOTION,
+          isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+        )}
+      >
+        <ul className="flex min-h-0 flex-col gap-0.5 overflow-hidden ps-4 pt-0.5">
+          {item.children?.map((child) => (
+            <NavSubItem key={child.id} item={child} onNavigate={onNavigate} />
+          ))}
+        </ul>
+      </div>
+    </li>
+  );
+}
+
 // Theme waves (Figma "Theme Wave — Beige/Purple/Orange"); the two sets cross-fade.
 function SidebarWaves({ isCollapsed }: { isCollapsed: boolean }) {
   const fade = cn('pointer-events-none absolute transition-opacity', SIDEBAR_MOTION);
@@ -129,7 +220,14 @@ function SidebarWaves({ isCollapsed }: { isCollapsed: boolean }) {
   );
 }
 
-function SidebarPanel({ isCollapsed, footer, onNavigate }: { isCollapsed: boolean; footer?: ReactNode; onNavigate?: () => void }) {
+type SidebarPanelProps = {
+  isCollapsed: boolean;
+  items: ReadonlyArray<SidebarNavItem>;
+  footer?: ReactNode;
+  onNavigate?: () => void;
+};
+
+function SidebarPanel({ isCollapsed, items, footer, onNavigate }: SidebarPanelProps) {
   const { t } = useTranslation();
 
   return (
@@ -170,15 +268,19 @@ function SidebarPanel({ isCollapsed, footer, onNavigate }: { isCollapsed: boolea
       <nav
         aria-label={t('dashboard.sidebar.navLabel')}
         className={cn(
-          'relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden transition-[margin,padding]',
+          'no-scrollbar relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden transition-[margin,padding]',
           SIDEBAR_MOTION,
           isCollapsed ? 'mt-[72px] px-[37px]' : 'mt-[39px] px-2',
         )}
       >
         <ul className={cn('flex flex-col transition-[gap]', SIDEBAR_MOTION, isCollapsed ? 'gap-6' : 'gap-1')}>
-          {SIDEBAR_NAV_ITEMS.map((item) => (
-            <NavItem key={item.id} item={item} isCollapsed={isCollapsed} onNavigate={onNavigate} />
-          ))}
+          {items.map((item) =>
+            item.children ? (
+              <NavGroup key={item.id} item={item} isCollapsed={isCollapsed} onNavigate={onNavigate} />
+            ) : (
+              <NavItem key={item.id} item={item} isCollapsed={isCollapsed} onNavigate={onNavigate} />
+            ),
+          )}
         </ul>
       </nav>
 
@@ -202,7 +304,7 @@ function SidebarPanel({ isCollapsed, footer, onNavigate }: { isCollapsed: boolea
   );
 }
 
-export function Sidebar({ footer }: SidebarProps) {
+export function Sidebar({ footer, items = SIDEBAR_NAV_ITEMS }: SidebarProps) {
   const { t } = useTranslation();
   const { isCollapsed, isMobileOpen, setMobileOpen } = useSidebar();
 
@@ -217,7 +319,7 @@ export function Sidebar({ footer }: SidebarProps) {
           isCollapsed ? 'w-[118px]' : 'w-[256px]',
         )}
       >
-        <SidebarPanel isCollapsed={isCollapsed} footer={footer} />
+        <SidebarPanel isCollapsed={isCollapsed} items={items} footer={footer} />
       </aside>
 
       {/* Mobile / tablet: drawer from the inline-start edge. */}
@@ -228,7 +330,7 @@ export function Sidebar({ footer }: SidebarProps) {
           <Dialog.Content className="db-drawer fixed inset-y-3 start-3 z-50 w-[256px] max-w-[calc(100vw-24px)] outline-none lg:hidden">
             <Dialog.Title className="sr-only">{t('dashboard.sidebar.navLabel')}</Dialog.Title>
             <Dialog.Description className="sr-only">{t('dashboard.sidebar.drawerDescription')}</Dialog.Description>
-            <SidebarPanel isCollapsed={false} footer={footer} onNavigate={() => setMobileOpen(false)} />
+            <SidebarPanel isCollapsed={false} items={items} footer={footer} onNavigate={() => setMobileOpen(false)} />
             <Dialog.Close
               aria-label={t('dashboard.sidebar.close')}
               className="absolute end-3 top-3 flex size-9 items-center justify-center rounded-full text-white/80 outline-none hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"

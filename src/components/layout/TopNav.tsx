@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import bellIcon from '@/assets/dashboard/topnav-bell.svg';
 import moonIcon from '@/assets/dashboard/topnav-moon.svg';
 import searchIcon from '@/assets/dashboard/topnav-search.svg';
-import { SidebarTrigger } from '@/components/layout/sidebar/SidebarTrigger';
+import { SidebarTrigger } from '@/components/shared/Sidebar/SidebarTrigger';
 import { SAMPLE_PROFILE } from '@/data/internshipDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { initialsOf } from '@/lib/initials';
