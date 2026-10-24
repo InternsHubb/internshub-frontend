@@ -787,3 +787,13 @@ html[dir="rtl"] {
     animation: none !important;
   }
 }
+
+/* Scroll containers that scroll with no visible scrollbar: the horizontal course rows
+   ("courses 6m plan", as in Figma) and the shared sidebar navigation. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

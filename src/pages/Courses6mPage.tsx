@@ -513,7 +513,7 @@ export const Courses6mPage: React.FC = () => {
       />
 
       {/* Main Canvas Container - aligned closer to browser edge */}
-      <div className="w-full max-w-[1560px] min-h-[1024px] flex flex-col lg:flex-row pl-1.5 sm:pl-2 lg:pl-1.5 pr-3 sm:pr-4 lg:pr-5 py-4 lg:py-5 gap-5 lg:gap-6 relative z-10 flow-page-enter">
+      <div className="w-full min-h-[1024px] flex flex-col lg:flex-row pl-1.5 sm:pl-2 lg:pl-6 pr-3 sm:pr-4 lg:pr-6 py-4 lg:py-6 gap-5 lg:gap-6 relative z-10 flow-page-enter">
         {/* Mobile Header (screen < 1024px) */}
         <div className="lg:hidden flex items-center justify-between bg-[#3B0454] text-white px-5 py-4 rounded-[24px] shadow-lg mb-2">
           <Link to={ROUTES.home} className="flex items-center gap-3">
@@ -553,7 +553,7 @@ export const Courses6mPage: React.FC = () => {
             Background: #3B0454, Border-Radius: 34px
            ========================================================================= */}
         <aside
-          className={`fixed lg:sticky top-4 lg:top-5 left-1.5 sm:left-2 lg:left-1.5 w-[308px] h-[976px] bg-[#3B0454] rounded-[34px] shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out shrink-0 select-none ${
+          className={`fixed lg:sticky top-4 lg:top-6 left-1.5 sm:left-2 lg:left-6 w-[308px] h-[976px] bg-[#3B0454] rounded-[34px] shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out shrink-0 select-none ${
             mobileMenuOpen ? 'translate-x-0' : '-translate-x-[340px] lg:translate-x-0'
           }`}
         >
@@ -951,11 +951,11 @@ export const Courses6mPage: React.FC = () => {
         {/* =========================================================================
             MAIN CONTENT AREA (Figma node 112:9054: width: 1060px, height: 912px)
            ========================================================================= */}
-        <main className="flex-1 flex flex-col min-w-0 w-full max-w-[1060px]">
+        <main className="flex-1 flex flex-col min-w-0 w-full">
           {/* Top Header Row (Figma node 112:9055: width: 1060px, height: 62px, gap: 24px) */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 lg:gap-[24px] w-full mb-[24px]">
+          <div className="flex flex-col md:flex-row md:flex-wrap items-stretch md:items-center gap-4 lg:gap-[24px] w-full mb-[24px]">
             {/* 1. Search Bar (Figma node 112:9056: width: 574px, height: 62px, bg: #F4F4F4, radius: 36px, shadow) */}
-            <div className="w-full md:w-[574px] h-[62px] bg-[#F4F4F4] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-[36px] px-[24px] flex items-center justify-between gap-4 transition-all focus-within:ring-2 focus-within:ring-[#5A198F]/40 focus-within:bg-white shrink-0">
+            <div className="relative w-full md:w-auto md:min-w-[240px] md:flex-1 h-[62px] bg-[#F4F4F4] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-[36px] px-[24px] flex items-center justify-between gap-4 transition-all focus-within:ring-2 focus-within:ring-[#5A198F]/40 focus-within:bg-white shrink-0">
               <div className="flex items-center gap-[22px] flex-1 min-w-0">
                 {/* vuesax/linear/search-normal (Exact Figma vector) */}
                 <svg
@@ -989,7 +989,7 @@ export const Courses6mPage: React.FC = () => {
                 />
               </div>
               {/* Filter Search Icon & Dropdown: Exact Figma node 112:9592 */}
-              <div className="relative shrink-0">
+              <div className="lg:relative shrink-0">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -1039,7 +1039,7 @@ export const Courses6mPage: React.FC = () => {
                 {showFilterPanel && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute top-[58px] end-0 w-[260px] bg-[#F4F4F4]/98 backdrop-blur-xl border border-white/60 shadow-[0px_20px_40px_-8px_rgba(58,4,83,0.18),0px_6px_16px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.7)_inset] rounded-[16px] p-[24px] flex flex-col gap-[20px] z-50 animate-filter-dropdown select-none text-start"
+                    className="absolute top-[68px] lg:top-[58px] start-0 lg:start-auto lg:end-0 w-[260px] max-w-[calc(100vw-24px)] bg-[#F4F4F4]/98 backdrop-blur-xl border border-white/60 shadow-[0px_20px_40px_-8px_rgba(58,4,83,0.18),0px_6px_16px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.7)_inset] rounded-[16px] p-[24px] flex flex-col gap-[20px] z-50 animate-filter-dropdown select-none text-start"
                   >
                     {/* Header Row: Filters & Clear all (Figma node 112:9594) */}
                     <div className="flex items-center justify-between w-full">
@@ -1675,7 +1675,7 @@ export const Courses6mPage: React.FC = () => {
                   </h2>
 
               {/* Sort & Category Filter Pills (Figma Frame 2147225693: width: 445px, height: 48px, gap: 19px) */}
-              <div className="flex items-center gap-[19px] relative">
+              <div className="flex flex-wrap items-center gap-[19px] relative">
                 {/* Pill 1: Sort : Most Popular (Figma node 159:8564: width: 181px, height: 48px, radius: 36px) */}
                 <div className="relative">
                   <button

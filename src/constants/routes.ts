@@ -19,7 +19,10 @@ export const ROUTES = {
   phoneOtp: '/auth/phone-otp',
   // Must match the redirect URI registered in the Azure app registration.
   microsoftCallback: '/auth/microsoft/callback',
+  // 3-month plan courses: redirects to dashboardCourses, where the 3-month screens live.
+  courses3m: '/courses-3m',
   courses6m: '/courses-6m',
+  courses12m: '/courses-12m',
   courseDetails: '/courses/:id',
   courseDetailsDefault: '/course-details',
   courseVideo: '/courses/:id/video',

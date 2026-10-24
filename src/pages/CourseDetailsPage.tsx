@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
+// Slim sidebar glyphs: the same Figma icons the dashboard sidebar uses ("course details" Frame 10).
+import slimCertificate from '@/assets/dashboard/sb-certificate.svg';
+import slimChat from '@/assets/dashboard/sb-chat.svg';
+import slimCourses from '@/assets/dashboard/sb-courses.svg';
+import slimWaves from '@/assets/dashboard/sb-collapsed-waves.svg';
+import slimInternship from '@/assets/dashboard/sb-internship.svg';
+import slimProgress from '@/assets/dashboard/sb-progress.svg';
+import slimSprints from '@/assets/dashboard/sb-sprints.svg';
+import slimSquad from '@/assets/dashboard/sb-squad.svg';
 
 interface EnrolledLesson {
   id: string;
@@ -188,7 +197,7 @@ export const CourseDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FEFEFE] relative font-['Plus_Jakarta_Sans'] pb-16 antialiased selection:bg-[#5A198F]/20 selection:text-[#5A198F] flex flex-col items-start flow-page-enter">
+    <div className="min-h-screen bg-[#FEFEFE] relative overflow-x-clip font-['Plus_Jakarta_Sans'] pb-16 antialiased selection:bg-[#5A198F]/20 selection:text-[#5A198F] flex flex-col items-start flow-page-enter">
       {/* Toast Notification */}
       {downloadSuccess && (
         <div className="fixed top-5 right-5 z-50 bg-[#3B0454] text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-3 animate-fade-in text-sm font-medium">
@@ -202,9 +211,9 @@ export const CourseDetailsPage: React.FC = () => {
       )}
 
       {/* Top Header / Breadcrumbs Bar (Figma node 112:15295 / 112:15801) */}
-      <header className="w-full max-w-[1560px] pl-1.5 sm:pl-2 lg:pl-1.5 pr-4 sm:pr-6 pt-3 pb-2 flex items-center justify-between gap-4">
+      <header className="w-full max-w-[1560px] mx-auto pl-1.5 sm:pl-2 lg:pl-6 pr-4 sm:pr-6 lg:pr-6 pt-3 pb-2 flex flex-wrap xl:flex-nowrap items-center justify-between gap-4">
         {/* Left: Logo & Breadcrumbs */}
-        <div className="flex items-center gap-6 sm:gap-8 flex-wrap">
+        <div className="flex min-w-0 max-w-full items-center gap-6 sm:gap-8 flex-wrap">
           <Link
             to={ROUTES.home}
             className="font-bold text-[24px] leading-none text-[#22023C] hover:opacity-90 transition-opacity whitespace-nowrap"
@@ -213,7 +222,7 @@ export const CourseDetailsPage: React.FC = () => {
           </Link>
 
           {/* Breadcrumbs Row */}
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 max-w-full items-center gap-2">
             {/* Purple Icon Box */}
             <div className="size-[36px] bg-[#F4F0F8] border border-[#AE8FC8] rounded-[8px] flex items-center justify-center shrink-0 shadow-xs">
               <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
@@ -228,7 +237,7 @@ export const CourseDetailsPage: React.FC = () => {
             </div>
 
             {/* Breadcrumb Steps */}
-            <nav className="flex items-center gap-2 text-[14px] font-medium leading-[20px] whitespace-nowrap overflow-x-auto">
+            <nav className="flex min-w-0 items-center gap-2 text-[14px] font-medium leading-[20px] whitespace-nowrap overflow-x-auto">
               <Link
                 to={ROUTES.courses6m}
                 className="text-[#94A3B8] hover:text-[#5A198F] transition-colors"
@@ -250,7 +259,7 @@ export const CourseDetailsPage: React.FC = () => {
         </div>
 
         {/* Right: Quick Controls & Profile Pill */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+        <div className="flex max-w-full flex-wrap items-center justify-end gap-3 sm:gap-4 xl:shrink-0 xl:flex-nowrap">
           {/* Progress Advance Trigger Pill */}
           {isEnrolled && (
             <button
@@ -304,7 +313,7 @@ export const CourseDetailsPage: React.FC = () => {
           </button>
 
           {/* User Profile Pill (Figma node 112:15321: 261px × 62px) */}
-          <div className="w-[240px] sm:w-[261px] h-[62px] bg-[#F4F4F4] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] rounded-[999px] px-[16px] flex items-center gap-[12px] shrink-0 hover:bg-gray-100 transition-colors cursor-pointer">
+          <div className="w-[240px] max-w-full sm:w-[261px] h-[62px] bg-[#F4F4F4] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] rounded-[999px] px-[16px] flex items-center gap-[12px] shrink-0 hover:bg-gray-100 transition-colors cursor-pointer">
             <img
               src="/images/avatar-maya-figma.jpg"
               alt="Maya Johnson"
@@ -323,7 +332,7 @@ export const CourseDetailsPage: React.FC = () => {
       </header>
 
       {/* Main Container: Slim Sidebar + Content Layout */}
-      <div className="w-full max-w-[1560px] pl-1.5 sm:pl-2 lg:pl-1.5 pr-4 sm:pr-6 pt-3 flex gap-[24px] items-start">
+      <div className="w-full max-w-[1560px] mx-auto pl-1.5 sm:pl-2 lg:pl-6 pr-4 sm:pr-6 lg:pr-6 pt-3 flex gap-[24px] items-start">
         {/* Slim Left Sidebar (Figma node 112:15329) */}
         <aside className="hidden lg:flex w-[118px] h-[976px] bg-[#3B0454] rounded-[34px] flex-col items-center pt-[61px] relative overflow-hidden shrink-0 select-none shadow-xl">
           {/* Top Logo / Graduation Cap */}
@@ -354,39 +363,18 @@ export const CourseDetailsPage: React.FC = () => {
               }`}
               title="Internship Tasks"
             >
-              <svg width="24" height="24" viewBox="0 0 23 23" fill="none">
-                <path
-                  d="M7.1 3.6C7.5 3.9 7.6 4.4 7.3 4.8L5.3 7.7C5.2 7.9 4.9 8 4.7 8C4.4 8.1 4.2 8 4 7.8L2.6 6.4C2.2 6 2.2 5.5 2.6 5.1C2.9 4.8 3.4 4.8 3.8 5.1L4.5 5.9L5.9 3.8C6.2 3.4 6.7 3.3 7.1 3.6ZM10.4 5.8H19.6C20.2 5.8 20.7 6.3 20.7 7C20.7 7.6 20.2 8.1 19.6 8.1H10.4C9.8 8.1 9.3 7.6 9.3 7C9.3 6.3 9.8 5.8 10.4 5.8ZM10.4 11.5H19.6C20.2 11.5 20.7 12 20.7 12.6C20.7 13.3 20.2 13.8 19.6 13.8H10.4C9.8 13.8 9.3 13.3 9.3 12.6C9.3 12 9.8 11.5 10.4 11.5ZM8.1 17.3H19.6C20.2 17.3 20.7 17.8 20.7 18.4C20.7 19.1 20.2 19.6 19.6 19.6H8.1C7.5 19.6 7 19.1 7 18.4C7 17.8 7.5 17.3 8.1 17.3Z"
-                  fill="white"
-                />
-              </svg>
+              <img src={slimInternship} alt="" aria-hidden="true" className="h-[36px] w-auto" />
             </button>
 
             <button
               type="button"
               onClick={() => setActiveNav('squad')}
-              className={`size-[36px] flex items-center justify-center transition-colors cursor-pointer ${
+              className={`size-[44px] flex items-center justify-center transition-colors cursor-pointer ${
                 activeNav === 'squad' ? 'text-white' : 'text-white/80 hover:text-white'
               }`}
               title="My Squad"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M17.25 6.86C17.19 6.85 17.13 6.85 17.07 6.86C15.75 6.81 14.69 5.73 14.69 4.39C14.69 3.02 15.79 1.92 17.16 1.92C18.53 1.92 19.64 3.03 19.64 4.39C19.63 5.73 18.57 6.81 17.25 6.86Z"
-                  stroke="#FAF8F1"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M11.5 14.02C11.44 14.01 11.38 14.01 11.32 14.02C9.99 13.97 8.94 12.89 8.94 11.55C8.94 10.18 10.04 9.08 11.41 9.08C12.78 9.08 13.89 10.19 13.89 11.55C13.88 12.89 12.82 13.98 11.5 14.02Z"
-                  stroke="#FAF8F1"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M8.71 17.04C7.36 17.94 7.36 19.42 8.71 20.32C10.24 21.34 12.76 21.34 14.29 20.32C15.64 19.42 15.64 17.94 14.29 17.04C12.77 16.02 10.24 16.02 8.71 17.04Z"
-                  stroke="#FAF8F1"
-                  strokeWidth="1.5"
-                />
-              </svg>
+              <img src={slimSquad} alt="" aria-hidden="true" className="size-[44px]" />
             </button>
 
             <button
@@ -400,16 +388,7 @@ export const CourseDetailsPage: React.FC = () => {
               }`}
               title="Courses"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M22 4.85V16.74C22 17.71 21.21 18.6 20.24 18.72L19.93 18.76C18.29 18.98 15.98 19.66 14.12 20.44C13.47 20.71 12.75 20.22 12.75 19.51V5.6C12.75 5.23 12.96 4.89 13.29 4.71C15.12 3.72 17.89 2.84 19.77 2.68H19.83C21.03 2.68 22 3.65 22 4.85Z"
-                  fill="white"
-                />
-                <path
-                  d="M10.71 4.71C8.88 3.72 6.11 2.84 4.23 2.68H4.16C2.96 2.68 1.99 3.65 1.99 4.85V16.74C1.99 17.71 2.78 18.6 3.75 18.72L4.06 18.76C5.7 18.98 8.01 19.66 9.87 20.44C10.52 20.71 11.24 20.22 11.24 19.51V5.6C11.24 5.22 11.04 4.89 10.71 4.71ZM5 7.74H7.25C7.66 7.74 8 8.08 8 8.49C8 8.91 7.66 9.24 7.25 9.24H5C4.59 9.24 4.25 8.91 4.25 8.49C4.25 8.08 4.59 7.74 5 7.74ZM8 12.24H5C4.59 12.24 4.25 11.91 4.25 11.49C4.25 11.08 4.59 10.74 5 10.74H8C8.41 10.74 8.75 11.08 8.75 11.49C8.75 11.91 8.41 12.24 8 12.24Z"
-                  fill="white"
-                />
-              </svg>
+              <img src={slimCourses} alt="" aria-hidden="true" className="size-[36px]" />
             </button>
 
             <button
@@ -418,12 +397,7 @@ export const CourseDetailsPage: React.FC = () => {
               className="size-[36px] flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Sprints"
             >
-              <svg width="23" height="23" viewBox="0 0 23 23" fill="none">
-                <path
-                  d="M12.4583 2.875C7.16833 2.875 2.875 7.16833 2.875 12.4583C2.875 17.7483 7.16833 22.0417 12.4583 22.0417C17.7483 22.0417 22.0417 17.7483 22.0417 12.4583C22.0417 7.16833 17.7483 2.875 12.4583 2.875ZM15.525 13.225L11.5 17.25L10.1483 15.8983L12.9283 13.1183H7.66667V11.2H12.9283L10.1483 8.42L11.5 7.06833L15.525 11.0933C15.8217 11.39 16.0133 11.7825 16.0133 12.1692C16.0133 12.5558 15.8217 12.9283 15.525 13.225Z"
-                  fill="white"
-                />
-              </svg>
+              <img src={slimSprints} alt="" aria-hidden="true" className="size-[36px]" />
             </button>
 
             <button
@@ -432,52 +406,35 @@ export const CourseDetailsPage: React.FC = () => {
               className="size-[36px] flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Progress"
             >
-              <svg width="23" height="23" viewBox="0 0 23 23" fill="none">
-                <path
-                  d="M11.5 1.91667C6.20813 1.91667 1.91667 6.20813 1.91667 11.5C1.91667 16.7919 6.20813 21.0833 11.5 21.0833C16.7919 21.0833 21.0833 16.7919 21.0833 11.5C21.0833 6.20813 16.7919 1.91667 11.5 1.91667ZM11.5 3.83333V11.5H19.1667C19.1667 15.7335 15.7335 19.1667 11.5 19.1667C7.26646 19.1667 3.83333 15.7335 3.83333 11.5C3.83333 7.26646 7.26646 3.83333 11.5 3.83333Z"
-                  fill="white"
-                />
-              </svg>
+              <img src={slimProgress} alt="" aria-hidden="true" className="size-[36px]" />
             </button>
 
             <button
               type="button"
               onClick={() => setActiveNav('chat')}
-              className="size-[36px] flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
+              className="size-[44px] flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Chat"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 2C6.48 2 2 6.03 2 11C2 13.87 3.48 16.41 5.78 17.98C5.64 19.24 5.09 20.91 3.5 22C5.55 21.95 7.82 21.04 9.38 19.78C10.22 19.92 11.1 20 12 20C17.52 20 22 15.97 22 11C22 6.03 17.52 2 12 2Z"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <img src={slimChat} alt="" aria-hidden="true" className="w-[37px] h-auto" />
             </button>
 
             <button
               type="button"
               onClick={() => setActiveNav('certificate')}
-              className="size-[36px] flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
+              className="size-[44px] flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Certificate"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="4" width="18" height="15" rx="2" stroke="white" strokeWidth="1.5" />
-                <path d="M12 8V12" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="12" cy="14" r="1" fill="white" />
-              </svg>
+              <img src={slimCertificate} alt="" aria-hidden="true" className="w-[37px] h-auto" />
             </button>
           </nav>
 
-          <div className="absolute bottom-0 left-0 right-0 pointer-events-none opacity-90">
-            <img
-              src="/images/sidebar-slim-bottom.svg"
-              alt=""
-              className="w-full object-cover"
-            />
-          </div>
+          {/* Theme waves, positioned as in Figma (289×209, overflowing the 118px column). */}
+          <img
+            src={slimWaves}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-[66px] -start-[83px] h-[209px] w-[289px] max-w-none rtl:-scale-x-100"
+          />
         </aside>
 
         {/* Dynamic Main Body: Check if Enrolled View or Pre-Enrollment View */}
@@ -1488,7 +1445,7 @@ export const CourseDetailsPage: React.FC = () => {
               </div>
 
               {/* Right Column: Hero Graphic Preview */}
-              <div className="w-full xl:w-[674px] relative shrink-0">
+              <div className="w-full min-w-0 xl:flex-1 xl:max-w-[674px] relative">
                 <div className="absolute -top-[24px] -right-[24px] size-[128px] bg-[#8B5DB0] rounded-full opacity-60 blur-2xl pointer-events-none" />
                 <div className="absolute -bottom-[32px] -left-[32px] size-[160px] bg-[#D2C1E1] rounded-full opacity-60 blur-3xl pointer-events-none" />
 

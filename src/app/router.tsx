@@ -50,6 +50,7 @@ const MicrosoftCallback = lazy(
   () => import('@/pages/auth/MicrosoftCallback')
 );
 const Courses6mPage = lazy(() => import('@/pages/Courses6mPage'));
+const Courses12mPage = lazy(() => import('@/pages/Courses12mPage'));
 const CourseDetailsPage = lazy(() => import('@/pages/CourseDetailsPage'));
 const CourseVideoPage = lazy(() => import('@/pages/CourseVideoPage'));
 const CourseQuizPage = lazy(() => import('@/pages/CourseQuizPage'));
@@ -211,8 +212,18 @@ export const router = createBrowserRouter(
           element: <LandingPage />,
         },
         {
+          // The 3-month courses screens ("courses 3m plan") use the dashboard layout, so the
+          // public plan URL opens them there.
+          path: ROUTES.courses3m,
+          element: <Navigate to={ROUTES.dashboardCourses} replace />,
+        },
+        {
           path: ROUTES.courses6m,
           element: <Courses6mPage />,
+        },
+        {
+          path: ROUTES.courses12m,
+          element: <Courses12mPage />,
         },
         {
           path: '/courses',

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 
@@ -228,9 +229,9 @@ export const CourseQuizPage: React.FC = () => {
 
   // Reusable Top Navigation Bar matching Figma
   const renderHeader = () => (
-    <header className="flex items-center justify-between w-full py-2">
+    <header className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 w-full py-2">
       {/* Left: Logo & Breadcrumbs */}
-      <div className="flex items-center gap-6 sm:gap-8 flex-wrap">
+      <div className="flex min-w-0 max-w-full items-center gap-6 sm:gap-8 flex-wrap">
         <Link
           to={ROUTES.home}
           className="font-bold text-[22px] sm:text-[24px] text-[#22023C] tracking-tight hover:opacity-90 transition-opacity"
@@ -239,7 +240,7 @@ export const CourseQuizPage: React.FC = () => {
         </Link>
 
         {/* Breadcrumb Navigation (Figma node 112:12887 / 112:20132 / 112:21377 / 112:21524 / 112:21669) */}
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 max-w-full items-center gap-2">
           <div className="size-[36px] bg-[#F4F0F8] border border-[#AE8FC8] rounded-[8px] flex items-center justify-center shrink-0 shadow-2xs">
             <img
               src="/images/video/grad-cap.svg"
@@ -248,7 +249,7 @@ export const CourseQuizPage: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center gap-2 text-[14px] font-medium">
+          <div className="flex min-w-0 items-center gap-2 overflow-x-auto text-[14px] font-medium">
             <Link
               to={ROUTES.courses6m}
               className="text-[#94A3B8] hover:text-[#5A198F] transition-colors whitespace-nowrap"
@@ -293,7 +294,7 @@ export const CourseQuizPage: React.FC = () => {
       </div>
 
       {/* Right: Settings & User Capsule */}
-      <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+      <div className="flex max-w-full flex-wrap items-center justify-end gap-4 sm:gap-6 lg:shrink-0">
         <button
           type="button"
           className="size-[27px] rounded-[6px] border border-[rgba(0,0,0,0.16)] bg-[rgba(0,0,0,0.01)] flex items-center justify-center hover:bg-black/5 transition-colors cursor-pointer"
@@ -352,7 +353,7 @@ export const CourseQuizPage: React.FC = () => {
       )}
 
       {/* Main Page Container */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 relative z-10 flex flex-col gap-6">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-6 pt-3 relative z-10 flex flex-col gap-6">
         {renderHeader()}
 
         {/* ------------------------------------------------------------- */}
@@ -949,9 +950,11 @@ export const CourseQuizPage: React.FC = () => {
       {/* CERTIFICATE MODAL (When clicking "Get My Certificate" or       */}
       {/* "Take Your Certificate")                                      */}
       {/* ------------------------------------------------------------- */}
-      {showCertificateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[28px] max-w-[660px] w-full p-6 sm:p-8 shadow-2xl border border-purple-100 flex flex-col items-center gap-6 text-center flow-scale-in relative">
+      {/* Portalled to <body>: the page wrapper animates with a transform, which would otherwise make
+          this `fixed` overlay as tall as the page instead of the viewport. */}
+      {showCertificateModal && createPortal(
+        <div className="fixed inset-0 z-50 flex overflow-y-auto p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="m-auto min-w-0 bg-white rounded-[28px] max-w-[660px] w-full p-6 sm:p-8 shadow-2xl border border-purple-100 flex flex-col items-center gap-6 text-center flow-scale-in relative">
             <button
               type="button"
               onClick={() => setShowCertificateModal(false)}
@@ -1030,7 +1033,8 @@ export const CourseQuizPage: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
