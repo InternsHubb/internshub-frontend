@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ROUTES } from '@/constants/routes'
 
 export const CourseSection: React.FC = () => {
   const { t, i18n } = useTranslation()
@@ -77,8 +79,8 @@ export const CourseSection: React.FC = () => {
         </div>
 
         <div className="shrink-0 text-start md:text-end">
-          <a
-            href="#all-courses"
+          <Link
+            to={ROUTES.courses12m}
             className="group relative inline-flex items-center gap-[12px] px-[40px] py-[16px] rounded-[9999px] bg-[#3a0353] hover:bg-[#4d076d] text-white text-[16px] font-semibold tracking-[0.0156px] shadow-[0px_10px_15px_-3px_rgba(224,191,254,0.75),0px_4px_6px_-4px_#ddbffe] transition-all duration-200 active:scale-98"
           >
             <span>{t('courses.cta')}</span>
@@ -87,7 +89,7 @@ export const CourseSection: React.FC = () => {
               alt=""
               className="w-[14px] h-[16px] shrink-0 rtl:rotate-180 transition-transform duration-200 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
             />
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -185,12 +187,12 @@ export const CourseSection: React.FC = () => {
 
               {/* Action Button: Enroll Now (Figma node 1002:1287) */}
               <div className="pt-[2px]">
-                <a
-                  href={`#enroll-${course.id}`}
+                <Link
+                  to={ROUTES.courseDetailsDefault}
                   className="w-full inline-flex items-center justify-center py-[10px] px-[14.5px] rounded-full bg-[#5a198f] hover:bg-[#471273] text-white text-[12px] font-semibold leading-none shadow-xs hover:shadow-md transition-all duration-200 active:scale-98"
                 >
                   {t('courses.enrollBtn')}
-                </a>
+                </Link>
               </div>
               </div>
             </div>

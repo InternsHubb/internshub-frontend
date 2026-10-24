@@ -164,12 +164,12 @@ export const PricingSection: React.FC = () => {
                       {plan.btnText}
                     </Link>
                   ) : (
-                    <a
-                      href={`#plan-${plan.id}`}
+                    <Link
+                      to={ROUTES.internship}
                       className="w-full h-[56px] rounded-full border border-[#5a198f] text-[#5a198f] group-hover:bg-[#5a198f] group-hover:text-white group-hover:shadow-[0px_10px_15px_-3px_#bfdbfe] transition-all duration-300 font-bold text-[18px] flex items-center justify-center active:scale-98"
                     >
                       {plan.btnText}
-                    </a>
+                    </Link>
                   )}
                 </div>
               </div>

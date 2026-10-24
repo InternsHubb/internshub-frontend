@@ -54,7 +54,7 @@ const FOOTER_COLUMNS: ReadonlyArray<FooterColumn> = [
     titleKey: 'footer.colCourses',
     icon: iconCourses,
     links: [
-      { labelKey: 'footer.linkAllCourses', href: '#all-courses' },
+      { labelKey: 'footer.linkAllCourses', href: ROUTES.courses12m },
       { labelKey: 'footer.linkLearningPaths', href: '#paths' },
       { labelKey: 'footer.linkInstructors', href: '#mentors' },
     ],
@@ -240,12 +240,21 @@ export const Footer: React.FC<FooterProps> = ({ onSubscribe }) => {
                   <ul className="flex flex-col gap-3">
                     {column.links.map((link) => (
                       <li key={link.labelKey}>
-                        <a
-                          href={link.href}
-                          className="text-base leading-6 font-medium text-white/[0.68] transition-colors hover:text-white focus:outline-none focus-visible:text-white focus-visible:underline"
-                        >
-                          {t(link.labelKey)}
-                        </a>
+                        {link.href.startsWith('/') ? (
+                          <Link
+                            to={link.href}
+                            className="text-base leading-6 font-medium text-white/[0.68] transition-colors hover:text-white focus:outline-none focus-visible:text-white focus-visible:underline"
+                          >
+                            {t(link.labelKey)}
+                          </Link>
+                        ) : (
+                          <a
+                            href={link.href}
+                            className="text-base leading-6 font-medium text-white/[0.68] transition-colors hover:text-white focus:outline-none focus-visible:text-white focus-visible:underline"
+                          >
+                            {t(link.labelKey)}
+                          </a>
+                        )}
                       </li>
                     ))}
                   </ul>

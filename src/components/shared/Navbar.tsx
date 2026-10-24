@@ -56,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = useMemo(
     () => [
       { id: 'home', label: t('nav.home'), href: ROUTES.home, isRoute: true },
-      { id: 'courses', label: t('nav.courses'), href: `${sectionLinkBase}#courses` },
+      { id: 'courses', label: t('nav.courses'), href: ROUTES.courses12m, isRoute: true },
       // The Internship item and Mentorship item open their own pages.
       { id: 'internship', label: t('nav.internship'), href: ROUTES.internship, isRoute: true },
       { id: 'mentorship', label: t('nav.mentorship'), href: ROUTES.mentorship, isRoute: true },
