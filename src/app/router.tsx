@@ -16,9 +16,7 @@ import {
   EMPLOYER_ROUTES,
   REGISTER_HASHES,
   ROUTES,
-  recruitmentApplicationPath,
 } from '@/constants/routes';
-import { DEFAULT_APPLICATION_ID } from '@/lib/recruitment/data';
 import LandingPage from '@/pages/LandingPage';
 
 // Route map and flow ownership. Each URL prefix has exactly one owning flow:
@@ -62,15 +60,41 @@ const PlansPage = lazy(() => import('@/pages/dashboard/courses/PlansPage'));
 
 // Student recruitment flow pages (PR #31)
 const RecruitmentLayout = lazy(() => import('@/components/recruitment/RecruitmentLayout'));
-const EligibilityPage = lazy(() => import('@/pages/recruitment/EligibilityPage'));
 const TalentDirectoryConsentPage = lazy(
   () => import('@/pages/recruitment/TalentDirectoryConsentPage'),
 );
-const ApplicationDetailsPage = lazy(
-  () => import('@/pages/recruitment/ApplicationDetailsPage'),
+const RecruitmentDashboard = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentDashboard })),
 );
-const AgreementDetailsPage = lazy(
-  () => import('@/pages/recruitment/AgreementDetailsPage'),
+const RecruitmentEligibility = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentEligibility })),
+);
+const RecruitmentProfile = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentProfile })),
+);
+const RecruitmentOpportunities = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentOpportunities })),
+);
+const RecruitmentOpportunityDetails = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentOpportunityDetails })),
+);
+const RecruitmentApplications = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentApplications })),
+);
+const RecruitmentApplicationDetails = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentApplicationDetails })),
+);
+const RecruitmentInterview = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentInterview })),
+);
+const RecruitmentAgreement = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentAgreement })),
+);
+const RecruitmentNotifications = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentNotifications })),
+);
+const RecruitmentCompletion = lazy(() =>
+  import('@/pages/recruitment/student/StudentRecruitmentPages').then((module) => ({ default: module.StudentRecruitmentCompletion })),
 );
 
 // Employer decision / agreement flow pages (PR #32): the primary /employer experience.
@@ -242,10 +266,7 @@ export const router = createBrowserRouter(
           ),
         },
 
-        // Student recruitment flow (PR #31): owns /recruitment. Eligibility review, Talent
-        // Directory consent, application details and agreements, inside RecruitmentLayout.
-        // Requires sign-in. /recruitment redirects to eligibility; /recruitment/applications
-        // redirects to the default sample application (local JSON, see lib/recruitment/data).
+        // Student recruitment flow: all student recruitment screens share one protected layout.
         {
           path: ROUTES.recruitment,
           element: (
@@ -254,20 +275,19 @@ export const router = createBrowserRouter(
             </RequireAuth>
           ),
           children: [
-            { index: true, element: <Navigate to={ROUTES.recruitmentEligibility} replace /> },
-            { path: 'eligibility', element: <EligibilityPage /> },
+            { index: true, element: <RecruitmentDashboard /> },
+            { path: 'eligibility', element: <RecruitmentEligibility /> },
+            { path: 'profile', element: <RecruitmentProfile /> },
+            { path: 'opportunities', element: <RecruitmentOpportunities /> },
+            { path: 'opportunities/:opportunityId', element: <RecruitmentOpportunityDetails /> },
             { path: 'talent-directory', element: <TalentDirectoryConsentPage /> },
-            {
-              path: 'applications',
-              element: (
-                <Navigate
-                  to={recruitmentApplicationPath(DEFAULT_APPLICATION_ID)}
-                  replace
-                />
-              ),
-            },
-            { path: 'applications/:applicationId', element: <ApplicationDetailsPage /> },
-            { path: 'agreements/:agreementId', element: <AgreementDetailsPage /> },
+            { path: 'applications', element: <RecruitmentApplications /> },
+            { path: 'applications/:applicationId', element: <RecruitmentApplicationDetails /> },
+            { path: 'interview', element: <RecruitmentInterview /> },
+            { path: 'agreements', element: <RecruitmentAgreement /> },
+            { path: 'agreements/:agreementId', element: <RecruitmentAgreement /> },
+            { path: 'notifications', element: <RecruitmentNotifications /> },
+            { path: 'completion', element: <RecruitmentCompletion /> },
           ],
         },
 

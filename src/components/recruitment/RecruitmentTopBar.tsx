@@ -48,21 +48,21 @@ export function RecruitmentTopBar({ onOpenMenu }: RecruitmentTopBarProps) {
           type="button"
           disabled
           title={t('recruitment.shell.darkUnavailable')}
-          className="flex h-12 items-center gap-2 rounded-full bg-[#22023C] px-4 text-xs font-medium text-white shadow-[0_1px_2px_rgba(21,19,38,0.08)] disabled:cursor-not-allowed"
+          className="flex h-14 items-center gap-3 rounded-full border border-[#EEEAF2] bg-white px-6 text-[16px] font-semibold text-[#222635] shadow-[0_8px_20px_-12px_rgba(21,19,38,0.24)] disabled:cursor-not-allowed"
         >
-          <Moon className="size-4" aria-hidden="true" />
+          <Moon className="size-5" aria-hidden="true" />
           <span className="hidden sm:inline">{t('recruitment.shell.dark')}</span>
         </button>
 
         <div className="flex min-w-0 items-center gap-2.5">
-          <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#8B5CF6_0%,#C084FC_100%)] text-[12px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#8B5CF6_0%,#C084FC_100%)] text-[18px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
             {CURRENT_APPLICANT.initials}
           </span>
           <div className="hidden min-w-0 sm:block">
-            <p className="truncate text-xs font-semibold text-[#151326]">
+            <p className="truncate text-[16px] font-semibold text-[#151326]">
               {CURRENT_APPLICANT.name}
             </p>
-            <p className="mt-0.5 truncate text-[11px] text-[#928CA1]">
+            <p className="mt-0.5 truncate text-[14px] text-[#4A4657]">
               {CURRENT_APPLICANT.role}
             </p>
           </div>
