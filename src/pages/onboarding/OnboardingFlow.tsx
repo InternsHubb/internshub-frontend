@@ -1,8 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { formatPrice, PACKAGES } from '@/constants/packages';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { OnboardingHeader } from './OnboardingHeader';
+import { PackageSelection } from './PackageSelection';
+import { PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, type PackageValue, type TrackId } from './packages';
+import { TrackSelection } from './TrackSelection';
 import { VerifyAccountStep } from './VerifyAccountStep';
 import { InterviewResultFlow } from './interview/InterviewResultFlow';
 import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
@@ -83,7 +88,16 @@ const RESULT_STATES: Record<ResultState, {
 
 const RESULT_STATE_ORDER: ResultState[] = ['assigned', 'pending', 'incomplete'];
 
+type OnboardingFormData = {
+  // No package or track until the learner picks them on the Path step; later steps require both.
+  selectedPackage: PackageValue | null;
+  selectedTrack: TrackId | null;
+  cvUploaded: boolean;
+  selectedMentor: string;
+};
+
 export default function OnboardingFlow() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   // Step 01 counts as done only when the backend reports email and phone as confirmed, not when
@@ -93,15 +107,56 @@ export default function OnboardingFlow() {
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
   const [resultState, setResultState] = useState<ResultState>('assigned');
   const activeResult = RESULT_STATES[resultState];
-  const [formData, setFormData] = useState({
-    selectedPackage: '6 Months',
-    selectedTrack: 'Frontend Development',
+  const [formData, setFormData] = useState<OnboardingFormData>({
+    selectedPackage: null,
+    selectedTrack: null,
     cvUploaded: false,
     selectedMentor: 'Amina M.'
   });
+  const [showPackageError, setShowPackageError] = useState(false);
+  const [showTrackError, setShowTrackError] = useState(false);
+  const pathForm = useRef<HTMLFormElement>(null);
   const [interview, setInterview] = useState<InterviewProgress>(INITIAL_INTERVIEW_PROGRESS);
   const updateInterview = (patch: InterviewProgressPatch) => setInterview((current) => ({ ...current, ...patch }));
-  const interviewType = interviewTypeFor(formData.selectedPackage);
+  const interviewType = interviewTypeFor(formData.selectedPackage ?? '');
+  const selectedPackage = formData.selectedPackage ? PACKAGES_BY_VALUE[formData.selectedPackage] : null;
+  const packageName = selectedPackage ? t(`onboarding.path.packages.${selectedPackage.key}.name`) : '';
+  const packagePrice = selectedPackage
+    ? t('onboarding.path.priceAmount', { value: formatPrice(PACKAGES[selectedPackage.id].priceEgp, i18n.language) })
+    : '';
+  const trackName = formData.selectedTrack ? t(`onboarding.path.tracks.${formData.selectedTrack}.name`) : '';
+  const isPathComplete = Boolean(formData.selectedPackage && formData.selectedTrack);
+
+  // Every step after Path needs a package and a track: without both the learner is kept on (or
+  // sent back to) Path with the missing choice flagged, whether they used Confirm, Enter or the
+  // progress bar.
+  const goToStep = (step: number) => {
+    if (step > PATH_STEP && !isPathComplete) {
+      setCurrentStep(PATH_STEP);
+      setShowPackageError(!formData.selectedPackage);
+      setShowTrackError(!formData.selectedTrack);
+      // Focus the first missing choice once the Path step has rendered.
+      const missing = formData.selectedPackage ? 'track' : 'package';
+      requestAnimationFrame(() => pathForm.current?.querySelector<HTMLInputElement>(`input[name="${missing}"]`)?.focus());
+      return;
+    }
+    setCurrentStep(step);
+  };
+
+  const selectPackage = (value: PackageValue) => {
+    setFormData((current) => ({ ...current, selectedPackage: value }));
+    setShowPackageError(false);
+  };
+
+  const selectTrack = (value: TrackId) => {
+    setFormData((current) => ({ ...current, selectedTrack: value }));
+    setShowTrackError(false);
+  };
+
+  const confirmPath = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    goToStep(PATH_STEP + 1);
+  };
   // Holds the navbar, progress bar and step content (not the footer); the interview's Start
   // Interview click puts this in fullscreen.
   const interviewPage = useRef<HTMLDivElement>(null);
@@ -306,7 +361,7 @@ export default function OnboardingFlow() {
               <React.Fragment key={s.num}>
                 <button
                   disabled={isAccountStep}
-                  onClick={() => setCurrentStep(stepNumber)}
+                  onClick={() => goToStep(stepNumber)}
                   className="flex shrink-0 flex-col items-center gap-[7px] focus:outline-none transition group z-10"
                 >
                   <div className={`w-[34px] h-[34px] rounded-full flex items-center justify-center text-[10px] transition ${
@@ -429,99 +484,29 @@ export default function OnboardingFlow() {
 
           {/* STEP 3: Path */}
           {currentStep === 3 && (
-            <div className="space-y-8">
+            // A form so Enter on a package (or anywhere in the step) runs the same check as Confirm.
+            <form ref={pathForm} noValidate onSubmit={confirmPath} className="space-y-8">
               <div>
-                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Choose Your Path to a Tech Career</h1>
-                <p className="text-[#69616D] text-base">Choose the program duration and technology track that match your goals.</p>
+                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">{t('onboarding.path.title')}</h1>
+                <p className="text-[#69616D] text-base">{t('onboarding.path.subtitle')}</p>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2"><span className="text-[#DD6F0D] font-bold text-xs">01</span><h2 className="text-xl font-normal text-[#111827]">Select your package</h2></div>
-                  <span className="px-3 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full">PRICING PENDING</span>
-                </div>
+              <PackageSelection value={formData.selectedPackage} onChange={selectPackage} hasError={showPackageError} />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div className="bg-white p-7 rounded-[24px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between">
-                    <div>
-                      <span className="text-[9px] font-bold text-[#8B5DB0] uppercase">INTERNSHIP FOCUS</span>
-                      <h3 className="text-[28px] font-normal text-[#111827] mt-1 mb-2">3 Months</h3>
-                      <div className="flex items-end gap-1 mb-6"><span className="text-xs font-bold text-slate-500">EGP</span><span className="text-[28px] font-bold text-[#3A0353]">3,000</span><span className="text-[11px] text-slate-400">/ package</span></div>
-                      <ul className="space-y-3 text-xs text-[#5C5C5C] mb-6">
-                        <li>✓ Practical internship</li>
-                        <li>✓ 3 mentorship sessions · proposed</li>
-                        <li>✓ Internship certificate</li>
-                        <li>✓ Courses not included</li>
-                      </ul>
-                    </div>
-                    <button onClick={() => setFormData({...formData, selectedPackage: '3 Months'})} className="w-full h-[50px] rounded-[13px] border border-[#CCB8D8] text-[#3A0353] font-bold text-xs bg-white">Choose 3 Months</button>
-                  </div>
-
-                  <div className="bg-white p-7 rounded-[24px] border border-[#3A0353]/10 relative flex flex-col justify-between shadow-md">
-                    <div className="absolute top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-[#8B5DB0] to-[#5C1D87] rounded-t-[24px]"></div>
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[9px] font-bold text-[#8B5DB0] uppercase">BALANCED PATHWAY</span>
-                        <span className="px-2.5 py-1 bg-[#F3E9FA] text-[#5C1D87] text-[9px] font-bold rounded-full">POPULAR PATH</span>
-                      </div>
-                      <h3 className="text-[28px] font-normal text-[#111827] mb-2">6 Months</h3>
-                      <div className="flex items-end gap-1 mb-6"><span className="text-xs font-bold text-slate-500">EGP</span><span className="text-[28px] font-bold text-[#3A0353]">5,500</span><span className="text-[11px] text-slate-400">/ package</span></div>
-                      <ul className="space-y-3 text-xs text-[#5C5C5C] mb-6">
-                        <li>✓ Published courses after payment</li>
-                        <li>✓ Practical internship</li>
-                        <li>✓ 6 mentorship sessions · proposed</li>
-                        <li>✓ Course + internship certificate types</li>
-                      </ul>
-                    </div>
-                    <button onClick={() => setFormData({...formData, selectedPackage: '6 Months'})} className="w-full h-[50px] rounded-[13px] border border-[#CCB8D8] text-[#3A0353] font-bold text-xs bg-white">Choose 6 Months</button>
-                  </div>
-
-                  <div className="bg-white p-7 rounded-[24px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between">
-                    <div>
-                      <span className="text-[9px] font-bold text-[#8B5DB0] uppercase">COMPLETE LEARNING PATH</span>
-                      <h3 className="text-[28px] font-normal text-[#111827] mt-1 mb-2">12 Months</h3>
-                      <div className="flex items-end gap-1 mb-6"><span className="text-xs font-bold text-slate-500">EGP</span><span className="text-[28px] font-bold text-[#3A0353]">9,500</span><span className="text-[11px] text-slate-400">/ package</span></div>
-                      <ul className="space-y-3 text-xs text-[#5C5C5C] mb-6">
-                        <li>✓ 6-month unified Learning Path</li>
-                        <li>✓ Mentorship from payment</li>
-                        <li>✓ Advisory Orientation interview</li>
-                        <li>✓ Squad stage follows learning stage</li>
-                      </ul>
-                    </div>
-                    <button onClick={() => setFormData({...formData, selectedPackage: '12 Months'})} className="w-full h-[50px] rounded-[13px] border border-[#CCB8D8] text-[#3A0353] font-bold text-xs bg-white">Choose 12 Months</button>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2"><span className="text-[#DD6F0D] font-bold text-xs">02</span><h2 className="text-xl font-normal text-[#111827]">Choose your technology track</h2></div>
-                  <span className="text-[11px] text-[#6B7280]">Catalog managed by InternsHub</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {[
-                    { code: 'FE', title: 'Frontend Development', tech: 'React', desc: 'Build polished, accessible web products.' },
-                    { code: 'BE', title: 'Backend Development', tech: 'ASP.NET / Node.js', desc: 'Design reliable APIs and services.' },
-                    { code: 'MB', title: 'Mobile Development', tech: 'Flutter', desc: 'Create cross-platform mobile experiences.' },
-                    { code: 'DE', title: 'Data Engineering', tech: 'Data Engineering', desc: 'Shape dependable data pipelines.' }
-                  ].map((track) => (
-                    <div key={track.code} onClick={() => setFormData({...formData, selectedTrack: track.title})} className={`p-5 bg-white border rounded-[20px] cursor-pointer transition relative shadow-sm ${formData.selectedTrack === track.title ? 'border-[#5C1D87] shadow-md' : 'border-[#E8E2EC]'}`}>
-                      <div className="absolute top-4 right-4 w-3 h-3 rounded-full border border-slate-300"></div>
-                      <div className="w-[33px] h-[38px] bg-gradient-to-br from-[#6F2C99] to-[#3A0353] text-white text-[10px] rounded-[12px] flex items-center justify-center font-bold mb-3">{track.code}</div>
-                      <h3 className="text-xs font-bold text-[#111827]">{track.title}</h3>
-                      <p className="text-[10px] text-[#5C1D87] mt-0.5">{track.tech}</p>
-                      <p className="text-[11px] text-[#6B7280] mt-2 leading-relaxed">{track.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <TrackSelection value={formData.selectedTrack} onChange={selectTrack} hasError={showTrackError} />
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                <button onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(4)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow">Confirm Path →</button>
+                <button type="button" onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">{t('onboarding.path.back')}</button>
+                {/* Stays focusable without a package so a click explains what is missing (as on the CV step). */}
+                <button
+                  type="submit"
+                  aria-disabled={!isPathComplete}
+                  className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow ${isPathComplete ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] rtl:bg-gradient-to-l text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}
+                >
+                  {t('onboarding.path.confirm')} <span aria-hidden="true" className="inline-block rtl:-scale-x-100">→</span>
+                </button>
               </div>
-            </div>
+            </form>
           )}
 
           {/* STEP 4: CV */}
@@ -630,7 +615,7 @@ export default function OnboardingFlow() {
               progress={interview}
               onChange={updateInterview}
               type={interviewType}
-              track={formData.selectedTrack}
+              track={trackName}
               cvUploaded={formData.cvUploaded}
               fullscreenTarget={interviewPage}
               onExit={() => setCurrentStep(5)}
@@ -646,7 +631,7 @@ export default function OnboardingFlow() {
               appealReason={interview.appealReason}
               onAppealReasonChange={(appealReason) => updateInterview({ appealReason })}
               type={interviewType}
-              track={formData.selectedTrack}
+              track={trackName}
               onContinue={() => setCurrentStep(8)}
               onHome={() => navigate(ROUTES.home)}
               onResume={resumeInterview}
@@ -853,28 +838,27 @@ export default function OnboardingFlow() {
                 <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5">
                   <div className="flex justify-between items-start gap-3">
                     <div><span className="text-[9px] font-bold text-[#8B5DB0] uppercase">ORDER SUMMARY</span><h3 className="text-[21px] font-normal text-[#111827] mt-1">Your enrollment</h3></div>
-                    <span className="px-3 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full">PRICE PENDING</span>
                   </div>
 
                   <div className="p-5 bg-gradient-to-br from-[#22023C] to-[#4C0585] text-white rounded-[17px] shadow-md flex items-center gap-4">
-                    <div className="w-[52px] h-[52px] bg-white/10 border border-white/20 rounded-[16px] flex items-center justify-center text-xl font-extrabold">6</div>
-                    <div><span className="text-[8px] text-[#CDBDD7] uppercase">SELECTED PACKAGE</span><h4 className="text-[17px] font-normal">{formData.selectedPackage}</h4><p className="text-[9px] text-[#E5DCE9]">{formData.selectedTrack}</p></div>
+                    <div className="w-[52px] h-[52px] bg-white/10 border border-white/20 rounded-[16px] flex items-center justify-center text-xl font-extrabold">{selectedPackage && PACKAGES[selectedPackage.id].months}</div>
+                    <div><span className="text-[8px] text-[#CDBDD7] uppercase">SELECTED PACKAGE</span><h4 className="text-[17px] font-normal">{packageName}</h4><p className="text-[9px] text-[#E5DCE9]">{trackName}</p></div>
                   </div>
 
                   <div>
                     <span className="text-[8px] text-[#6B7280] uppercase block mb-2">WHAT’S INCLUDED</span>
                     <ul className="space-y-2 text-xs text-[#5C5C5C]">
-                      <li>✓ Published courses after payment</li>
-                      <li>✓ Practical internship</li>
-                      <li>✓ 6 mentorship sessions · proposed</li>
-                      <li>✓ Course + internship certificate types</li>
+                      {/* The selected package's benefits, as listed on the Path step. */}
+                      {selectedPackage && PACKAGE_FEATURE_KEYS.map((feature) => (
+                        <li key={feature}>✓ {t(`onboarding.path.packages.${selectedPackage.key}.features.${feature}`)}</li>
+                      ))}
                     </ul>
                   </div>
 
                   <div className="p-4 bg-[#FAF9FB] border border-[#E8E2EC] rounded-[15px] space-y-3 text-xs">
-                    <div className="flex justify-between"><span className="text-slate-600">Package price</span><span className="font-bold text-[#111827]">To be confirmed</span></div>
+                    <div className="flex justify-between"><span className="text-slate-600">Package price</span><span className="font-bold text-[#111827]">{packagePrice}</span></div>
                     <div className="flex justify-between border-t border-[#E8E2EC] pt-3"><span className="text-slate-600">Approved discount</span><span className="font-bold text-[#111827]">Not supplied</span></div>
-                    <div className="flex justify-between border-t border-[#E8E2EC] pt-3"><span className="text-[#3A0353]">Total in EGP</span><span className="font-bold text-[#3A0353]">Pending approved pricing</span></div>
+                    <div className="flex justify-between border-t border-[#E8E2EC] pt-3"><span className="text-[#3A0353]">Total in EGP</span><span className="font-bold text-[#3A0353]">{packagePrice}</span></div>
                   </div>
 
                   <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 text-xs text-[#9A5700] space-y-1">
@@ -933,8 +917,8 @@ export default function OnboardingFlow() {
 
                 <div className="bg-white/92 p-8 rounded-[28px] border border-[#3A0353]/10 shadow-sm space-y-4">
                   <div className="p-4 border border-[#E8E2EC] rounded-[14px] grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="text-[8px] text-[#8B5DB0] block uppercase">PACKAGE</span><span className="font-normal text-[#111827]">{formData.selectedPackage}</span></div>
-                    <div><span className="text-[8px] text-[#8B5DB0] block uppercase">TRACK</span><span className="font-normal text-[#111827]">{formData.selectedTrack}</span></div>
+                    <div><span className="text-[8px] text-[#8B5DB0] block uppercase">PACKAGE</span><span className="font-normal text-[#111827]">{packageName}</span></div>
+                    <div><span className="text-[8px] text-[#8B5DB0] block uppercase">TRACK</span><span className="font-normal text-[#111827]">{trackName}</span></div>
                   </div>
                   <div className="p-4 border border-[#E8E2EC] rounded-[14px] space-y-1"><h4 className="text-xs font-normal text-[#111827]">When your package starts</h4><p className="text-[10px] text-[#6B7280] leading-relaxed">Your package clock starts only at the official squad Start.</p></div>
                   <div className="p-4 border border-[#E8E2EC] rounded-[14px] space-y-2">

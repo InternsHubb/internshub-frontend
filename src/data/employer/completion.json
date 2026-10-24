@@ -1,0 +1,13 @@
+{
+  "summaryLabels": ["confirmed", "pending", "shown"],
+  "record": {
+    "id": "placement-merna-adel",
+    "candidateId": "merna-adel",
+    "opportunityId": "uiux-designcraft",
+    "employer": "DesignCraft Agency",
+    "role": "UI/UX Designer",
+    "durationMonths": 3,
+    "statusKey": "confirmed"
+  },
+  "footer": "Demo/sample data only. No salary, placement dates, or unprovided metrics are included."
+}
