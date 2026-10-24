@@ -1,4 +1,4 @@
-import { CircleCheck, FileWarning, LockKeyhole, ShieldAlert } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
 
@@ -21,27 +21,27 @@ function PartyRow({ party }: { party: AgreementParty }) {
   const signed = party.status === 'signed';
   const meta =
     party.kind === 'employer'
-      ? t('agreement.employerMeta', { name: party.signedBy })
+      ? t('agreement.employerMeta', { name: party.signedBy, defaultValue: `Employer · Signed by ${party.signedBy}` })
       : signed
-        ? t('agreement.studentSignedMeta')
-        : t('agreement.studentPendingMeta');
+        ? t('agreement.studentSignedMeta', 'Student · Signature complete')
+        : t('agreement.studentPendingMeta', 'Student · Signature requested');
 
   return (
-    <div className="flex min-h-[67px] items-center gap-3 rounded-[12px] bg-[#F8F2FC] px-4 py-3">
+    <div className="flex min-h-[64px] items-center gap-3.5 rounded-[16px] bg-[#FAF7FD] px-4 py-3 sm:px-5">
       <span
         className={cn(
-          'flex size-8 shrink-0 items-center justify-center rounded-full',
-          signed ? 'bg-[#DFF8ED] text-[#087A50]' : 'bg-[#FFF1D7] text-[#A05A08]',
+          'flex size-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold',
+          signed ? 'bg-[#DCFCE7] text-[#16A34A]' : 'bg-[#FEF3C7] text-[#D97706]',
         )}
       >
-        {signed ? <CircleCheck className="size-4" strokeWidth={2} /> : <LockKeyhole className="size-4" strokeWidth={1.8} />}
+        {signed ? <CircleCheck className="size-4" strokeWidth={2.2} /> : <span>—</span>}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[12px] font-bold text-[#111827]">{party.name}</p>
-        <p className="mt-1 text-[9px] text-[#475569]">{meta}</p>
+        <p className="truncate text-[14px] font-bold text-[#111827]">{party.name}</p>
+        <p className="mt-0.5 text-[12px] text-[#64748B]">{meta}</p>
       </div>
       <StatusBadge tone={signed ? 'success' : 'warning'}>
-        {signed ? t('agreement.signed') : t('agreement.pending')}
+        {signed ? t('agreement.signed', 'Signed') : t('agreement.pending', 'Pending')}
       </StatusBadge>
     </div>
   );
@@ -50,7 +50,7 @@ function PartyRow({ party }: { party: AgreementParty }) {
 export function PartnerAgreementPage() {
   const { t } = useTranslation();
   const { applicationId = '' } = useParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const signed = searchParams.get('state') === 'signed';
 
   const { data, loading, error, reload } = useEmployerResource(
@@ -65,86 +65,88 @@ export function PartnerAgreementPage() {
 
   const [context, agreement] = data;
   const student = agreement.parties.find((party) => party.kind === 'student');
-  const completed = agreement.completedSignatures;
-  const total = agreement.parties.length;
+  const completed = signed ? 2 : 1;
+  const total = agreement.parties.length || 2;
 
   return (
     <div>
-      <EmployerPageHeader
-        breadcrumb={t('header.breadcrumb')}
-        title={t('agreement.title')}
-        description={t('agreement.subtitle', { name: student?.name })}
-        status={
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <EmployerPageHeader
+          breadcrumb={t('header.breadcrumb', 'RECRUITMENT')}
+          title={t('agreement.title', 'Partner project agreement')}
+          description={t('agreement.subtitle', { name: student?.name, defaultValue: `Review signature readiness for ${student?.name || 'candidate'}.` })}
+        />
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSearchParams({ state: signed ? 'pending' : 'signed' })}
+            className="rounded-full border border-[#D8C6E8] bg-white px-3 py-1 text-[11px] font-semibold text-[#5B1B75] hover:bg-[#F8F2FC]"
+          >
+            {signed ? 'Preview Pending State' : 'Preview Signed State'}
+          </button>
           <StatusBadge tone={signed ? 'success' : 'warning'}>
-            {signed ? t('status.agreementSigned') : t('status.waitingStudent')}
+            {signed ? t('status.agreementSigned', 'Agreement signed') : t('status.waitingStudent', 'Waiting for student signature')}
           </StatusBadge>
-        }
-      />
+        </div>
+      </div>
 
-      <div className="mt-7">
+      <div className="mt-6">
         <EmployerJobCard candidate={context.candidate} opportunity={context.opportunity} />
       </div>
 
-      <section className={cn('mt-4 p-4', employerCardClass)}>
+      <section className={cn('mt-5 p-5 sm:p-6', employerCardClass)}>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-[8px] font-bold tracking-[1.2px] text-[#3A0353] uppercase">
-              {t('agreement.statusEyebrow')}
+            <p className="text-[11px] font-bold tracking-[1.4px] text-[#7C3AED] uppercase">
+              {t('agreement.statusEyebrow', 'AGREEMENT STATUS')}
             </p>
-            <h2 className="mt-2 text-[18px] font-bold leading-[24px] text-[#111827]">
-              {signed ? t('agreement.bothSigned') : t('agreement.studentPending')}
+            <h2 className="mt-2 text-[20px] font-bold leading-tight text-[#111827]">
+              {signed ? t('agreement.bothSigned', 'Both parties have signed') : t('agreement.studentPending', 'Student signature pending')}
             </h2>
           </div>
-          <p className="text-[9px] font-medium text-[#475569]">
-            {t('agreement.signatureCount', { completed, total })}
+          <p className="text-[13px] font-medium text-[#64748B]">
+            {t('agreement.signatureCount', { completed, total, defaultValue: `${completed} of ${total} complete` })}
           </p>
         </div>
 
-        <div className="mt-4 space-y-2.5">
+        <div className="mt-5 space-y-3">
           {agreement.parties.map((party) => (
-            <PartyRow key={party.id} party={party} />
+            <PartyRow key={party.id} party={{ ...party, status: signed ? 'signed' : party.status }} />
           ))}
         </div>
       </section>
 
-      <section className={cn('mt-4 flex min-h-[123px] items-start gap-3 p-4', employerCardClass)}>
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-[#F1E8FA] text-[#3A0353]">
-          <FileWarning className="size-4" strokeWidth={1.8} />
-        </span>
+      <section className={cn('mt-5 flex items-start gap-4 p-5 sm:p-6', employerCardClass)}>
+        <div className="w-1 self-stretch rounded-full bg-[#8B5CF6]" />
         <div>
-          <p className="text-[8px] font-bold tracking-[1.2px] text-[#3A0353] uppercase">
-            {t('agreement.legalEyebrow')}
-          </p>
-          <h2 className="mt-2 text-[14px] font-bold text-[#111827]">{t('agreement.legalTitle')}</h2>
-          <p className="mt-2 text-[9px] leading-4 text-[#475569]">{t('agreement.legalBody')}</p>
+          <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[11px] font-semibold text-[#4B5563]">
+            {t('agreement.legalEyebrow', 'Legal notice')}
+          </span>
+          <h2 className="mt-2 text-[16px] font-bold text-[#111827]">{t('agreement.legalTitle', 'Agreement text pending legal approval')}</h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-[#64748B]">{t('agreement.legalBody', 'No legal terms are displayed until approved wording is available.')}</p>
         </div>
       </section>
 
-      <section
-        className={cn(
-          'mt-4 flex min-h-[89px] items-start gap-3 rounded-[18px] border p-4',
-          signed
-            ? 'border-[#A7E6CC] bg-[#F0FBF7]'
-            : 'border-[#F0CC92] bg-[#FFF9ED]',
-        )}
-      >
-        <span
-          className={cn(
-            'flex size-7 shrink-0 items-center justify-center rounded-[8px]',
-            signed ? 'bg-[#DFF8ED] text-[#087A50]' : 'bg-[#FFF1D7] text-[#A05A08]',
-          )}
-        >
-          {signed ? <CircleCheck className="size-4" strokeWidth={2} /> : <ShieldAlert className="size-4" strokeWidth={1.8} />}
-        </span>
-        <div>
-          <h2 className="text-[13px] font-bold text-[#111827]">
-            {signed ? t('agreement.completeTitle') : t('agreement.blockedTitle')}
+      {signed ? (
+        <section className="mt-5 rounded-[22px] border border-[#BBF7D0] bg-[#F0FDF4] p-5 sm:p-6 text-[#166534]">
+          <h2 className="text-[16px] font-bold text-[#166534]">
+            {t('agreement.completeTitle', 'Agreement complete — ready for official-start review')}
           </h2>
-          <p className="mt-2 text-[9px] leading-4 text-[#475569]">
-            {signed ? t('agreement.completeBody') : t('agreement.blockedBody')}
+          <p className="mt-1 text-[13px] leading-relaxed text-[#15803D]">
+            {t('agreement.completeBody', 'Signing is complete, but this does not mean the project or placement is completed. Proceed only when all applicable official-start conditions are satisfied.')}
           </p>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="mt-5 rounded-[22px] border border-[#FDE68A] bg-[#FFFBEB] p-5 sm:p-6 text-[#92400E]">
+          <h2 className="text-[16px] font-bold text-[#92400E]">
+            {t('agreement.blockedTitle', 'Project remains blocked')}
+          </h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-[#B45309]">
+            {t('agreement.blockedBody', 'The real partner project cannot begin until both parties have signed.')}
+          </p>
+        </section>
+      )}
     </div>
   );
 }
+

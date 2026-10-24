@@ -1,48 +1,39 @@
-import { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
-import { RecruitmentSidebar } from './RecruitmentSidebar';
+import { Sidebar } from '@/components/shared/Sidebar/Sidebar';
+import { SidebarProvider } from '@/components/shared/Sidebar/SidebarProvider';
+
+import { CompositeScoreCard } from './CompositeScoreCard';
 import { RecruitmentTopBar } from './RecruitmentTopBar';
 
 // Layout of the student recruitment flow (PR #31), which owns /recruitment; the router wraps it
 // in RequireAuth. Student-facing (eligibility, Talent Directory consent, applications,
 // agreements), separate from the employer flows. Pages load local JSON (src/data/recruitment)
 // through the services in lib/recruitment; there is no recruitment API yet.
+//
+// Navigation is the shared dashboard sidebar (same items, collapse state and mobile drawer as
+// /dashboard), with the Recruitment menu opened on these pages and the "Composite Score" card
+// in its footer, as in the recruitment frames.
 
 export default function RecruitmentLayout() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!mobileOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [mobileOpen]);
-
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#F6F0FB_0%,#FCF9FE_100%)] text-[#151326]">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-32 end-[-120px] size-[420px] rounded-full bg-[#EADCF5]/45 blur-3xl" />
-        <div className="absolute bottom-[-160px] start-[260px] size-[360px] rounded-full bg-[#F3E7F8]/50 blur-3xl" />
-      </div>
+    <SidebarProvider>
+      <div className="relative min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#F6F0FB_0%,#FCF9FE_100%)] text-[#151326]">
+        <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
+          <div className="absolute -top-32 end-[-120px] size-[420px] rounded-full bg-[#EADCF5]/45 blur-3xl" />
+          <div className="absolute bottom-[-160px] start-[260px] size-[360px] rounded-full bg-[#F3E7F8]/50 blur-3xl" />
+        </div>
 
-      <RecruitmentSidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
-
-      <div className="relative lg:ps-[304px]">
-        <RecruitmentTopBar onOpenMenu={() => setMobileOpen(true)} />
-        <main className="mx-auto w-full max-w-[1136px] px-4 pb-10 sm:px-6">
-          <Outlet />
-        </main>
+        <div className="relative flex lg:gap-6 lg:ps-6 lg:pt-6">
+          <Sidebar footer={<CompositeScoreCard />} />
+          <div className="flex min-w-0 flex-1 flex-col lg:-mt-6">
+            <RecruitmentTopBar />
+            <main className="mx-auto w-full max-w-[1136px] px-4 pb-10 sm:px-6">
+              <Outlet />
+            </main>
+          </div>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }

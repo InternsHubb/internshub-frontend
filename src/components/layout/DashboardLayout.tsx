@@ -2,8 +2,8 @@ import { Suspense, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useMatches } from 'react-router-dom';
 
-import { Sidebar } from '@/components/layout/sidebar/Sidebar';
-import { SidebarProvider } from '@/components/layout/sidebar/SidebarProvider';
+import { Sidebar } from '@/components/shared/Sidebar/Sidebar';
+import { SidebarProvider } from '@/components/shared/Sidebar/SidebarProvider';
 import { TopNav } from '@/components/layout/TopNav';
 
 // Shared shell for every student dashboard page: one SidebarProvider, one Sidebar and the

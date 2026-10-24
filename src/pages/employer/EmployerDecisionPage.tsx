@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LockKeyhole, ShieldCheck } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -74,26 +74,28 @@ function DecisionForm({
 
   return (
     <form onSubmit={submit} noValidate>
-      <div className={cn('mt-4 p-4 sm:p-5', employerCardClass)}>
+      <div className={cn('mt-5 p-5 sm:p-7', employerCardClass)}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-[8px] font-bold tracking-[1.2px] text-[#3A0353] uppercase">
-              {t('decision.eyebrow')}
+            <p className="text-[11px] font-bold tracking-[1.4px] text-[#7C3AED] uppercase">
+              {t('decision.eyebrow', 'CANDIDATE DECISION')}
             </p>
-            <h2 className="mt-2 text-[16px] font-bold leading-tight text-[#111827]">{t('decision.heading')}</h2>
+            <h2 className="mt-2 text-[20px] font-bold leading-tight text-[#111827] sm:text-[22px]">
+              {t('decision.heading', 'Choose an outcome')}
+            </h2>
           </div>
-          <StatusBadge tone="warning">{t('decision.adminBadge')}</StatusBadge>
+          <StatusBadge tone="warning">{t('decision.adminBadge', 'Admin confirmation required')}</StatusBadge>
         </div>
 
-        <fieldset className="mt-5">
+        <fieldset className="mt-6">
           <legend className="sr-only">{t('decision.heading')}</legend>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <label
               className={cn(
-                'flex cursor-pointer items-start gap-3 rounded-[12px] border px-4 py-3.5 transition',
+                'flex cursor-pointer items-start gap-4 rounded-[16px] border-2 p-5 transition',
                 outcome === 'select'
-                  ? 'border-[#5DC895] bg-[#F5FCF9] shadow-[0_0_0_1px_rgba(93,200,149,0.18)]'
-                  : 'border-[#E9DCF8] bg-white hover:bg-[#FBF8FD]',
+                  ? 'border-[#22C55E] bg-[#F0FDF4] shadow-sm'
+                  : 'border-[#E9DCF8] bg-white hover:bg-[#FAF7FD]',
               )}
             >
               <input
@@ -103,28 +105,25 @@ function DecisionForm({
                 {...register('outcome')}
               />
               <span
-                className={cn(
-                  'mt-0.5 flex size-[18px] shrink-0 items-center justify-center rounded-full border-2',
-                  outcome === 'select' ? 'border-[#2FA66C] bg-[#2FA66C]' : 'border-[#C9BCD2] bg-white',
-                )}
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#DCFCE7] text-[#16A34A]"
                 aria-hidden="true"
               >
-                {outcome === 'select' ? <span className="size-1.5 rounded-full bg-white" /> : null}
+                <ShieldCheck className="size-5" />
               </span>
-              <span>
-                <span className="block text-[10px] font-bold text-[#111827]">{t('decision.selectTitle')}</span>
-                <span className="mt-1 block text-[8px] leading-[14px] text-[#475569]">
-                  {t('decision.selectBody', { name: candidateName })}
+              <div>
+                <span className="block text-[15px] font-bold text-[#111827]">{t('decision.selectTitle', 'Select Candidate')}</span>
+                <span className="mt-1 block text-[13px] leading-relaxed text-[#64748B]">
+                  {t('decision.selectBody', { name: candidateName, defaultValue: `Recommend ${candidateName} for this opportunity.` })}
                 </span>
-              </span>
+              </div>
             </label>
 
             <label
               className={cn(
-                'flex cursor-pointer items-start gap-3 rounded-[12px] border px-4 py-3.5 transition',
+                'flex cursor-pointer items-start gap-4 rounded-[16px] border-2 p-5 transition',
                 outcome === 'reject'
-                  ? 'border-[#E78A94] bg-[#FFF7F8] shadow-[0_0_0_1px_rgba(231,138,148,0.16)]'
-                  : 'border-[#E9DCF8] bg-white hover:bg-[#FBF8FD]',
+                  ? 'border-[#EF4444] bg-[#FEF2F2] shadow-sm'
+                  : 'border-[#E9DCF8] bg-white hover:bg-[#FAF7FD]',
               )}
             >
               <input
@@ -134,63 +133,60 @@ function DecisionForm({
                 {...register('outcome')}
               />
               <span
-                className={cn(
-                  'mt-0.5 flex size-[18px] shrink-0 items-center justify-center rounded-full border-2',
-                  outcome === 'reject' ? 'border-[#C54857] bg-[#C54857]' : 'border-[#C9BCD2] bg-white',
-                )}
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FEE2E2] text-[#DC2626]"
                 aria-hidden="true"
               >
-                {outcome === 'reject' ? <span className="size-1.5 rounded-full bg-white" /> : null}
+                <LockKeyhole className="size-5" />
               </span>
-              <span>
-                <span className="block text-[10px] font-bold text-[#111827]">{t('decision.rejectTitle')}</span>
-                <span className="mt-1 block text-[8px] leading-[14px] text-[#475569]">{t('decision.rejectBody')}</span>
-              </span>
+              <div>
+                <span className="block text-[15px] font-bold text-[#111827]">{t('decision.rejectTitle', 'Reject Candidate')}</span>
+                <span className="mt-1 block text-[13px] leading-relaxed text-[#64748B]">{t('decision.rejectBody', 'Recommend closing this candidate application.')}</span>
+              </div>
             </label>
           </div>
         </fieldset>
 
-        <div className="mt-4">
+        <div className="mt-6">
           <label htmlFor="decision-reason" className={employerLabelClass}>
-            {t('decision.reasonLabel')}
+            {t('decision.reasonLabel', 'Decision reason')} <span className="text-[#EF4444]">*</span>
           </label>
           <textarea
             id="decision-reason"
-            placeholder={t('decision.reasonPlaceholder')}
-            className={cn(employerTextareaClass, 'mt-2 min-h-[66px]')}
+            placeholder={t('decision.reasonPlaceholder', 'Provide a clear reason for InternsHub Admin...')}
+            className={cn(employerTextareaClass, 'mt-2 min-h-[96px]')}
             aria-invalid={Boolean(errors.reason)}
             {...register('reason')}
           />
           {errors.reason?.message ? (
-            <p className="mt-1.5 text-[8px] text-[#B42331]">{errors.reason.message}</p>
+            <p className="mt-1.5 text-[12px] text-[#B42331]">{errors.reason.message}</p>
           ) : null}
         </div>
 
-        <div className="mt-4 flex gap-2.5 rounded-[10px] border border-[#E9DCF8] bg-[#F8F2FC] px-3 py-2.5">
-          <LockKeyhole className="mt-0.5 size-3.5 shrink-0 text-[#3A0353]" strokeWidth={1.8} />
-          <div>
-            <p className="text-[9px] font-bold text-[#3A0353]">{t('decision.internalOnly')}</p>
-            <p className="mt-0.5 text-[8px] leading-[14px] text-[#475569]">{t('decision.internalBody')}</p>
-          </div>
+        <div className="mt-5 rounded-[14px] border border-[#E9D5FF] bg-[#FAF5FF] p-4 text-[#581C87]">
+          <p className="text-[13px] font-bold text-[#581C87]">{t('decision.internalOnly', 'Internal only')}</p>
+          <p className="mt-1 text-[13px] leading-relaxed text-[#6B21A8]">
+            {t('decision.internalBody', 'This reason is shared with InternsHub Admin and is not exposed to the student as internal notes.')}
+          </p>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           <button type="submit" className={employerPrimaryButtonClass} disabled={isSubmitting}>
-            <ShieldCheck className="size-3.5" strokeWidth={2} />
-            {t('decision.review')}
+            <ShieldCheck className="size-4" strokeWidth={2} />
+            {t('decision.review', 'Review Decision')}
           </button>
           <button
             type="button"
             onClick={() => navigate(EMPLOYER_ROUTES.pipeline)}
             className={employerSecondaryButtonClass}
           >
-            {t('common.cancel')}
+            {t('common.cancel', 'Cancel')}
           </button>
         </div>
       </div>
     </form>
   );
 }
+
 
 export function EmployerDecisionPage() {
   const { t } = useTranslation();

@@ -395,11 +395,11 @@ export const CourseVideoPage: React.FC = () => {
       )}
 
       {/* Main Container */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 relative z-10 flex flex-col gap-5">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-6 pt-3 relative z-10 flex flex-col gap-5">
         {/* TOP BAR (Figma node 112:10106 / 112:10465) */}
-        <header className="flex items-center justify-between w-full py-2">
+        <header className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 w-full py-2">
           {/* Left: Logo & Breadcrumbs */}
-          <div className="flex items-center gap-6 sm:gap-8 flex-wrap">
+          <div className="flex min-w-0 max-w-full items-center gap-6 sm:gap-8 flex-wrap">
             <Link
               to={ROUTES.home}
               className="font-bold text-[22px] sm:text-[24px] text-[#22023C] tracking-tight hover:opacity-90 transition-opacity"
@@ -408,7 +408,7 @@ export const CourseVideoPage: React.FC = () => {
             </Link>
 
             {/* Breadcrumb Navigation */}
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 max-w-full items-center gap-2">
               <div className="size-[36px] bg-[#F4F0F8] border border-[#AE8FC8] rounded-[8px] flex items-center justify-center shrink-0 shadow-2xs">
                 <img
                   src="/images/video/grad-cap.svg"
@@ -417,7 +417,7 @@ export const CourseVideoPage: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center gap-2 text-[14px] font-medium">
+              <div className="flex min-w-0 items-center gap-2 overflow-x-auto text-[14px] font-medium">
                 <Link
                   to={ROUTES.courses6m}
                   className="text-[#94A3B8] hover:text-[#5A198F] transition-colors whitespace-nowrap"
@@ -449,7 +449,7 @@ export const CourseVideoPage: React.FC = () => {
           </div>
 
           {/* Right: Settings & User Capsule */}
-          <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+          <div className="flex max-w-full flex-wrap items-center justify-end gap-4 sm:gap-6 lg:shrink-0">
             <button
               type="button"
               className="size-[27px] rounded-[6px] border border-[rgba(0,0,0,0.16)] bg-white/40 flex items-center justify-center hover:bg-black/5 transition-colors cursor-pointer"

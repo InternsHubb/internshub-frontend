@@ -93,23 +93,25 @@ function InterviewForm({ applicationId, interview }: InterviewFormProps) {
 
   return (
     <form onSubmit={submit} noValidate>
-      <div className={cn('mt-4 p-4 sm:p-5', employerCardClass)}>
+      <div className={cn('mt-5 p-5 sm:p-7', employerCardClass)}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-[8px] font-bold tracking-[1.2px] text-[#3A0353] uppercase">
-              {t('schedule.eyebrow')}
+            <p className="text-[11px] font-bold tracking-[1.4px] text-[#7C3AED] uppercase">
+              {t('schedule.eyebrow', 'INTERVIEW DETAILS')}
             </p>
-            <h2 className="mt-2 text-[16px] font-bold leading-tight text-[#111827]">{t('schedule.heading')}</h2>
+            <h2 className="mt-2 text-[20px] font-bold leading-tight text-[#111827] sm:text-[22px]">
+              {t('schedule.heading', 'Set the schedule')}
+            </h2>
           </div>
-          <StatusBadge tone="info">{t('common.required')}</StatusBadge>
+          <StatusBadge tone="info">{t('common.required', 'All fields marked * are required')}</StatusBadge>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2">
-          <Field label={t('schedule.date')} error={errors.date?.message} htmlFor="interview-date">
+        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+          <Field label={t('schedule.date')} error={errors.date?.message} htmlFor="interview-date" required>
             <input id="interview-date" type="date" className={employerFieldClass} {...register('date')} />
           </Field>
 
-          <Field label={t('schedule.startTime')} error={errors.startTime?.message} htmlFor="interview-start">
+          <Field label={t('schedule.startTime')} error={errors.startTime?.message} htmlFor="interview-start" required>
             <input
               id="interview-start"
               type="time"
@@ -118,21 +120,21 @@ function InterviewForm({ applicationId, interview }: InterviewFormProps) {
             />
           </Field>
 
-          <Field label={t('schedule.timeZone')} error={errors.timezone?.message} htmlFor="interview-zone">
+          <Field label={t('schedule.timeZone')} error={errors.timezone?.message} htmlFor="interview-zone" required>
             <select id="interview-zone" className={employerFieldClass} {...register('timezone')}>
-              <option value="EET (UTC+2)">{t('schedule.timeZoneValue')}</option>
+              <option value="EET (UTC+2)">{t('schedule.timeZoneValue', 'EET (UTC+2)')}</option>
             </select>
           </Field>
 
-          <Field label={t('schedule.duration')} error={errors.duration?.message} htmlFor="interview-duration">
+          <Field label={t('schedule.duration')} error={errors.duration?.message} htmlFor="interview-duration" required>
             <select id="interview-duration" className={employerFieldClass} {...register('duration')}>
-              <option value="45 minutes">{t('schedule.durationValue')}</option>
+              <option value="45 minutes">{t('schedule.durationValue', '45 minutes')}</option>
             </select>
           </Field>
 
-          <Field label={t('schedule.mode')} error={errors.mode?.message} htmlFor="interview-mode">
+          <Field label={t('schedule.mode')} error={errors.mode?.message} htmlFor="interview-mode" required>
             <select id="interview-mode" className={employerFieldClass} {...register('mode')}>
-              <option value="Google Meet">{t('schedule.modeValue')}</option>
+              <option value="Google Meet">{t('schedule.modeValue', 'Google Meet')}</option>
             </select>
           </Field>
 
@@ -140,6 +142,7 @@ function InterviewForm({ applicationId, interview }: InterviewFormProps) {
             label={t('schedule.interviewer')}
             error={errors.interviewer?.message}
             htmlFor="interview-interviewer"
+            required
           >
             <input
               id="interview-interviewer"
@@ -154,6 +157,7 @@ function InterviewForm({ applicationId, interview }: InterviewFormProps) {
               label={t('schedule.meetingLink')}
               error={errors.meetingLink?.message}
               htmlFor="interview-link"
+              required
             >
               <input
                 id="interview-link"
@@ -173,7 +177,7 @@ function InterviewForm({ applicationId, interview }: InterviewFormProps) {
 
         <div
           className={cn(
-            'mt-5 flex min-h-[37px] items-center gap-2 rounded-[10px] border px-3 py-2 text-[9px] leading-4',
+            'mt-6 flex min-h-[44px] items-center gap-2.5 rounded-[12px] border px-4 py-3 text-[13px] leading-5',
             complete
               ? 'border-[#DFF8ED] bg-[#EDFAF5] text-[#087A50]'
               : 'border-[#FFF1D7] bg-[#FFF9ED] text-[#A05A08]',
@@ -181,9 +185,9 @@ function InterviewForm({ applicationId, interview }: InterviewFormProps) {
           role="status"
         >
           {complete ? (
-            <Check className="size-3.5 shrink-0" strokeWidth={2.2} />
+            <Check className="size-4 shrink-0 text-[#087A50]" strokeWidth={2.2} />
           ) : (
-            <Info className="size-3.5 shrink-0" strokeWidth={2} />
+            <Info className="size-4 shrink-0 text-[#A05A08]" strokeWidth={2} />
           )}
           <span>
             {complete
@@ -195,9 +199,9 @@ function InterviewForm({ applicationId, interview }: InterviewFormProps) {
           </span>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           <button type="submit" className={employerPrimaryButtonClass} disabled={isSubmitting}>
-            <CalendarCheck className="size-3.5" strokeWidth={2} />
+            <CalendarCheck className="size-4" strokeWidth={2} />
             {t('schedule.submit')}
           </button>
           <button
@@ -217,20 +221,23 @@ type FieldProps = {
   label: string;
   error?: string;
   htmlFor: string;
+  required?: boolean;
   children: ReactNode;
 };
 
-function Field({ label, error, htmlFor, children }: FieldProps) {
+function Field({ label, error, htmlFor, required, children }: FieldProps) {
   return (
     <div>
       <label htmlFor={htmlFor} className={employerLabelClass}>
         {label}
+        {required ? <span className="ms-1 text-[#EF4444]">*</span> : null}
       </label>
       <div className="mt-2">{children}</div>
-      {error ? <p className="mt-1.5 text-[8px] text-[#B42331]">{error}</p> : null}
+      {error ? <p className="mt-1.5 text-[12px] text-[#B42331]">{error}</p> : null}
     </div>
   );
 }
+
 
 export function ScheduleInterviewPage() {
   const { t } = useTranslation();

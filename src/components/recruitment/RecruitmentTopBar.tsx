@@ -1,30 +1,21 @@
-import { Bell, Languages, Menu, Moon } from 'lucide-react';
+import { Bell, Languages, Moon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import { SidebarTrigger } from '@/components/shared/Sidebar/SidebarTrigger';
 import { ROUTES } from '@/constants/routes';
 import { CURRENT_APPLICANT } from '@/lib/recruitment/data';
 
-type RecruitmentTopBarProps = {
-  onOpenMenu: () => void;
-};
-
-export function RecruitmentTopBar({ onOpenMenu }: RecruitmentTopBarProps) {
+export function RecruitmentTopBar() {
   const { t, i18n } = useTranslation();
   const nextLanguage = i18n.resolvedLanguage === 'ar' ? 'en' : 'ar';
 
   return (
-    <header className="flex h-20 items-center justify-between gap-3 px-4 sm:px-6">
-      <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
-        <button
-          type="button"
-          onClick={onOpenMenu}
-          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-[#E7E4EF] bg-white text-[#3B3650] shadow-sm transition hover:bg-[#F8F7FC]"
-          aria-label={t('recruitment.shell.openMenu')}
-        >
-          <Menu className="size-5" aria-hidden="true" />
-        </button>
-        <Link to={ROUTES.home} className="flex min-w-0 items-center gap-2">
+    <header className="flex h-20 items-center justify-between gap-2 px-4 sm:gap-3 sm:px-6">
+      {/* Shared sidebar toggle: collapses the docked sidebar from lg up, opens the drawer below. */}
+      <div className="flex min-w-0 shrink-0 items-center gap-2.5 sm:shrink">
+        <SidebarTrigger />
+        <Link to={ROUTES.home} className="hidden min-w-0 items-center gap-2 sm:flex lg:hidden">
           <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-[linear-gradient(135deg,#7C3AED_0%,#A855F7_100%)] text-[10px] font-bold text-white">
             IH
           </span>
@@ -35,20 +26,20 @@ export function RecruitmentTopBar({ onOpenMenu }: RecruitmentTopBarProps) {
         </Link>
       </div>
 
-      <div className="ms-auto flex items-center gap-2.5 sm:gap-3">
+      <div className="ms-auto flex items-center gap-2 sm:gap-3">
         <button
           type="button"
           onClick={() => void i18n.changeLanguage(nextLanguage)}
-          className="inline-flex h-11 items-center gap-2 rounded-full border border-[#E7E4EF] bg-white px-3 text-sm font-semibold text-[#3B3650] shadow-sm transition hover:bg-[#F8F7FC]"
+          className="inline-flex h-11 items-center gap-2 rounded-full border border-[#E7E4EF] bg-white px-2.5 text-sm sm:px-3 font-semibold text-[#3B3650] shadow-sm transition hover:bg-[#F8F7FC]"
           aria-label={nextLanguage === 'ar' ? 'Switch to Arabic' : 'Switch to English'}
         >
           <Languages className="size-4" aria-hidden="true" />
-          <span>{nextLanguage === 'ar' ? 'العربية' : 'English'}</span>
+          <span className="hidden sm:inline">{nextLanguage === 'ar' ? 'العربية' : 'English'}</span>
         </button>
 
         <button
           type="button"
-          className="relative flex size-12 items-center justify-center rounded-full border border-[#E7E4EF] bg-white text-[#3B3650] shadow-[0_1px_2px_rgba(21,19,38,0.04)] transition hover:bg-[#F8F7FC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2"
+          className="relative flex size-11 shrink-0 items-center sm:size-12 justify-center rounded-full border border-[#E7E4EF] bg-white text-[#3B3650] shadow-[0_1px_2px_rgba(21,19,38,0.04)] transition hover:bg-[#F8F7FC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2"
           aria-label={t('recruitment.shell.notifications')}
         >
           <Bell className="size-[19px]" aria-hidden="true" />
@@ -59,14 +50,14 @@ export function RecruitmentTopBar({ onOpenMenu }: RecruitmentTopBarProps) {
           type="button"
           disabled
           title={t('recruitment.shell.darkUnavailable')}
-          className="flex h-14 items-center gap-3 rounded-full border border-[#EEEAF2] bg-white px-6 text-[16px] font-semibold text-[#222635] shadow-[0_8px_20px_-12px_rgba(21,19,38,0.24)] disabled:cursor-not-allowed"
+          className="flex h-11 items-center sm:h-14 gap-3 rounded-full border border-[#EEEAF2] bg-white px-4 text-[16px] sm:px-6 font-semibold text-[#222635] shadow-[0_8px_20px_-12px_rgba(21,19,38,0.24)] disabled:cursor-not-allowed"
         >
           <Moon className="size-5" aria-hidden="true" />
           <span className="hidden sm:inline">{t('recruitment.shell.dark')}</span>
         </button>
 
         <div className="flex min-w-0 items-center gap-2.5">
-          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#8B5CF6_0%,#C084FC_100%)] text-[18px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
+          <span className="flex size-11 shrink-0 sm:size-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,#8B5CF6_0%,#C084FC_100%)] text-[18px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
             {CURRENT_APPLICANT.initials}
           </span>
           <div className="hidden min-w-0 sm:block">

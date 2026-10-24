@@ -6,6 +6,13 @@ import { ROUTES } from '@/constants/routes'
 
 import { formatPackagePrice } from '@/constants/packages'
 
+// The courses page each plan card opens.
+const PLAN_COURSES_ROUTES: Partial<Record<string, string>> = {
+  '3m': ROUTES.courses3m,
+  '6m': ROUTES.courses6m,
+  '12m': ROUTES.courses12m,
+}
+
 export const PricingSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -85,16 +92,18 @@ export const PricingSection: React.FC = () => {
                 ? 'reveal-delay-200'
                 : 'reveal-delay-300'
 
+          const coursesRoute = PLAN_COURSES_ROUTES[plan.id]
+
           return (
             <div key={plan.id} className={`reveal-on-scroll ${delayClass} h-full`}>
               <div
                 onClick={() => {
-                  if (plan.id === '6m') {
-                    navigate(ROUTES.courses6m)
+                  if (coursesRoute) {
+                    navigate(coursesRoute)
                   }
                 }}
                 className={`group relative bg-white hover:bg-[#fdfbff] border border-[#b2b2b2] hover:border-[#5a198f] hover:border-2 rounded-[50px] px-5 sm:px-6 py-8 sm:py-10 flex flex-col justify-between transition-all duration-300 hover:shadow-[0px_16px_40px_rgba(90,25,143,0.22)] hover:-translate-y-2 h-full ${
-                  plan.id === '6m' ? 'cursor-pointer' : ''
+                  coursesRoute ? 'cursor-pointer' : ''
                 }`}
               >
                 {/* Floating MOST POPULAR Badge - appears ONLY on the middle card when hovered */}
@@ -149,9 +158,9 @@ export const PricingSection: React.FC = () => {
 
                 {/* Action Button */}
                 <div className="pt-8 w-full mt-auto">
-                  {plan.id === '6m' ? (
+                  {coursesRoute ? (
                     <Link
-                      to={ROUTES.courses6m}
+                      to={coursesRoute}
                       className="w-full h-[56px] rounded-full border border-[#5a198f] text-[#5a198f] group-hover:bg-[#5a198f] group-hover:text-white group-hover:shadow-[0px_10px_15px_-3px_#bfdbfe] transition-all duration-300 font-bold text-[18px] flex items-center justify-center active:scale-98"
                     >
                       {plan.btnText}
