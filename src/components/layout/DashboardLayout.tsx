@@ -1,6 +1,6 @@
 import { Suspense, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useMatches } from 'react-router-dom';
+import { Outlet, useLocation, useMatches } from 'react-router-dom';
 
 import { Sidebar } from '@/components/layout/sidebar/Sidebar';
 import { SidebarProvider } from '@/components/layout/sidebar/SidebarProvider';
@@ -39,6 +39,7 @@ function ContentFallback() {
 
 export function DashboardLayout() {
   const { sidebarFooter: SidebarFooter, topNavSearch: TopNavSearchSlot } = useDashboardHandle();
+  const { pathname } = useLocation();
 
   return (
     <SidebarProvider>
@@ -49,7 +50,11 @@ export function DashboardLayout() {
             <TopNav search={TopNavSearchSlot ? <TopNavSearchSlot /> : undefined} />
             <main className="min-w-0 pb-10 pt-6 lg:ps-6">
               <Suspense fallback={<ContentFallback />}>
-                <Outlet />
+                {/* Keyed on the path (not the query) so each page fades up once when it opens,
+                    after its lazy chunk has loaded; typing in a search field never re-runs it. */}
+                <div key={pathname} className="db-page-enter">
+                  <Outlet />
+                </div>
               </Suspense>
             </main>
           </div>

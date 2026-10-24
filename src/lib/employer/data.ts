@@ -1,0 +1,36 @@
+import agreementsJson from '@/data/employer/agreements.json';
+import completionJson from '@/data/employer/completion.json';
+import decisionsJson from '@/data/employer/decisions.json';
+import employerJson from '@/data/employer/employer.json';
+import interviewsJson from '@/data/employer/interviews.json';
+import pipelineJson from '@/data/employer/pipeline.json';
+import type {
+  AgreementRecord,
+  Candidate,
+  CompletionData,
+  EmployerDecision,
+  EmployerProfile,
+  InterviewDetails,
+  Opportunity,
+  PipelineData,
+} from './types';
+
+export const employerProfile = employerJson.profile as EmployerProfile;
+export const employerCandidate = employerJson.candidate as Candidate;
+export const employerOpportunity = employerJson.opportunity as Opportunity;
+export const pipelineData = pipelineJson as PipelineData;
+export const completionData = completionJson as CompletionData;
+export const agreementData = agreementsJson as AgreementRecord;
+
+export const employerStore = {
+  interview: { ...interviewsJson } as InterviewDetails,
+  decision: { ...decisionsJson } as EmployerDecision,
+};
+
+export function resolveCandidate(candidateId: string): Candidate {
+  return candidateId === employerCandidate.id ? employerCandidate : employerCandidate;
+}
+
+export function resolveOpportunity(opportunityId: string): Opportunity {
+  return opportunityId === employerOpportunity.id ? employerOpportunity : employerOpportunity;
+}

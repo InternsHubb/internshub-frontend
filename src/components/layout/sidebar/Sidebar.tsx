@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Dialog } from 'radix-ui';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { X } from 'lucide-react';
 
 import logoCap from '@/assets/dashboard/sb-logo-cap.svg';
@@ -9,6 +9,7 @@ import collapsedWaves from '@/assets/dashboard/sb-collapsed-waves.svg';
 import waveBeige from '@/assets/dashboard/sb-wave-beige.svg';
 import waveOrange from '@/assets/dashboard/sb-wave-orange.svg';
 import wavePurple from '@/assets/dashboard/sb-wave-purple.svg';
+import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/cn';
 
 import { useSidebar } from './SidebarContext';
@@ -27,29 +28,52 @@ import { SIDEBAR_NAV_ITEMS, type SidebarNavItem } from './sidebarNav';
 type SidebarProps = { footer?: ReactNode };
 
 const SIDEBAR_MOTION = 'duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none';
-const ACTIVE_ITEM = 'bg-linear-to-r from-[#3a0353] to-[#804a8a] rtl:bg-linear-to-l';
+const ACTIVE_ITEM = 'bg-linear-to-r from-[#3a0353] to-[#804a8a] font-semibold text-white shadow-sm rtl:bg-linear-to-l';
+// Item states adapted from the employer sidebar: dimmed text that brightens on hover, a soft
+// hover fill, and a short accent bar beside the active item.
+const IDLE_ITEM = 'font-medium text-[#ede6f3]/80 hover:bg-white/[0.07] hover:text-white';
+const UNAVAILABLE_ITEM = 'cursor-default font-medium text-[#ede6f3]/45';
 const FOCUS_RING = 'outline-none focus-visible:ring-2 focus-visible:ring-white/70';
+
+function ActiveIndicator({ isActive }: { isActive: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'absolute -start-2 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-[#c592fb] transition-opacity',
+        SIDEBAR_MOTION,
+        isActive ? 'opacity-100' : 'opacity-0',
+      )}
+    />
+  );
+}
 
 function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCollapsed: boolean; onNavigate?: () => void }) {
   const { t } = useTranslation();
   const label = t(item.labelKey);
   const shape = cn(
-    'flex items-center overflow-hidden rounded-lg transition-[width,height,padding,gap,background-color]',
+    'relative flex items-center rounded-lg transition-[width,height,padding,gap,background-color,color]',
     SIDEBAR_MOTION,
     // Collapsed: 32px icon centred in a 44px square; expanded: 17px icon + label, full width.
     isCollapsed ? 'h-11 w-11 gap-0 ps-1.5' : 'h-10 w-full gap-3 ps-3 pe-2',
   );
-  const content = (
+  const renderContent = (isActive: boolean) => (
     <>
+      <ActiveIndicator isActive={isActive} />
       <img
         src={item.icon}
         alt=""
         aria-hidden="true"
-        className={cn('shrink-0 object-contain transition-[width,height]', SIDEBAR_MOTION, isCollapsed ? 'size-8' : 'size-[17px]')}
+        className={cn(
+          'shrink-0 object-contain transition-[width,height,opacity]',
+          SIDEBAR_MOTION,
+          isCollapsed ? 'size-8' : 'size-[17px]',
+          !item.to && 'opacity-50',
+        )}
       />
       <span
         className={cn(
-          'truncate text-sm font-medium leading-none text-[#ede6f3] transition-[opacity,max-width]',
+          'truncate text-sm leading-none transition-[opacity,max-width]',
           SIDEBAR_MOTION,
           isCollapsed ? 'max-w-0 opacity-0' : 'max-w-[180px] opacity-100',
         )}
@@ -60,11 +84,11 @@ function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCo
   );
 
   if (!item.to) {
-    // No screen behind this section yet: shown as in Figma, but not navigable.
+    // No screen behind this section yet: shown as in Figma, dimmed and not navigable.
     return (
       <li>
-        <span aria-disabled="true" title={isCollapsed ? label : undefined} className={cn(shape, 'cursor-default')}>
-          {content}
+        <span aria-disabled="true" title={isCollapsed ? label : undefined} className={cn(shape, UNAVAILABLE_ITEM)}>
+          {renderContent(false)}
         </span>
       </li>
     );
@@ -77,9 +101,9 @@ function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCo
         end={item.end}
         onClick={onNavigate}
         title={isCollapsed ? label : undefined}
-        className={({ isActive }) => cn(shape, FOCUS_RING, isActive ? ACTIVE_ITEM : 'hover:bg-white/10')}
+        className={({ isActive }) => cn(shape, FOCUS_RING, isActive ? ACTIVE_ITEM : IDLE_ITEM)}
       >
-        {content}
+        {({ isActive }) => renderContent(isActive)}
       </NavLink>
     </li>
   );
@@ -112,12 +136,16 @@ function SidebarPanel({ isCollapsed, footer, onNavigate }: { isCollapsed: boolea
     <div className="relative flex h-full flex-col overflow-hidden rounded-[36px] bg-[#3b0454]">
       <SidebarWaves isCollapsed={isCollapsed} />
 
-      {/* Header: logo. Collapsed, the 43px cap is centred in the rail: (118 - 43) / 2. */}
-      <div
+      {/* Header: logo, linking to the dashboard home as in the employer sidebar. Collapsed,
+          the 43px cap is centred in the rail: (118 - 43) / 2. */}
+      <Link
+        to={ROUTES.dashboard}
+        onClick={onNavigate}
         className={cn(
-          'relative flex items-center transition-[padding,gap]',
+          'relative flex items-center self-start rounded-lg transition-[margin,gap]',
+          FOCUS_RING,
           SIDEBAR_MOTION,
-          isCollapsed ? 'gap-0 ps-[37.5px] pt-[61px]' : 'gap-[5px] ps-5 pt-[26px]',
+          isCollapsed ? 'gap-0 ms-[37.5px] mt-[61px]' : 'gap-[5px] ms-5 mt-[26px]',
         )}
       >
         <img
@@ -136,7 +164,7 @@ function SidebarPanel({ isCollapsed, footer, onNavigate }: { isCollapsed: boolea
         >
           Interns HUB
         </span>
-      </div>
+      </Link>
 
       {/* Content: navigation. Collapsed, the 44px items are centred: (118 - 44) / 2 = 37px. */}
       <nav
@@ -147,7 +175,7 @@ function SidebarPanel({ isCollapsed, footer, onNavigate }: { isCollapsed: boolea
           isCollapsed ? 'mt-[72px] px-[37px]' : 'mt-[39px] px-2',
         )}
       >
-        <ul className={cn('flex flex-col transition-[gap]', SIDEBAR_MOTION, isCollapsed ? 'gap-6' : 'gap-0.5')}>
+        <ul className={cn('flex flex-col transition-[gap]', SIDEBAR_MOTION, isCollapsed ? 'gap-6' : 'gap-1')}>
           {SIDEBAR_NAV_ITEMS.map((item) => (
             <NavItem key={item.id} item={item} isCollapsed={isCollapsed} onNavigate={onNavigate} />
           ))}
@@ -195,8 +223,9 @@ export function Sidebar({ footer }: SidebarProps) {
       {/* Mobile / tablet: drawer from the inline-start edge. */}
       <Dialog.Root open={isMobileOpen} onOpenChange={setMobileOpen}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-50 bg-[#22023c]/40 backdrop-blur-[2px] lg:hidden" />
-          <Dialog.Content className="fixed inset-y-3 start-3 z-50 w-[256px] max-w-[calc(100vw-24px)] outline-none lg:hidden">
+          {/* db-overlay / db-drawer (index.css): fade and slide on open and close. */}
+          <Dialog.Overlay className="db-overlay fixed inset-0 z-50 bg-[#22023c]/40 backdrop-blur-[2px] lg:hidden" />
+          <Dialog.Content className="db-drawer fixed inset-y-3 start-3 z-50 w-[256px] max-w-[calc(100vw-24px)] outline-none lg:hidden">
             <Dialog.Title className="sr-only">{t('dashboard.sidebar.navLabel')}</Dialog.Title>
             <Dialog.Description className="sr-only">{t('dashboard.sidebar.drawerDescription')}</Dialog.Description>
             <SidebarPanel isCollapsed={false} footer={footer} onNavigate={() => setMobileOpen(false)} />

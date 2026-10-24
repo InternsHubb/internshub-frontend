@@ -698,3 +698,92 @@ html[dir="rtl"] {
     transition: none !important;
   }
 }
+
+/* Student dashboard motion: short fades and small slides (transform/opacity only).
+   The drawer and its overlay animate on Radix's data-state; Radix keeps them mounted
+   until the exit animation ends, so closing never waits on navigation. */
+@keyframes dbFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dbFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dbFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dbDrawerIn {
+  from {
+    transform: translateX(var(--db-drawer-offset));
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes dbDrawerOut {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(var(--db-drawer-offset));
+  }
+}
+
+.db-page-enter {
+  animation: dbFadeUp 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.db-overlay[data-state='open'] {
+  animation: dbFadeIn 200ms ease-out both;
+}
+
+.db-overlay[data-state='closed'] {
+  animation: dbFadeOut 160ms ease-in both;
+  /* Radix sets pointer-events inline; let clicks through while the overlay fades out. */
+  pointer-events: none !important;
+}
+
+/* Slides in from the inline-start edge: the left in LTR, the right in RTL. */
+.db-drawer {
+  --db-drawer-offset: calc(-100% - 12px);
+}
+
+[dir='rtl'] .db-drawer {
+  --db-drawer-offset: calc(100% + 12px);
+}
+
+.db-drawer[data-state='open'] {
+  animation: dbDrawerIn 220ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.db-drawer[data-state='closed'] {
+  animation: dbDrawerOut 180ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .db-page-enter,
+  .db-overlay,
+  .db-drawer {
+    animation: none !important;
+  }
+}
