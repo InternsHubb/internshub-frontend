@@ -12,6 +12,10 @@ import type {
   TalentDirectoryConsent,
 } from './types';
 
+// Student recruitment flow (PR #31) data: local JSON from src/data/recruitment, not an API.
+// Read by the lib/recruitment/*Service modules (which the pages call), RecruitmentSidebar,
+// RecruitmentTopBar, the application/agreement pages and the router (default ids). The consent
+// service keeps the Talent Directory choice in memory only, so it resets on reload.
 export const CURRENT_APPLICANT = applicantJson as Applicant;
 
 export const ELIGIBILITY_SAMPLE = eligibilityJson;

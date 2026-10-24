@@ -9,9 +9,20 @@ type RequireAuthProps = {
   children: ReactNode;
 };
 
+// Shared sign-in guard used by the router for /onboarding, /recruitment (PR #31) and /employer
+// (PR #32). It only checks that a session exists: anonymous users are sent to Login with
+// `from` so they return afterwards. It does not check roles (e.g. employer vs student).
+
 export function RequireAuth({ children }: RequireAuthProps) {
   const { status } = useAuth();
   const location = useLocation();
+
+  // Local-only preview for frontend work while the verification backend is unavailable.
+  // The flag is ignored by production builds, so deployed routes remain protected.
+  const localPreview = import.meta.env.DEV &&
+    new URLSearchParams(location.search).get('preview') === '1';
+
+  if (localPreview) return <>{children}</>;
 
   if (status === 'loading') {
     return (

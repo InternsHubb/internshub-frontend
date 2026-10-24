@@ -4,28 +4,24 @@ import {
   BookOpen,
   Briefcase,
   Calendar,
-  FileCheck,
   FileText,
   GraduationCap,
   Handshake,
   LayoutGrid,
+  ListChecks,
+  MessageSquare,
+  PieChart,
+  FileBadge2,
   Search,
   Users,
+  Waypoints,
   X,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import {
-  DEFAULT_AGREEMENT_ID,
-  DEFAULT_APPLICATION_ID,
-  CURRENT_APPLICANT,
-} from '@/lib/recruitment/data';
-import {
-  ROUTES,
-  recruitmentAgreementPath,
-  recruitmentApplicationPath,
-} from '@/constants/routes';
+import { CURRENT_APPLICANT } from '@/lib/recruitment/data';
+import { ROUTES } from '@/constants/routes';
 
 type IconComponent = ComponentType<{ className?: string; 'aria-hidden'?: boolean }>;
 
@@ -34,12 +30,13 @@ type SidebarLinkProps = {
   label: string;
   to?: string;
   active?: boolean;
+  badge?: string;
   onNavigate: () => void;
 };
 
-function SidebarLink({ icon: Icon, label, to, active = false, onNavigate }: SidebarLinkProps) {
+function SidebarLink({ icon: Icon, label, to, active = false, badge, onNavigate }: SidebarLinkProps) {
   const className = [
-    'flex min-h-9 w-full items-center gap-2.5 rounded-full px-3 text-start text-[12px] font-medium transition',
+    'flex min-h-9 w-full items-center gap-3 rounded-full px-3 text-start text-[14px] font-medium transition',
     active
       ? 'bg-[linear-gradient(90deg,#3A0353_0%,#804A8A_100%)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]'
       : to
@@ -51,6 +48,7 @@ function SidebarLink({ icon: Icon, label, to, active = false, onNavigate }: Side
     <>
       <Icon className="size-4 shrink-0" aria-hidden={true} />
       <span className="truncate">{label}</span>
+      {badge ? <span className="ms-auto flex size-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-[11px] font-semibold text-white">{badge}</span> : null}
     </>
   );
 
@@ -88,6 +86,7 @@ export function RecruitmentSidebar({ mobileOpen, onClose }: RecruitmentSidebarPr
 
   const score = CURRENT_APPLICANT.compositeScore;
 
+
   return (
     <>
       {mobileOpen ? (
@@ -101,18 +100,21 @@ export function RecruitmentSidebar({ mobileOpen, onClose }: RecruitmentSidebarPr
 
       <aside
         className={[
-          'fixed inset-y-0 start-0 z-50 flex h-dvh w-[256px] flex-col overflow-hidden bg-[#3B0454] px-4 pb-5 pt-5 text-white shadow-[0_24px_60px_-28px_rgba(43,4,65,0.55)] transition-transform duration-300',
+          'fixed inset-y-0 start-0 z-50 flex h-dvh w-[272px] flex-col overflow-hidden bg-[#3B0454] px-4 pb-5 pt-5 text-white shadow-[0_24px_60px_-28px_rgba(43,4,65,0.55)] transition-transform duration-300',
           'lg:inset-y-auto lg:bottom-6 lg:top-6 lg:h-[calc(100vh-3rem)] lg:max-h-[976px] lg:translate-x-0 lg:rounded-[36px] rtl:lg:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full [dir=rtl]:translate-x-full',
         ].join(' ')}
         aria-label={t('recruitment.nav.recruitment')}
       >
-        <div className="flex items-center justify-between gap-2 px-1">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[285px] overflow-hidden" aria-hidden="true">
+          <div className="absolute -bottom-24 -start-24 h-[220px] w-[430px] rotate-[-15deg] rounded-[50%] bg-[#8B5CE2]" />
+          <div className="absolute -bottom-24 start-[108px] h-[245px] w-[340px] rotate-[18deg] rounded-[50%] bg-[#F5A85F]" />
+          <div className="absolute -bottom-32 -start-16 h-[180px] w-[440px] rotate-[-9deg] rounded-[50%] bg-[#7650CF]" />
+        </div>
+        <div className="relative z-10 flex items-center justify-between gap-2 px-1">
           <Link to={ROUTES.home} className="flex min-w-0 items-center gap-2.5" onClick={onClose}>
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-[11px] bg-[linear-gradient(135deg,#7C3AED_0%,#A855F7_100%)] text-[11px] font-bold tracking-tight text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.24)]">
-              IH
-            </span>
-            <span className="truncate text-[15px] font-semibold tracking-[-0.02em]">
+            <GraduationCap className="size-9 shrink-0 text-white" aria-hidden="true" />
+            <span className="truncate text-[21px] font-semibold tracking-[-0.02em]">
               {t('recruitment.shell.brandName')}{' '}
               <span className="font-bold text-[#D8C9DF]">
                 {t('recruitment.shell.brandAccent')}
@@ -129,11 +131,9 @@ export function RecruitmentSidebar({ mobileOpen, onClose }: RecruitmentSidebarPr
           </button>
         </div>
 
-        <nav className="mt-6 min-h-0 flex-1 overflow-y-auto pe-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <p className="px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#B99FC8]">
-            {t('recruitment.nav.internship')}
-          </p>
-          <div className="mt-2 space-y-1">
+        <nav className="relative z-10 mt-6 min-h-0 flex-1 overflow-y-auto pe-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="space-y-1">
+            <SidebarLink icon={ListChecks} label={t('recruitment.nav.internship')} onNavigate={onClose} />
             <SidebarLink
               icon={Users}
               label={t('recruitment.nav.mySquad')}
@@ -146,10 +146,8 @@ export function RecruitmentSidebar({ mobileOpen, onClose }: RecruitmentSidebarPr
             />
           </div>
 
-          <p className="mt-5 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#B99FC8]">
-            {t('recruitment.nav.recruitment')}
-          </p>
-          <div className="mt-2 space-y-1">
+          <div className="mt-3 space-y-1">
+            <SidebarLink icon={Briefcase} label={t('recruitment.nav.recruitment')} to={ROUTES.recruitment} onNavigate={onClose} />
             <SidebarLink
               icon={LayoutGrid}
               label={t('recruitment.nav.dashboard')}
@@ -167,85 +165,87 @@ export function RecruitmentSidebar({ mobileOpen, onClose }: RecruitmentSidebarPr
             <SidebarLink
               icon={Search}
               label={t('recruitment.nav.talentProfile')}
-              to={ROUTES.recruitmentTalentDirectory}
-              active={isActive(ROUTES.recruitmentTalentDirectory)}
+              to={`${ROUTES.recruitment}/profile`}
+              active={isActive(`${ROUTES.recruitment}/profile`)}
               onNavigate={onClose}
             />
             <SidebarLink
               icon={Briefcase}
               label={t('recruitment.nav.opportunities')}
+              to={`${ROUTES.recruitment}/opportunities`}
+              active={isActive(`${ROUTES.recruitment}/opportunities`)}
+              badge="4"
               onNavigate={onClose}
             />
             <SidebarLink
               icon={FileText}
               label={t('recruitment.nav.applications')}
-              to={recruitmentApplicationPath(DEFAULT_APPLICATION_ID)}
+              to={ROUTES.recruitmentApplications}
               active={isActive(ROUTES.recruitmentApplications)}
               onNavigate={onClose}
             />
             <SidebarLink
               icon={Calendar}
               label={t('recruitment.nav.interview')}
+              to={`${ROUTES.recruitment}/interview`}
+              active={isActive(`${ROUTES.recruitment}/interview`)}
+              badge="1"
               onNavigate={onClose}
             />
             <SidebarLink
               icon={Handshake}
               label={t('recruitment.nav.agreement')}
-              to={recruitmentAgreementPath(DEFAULT_AGREEMENT_ID)}
+              to={ROUTES.recruitmentAgreements}
               active={isActive(ROUTES.recruitmentAgreements)}
               onNavigate={onClose}
             />
             <SidebarLink
               icon={Bell}
               label={t('recruitment.nav.notifications')}
+              to={`${ROUTES.recruitment}/notifications`}
+              active={isActive(`${ROUTES.recruitment}/notifications`)}
+              badge="2"
               onNavigate={onClose}
             />
           </div>
 
-          <p className="mt-5 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#B99FC8]">
-            {t('recruitment.nav.sprints')}
-          </p>
-          <div className="mt-2 space-y-1">
+          <div className="mt-3 space-y-1">
+            <SidebarLink icon={Waypoints} label={t('recruitment.nav.sprints')} onNavigate={onClose} />
             <SidebarLink
-              icon={FileCheck}
+              icon={PieChart}
               label={t('recruitment.nav.progress')}
               onNavigate={onClose}
             />
             <SidebarLink
-              icon={Users}
+              icon={MessageSquare}
               label={t('recruitment.nav.chat')}
               onNavigate={onClose}
             />
             <SidebarLink
-              icon={FileCheck}
+              icon={FileBadge2}
               label={t('recruitment.nav.certificate')}
               onNavigate={onClose}
             />
           </div>
         </nav>
 
-        <div className="mt-4 shrink-0">
-          <div className="rounded-[18px] bg-[linear-gradient(135deg,#6A2A8A_0%,#3B0454_100%)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#CDB6DC]">
-                {t('recruitment.nav.progress')}
+        <div className="relative z-10 mt-3 shrink-0">
+          <div className="rounded-[24px] border border-white/20 bg-[linear-gradient(145deg,rgba(91,30,130,0.9),rgba(48,0,75,0.92))] p-4 shadow-[0_18px_38px_-22px_rgba(12,4,24,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] backdrop-blur-sm">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[13px] font-medium text-[#F1E7F7]">
+                {t('recruitment.shell.compositeScore')}
               </span>
-              <span className="text-[13px] font-semibold text-white">{score}%</span>
+              <span className="rounded-full bg-white/20 px-3 py-1 text-[12px] font-bold text-white">{CURRENT_APPLICANT.percentile}</span>
             </div>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/15">
+            <p className="mt-3 text-[36px] font-bold leading-none text-white">{score}%</p>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/25">
               <div
-                className="h-full rounded-full bg-[linear-gradient(90deg,#C084FC_0%,#F0ABFC_100%)]"
+                className="h-full rounded-full bg-white"
                 style={{ width: `${score}%` }}
               />
             </div>
-            <p className="mt-3 text-[10px] leading-4 text-[#E6DAEE]">
-              {t('recruitment.shell.compositeScore')}
-            </p>
-            <p className="mt-1 text-[9px] leading-4 text-[#B99FC8]">
-              {CURRENT_APPLICANT.percentile}
-            </p>
+            <p className="mt-3 flex items-center gap-2 text-[12px] leading-5 text-white"><span className="size-2 shrink-0 rounded-full bg-[#39E77D]" />{t('recruitment.shell.profileVisible')}</p>
           </div>
-          <p className="mt-3 text-center text-[9px] text-[#9F7BB3]">© 2026 InternsHub</p>
         </div>
       </aside>
     </>
