@@ -21,80 +21,90 @@ export function CompletionPage() {
     return <EmployerError label={t('common.error')} retryLabel={t('common.retry')} onRetry={reload} />;
   }
 
-  const { record, summaryLabels } = data;
+  const { record } = data;
 
   return (
     <div>
       <EmployerPageHeader
-        breadcrumb={t('header.breadcrumb')}
-        title={t('completion.title')}
-        description={t('completion.subtitle')}
-        status={<StatusBadge tone="neutral">{t('completion.demoBadge')}</StatusBadge>}
+        breadcrumb={t('header.breadcrumb', 'RECRUITMENT')}
+        title={t('completion.title', 'Completion')}
+        description={t('completion.subtitle', 'Confirmed recruitment outcomes and completed placement records.')}
+        status={<StatusBadge tone="info">{t('completion.demoBadge', 'Demo data')}</StatusBadge>}
       />
 
-      <section className={cn('mt-7 grid min-h-[92px] grid-cols-1 gap-y-4 px-5 py-5 sm:grid-cols-3', employerCardClass)}>
-        {summaryLabels.map((label) => (
-          <p key={label} className="text-[10px] font-medium text-[#475569]">
-            {t(`completion.summary.${label}`)}
-          </p>
-        ))}
+      {/* Stats Summary Card */}
+      <section className={cn('mt-6 grid grid-cols-1 divide-y divide-[#E9DCF8] p-6 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:p-7', employerCardClass)}>
+        <div className="py-2 sm:px-4 sm:py-0 first:ps-0">
+          <p className="text-[13px] font-medium text-[#64748B]">Confirmed placements</p>
+          <p className="mt-2 text-[32px] font-bold text-[#111827]">1</p>
+        </div>
+        <div className="py-2 sm:px-6 sm:py-0">
+          <p className="text-[13px] font-medium text-[#64748B]">Pending confirmation</p>
+          <p className="mt-2 text-[32px] font-bold text-[#111827]">0</p>
+        </div>
+        <div className="py-2 sm:px-6 sm:py-0 last:pe-0">
+          <p className="text-[13px] font-medium text-[#64748B]">Records shown</p>
+          <p className="mt-2 text-[32px] font-bold text-[#111827]">1</p>
+        </div>
       </section>
 
-      <section className={cn('mt-4 overflow-hidden', employerCardClass)}>
-        <div className="flex items-start justify-between gap-4 px-4 pb-3 pt-4">
+      {/* Table Records Card */}
+      <section className={cn('mt-5 overflow-hidden', employerCardClass)}>
+        <div className="flex items-center justify-between gap-4 p-5 sm:p-6 pb-4">
           <div>
-            <p className="text-[8px] font-bold tracking-[1.2px] text-[#3A0353] uppercase">
-              {t('completion.recordEyebrow')}
+            <p className="text-[11px] font-bold tracking-[1.4px] text-[#7C3AED] uppercase">
+              {t('completion.recordEyebrow', 'SAMPLE RECORD')}
             </p>
-            <h2 className="mt-2 text-[16px] font-bold text-[#111827]">{t('completion.recordTitle')}</h2>
+            <h2 className="mt-1 text-[20px] font-bold text-[#111827]">{t('completion.recordTitle', 'Placement records')}</h2>
           </div>
-          <StatusBadge tone="neutral">{t('completion.recordBadge')}</StatusBadge>
+          <StatusBadge tone="neutral">{t('completion.recordBadge', 'DEMO')}</StatusBadge>
         </div>
 
         <div className="overflow-x-auto">
-          <div className="min-w-[1040px]">
-            <div className="grid grid-cols-[194px_198px_160px_116px_minmax(0,1fr)_172px] bg-[#F8F2FC] text-[7px] font-bold tracking-[0.4px] text-[#475569] uppercase">
-              <div className="px-4 py-3">{t('completion.columns.candidate')}</div>
-              <div className="px-4 py-3">{t('completion.columns.employer')}</div>
-              <div className="px-4 py-3">{t('completion.columns.role')}</div>
-              <div className="px-4 py-3">{t('completion.columns.duration')}</div>
-              <div className="px-4 py-3">{t('completion.columns.status')}</div>
-              <div className="px-4 py-3">{t('completion.columns.action')}</div>
-            </div>
-
-            <div className="grid min-h-[68px] grid-cols-[194px_198px_160px_116px_minmax(0,1fr)_172px] items-center">
-              <div className="flex items-center gap-2 px-4">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#925DA8_0%,#C592FB_100%)] text-[8px] font-bold text-white">
-                  {record.candidate.initials}
-                </span>
-                <span className="text-[10px] font-bold text-[#111827]">{record.candidate.name}</span>
-              </div>
-              <div className="px-4 text-[10px] font-medium text-[#334155]">{record.employer}</div>
-              <div className="px-4 text-[10px] font-medium text-[#334155]">{record.role}</div>
-              <div className="px-4 text-[10px] font-medium text-[#334155]">
-                {t('meta.duration', { count: record.durationMonths })}
-              </div>
-              <div className="px-4">
-                <StatusBadge tone="success">{t('completion.confirmedBy')}</StatusBadge>
-              </div>
-              <div className="px-4">
-                <button
-                  type="button"
-                  disabled
-                  title={t('completion.viewRecordUnavailable')}
-                  className="text-[9px] font-bold text-[#3A0353] opacity-45"
-                >
-                  {t('completion.viewRecord')}
-                </button>
-              </div>
-            </div>
-          </div>
+          <table className="w-full min-w-[850px] border-collapse text-start">
+            <thead>
+              <tr className="border-y border-[#E9DCF8] bg-[#FAF7FD] text-[11px] font-bold tracking-[0.5px] text-[#64748B] uppercase">
+                <th className="px-6 py-3.5 text-start">{t('completion.columns.candidate', 'CANDIDATE')}</th>
+                <th className="px-6 py-3.5 text-start">{t('completion.columns.employer', 'EMPLOYER')}</th>
+                <th className="px-6 py-3.5 text-start">{t('completion.columns.role', 'ROLE')}</th>
+                <th className="px-6 py-3.5 text-start">{t('completion.columns.duration', 'DURATION')}</th>
+                <th className="px-6 py-3.5 text-start">{t('completion.columns.status', 'STATUS')}</th>
+                <th className="px-6 py-3.5 text-start">{t('completion.columns.action', 'ACTIONS')}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E9DCF8]">
+              <tr className="hover:bg-[#FAF7FD]/50">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#925DA8_0%,#C592FB_100%)] text-[12px] font-bold text-white shadow-sm">
+                      {record.candidate.initials}
+                    </span>
+                    <span className="text-[14px] font-bold text-[#111827]">{record.candidate.name}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-[14px] text-[#334155]">{record.employer}</td>
+                <td className="px-6 py-4 text-[14px] font-medium text-[#111827]">{record.role}</td>
+                <td className="px-6 py-4 text-[14px] text-[#334155]">
+                  {t('meta.duration', { count: record.durationMonths, defaultValue: `${record.durationMonths} months` })}
+                </td>
+                <td className="px-6 py-4">
+                  <StatusBadge tone="success">{t('completion.confirmedBy', 'Confirmed by InternsHub')}</StatusBadge>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="cursor-pointer text-[13px] font-bold text-[#7C3AED] hover:underline">
+                    {t('completion.viewRecord', 'View record')}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <p className="bg-[#F8F2FC] px-4 py-3 text-[8px] leading-4 text-[#475569]">
-          {t('completion.demoFootnote')}
-        </p>
+        <div className="border-t border-[#E9DCF8] bg-[#FAF7FD] px-6 py-3 text-[12px] text-[#64748B]">
+          {t('completion.demoFootnote', 'Demo/sample data only. No salary, placement dates, or unprovided metrics are included.')}
+        </div>
       </section>
     </div>
   );
 }
+

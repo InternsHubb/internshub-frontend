@@ -501,105 +501,159 @@ function Stat({
 }
 
 export function StudentRecruitmentEligibility() {
-  const { i18n } = useTranslation();
-  const locale = i18n.resolvedLanguage?.startsWith("ar") ? "ar" : "en";
   const { t } = useTranslation();
-  const [preview, setPreview] = useState(false);
-  const score = preview ? 72 : profile.score;
-  const eligible = score >= 80;
+  const sampleScore = 74;
+  const threshold = 80;
+  const pointsBelow = threshold - sampleScore;
+
   return (
     <div>
-      <PageTitle
-        title={t("recruitment.studentScreens.eligibility.title")}
-        subtitle="Your score breakdown and employer visibility status."
-        action={
-          <button
-            className={paleButton}
-            onClick={() => setPreview((value) => !value)}
-            type="button"
-          >
-            {preview ? t("recruitment.studentScreens.eligibility.previewEligible") : t("recruitment.studentScreens.eligibility.previewIneligible")}{" "}
-            <ArrowRight className="size-3" />
-          </button>
-        }
-      />
-      <Panel className="mb-4 flex flex-col items-center gap-5 sm:flex-row sm:px-7 sm:py-6">
-        <ScoreCircle score={score} size={118} />
-        <div className="min-w-0 flex-1">
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-[13px] font-bold ${eligible ? "bg-[#DDF8E9] text-[#087C50]" : "bg-[#FCE6E5] text-[#A43030]"}`}
-          >
-            <CheckCircle2 className="size-3.5" />
-            {eligible ? t("recruitment.studentScreens.eligibility.eligible") : t("recruitment.studentScreens.eligibility.notEligible")}
-          </span>
-          <h2 className="mt-2 text-[22px] font-bold text-[#20162A]">
-            {eligible
-              ? t("recruitment.studentScreens.eligibility.visibleTitle")
-              : t("recruitment.studentScreens.eligibility.needsProgress")}
-          </h2>
-          <p className="mt-1 text-[14px] text-[#64596D]">
-            {t("recruitment.studentScreens.eligibility.score")}: <b>{score}%</b> · {t("recruitment.studentScreens.eligibility.required")}: <b>80%</b> ·{" "}
-            {eligible ? t("recruitment.studentScreens.eligibility.exceededBy", { points: score - 80 }) : t("recruitment.studentScreens.eligibility.pointsToGo", { points: 80 - score })}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-[11px] font-bold tracking-[1.5px] text-[#7C3AED] uppercase">
+            {t('recruitment.shell.brandName', 'RECRUITMENT')}
           </p>
-          <p className="mt-2 max-w-[660px] text-[14px] leading-5 text-[#716879]">
-            {eligible
-              ? t("recruitment.studentScreens.eligibility.eligibleBody")
-              : t("recruitment.studentScreens.eligibility.ineligibleBody")}
+          <h1 className="mt-1 text-[26px] font-bold tracking-[-0.02em] text-[#111827] sm:text-[30px]">
+            Eligibility review
+          </h1>
+          <p className="mt-1 text-[14px] text-[#64748B]">
+            See how your profile measures against Talent Directory requirements.
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Link className={purpleButton} to={`${ROUTES.recruitment}/profile`}>
-              {t("recruitment.studentScreens.dashboard.viewProfile")}</Link>
-            <Link
-              className={paleButton}
-              to={`${ROUTES.recruitment}/opportunities`}
-            >
-              {t("recruitment.studentScreens.dashboard.browseOpportunities")}</Link>
-          </div>
         </div>
-      </Panel>
-      <Panel title={t("recruitment.studentScreens.eligibility.scoreBreakdown")} className="mb-4">
-        <div className="space-y-4">
-          {scoreCategories.map((item) => (
-            <div key={item.label[locale]}>
-              <div className="mb-2 flex items-center justify-between text-[14px]">
-                <span className="font-medium text-[#302639]">
-                  {item.label[locale]}
-                </span>
-                <b className="text-[#3B0454]">{item.score}%</b>
-              </div>
-              <div className="h-[7px] rounded-full bg-[#F0E9F4]">
+        <div className="shrink-0 pt-1">
+          <span className="inline-flex min-h-[28px] items-center justify-center rounded-full bg-[#FEE2E2] px-4 text-[12px] font-bold text-[#DC2626]">
+            Not eligible
+          </span>
+        </div>
+      </div>
+
+      {/* Main Eligibility Hero Card */}
+      <section className="mt-6 rounded-[24px] border border-white/80 bg-white p-6 shadow-[0_12px_32px_-16px_rgba(49,18,67,0.18)] sm:p-8">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-8">
+          {/* Score Donut */}
+          <div className="relative flex size-[140px] shrink-0 items-center justify-center rounded-full bg-[#FAF5FF] p-3 shadow-inner">
+            <svg className="size-full -rotate-90" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="#F1E8FA"
+                strokeWidth="10"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="url(#purpleRedGrad)"
+                strokeWidth="10"
+                strokeDasharray="251.2"
+                strokeDashoffset={251.2 - (251.2 * sampleScore) / 100}
+                strokeLinecap="round"
+              />
+              <defs>
+                <linearGradient id="purpleRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#7C3AED" />
+                  <stop offset="50%" stopColor="#C084FC" />
+                  <stop offset="100%" stopColor="#F43F5E" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span className="text-[32px] font-bold leading-none text-[#111827]">{sampleScore}%</span>
+              <span className="mt-1 text-[11px] font-medium text-[#64748B]">Sample score</span>
+            </div>
+          </div>
+
+          {/* Right Info and Progress */}
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-bold tracking-[1.4px] text-[#7C3AED] uppercase">
+              MERNA ADEL · COMPOSITE SCORE
+            </p>
+            <h2 className="mt-1 text-[20px] font-bold text-[#111827] sm:text-[22px]">
+              You are {pointsBelow} percentage points below the threshold
+            </h2>
+            <p className="mt-2 text-[14px] leading-relaxed text-[#64748B]">
+              Talent Directory visibility requires a Composite Score of at least 80% and your recorded consent. This clearly labeled sample does not represent your real score.
+            </p>
+
+            <div className="mt-5">
+              <div className="h-3 w-full overflow-hidden rounded-full bg-[#F3E8FF]">
                 <div
-                  className="h-full rounded-full bg-[linear-gradient(90deg,#653278,#B672CB)]"
-                  style={{ width: `${item.score}%` }}
+                  className="h-full rounded-full bg-[linear-gradient(90deg,#7C3AED_0%,#C084FC_50%,#F43F5E_100%)]"
+                  style={{ width: `${sampleScore}%` }}
                 />
               </div>
+              <div className="mt-2 flex items-center justify-between text-[12px] font-medium text-[#64748B]">
+                <span>Sample: {sampleScore}%</span>
+                <span>Eligibility threshold: {threshold}%</span>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-        <div className="mt-5 flex items-center justify-between border-t border-[#EEE7F2] pt-4 text-[15px] font-bold">
-          <span>{t("recruitment.studentScreens.dashboard.compositeScore")}</span>
-          <span className="text-[23px] text-[#3B0454]">{score}%</span>
+      </section>
+
+      {/* 3 Action Cards */}
+      <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="rounded-[20px] border border-white/80 bg-white p-6 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.14)]">
+          <span className="inline-flex size-8 items-center justify-center rounded-[8px] bg-[#FAF5FF] text-[13px] font-bold text-[#7C3AED]">
+            01
+          </span>
+          <h3 className="mt-4 text-[16px] font-bold text-[#111827]">Complete recommended courses</h3>
+          <p className="mt-2 text-[13px] leading-relaxed text-[#64748B]">
+            Build the role-specific skills highlighted in your learning plan.
+          </p>
         </div>
-      </Panel>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className={`${card} p-4 text-center`}>
-          <p className="text-[13px] text-[#766B7E]">{t("recruitment.studentScreens.eligibility.yourScore")}</p>
-          <p className="mt-1 text-[29px] font-bold text-[#3B0454]">{score}%</p>
-          <p className="text-[12px] text-[#008A58]">{t("recruitment.studentScreens.eligibility.monthlyIncrease")}</p>
+
+        <div className="rounded-[20px] border border-white/80 bg-white p-6 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.14)]">
+          <span className="inline-flex size-8 items-center justify-center rounded-[8px] bg-[#FAF5FF] text-[13px] font-bold text-[#7C3AED]">
+            02
+          </span>
+          <h3 className="mt-4 text-[16px] font-bold text-[#111827]">Strengthen performance</h3>
+          <p className="mt-2 text-[13px] leading-relaxed text-[#64748B]">
+            Use internship feedback to improve delivery, teamwork, and consistency.
+          </p>
         </div>
-        <div className={`${card} p-4 text-center`}>
-          <p className="text-[13px] text-[#766B7E]">{t("recruitment.studentScreens.eligibility.requiredScore")}</p>
-          <p className="mt-1 text-[29px] font-bold text-[#20162A]">80%</p>
-          <p
-            className={`text-[12px] ${eligible ? "text-[#008A58]" : "text-[#A43030]"}`}
-          >
-            {eligible ? t("recruitment.studentScreens.eligibility.exceeded") : t("recruitment.studentScreens.eligibility.remaining", { points: 80 - score })}
+
+        <div className="rounded-[20px] border border-white/80 bg-white p-6 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.14)]">
+          <span className="inline-flex size-8 items-center justify-center rounded-[8px] bg-[#FAF5FF] text-[13px] font-bold text-[#7C3AED]">
+            03
+          </span>
+          <h3 className="mt-4 text-[16px] font-bold text-[#111827]">Meet your mentor</h3>
+          <p className="mt-2 text-[13px] leading-relaxed text-[#64748B]">
+            Set practical goals and review progress before your next eligibility check.
           </p>
         </div>
       </div>
+
+      {/* What happens next Card */}
+      <section className="mt-6 flex flex-col gap-4 rounded-[20px] border border-white/80 bg-white p-6 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.14)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-[17px] font-bold text-[#111827]">What happens next?</h2>
+          <p className="mt-1 text-[14px] text-[#64748B]">
+            Keep using InternsHub normally. Your eligibility can be reviewed again as your profile improves.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to={`${ROUTES.recruitment}/talent-directory`}
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#7C3AED_0%,#9333EA_100%)] px-6 text-[14px] font-semibold text-white shadow-[0_6px_18px_rgba(124,58,237,0.25)] transition hover:brightness-110"
+          >
+            Review directory consent
+          </Link>
+          <Link
+            to={ROUTES.recruitment}
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[#D8C6E8] bg-white px-6 text-[14px] font-semibold text-[#111827] transition hover:bg-[#FAF7FD]"
+          >
+            Return to dashboard
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
+
 
 export function StudentRecruitmentProfile() {
   const { t, i18n } = useTranslation();
@@ -1432,131 +1486,207 @@ export function StudentRecruitmentApplications() {
 
 export function StudentRecruitmentApplicationDetails() {
   const { t } = useTranslation();
-  const { applicationId = "designcraft-ui-ux" } = useParams();
-  const application =
-    studentApplications.find((item) => item.id === applicationId) ??
-    studentApplications[0];
-  const timeline = [
-    {
-      title: t("recruitment.studentScreens.applicationDetails.applied"),
-      detail: t("recruitment.studentScreens.applicationDetails.interestSent"),
-      date: "Oct 14, 2024",
-      state: "done",
+  const [outcome, setOutcome] = useState<'declined' | 'selected' | 'not_selected'>('declined');
+
+  const configs = {
+    declined: {
+      badge: 'Declined',
+      badgeClass: 'bg-[#FEE2E2] text-[#DC2626]',
+      heading: 'Application declined',
+      calloutBg: 'border-[#FECACA] bg-[#FEF2F2]',
+      calloutIconBg: 'bg-[#FEE2E2] text-[#DC2626]',
+      calloutIcon: '!',
+      calloutTitle: 'Application declined',
+      calloutBody: 'DesignCraft Agency has closed this application. Thank you for the time and care you put into applying.',
+      nextText: 'Review other applications or speak with your mentor before applying again.',
+      actionLabel: 'Back to My Applications',
+      actionTo: `${ROUTES.recruitment}/applications`,
     },
-    {
-      title: t("recruitment.studentScreens.applicationDetails.profileViewed"),
-      detail: t("recruitment.studentScreens.applicationDetails.profileReviewed"),
-      date: "Oct 16, 2024",
-      state: "done",
+    selected: {
+      badge: 'Selected',
+      badgeClass: 'bg-[#DCFCE7] text-[#16A34A]',
+      heading: 'You have been selected',
+      calloutBg: 'border-[#BBF7D0] bg-[#F0FDF4]',
+      calloutIconBg: 'bg-[#DCFCE7] text-[#16A34A]',
+      calloutIcon: '✓',
+      calloutTitle: 'You have been selected',
+      calloutBody: 'DesignCraft Agency would like to move forward. Review and sign the liability agreement to continue.',
+      nextText: 'The placement is not complete yet. Both parties must sign the agreement and the required completion process must be satisfied.',
+      actionLabel: 'Continue to agreement',
+      actionTo: `${ROUTES.recruitment}/agreements`,
     },
-    {
-      title: t("recruitment.studentScreens.applicationDetails.interview"),
-      detail: t("recruitment.studentScreens.applicationDetails.interviewConfirmed"),
-      date: "Sep 28, 2026 · 2:00 PM",
-      state: "current",
+    not_selected: {
+      badge: 'Not selected',
+      badgeClass: 'bg-[#F1F5F9] text-[#64748B]',
+      heading: 'Not selected for this opportunity',
+      calloutBg: 'border-[#E2E8F0] bg-[#F8FAFC]',
+      calloutIconBg: 'bg-[#E2E8F0] text-[#64748B]',
+      calloutIcon: 'i',
+      calloutTitle: 'Not selected for this opportunity',
+      calloutBody: 'Another candidate was selected after the completed review. Your profile remains active for future opportunities.',
+      nextText: 'Explore matched opportunities and use this experience to strengthen your next application.',
+      actionLabel: 'Explore Opportunities',
+      actionTo: `${ROUTES.recruitment}/opportunities`,
     },
-    {
-      title: t("recruitment.studentScreens.applicationDetails.employerDecision"),
-      detail: t("recruitment.studentScreens.applicationDetails.awaitingDecision"),
-      date: "",
-      state: "next",
-    },
-    {
-      title: t("recruitment.studentScreens.applicationDetails.completed"),
-      detail: t("recruitment.studentScreens.applicationDetails.processFinalized"),
-      date: "",
-      state: "next",
-    },
-  ];
+  };
+
+  const current = configs[outcome];
+
   return (
     <div>
-      <Link
-        to={`${ROUTES.recruitment}/applications`}
-        className="mb-3 inline-flex items-center gap-2 text-[13px] font-medium text-[#564B5F]"
-      >
-        <ArrowLeft className="size-3" />
-        {t("recruitment.studentScreens.applicationDetails.back")}</Link>
-      <Panel className="mb-3">
-        <div className="flex items-center gap-3">
-          <span
-            className="flex size-12 items-center justify-center rounded-xl text-[18px] font-bold text-white"
-            style={{ background: application.color }}
-          >
-            {application.initials}
-          </span>
-          <div>
-            <h1 className="text-[19px] font-bold">{application.title}</h1>
-            <p className="text-[14px] text-[#6A5F72]">{application.company}</p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              <span className={tag}>{t(`recruitment.studentScreens.common.${({"Full-time":"fullTime", Internship:"internship", "Part-time":"partTime"} as Record<string,string>)[application.type]}`, { defaultValue: application.type })}</span>
-              <span className={tag}>{t(`recruitment.studentScreens.common.${({Remote:"remote", Hybrid:"hybrid", "On-site":"onsite"} as Record<string,string>)[application.mode]}`, { defaultValue: application.mode })}</span>
-              <span className={tag}>{t("recruitment.studentScreens.applications.interview")}</span>
-            </div>
-          </div>
-        </div>
-      </Panel>
-      <section className="mb-4 flex items-center gap-3 rounded-xl border border-[#E4D4EE] bg-[#F1E5FA] p-4">
-        <span className="flex size-10 items-center justify-center rounded-xl bg-[#3B0454] text-white">
-          <CalendarDays className="size-4" />
-        </span>
+      {/* Top Bar / Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-[14px] font-bold">{t("recruitment.studentScreens.applicationDetails.currentStatus")}</h2>
-          <p className="mt-0.5 text-[13px] text-[#62596C]">
-            {t("recruitment.studentScreens.applicationDetails.interviewConfirmed")}</p>
-          <p className="text-[13px] font-semibold text-[#3B0454]">
-            Sep 28, 2026 · 2:00 PM
+          <p className="text-[11px] font-bold tracking-[1.5px] text-[#7C3AED] uppercase">
+            {t('recruitment.shell.brandName', 'RECRUITMENT')}
+          </p>
+          <h1 className="mt-1 text-[26px] font-bold tracking-[-0.02em] text-[#111827] sm:text-[30px]">
+            {current.heading}
+          </h1>
+          <p className="mt-1 text-[14px] text-[#64748B]">
+            Application details and next steps.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {/* Outcome state selector for easy testing */}
+          <div className="hidden items-center rounded-full border border-[#D8C6E8] bg-white p-1 text-[11px] font-semibold sm:flex">
+            <button
+              type="button"
+              onClick={() => setOutcome('declined')}
+              className={`rounded-full px-2.5 py-1 transition ${outcome === 'declined' ? 'bg-[#3B0454] text-white' : 'text-[#64748B]'}`}
+            >
+              Declined
+            </button>
+            <button
+              type="button"
+              onClick={() => setOutcome('selected')}
+              className={`rounded-full px-2.5 py-1 transition ${outcome === 'selected' ? 'bg-[#3B0454] text-white' : 'text-[#64748B]'}`}
+            >
+              Selected
+            </button>
+            <button
+              type="button"
+              onClick={() => setOutcome('not_selected')}
+              className={`rounded-full px-2.5 py-1 transition ${outcome === 'not_selected' ? 'bg-[#3B0454] text-white' : 'text-[#64748B]'}`}
+            >
+              Not Selected
+            </button>
+          </div>
+          <span className={`inline-flex min-h-[28px] items-center justify-center rounded-full px-4 text-[12px] font-bold ${current.badgeClass}`}>
+            {current.badge}
+          </span>
+        </div>
+      </div>
+
+      {/* Opportunity Card */}
+      <section className="mt-6 flex flex-col gap-4 rounded-[22px] border border-white/80 bg-white p-5 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.12)] sm:flex-row sm:items-center">
+        <div className="flex size-13 shrink-0 items-center justify-center rounded-[16px] bg-[linear-gradient(145deg,#0891B2_0%,#22B8CF_100%)] text-[18px] font-bold text-white shadow-sm">
+          D
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-[17px] font-bold text-[#111827]">UI/UX Designer</h2>
+          <p className="mt-0.5 text-[14px] text-[#64748B]">DesignCraft Agency · Alexandria</p>
+          <p className="mt-1 text-[13px] text-[#64748B]">
+            UI/UX Designer · Internship · Hybrid · 3 months · starts Nov 1, 2026
           </p>
         </div>
       </section>
-      <Panel title={t("recruitment.studentScreens.applicationDetails.progress")}>
-        <ol className="space-y-0">
-          {timeline.map((stage, index) => (
-            <li className="relative flex min-h-[68px] gap-4" key={stage.title}>
-              <span
-                className={`relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${stage.state === "done" ? "bg-[#9656AD] text-white" : stage.state === "current" ? "border-2 border-[#6B3280] bg-[#3B0454] text-white" : "bg-[#F1E5FA] text-[#4B3C55]"}`}
-              >
-                {stage.state === "done" ? (
-                  <Check className="size-3.5" />
-                ) : stage.state === "current" ? (
-                  <CalendarDays className="size-3" />
-                ) : (
-                  index + 1
-                )}
+
+      {/* Outcome Callout Box */}
+      <section className={`mt-5 flex items-start gap-4 rounded-[20px] border p-5 ${current.calloutBg}`}>
+        <span className={`flex size-8 shrink-0 items-center justify-center rounded-full text-[14px] font-bold ${current.calloutIconBg}`}>
+          {current.calloutIcon}
+        </span>
+        <div>
+          <h2 className="text-[16px] font-bold text-[#111827]">{current.calloutTitle}</h2>
+          <p className="mt-1 text-[14px] leading-relaxed text-[#4B5563]">{current.calloutBody}</p>
+        </div>
+      </section>
+
+      {/* Application Timeline Card */}
+      <section className="mt-5 rounded-[22px] border border-white/80 bg-white p-6 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.12)]">
+        <h2 className="text-[16px] font-bold text-[#111827]">Application timeline</h2>
+
+        <div className="mt-6 overflow-x-auto pb-2">
+          <div className="flex min-w-[620px] items-center justify-between">
+            {/* Step 1: Applied */}
+            <div className="flex flex-col items-center text-center">
+              <span className="flex size-7 items-center justify-center rounded-full bg-[#7C3AED] text-[12px] font-bold text-white shadow-sm">
+                ✓
               </span>
-              {index < timeline.length - 1 ? (
-                <span className="absolute start-[11px] top-6 h-[54px] w-px bg-[#BD91D0]" />
-              ) : null}
-              <div className="pb-4">
-                <p
-                  className={`text-[14px] font-bold ${stage.state === "next" ? "text-[#62596C]" : "text-[#20162A]"}`}
-                >
-                  {stage.title}
-                  {stage.state === "current" ? (
-                    <span className="ms-2 rounded-full bg-[#F1E5FA] px-2 py-1 text-[10px] text-[#3B0454]">
-                      {t("recruitment.studentScreens.applicationDetails.current")}</span>
-                  ) : null}
-                </p>
-                <p className="mt-0.5 text-[13px] text-[#62596C]">
-                  {stage.detail}
-                </p>
-                {stage.date ? (
-                  <p className="mt-1 text-[13px] text-[#4D3D58]">
-                    {stage.date}
-                  </p>
-                ) : null}
-              </div>
-            </li>
-          ))}
-        </ol>
+              <span className="mt-2 text-[12px] font-medium text-[#7C3AED]">Applied</span>
+            </div>
+
+            <div className="h-0.5 flex-1 bg-[#7C3AED]" />
+
+            {/* Step 2: Profile Viewed */}
+            <div className="flex flex-col items-center text-center">
+              <span className="flex size-7 items-center justify-center rounded-full bg-[#7C3AED] text-[12px] font-bold text-white shadow-sm">
+                ✓
+              </span>
+              <span className="mt-2 text-[12px] font-medium text-[#7C3AED]">Profile Viewed</span>
+            </div>
+
+            <div className="h-0.5 flex-1 bg-[#7C3AED]" />
+
+            {/* Step 3: Interview */}
+            <div className="flex flex-col items-center text-center">
+              <span className="flex size-7 items-center justify-center rounded-full bg-[#7C3AED] text-[12px] font-bold text-white shadow-sm">
+                ✓
+              </span>
+              <span className="mt-2 text-[12px] font-medium text-[#7C3AED]">Interview</span>
+            </div>
+
+            <div className="h-0.5 flex-1 bg-[#7C3AED]" />
+
+            {/* Step 4: Employer Decision */}
+            <div className="flex flex-col items-center text-center">
+              <span className="flex size-7 items-center justify-center rounded-full bg-[#7C3AED] text-[12px] font-bold text-white shadow-sm">
+                4
+              </span>
+              <span className="mt-2 text-[12px] font-semibold text-[#7C3AED]">Employer Decision</span>
+            </div>
+
+            <div className="h-0.5 flex-1 bg-[#E2E8F0]" />
+
+            {/* Step 5: Agreement */}
+            <div className="flex flex-col items-center text-center">
+              <span className="flex size-7 items-center justify-center rounded-full border border-[#CBD5E1] bg-white text-[12px] font-medium text-[#94A3B8]">
+                5
+              </span>
+              <span className="mt-2 text-[12px] font-medium text-[#94A3B8]">Agreement</span>
+            </div>
+
+            <div className="h-0.5 flex-1 bg-[#E2E8F0]" />
+
+            {/* Step 6: Completed */}
+            <div className="flex flex-col items-center text-center">
+              <span className="flex size-7 items-center justify-center rounded-full border border-[#CBD5E1] bg-white text-[12px] font-medium text-[#94A3B8]">
+                6
+              </span>
+              <span className="mt-2 text-[12px] font-medium text-[#94A3B8]">Completed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Next Steps Card */}
+      <section className="mt-5 flex flex-col gap-4 rounded-[22px] border border-white/80 bg-white p-5 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.12)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-[16px] font-bold text-[#111827]">Next steps</h2>
+          <p className="mt-1 text-[14px] text-[#64748B]">{current.nextText}</p>
+        </div>
         <Link
-          to={`${ROUTES.recruitment}/interview`}
-          className={`${purpleButton} mt-2 w-full sm:w-[55%]`}
+          to={current.actionTo}
+          className="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#7C3AED_0%,#9333EA_100%)] px-6 text-[14px] font-semibold text-white shadow-[0_6px_18px_rgba(124,58,237,0.25)] transition hover:brightness-110"
         >
-          {t("recruitment.studentScreens.applicationDetails.interviewDetails")}</Link>
-      </Panel>
+          {current.actionLabel}
+        </Link>
+      </section>
     </div>
   );
 }
+
 
 export function StudentRecruitmentInterview() {
   const { t } = useTranslation();
@@ -1699,135 +1829,123 @@ function InterviewInfo({
 
 export function StudentRecruitmentAgreement() {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false);
-  const [signed, setSigned] = useState(false);
-  const sections = [
-    [
-      t("recruitment.studentScreens.agreementScreen.sectionConfidentiality"),
-      t("recruitment.studentScreens.agreementScreen.sectionConfidentialityText"),
-    ],
-    [
-      t("recruitment.studentScreens.agreementScreen.sectionIntellectualProperty"),
-      t("recruitment.studentScreens.agreementScreen.sectionIntellectualPropertyText"),
-    ],
-    [
-      t("recruitment.studentScreens.agreementScreen.sectionConduct"),
-      t("recruitment.studentScreens.agreementScreen.sectionConductText"),
-    ],
-    [
-      t("recruitment.studentScreens.agreementScreen.sectionHours"),
-      t("recruitment.studentScreens.agreementScreen.sectionHoursText"),
-    ],
-    [
-      t("recruitment.studentScreens.agreementScreen.sectionTermination"),
-      t("recruitment.studentScreens.agreementScreen.sectionTerminationText"),
-    ],
-  ];
-  if (signed)
-    return (
-      <div>
-        <PageTitle
-          title={t("recruitment.studentScreens.agreementScreen.title")}
-          subtitle={t("recruitment.studentScreens.agreementScreen.subtitle")}
-        />
-        <Panel className="min-h-[420px] text-center">
-          <span className="mx-auto mt-2 flex size-14 items-center justify-center rounded-full bg-[#B272D0] text-white">
-            <Check className="size-7" />
-          </span>
-          <h2 className="mt-3 text-[22px] font-bold">{t("recruitment.studentScreens.agreementScreen.signed")}</h2>
-          <p className="mt-1 text-[14px] text-[#62596C]">
-            {t("recruitment.studentScreens.agreementScreen.agreementName")}</p>
-          <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-[#DDF8EA] px-3 py-1 text-[12px] font-semibold text-[#087544]">
-            {t("recruitment.studentScreens.agreementScreen.statusCompleted")}</span>
-          <hr className="my-5 border-[#E9DDF0]" />
-          <Link
-            to={`${ROUTES.recruitment}/completion`}
-            className={`${purpleButton} mx-auto`}
-          >
-            {t("recruitment.studentScreens.agreementScreen.continue")}</Link>
-        </Panel>
-      </div>
-    );
+
   return (
     <div>
-      <PageTitle
-        title={t("recruitment.studentScreens.agreementScreen.title")}
-        subtitle={t("recruitment.studentScreens.agreementScreen.subtitle")}
-      />
-      <div className="mb-4 flex items-center gap-2 rounded-xl bg-[#F1E5FA] px-4 py-3 text-[13px] text-[#3F1D51]">
-        <span className="text-[18px]">ⓘ</span>{t("recruitment.studentScreens.agreementScreen.bothSign")}</div>
-      <Panel className="overflow-hidden p-0">
-        <div className="flex items-center gap-3 bg-[#F1E5FA] px-4 py-4">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-white/70 text-[#4B1D61]">
-            <FileText className="size-4" />
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-[11px] font-bold tracking-[1.5px] text-[#7C3AED] uppercase">
+            {t('recruitment.shell.brandName', 'RECRUITMENT')}
+          </p>
+          <h1 className="mt-1 text-[26px] font-bold tracking-[-0.02em] text-[#111827] sm:text-[30px]">
+            Liability agreement
+          </h1>
+          <p className="mt-1 text-[14px] text-[#64748B]">
+            Track signatures before the partner project can begin.
+          </p>
+        </div>
+        <div className="shrink-0 pt-1">
+          <span className="inline-flex min-h-[28px] items-center justify-center rounded-full bg-[#FEF3C7] px-4 text-[12px] font-bold text-[#B45309]">
+            Waiting for employer signature
           </span>
-          <div className="flex-1">
-            <h2 className="text-[14px] font-bold">
-              {t("recruitment.studentScreens.agreementScreen.documentTitle")}</h2>
-            <p className="text-[12px] text-[#6F637A]">
-              {t("recruitment.studentScreens.agreementScreen.version")}</p>
-          </div>
-          <span className="rounded-full bg-[#FFF1C9] px-3 py-1 text-[12px] font-semibold text-[#935A00]">
-            {t("recruitment.studentScreens.agreementScreen.pending")}</span>
         </div>
-        <div className="p-4 sm:p-5">
-          <p className="max-w-[740px] text-[14px] leading-5 text-[#51465B]">
-            {t("recruitment.studentScreens.agreementScreen.summary")}</p>
-          <ul className="mt-3 space-y-2">
-            {[
-              t("recruitment.studentScreens.agreementScreen.confidentiality"),
-              t("recruitment.studentScreens.agreementScreen.ip"),
-              t("recruitment.studentScreens.agreementScreen.hours"),
-              t("recruitment.studentScreens.agreementScreen.conduct"),
-              t("recruitment.studentScreens.agreementScreen.termination"),
-            ].map((item) => (
-              <li className="flex items-center gap-2 text-[13px]" key={item}>
-                <Check className="size-3 text-[#4B1D61]" />
-                {item}
-              </li>
-            ))}
-          </ul>
-          <button
-            className="mt-3 text-[13px] font-semibold text-[#4B1D61]"
-            type="button"
-            onClick={() => setExpanded((value) => !value)}
-          >
-            {expanded ? t("recruitment.studentScreens.agreementScreen.hideFull") : t("recruitment.studentScreens.agreementScreen.viewFull")}
-          </button>
-          {expanded ? (
-            <div className="mt-3 max-h-[230px] space-y-2 overflow-auto rounded-xl bg-[#F1E5FA] p-4">
-              {sections.map(([title, text], index) => (
-                <p className="text-[12px] leading-4 text-[#51465B]" key={title}>
-                  <b>
-                    {index + 1}. {title}.
-                  </b>{" "}
-                  {text}
-                </p>
-              ))}
+      </div>
+
+      {/* Job & Candidate Card */}
+      <section className="mt-6 flex flex-col gap-4 rounded-[22px] border border-white/80 bg-white p-5 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.12)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="flex size-13 shrink-0 items-center justify-center rounded-[16px] bg-[linear-gradient(145deg,#0891B2_0%,#22B8CF_100%)] text-[18px] font-bold text-white shadow-sm">
+            D
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-[17px] font-bold text-[#111827]">UI/UX Designer</h2>
+            <p className="mt-0.5 text-[14px] text-[#64748B]">DesignCraft Agency · Alexandria</p>
+            <p className="mt-1 text-[13px] text-[#64748B]">
+              UI/UX Designer · Internship · Hybrid · 3 months · starts Nov 1, 2026
+            </p>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-3 border-t border-[#E9DCF8] pt-3 sm:border-s sm:border-t-0 sm:ps-5 sm:pt-0">
+          <span className="flex size-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#925DA8_0%,#C592FB_100%)] text-[13px] font-bold text-white shadow-sm">
+            MA
+          </span>
+          <div className="flex flex-col">
+            <span className="text-[14px] font-bold text-[#111827]">Merna Adel</span>
+            <span className="text-[12px] text-[#64748B]">87% · Cohort 12</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Signature Progress Card */}
+      <section className="mt-5 rounded-[22px] border border-white/80 bg-white p-6 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.12)]">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[11px] font-bold tracking-[1.4px] text-[#7C3AED] uppercase">
+              SIGNATURE PROGRESS
+            </p>
+            <h2 className="mt-1 text-[20px] font-bold text-[#111827]">One signature remaining</h2>
+          </div>
+          <p className="text-[13px] font-medium text-[#64748B]">1 of 2 complete</p>
+        </div>
+
+        <div className="mt-5 space-y-3">
+          {/* Merna Adel row */}
+          <div className="flex min-h-[64px] items-center gap-3.5 rounded-[16px] bg-[#FAF7FD] px-4 py-3 sm:px-5">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#DCFCE7] text-[13px] font-bold text-[#16A34A]">
+              ✓
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[14px] font-bold text-[#111827]">Merna Adel</p>
+              <p className="mt-0.5 text-[12px] text-[#64748B]">Student · Signed Oct 28, 2026</p>
             </div>
-          ) : null}
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <button
-              className={`${purpleButton} flex-1`}
-              type="button"
-              onClick={() => {
-                setExpanded(true);
-                setSigned(true);
-              }}
-            >
-              {t("recruitment.studentScreens.agreementScreen.sign")}</button>
-            <button
-              className={paleButton}
-              type="button"
-              onClick={() => setExpanded((value) => !value)}
-            >
-              {t("recruitment.studentScreens.agreementScreen.view")}</button>
+            <span className="inline-flex min-h-[26px] items-center justify-center rounded-full bg-[#DCFCE7] px-3.5 text-[12px] font-semibold text-[#15803D]">
+              Signed
+            </span>
+          </div>
+
+          {/* DesignCraft Agency row */}
+          <div className="flex min-h-[64px] items-center gap-3.5 rounded-[16px] bg-[#FAF7FD] px-4 py-3 sm:px-5">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#FEF3C7] text-[13px] font-bold text-[#D97706]">
+              —
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[14px] font-bold text-[#111827]">DesignCraft Agency</p>
+              <p className="mt-0.5 text-[12px] text-[#64748B]">Employer · Signature requested</p>
+            </div>
+            <span className="inline-flex min-h-[26px] items-center justify-center rounded-full bg-[#FEF3C7] px-3.5 text-[12px] font-semibold text-[#B45309]">
+              Pending
+            </span>
           </div>
         </div>
-      </Panel>
+      </section>
+
+      {/* Legal Notice Card */}
+      <section className="mt-5 flex items-start gap-4 rounded-[22px] border border-white/80 bg-white p-6 shadow-[0_12px_28px_-16px_rgba(49,18,67,0.12)]">
+        <div className="w-1 self-stretch rounded-full bg-[#8B5CF6]" />
+        <div>
+          <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[11px] font-semibold text-[#4B5563]">
+            Legal notice
+          </span>
+          <h2 className="mt-2 text-[16px] font-bold text-[#111827]">Agreement text pending legal approval</h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-[#64748B]">
+            No legal terms are displayed until approved wording is available.
+          </p>
+        </div>
+      </section>
+
+      {/* Project start is blocked Callout Box */}
+      <section className="mt-5 rounded-[22px] border border-[#FDE68A] bg-[#FFFBEB] p-5 sm:p-6 text-[#92400E]">
+        <h2 className="text-[16px] font-bold text-[#92400E]">Project start is blocked</h2>
+        <p className="mt-1 text-[13px] leading-relaxed text-[#B45309]">
+          The real partner project cannot start until both Merna Adel and DesignCraft Agency have signed.
+        </p>
+      </section>
     </div>
   );
 }
+
 
 type NotificationCategory =
   | "Opportunity"

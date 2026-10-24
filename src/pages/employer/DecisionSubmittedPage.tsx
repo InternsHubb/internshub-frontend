@@ -36,46 +36,45 @@ export function DecisionSubmittedPage() {
   return (
     <div>
       <EmployerPageHeader
-        breadcrumb={t('header.breadcrumb')}
-        title={t('submitted.title')}
-        description={t('submitted.subtitle')}
-        status={<StatusBadge tone="warning">{t('status.awaitingAdmin')}</StatusBadge>}
+        breadcrumb={t('header.breadcrumb', 'RECRUITMENT')}
+        title={t('submitted.title', 'Decision submitted')}
+        description={t('submitted.subtitle', 'Your recommendation has been sent to InternsHub.')}
+        status={<StatusBadge tone="warning">{t('status.awaitingAdmin', 'Awaiting InternsHub confirmation')}</StatusBadge>}
       />
 
-      <section className={cn('mt-7 flex min-h-[270px] flex-col px-5 pb-6 pt-[50px]', employerCardClass)}>
-        <div className="flex justify-center">
-          <span className="flex size-16 items-center justify-center rounded-full bg-[#DFF8ED] text-[#087A50]">
-            <CheckCheck className="size-7" strokeWidth={2} />
-          </span>
-        </div>
-        <p className="mt-5 text-[8px] font-bold tracking-[1.3px] text-[#3A0353] uppercase">
-          {t('submitted.eyebrow')}
+      <section className={cn('mt-6 flex min-h-[260px] flex-col items-center justify-center p-8 text-center', employerCardClass)}>
+        <span className="flex size-16 items-center justify-center rounded-full bg-[#DCFCE7] text-[#16A34A] shadow-sm">
+          <CheckCheck className="size-8" strokeWidth={2.2} />
+        </span>
+        <p className="mt-5 text-[11px] font-bold tracking-[1.4px] text-[#7C3AED] uppercase">
+          {t('submitted.eyebrow', 'SUBMITTED SUCCESSFULLY')}
         </p>
-        <h2 className="mt-2 max-w-[560px] text-[20px] font-bold leading-[26px] tracking-[-0.02em] text-[#111827]">
-          {t('submitted.heading')}
+        <h2 className="mt-2 text-[24px] font-bold leading-tight tracking-[-0.02em] text-[#111827]">
+          {t('submitted.heading', 'Awaiting InternsHub confirmation')}
         </h2>
-        <p className="mx-auto mt-4 max-w-[530px] text-center text-[10px] leading-[17px] text-[#475569]">
-          {t('submitted.body')}
+        <p className="mt-3 max-w-[560px] text-[14px] leading-relaxed text-[#64748B]">
+          {t('submitted.body', 'The Admin team must review and confirm the employer recommendation before any placement is considered confirmed.')}
         </p>
       </section>
 
-      <div className="mt-4">
+      <div className="mt-5">
         <EmployerJobCard candidate={context.candidate} opportunity={context.opportunity} />
       </div>
 
-      <section className={cn('mt-4 flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center', employerCardClass)}>
+      <section className={cn('mt-5 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between', employerCardClass)}>
         <div className="min-w-0 flex-1">
-          <h2 className="text-[12px] font-bold text-[#111827]">{t('submitted.nextTitle')}</h2>
-          <p className="mt-1 text-[9px] leading-4 text-[#475569]">{t('submitted.nextBody')}</p>
+          <h2 className="text-[16px] font-bold text-[#111827]">{t('submitted.nextTitle', 'What happens next?')}</h2>
+          <p className="mt-1 text-[14px] leading-relaxed text-[#64748B]">{t('submitted.nextBody', 'InternsHub will review the decision, agreement readiness, and required process. You will be notified when the outcome changes.')}</p>
         </div>
         <Link
           to={EMPLOYER_ROUTES.pipeline}
           className={cn(employerPrimaryButtonClass, 'self-start whitespace-nowrap sm:self-auto')}
         >
-          {t('submitted.return')}
-          <ArrowRight className="size-3.5 rtl:rotate-180" strokeWidth={2} />
+          {t('submitted.return', 'Return to Pipeline')}
+          <ArrowRight className="size-4 rtl:rotate-180" strokeWidth={2} />
         </Link>
       </section>
     </div>
   );
 }
+
