@@ -319,7 +319,7 @@ export const CourseQuizPage: React.FC = () => {
               Maya Johnson
             </span>
             <span className="font-normal text-[12px] leading-[16px] text-[#6B7280] truncate">
-              AI track - 6 Month Plan
+              AI track - 12 Month Plan
             </span>
           </div>
         </div>

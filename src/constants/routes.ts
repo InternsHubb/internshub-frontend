@@ -20,6 +20,7 @@ export const ROUTES = {
   // Must match the redirect URI registered in the Azure app registration.
   microsoftCallback: '/auth/microsoft/callback',
   courses6m: '/courses-6m',
+  courses12m: '/courses-12m',
   courseDetails: '/courses/:id',
   courseDetailsDefault: '/course-details',
   courseVideo: '/courses/:id/video',

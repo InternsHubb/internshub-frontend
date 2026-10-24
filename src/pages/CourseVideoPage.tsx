@@ -475,7 +475,7 @@ export const CourseVideoPage: React.FC = () => {
                   Maya Johnson
                 </span>
                 <span className="font-normal text-[12px] leading-[16px] text-[#6B7280] truncate">
-                  AI track - 6 Month Plan
+                  AI track - 12 Month Plan
                 </span>
               </div>
             </div>
@@ -490,7 +490,7 @@ export const CourseVideoPage: React.FC = () => {
               if (id) {
                 navigate(`/courses/${id}?enrolled=true`);
               } else {
-                navigate(ROUTES.courses6m);
+                navigate(ROUTES.courses12m);
               }
             }}
             className="size-[34px] flex items-center justify-center rounded-full hover:bg-purple-100/60 active:scale-95 transition-all cursor-pointer group"

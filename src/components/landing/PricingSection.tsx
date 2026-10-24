@@ -149,7 +149,14 @@ export const PricingSection: React.FC = () => {
 
                 {/* Action Button */}
                 <div className="pt-8 w-full mt-auto">
-                  {plan.id === '6m' ? (
+                  {plan.id === '12m' ? (
+                    <Link
+                      to={ROUTES.courses12m}
+                      className="w-full h-[56px] rounded-full border border-[#5a198f] text-[#5a198f] group-hover:bg-[#5a198f] group-hover:text-white group-hover:shadow-[0px_10px_15px_-3px_#bfdbfe] transition-all duration-300 font-bold text-[18px] flex items-center justify-center active:scale-98"
+                    >
+                      {plan.btnText}
+                    </Link>
+                  ) : plan.id === '6m' ? (
                     <Link
                       to={ROUTES.courses6m}
                       className="w-full h-[56px] rounded-full border border-[#5a198f] text-[#5a198f] group-hover:bg-[#5a198f] group-hover:text-white group-hover:shadow-[0px_10px_15px_-3px_#bfdbfe] transition-all duration-300 font-bold text-[18px] flex items-center justify-center active:scale-98"

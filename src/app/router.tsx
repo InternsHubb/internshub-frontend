@@ -52,6 +52,7 @@ const MicrosoftCallback = lazy(
   () => import('@/pages/auth/MicrosoftCallback')
 );
 const Courses6mPage = lazy(() => import('@/pages/Courses6mPage'));
+const Courses12mPage = lazy(() => import('@/pages/Courses12mPage'));
 const CourseDetailsPage = lazy(() => import('@/pages/CourseDetailsPage'));
 const CourseVideoPage = lazy(() => import('@/pages/CourseVideoPage'));
 const CourseQuizPage = lazy(() => import('@/pages/CourseQuizPage'));
@@ -191,8 +192,12 @@ export const router = createBrowserRouter(
           element: <Courses6mPage />,
         },
         {
+          path: ROUTES.courses12m,
+          element: <Courses12mPage />,
+        },
+        {
           path: '/courses',
-          element: <Courses6mPage />,
+          element: <Courses12mPage />,
         },
         {
           path: ROUTES.courseDetails,
