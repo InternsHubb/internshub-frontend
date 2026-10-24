@@ -1,0 +1,23 @@
+{
+  "terms": [
+    { "id": "profile-visibility", "required": true },
+    { "id": "withdrawal", "required": true }
+  ],
+  "visibleFields": [
+    "name",
+    "role",
+    "skills",
+    "compositeScore",
+    "cohort",
+    "portfolio",
+    "approvedExperience"
+  ],
+  "privateFields": [
+    "phoneNumber",
+    "personalEmail",
+    "address",
+    "privateNotes",
+    "internalAssessments"
+  ],
+  "consented": false
+}

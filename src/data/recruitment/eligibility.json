@@ -1,0 +1,10 @@
+{
+  "score": 74,
+  "threshold": 80,
+  "isSample": true,
+  "reasons": [
+    { "id": "courses" },
+    { "id": "performance" },
+    { "id": "mentor" }
+  ]
+}
