@@ -49,6 +49,10 @@ const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
 const MicrosoftCallback = lazy(
   () => import('@/pages/auth/MicrosoftCallback')
 );
+const Courses6mPage = lazy(() => import('@/pages/Courses6mPage'));
+const CourseDetailsPage = lazy(() => import('@/pages/CourseDetailsPage'));
+const CourseVideoPage = lazy(() => import('@/pages/CourseVideoPage'));
+const CourseQuizPage = lazy(() => import('@/pages/CourseQuizPage'));
 
 // Student dashboard pages
 const DashboardLayout = lazy(() => import('@/components/layout/DashboardLayout'));
@@ -205,6 +209,38 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.home,
           element: <LandingPage />,
+        },
+        {
+          path: ROUTES.courses6m,
+          element: <Courses6mPage />,
+        },
+        {
+          path: '/courses',
+          element: <Courses6mPage />,
+        },
+        {
+          path: ROUTES.courseDetails,
+          element: <CourseDetailsPage />,
+        },
+        {
+          path: ROUTES.courseDetailsDefault,
+          element: <CourseDetailsPage />,
+        },
+        {
+          path: ROUTES.courseVideo,
+          element: <CourseVideoPage />,
+        },
+        {
+          path: ROUTES.courseVideoDefault,
+          element: <CourseVideoPage />,
+        },
+        {
+          path: ROUTES.courseQuiz,
+          element: <CourseQuizPage />,
+        },
+        {
+          path: ROUTES.courseQuizDefault,
+          element: <CourseQuizPage />,
         },
         {
           path: `${ROUTES.internship}/*`,
