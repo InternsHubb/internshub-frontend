@@ -26,6 +26,7 @@ import LandingPage from '@/pages/LandingPage';
 //   /dashboard/*      student dashboard              DashboardLayout
 //   /recruitment/*    student recruitment (PR #31)   RecruitmentLayout, requires sign-in
 //   /employer/*       employer decision/agreement flow (PR #32), EmployerLayout, requires sign-in
+//   /mentorship/*     mentorship dashboard & booking flow MentorshipLayout
 // The legacy employer prototype (PR #30) keeps only the /employer sub-paths listed in its group
 // below; it does not own /employer itself. Keep a single route tree in createBrowserRouter:
 // pasting a second tree or a second /employer index/catch-all is what broke dev before.
@@ -132,6 +133,17 @@ const OpportunitySent = lazy(
   () => import('@/pages/employer/OpportunitySent')
 );
 
+// Mentorship feature code-split routes
+const MentorshipLayout = lazy(() => import('@/pages/mentorship/MentorshipLayout'));
+const MentorshipDashboard = lazy(() => import('@/pages/mentorship/MentorshipDashboard'));
+const MentorsPage = lazy(() => import('@/pages/mentorship/MentorsPage'));
+const MentorProfilePage = lazy(() => import('@/pages/mentorship/MentorProfilePage'));
+const ConfirmBookingPage = lazy(() => import('@/pages/mentorship/ConfirmBookingPage'));
+const BookingSuccessPage = lazy(() => import('@/pages/mentorship/BookingSuccessPage'));
+const SessionDetailsPage = lazy(() => import('@/pages/mentorship/SessionDetailsPage'));
+const SessionCancelledPage = lazy(() => import('@/pages/mentorship/SessionCancelledPage'));
+const SessionFeedbackPage = lazy(() => import('@/pages/mentorship/SessionFeedbackPage'));
+
 const PageFallback: React.FC = () => (
   <div className="flex min-h-screen items-center justify-center bg-white">
     <div className="size-8 animate-spin rounded-full border-3 border-purple-600 border-t-transparent" />
@@ -201,6 +213,22 @@ export const router = createBrowserRouter(
                 { path: 'plans', element: <PlansPage /> },
               ],
             },
+          ],
+        },
+
+        // Mentorship Flow
+        {
+          path: ROUTES.mentorship,
+          element: <MentorshipLayout />,
+          children: [
+            { index: true, element: <MentorshipDashboard /> },
+            { path: 'mentors', element: <MentorsPage /> },
+            { path: 'mentors/:id', element: <MentorProfilePage /> },
+            { path: 'book/confirm', element: <ConfirmBookingPage /> },
+            { path: 'book/success', element: <BookingSuccessPage /> },
+            { path: 'sessions/:id', element: <SessionDetailsPage /> },
+            { path: 'sessions/:id/cancelled', element: <SessionCancelledPage /> },
+            { path: 'sessions/:id/feedback', element: <SessionFeedbackPage /> },
           ],
         },
 
