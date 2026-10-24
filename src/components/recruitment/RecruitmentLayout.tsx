@@ -4,6 +4,11 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { RecruitmentSidebar } from './RecruitmentSidebar';
 import { RecruitmentTopBar } from './RecruitmentTopBar';
 
+// Layout of the student recruitment flow (PR #31), which owns /recruitment; the router wraps it
+// in RequireAuth. Student-facing (eligibility, Talent Directory consent, applications,
+// agreements), separate from the employer flows. Pages load local JSON (src/data/recruitment)
+// through the services in lib/recruitment; there is no recruitment API yet.
+
 export default function RecruitmentLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { pathname } = useLocation();
