@@ -1,0 +1,193 @@
+{
+  "brand": {
+    "portal": "بوابة جهة التوظيف",
+    "recruitment": "التوظيف"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "talentDirectory": "دليل المواهب",
+    "shortlist": "القائمة المختصرة",
+    "pipeline": "مسار التوظيف",
+    "interviews": "المقابلات",
+    "completion": "الإكمال"
+  },
+  "sidebar": {
+    "switchToStudent": "التبديل إلى عرض الطالب"
+  },
+  "topbar": {
+    "notifications": "الإشعارات",
+    "notificationsUnavailable": "الإشعارات غير متاحة في هذا العرض التجريبي.",
+    "dark": "الوضع الداكن",
+    "darkUnavailable": "الوضع الداكن غير متاح في هذا العرض التجريبي."
+  },
+  "header": {
+    "breadcrumb": "التوظيف"
+  },
+  "common": {
+    "loading": "جارٍ التحميل",
+    "error": "حدث خطأ أثناء تحميل هذه الصفحة.",
+    "retry": "إعادة المحاولة",
+    "notProvided": "غير متوفر",
+    "required": "جميع الحقول المعلّمة بـ * مطلوبة",
+    "cancel": "إلغاء"
+  },
+  "candidate": {
+    "summary": "{{percent}}% الدفعة {{cohort}}"
+  },
+  "meta": {
+    "internship": "تدريب",
+    "hybrid": "هجين",
+    "duration": "{{count}} أشهر",
+    "starts": "يبدأ {{date}}"
+  },
+  "status": {
+    "scheduled": "مجدول",
+    "awaitingAdmin": "بانتظار تأكيد InternsHub",
+    "agreementSigned": "تم توقيع الاتفاقية",
+    "waitingStudent": "بانتظار توقيع الطالب",
+    "completed": "مكتمل",
+    "confirmed": "مؤكد من InternsHub"
+  },
+  "pipeline": {
+    "title": "مسار التوظيف",
+    "subtitle": "راجع المتقدمين حسب مرحلة التوظيف الحالية.",
+    "stageEyebrow": "المرحلة المحددة",
+    "stageNames": {
+      "all": "الكل",
+      "applied": "تم التقديم",
+      "screening": "الفرز",
+      "interview": "المقابلة",
+      "decision": "القرار",
+      "agreement": "الاتفاقية"
+    },
+    "filters": {
+      "all": "الكل {{count}}",
+      "applied": "تم التقديم {{count}}",
+      "screening": "الفرز {{count}}",
+      "interview": "المقابلة {{count}}",
+      "decision": "القرار {{count}}",
+      "agreement": "الاتفاقية {{count}}"
+    },
+    "stageSummary": {
+      "interview": "{{count}} متقدم بحاجة إلى متابعة المقابلة.",
+      "all": "{{count}} متقدم ظاهر عبر جميع المراحل.",
+      "empty": "لا يوجد متقدمون في هذه المرحلة حالياً."
+    },
+    "schedule": "جدولة المقابلة",
+    "columns": {
+      "candidate": "المتقدم",
+      "opportunity": "الفرصة",
+      "interview": "المقابلة",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "opportunityMeta": "{{type}} • {{mode}} • {{duration}}",
+    "emptyTitle": "هذه المرحلة فارغة",
+    "emptyBody": "لا توجد سجلات متقدمين لهذه المرحلة. جرّب مرحلة أخرى للمتابعة.",
+    "viewInterview": "عرض المقابلة",
+    "recordDecision": "تسجيل القرار"
+  },
+  "schedule": {
+    "title": "جدولة المقابلة",
+    "subtitle": "نسّق مقابلة المتقدم وأرسل التفاصيل المؤكدة.",
+    "eyebrow": "تفاصيل المقابلة",
+    "heading": "حدد الموعد",
+    "date": "التاريخ *",
+    "startTime": "وقت البدء *",
+    "timeZone": "المنطقة الزمنية *",
+    "duration": "المدة *",
+    "mode": "طريقة المقابلة *",
+    "interviewer": "المحاور *",
+    "meetingLink": "رابط الاجتماع *",
+    "notes": "ملاحظات",
+    "timeZoneValue": "EET (UTC+2)",
+    "durationValue": "45 دقيقة",
+    "modeValue": "Google Meet",
+    "complete": "جميع الحقول المطلوبة مكتملة. موعد المقابلة: {{date}} {{time}} (EET).",
+    "incomplete": "أكمل جميع الحقول المطلوبة لجدولة المقابلة.",
+    "submit": "جدولة المقابلة",
+    "errors": {
+      "date": "اختر تاريخ المقابلة.",
+      "startTime": "اختر وقت البدء.",
+      "timezone": "اختر المنطقة الزمنية.",
+      "duration": "اختر المدة.",
+      "mode": "اختر طريقة المقابلة.",
+      "interviewer": "أدخل اسم المحاور.",
+      "meetingLink": "أدخل رابط اجتماع صالحاً."
+    }
+  },
+  "decision": {
+    "title": "قرار جهة التوظيف",
+    "subtitle": "أرسل توصية لمراجعة فريق إدارة InternsHub.",
+    "eyebrow": "قرار المتقدم",
+    "heading": "اختر النتيجة",
+    "adminBadge": "مطلوب تأكيد الإدارة",
+    "selectTitle": "اختيار المتقدم",
+    "selectBody": "التوصية باختيار {{name}} لهذه الفرصة.",
+    "rejectTitle": "رفض المتقدم",
+    "rejectBody": "التوصية بإغلاق طلب هذا المتقدم.",
+    "reasonLabel": "سبب القرار *",
+    "reasonPlaceholder": "قدّم سبباً واضحاً لفريق إدارة InternsHub...",
+    "internalOnly": "للاستخدام الداخلي فقط",
+    "internalBody": "يُشارك هذا السبب مع فريق إدارة InternsHub ولا يظهر للطالب كملاحظات داخلية.",
+    "review": "مراجعة القرار",
+    "errors": {
+      "reasonRequired": "قدّم سبباً لهذا القرار."
+    }
+  },
+  "submitted": {
+    "title": "تم إرسال القرار",
+    "subtitle": "تم إرسال توصيتك إلى InternsHub.",
+    "eyebrow": "تم الإرسال بنجاح",
+    "heading": "بانتظار تأكيد InternsHub",
+    "body": "يجب أن يراجع فريق الإدارة توصية جهة التوظيف ويؤكدها قبل اعتبار أي توظيف مؤكداً.",
+    "nextTitle": "ما الخطوة التالية؟",
+    "nextBody": "ستراجع InternsHub القرار وجاهزية الاتفاقية والإجراءات المطلوبة. سيتم إشعارك عند تغيّر النتيجة.",
+    "return": "العودة إلى مسار التوظيف"
+  },
+  "agreement": {
+    "title": "اتفاقية المشروع المشترك",
+    "subtitle": "راجع جاهزية التوقيع لـ {{name}}.",
+    "statusEyebrow": "حالة الاتفاقية",
+    "studentPending": "توقيع الطالب معلّق",
+    "bothSigned": "وقّع الطرفان",
+    "signatureCount": "اكتمل {{completed}} من {{total}}",
+    "signed": "موقّع",
+    "pending": "معلّق",
+    "employerMeta": "جهة التوظيف • وقّعها {{name}}",
+    "studentPendingMeta": "الطالب • تم طلب التوقيع",
+    "studentSignedMeta": "الطالب • اكتمل التوقيع",
+    "legalEyebrow": "إشعار قانوني",
+    "legalTitle": "نص الاتفاقية بانتظار الموافقة القانونية",
+    "legalBody": "لا تُعرض أي شروط قانونية حتى يتوفر النص المعتمد.",
+    "blockedTitle": "المشروع ما زال متوقفاً",
+    "blockedBody": "لا يمكن أن يبدأ المشروع المشترك الفعلي حتى يوقّع الطرفان.",
+    "completeTitle": "الاتفاقية مكتملة - جاهزة لمراجعة البدء الرسمي",
+    "completeBody": "اكتمل التوقيع، لكن هذا لا يعني أن المشروع أو التوظيف قد اكتمل. تابع فقط عند استيفاء جميع شروط البدء الرسمي."
+  },
+  "completion": {
+    "title": "الإكمال",
+    "subtitle": "نتائج التوظيف المؤكدة وسجلات التوظيف المكتملة.",
+    "demoBadge": "بيانات تجريبية",
+    "summary": {
+      "confirmed": "عمليات توظيف مؤكدة",
+      "pending": "بانتظار التأكيد",
+      "shown": "السجلات المعروضة"
+    },
+    "recordEyebrow": "سجل تجريبي",
+    "recordTitle": "سجلات التوظيف",
+    "recordBadge": "تجريبي",
+    "columns": {
+      "candidate": "المتقدم",
+      "employer": "جهة التوظيف",
+      "role": "الدور",
+      "duration": "المدة",
+      "status": "الحالة",
+      "action": "الإجراء"
+    },
+    "confirmedBy": "مؤكد من InternsHub",
+    "viewRecord": "عرض السجل",
+    "viewRecordUnavailable": "تفاصيل السجل غير متاحة في هذا العرض التجريبي.",
+    "demoFootnote": "بيانات تجريبية فقط. لا تتضمن راتباً أو تواريخ توظيف أو أي مقاييس غير متوفرة."
+  }
+}
