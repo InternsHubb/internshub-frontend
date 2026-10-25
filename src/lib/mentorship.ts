@@ -6,6 +6,7 @@ import type {
   PackageDto,
   TrackSummaryDto,
 } from '@/lib/api/types';
+import { safeHttpUrl } from '@/lib/url';
 import type { Mentor, MentorSlot, MentorshipBalance, MentorshipSession } from '@/types/mentorship';
 
 // Pure mapping from the mentors, bookings and packages API to the mentorship screens' models.
@@ -20,17 +21,6 @@ export function currentEnrollment(enrollments: EnrollmentDto[]): EnrollmentDto |
   const active = live.find((item) => item.status === 'Active');
   if (active) return active;
   return [...live].sort((a, b) => b.chosenAt.localeCompare(a.chosenAt))[0] ?? null;
-}
-
-// Only http(s) links are used as hrefs.
-export function safeMeetingUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === 'https:' || parsed.protocol === 'http:' ? parsed.toString() : null;
-  } catch {
-    return null;
-  }
 }
 
 function pad(value: number): string {
@@ -120,7 +110,7 @@ export function toSession(booking: MentorBookingDto, language: string, now: numb
     time: formatted.time,
     duration: formatted.duration,
     status,
-    meetingUrl: safeMeetingUrl(booking.meetingUrl),
+    meetingUrl: safeHttpUrl(booking.meetingUrl),
     cancelledAt: booking.cancelledAt,
     isLateCancellation: isLateCancellation(booking),
   };

@@ -1228,13 +1228,25 @@
     },
     "project": {
       "yourProject": "Your project",
-      "durationLabel": "Project Duration:",
-      "durationValue_one": "{{count}} Sprint · 1 week each",
-      "durationValue_other": "{{count}} Sprints · 1 week each",
-      "startsSoon": "Everything is set. The Senior will start the project soon.",
+      "squadProject": "{{track}} squad project",
+      "summary": "Your squad builds a real project in weekly sprints, led and reviewed by your Senior.",
+      "startsSoon": "Your Senior will start the project once the squad is ready.",
+      "open": "Open project",
       "active": "Active",
+      "completed": "Completed",
       "teamLabel": "Project team",
-      "teamLeader": "Team Leader"
+      "teamLeader": "Team Leader",
+      "notStartedTitle": "Your project hasn't started yet",
+      "notStartedBody": "The project opens here once your Senior starts your squad.",
+      "backToInternship": "Back to My Internship"
+    },
+    "internship": {
+      "loading": "Loading your internship…",
+      "loadError": "We couldn't load your internship.",
+      "retry": "Try again",
+      "noneTitle": "Your internship hasn't started yet",
+      "noneBody": "Choose a package and finish onboarding to join the internship.",
+      "noneCta": "Continue onboarding"
     },
     "review": {
       "title": "Interview in Review",
@@ -1250,9 +1262,6 @@
       "track": "TRACK",
       "packageLabel": "PACKAGE",
       "level": "LEVEL",
-      "levels": {
-        "intermediate": "Intermediate"
-      },
       "months_one": "{{count}} Month",
       "months_other": "{{count}} Months",
       "since": "Waiting since {{date}}",
@@ -1287,9 +1296,10 @@
     },
     "github": {
       "placeholder": "Please enter your GitHub username",
-      "missing": "You can’t join a squad without adding your GitHub username first.",
       "usernameLabel": "GitHub username",
       "save": "Save Username",
+      "saving": "Saving…",
+      "saveError": "We couldn't save your username.",
       "edit": "Edit Username",
       "add": {
         "title": "Add Your GitHub Username",
@@ -1313,10 +1323,10 @@
       "seniorRole": "role : Team Leader",
       "readinessTitle": "<purple>Squad</purple> Readiness",
       "seatsFilled": "Seats filled",
-      "membersReady": "Member ready",
-      "readyCount": "{{value}}/{{max}} Ready",
       "seats": "{{value}}/{{max}} Seats",
-      "ready": "Ready",
+      "seniorPending": "Senior to be assigned",
+      "startsWhenReady": "Your Senior starts the squad once every seat is filled.",
+      "started": "Your squad has started. Open the project to see your sprint.",
       "emptySeatName": "Member {{number}}",
       "emptySeatTrack": "TRACK {{number}}",
       "emptySeatGithub": "Username",
@@ -1324,9 +1334,8 @@
       "github": "GitHub",
       "gmail": "Gmail",
       "notice": {
-        "pressReady": "your squad cannot start until you press ready.",
-        "youAreReady": "You are ready. Waiting for the rest of the squad and the Senior.",
-        "allSet": "Everything is set. The Senior will start the project soon."
+        "forming": "Your squad is forming. Your Senior will start it soon.",
+        "allSet": "Your squad has started. Your project is open."
       }
     },
     "layout": {
@@ -1335,31 +1344,34 @@
     "sprint": {
       "select": "Select sprint",
       "current": "Sprint {{number}} — Current",
+      "option": "Sprint {{number}}",
       "title": "Sprints {{number}}",
       "dates": "{{start}} - {{end}}",
       "daysLeft_one": "{{count}} day left",
       "daysLeft_other": "{{count}} days left",
-      "goalLabel": "Sprint Goal",
+      "statuses": {
+        "Planning": "Planning",
+        "Active": "Active",
+        "Completed": "Completed"
+      },
+      "none": "Your Senior hasn't planned a sprint yet.",
       "tasksDone": "{{done}} of {{total}} tasks done",
       "progressLabel": "Sprint progress",
       "stats": {
         "total": "total tasks",
         "completed": "Completed tasks",
-        "remaining": "Remaining tasks",
-        "storyPoints": "story point"
+        "remaining": "Remaining tasks"
       }
     },
     "links": {
       "title": "Projects Links",
-      "edit": "Edit my link",
-      "editUnavailable": "Editing links isn't available yet."
+      "repository": "Squad repository",
+      "none": "Your squad's repository link will appear here once it's added."
     },
     "tasks": {
       "title": "My Tasks This Sprint",
       "topTasks": "My Top Tasks",
-      "empty": "No tasks assigned to you in this sprint yet.",
-      "taskNumber": "Task #{{id}}",
-      "taskNumberSpaced": "Task # {{id}}",
+      "empty": "No open tasks assigned to you in this sprint.",
       "status": {
         "todo": "to do",
         "inProgress": "In Progress",
@@ -1369,15 +1381,14 @@
     "board": {
       "title": "Task Board",
       "empty": "No tasks here yet.",
-      "readOnly": "Read only",
-      "changesRequested": "Changes requested",
-      "points": "{{count}}pt",
       "moveTask": "Move {{title}}",
       "viewLabel": "Task board view",
-      "mockHint": "Interactive demo: drag a task or choose its status to move it and move it back. Changes are temporary; Backlog is read-only.",
+      "hint": "Drag your tasks or choose their status to move them. A task is completed once your Senior approves it.",
+      "moveError": "We couldn't move the task.",
+      "unassigned": "Unassigned",
+      "pullRequest": "Pull request",
       "tabs": { "mine": "My tasks", "squad": "Squad board" },
       "columns": {
-        "backlog": "Backlog",
         "todo": "Task to do",
         "inProgress": "Tasks in progress",
         "inReview": "Tasks in review",

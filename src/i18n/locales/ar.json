@@ -1240,17 +1240,25 @@
     },
     "project": {
       "yourProject": "مشروعك",
-      "durationLabel": "مدة المشروع:",
-      "durationValue_zero": "لا توجد دورات عمل",
-      "durationValue_one": "دورة عمل واحدة · أسبوع لكل دورة",
-      "durationValue_two": "دورتا عمل · أسبوع لكل دورة",
-      "durationValue_few": "{{count}} دورات عمل · أسبوع لكل دورة",
-      "durationValue_many": "{{count}} دورة عمل · أسبوع لكل دورة",
-      "durationValue_other": "{{count}} دورة عمل · أسبوع لكل دورة",
-      "startsSoon": "كل شيء جاهز. سيبدأ المشرف المشروع قريبًا.",
+      "squadProject": "مشروع فريق {{track}}",
+      "summary": "يبني فريقك مشروعًا حقيقيًا على دورات عمل أسبوعية بقيادة مشرفك ومراجعته.",
+      "startsSoon": "سيبدأ مشرفك المشروع عندما يكتمل الفريق.",
+      "open": "فتح المشروع",
       "active": "نشط",
+      "completed": "مكتمل",
       "teamLabel": "فريق المشروع",
-      "teamLeader": "قائد الفريق"
+      "teamLeader": "قائد الفريق",
+      "notStartedTitle": "لم يبدأ مشروعك بعد",
+      "notStartedBody": "سيفتح المشروع هنا عندما يبدأ مشرفك فريقك.",
+      "backToInternship": "العودة إلى تدريبي العملي"
+    },
+    "internship": {
+      "loading": "جارٍ تحميل تدريبك العملي…",
+      "loadError": "تعذّر تحميل تدريبك العملي.",
+      "retry": "إعادة المحاولة",
+      "noneTitle": "لم يبدأ تدريبك العملي بعد",
+      "noneBody": "اختر باقة وأكمل التسجيل للانضمام إلى التدريب العملي.",
+      "noneCta": "متابعة التسجيل"
     },
     "review": {
       "title": "المقابلة قيد المراجعة",
@@ -1266,9 +1274,6 @@
       "track": "المسار",
       "packageLabel": "الباقة",
       "level": "المستوى",
-      "levels": {
-        "intermediate": "متوسط"
-      },
       "months_zero": "{{count}} شهر",
       "months_one": "شهر واحد",
       "months_two": "شهران",
@@ -1307,9 +1312,10 @@
     },
     "github": {
       "placeholder": "يرجى إدخال اسم المستخدم على GitHub",
-      "missing": "لا يمكنك الانضمام إلى فريق قبل إضافة اسم المستخدم على GitHub.",
       "usernameLabel": "اسم المستخدم على GitHub",
       "save": "حفظ اسم المستخدم",
+      "saving": "جارٍ الحفظ…",
+      "saveError": "تعذّر حفظ اسم المستخدم.",
       "edit": "تعديل اسم المستخدم",
       "add": {
         "title": "أضف اسم المستخدم على GitHub",
@@ -1333,10 +1339,10 @@
       "seniorRole": "الدور: قائد الفريق",
       "readinessTitle": "جاهزية <purple>الفريق</purple>",
       "seatsFilled": "المقاعد المشغولة",
-      "membersReady": "الأعضاء الجاهزون",
-      "readyCount": "{{value}}/{{max}} جاهزون",
       "seats": "{{value}}/{{max}} مقاعد",
-      "ready": "جاهز",
+      "seniorPending": "سيُعيَّن المشرف قريبًا",
+      "startsWhenReady": "يبدأ مشرفك الفريق عندما تمتلئ كل المقاعد.",
+      "started": "بدأ فريقك. افتح المشروع لترى دورة العمل.",
       "emptySeatName": "العضو {{number}}",
       "emptySeatTrack": "المسار {{number}}",
       "emptySeatGithub": "اسم المستخدم",
@@ -1344,9 +1350,8 @@
       "github": "GitHub",
       "gmail": "Gmail",
       "notice": {
-        "pressReady": "لا يمكن لفريقك البدء حتى تضغط على «جاهز».",
-        "youAreReady": "أنت جاهز. بانتظار بقية الفريق والمشرف.",
-        "allSet": "كل شيء جاهز. سيبدأ المشرف المشروع قريبًا."
+        "forming": "يجري تشكيل فريقك. سيبدأه مشرفك قريبًا.",
+        "allSet": "بدأ فريقك. مشروعك مفتوح الآن."
       }
     },
     "layout": {
@@ -1355,6 +1360,7 @@
     "sprint": {
       "select": "اختيار السبرنت",
       "current": "السبرنت {{number}} — الحالي",
+      "option": "السبرنت {{number}}",
       "title": "السبرنت {{number}}",
       "dates": "{{start}} - {{end}}",
       "daysLeft_zero": "لم يتبقَّ أي يوم",
@@ -1363,27 +1369,29 @@
       "daysLeft_few": "تبقّى {{count}} أيام",
       "daysLeft_many": "تبقّى {{count}} يومًا",
       "daysLeft_other": "تبقّى {{count}} يوم",
-      "goalLabel": "هدف السبرنت",
+      "statuses": {
+        "Planning": "قيد التخطيط",
+        "Active": "نشط",
+        "Completed": "مكتمل"
+      },
+      "none": "لم يخطط مشرفك لأي سبرنت بعد.",
       "tasksDone": "أُنجزت {{done}} من {{total}} مهمة",
       "progressLabel": "تقدّم السبرنت",
       "stats": {
         "total": "إجمالي المهام",
         "completed": "المهام المكتملة",
-        "remaining": "المهام المتبقية",
-        "storyPoints": "نقاط القصة"
+        "remaining": "المهام المتبقية"
       }
     },
     "links": {
       "title": "روابط المشروع",
-      "edit": "تعديل رابطي",
-      "editUnavailable": "تعديل الروابط غير متاح بعد."
+      "repository": "مستودع الفريق",
+      "none": "سيظهر رابط مستودع فريقك هنا بعد إضافته."
     },
     "tasks": {
       "title": "مهامي في هذا السبرنت",
       "topTasks": "أهم مهامي",
-      "empty": "لم تُسند إليك مهام في هذا السبرنت بعد.",
-      "taskNumber": "مهمة #{{id}}",
-      "taskNumberSpaced": "مهمة # {{id}}",
+      "empty": "لا توجد مهام مفتوحة مسندة إليك في هذا السبرنت.",
       "status": {
         "todo": "للتنفيذ",
         "inProgress": "قيد التنفيذ",
@@ -1393,15 +1401,14 @@
     "board": {
       "title": "لوحة المهام",
       "empty": "لا توجد مهام هنا بعد.",
-      "readOnly": "للعرض فقط",
-      "changesRequested": "تعديلات مطلوبة",
-      "points": "{{count}} نقطة",
       "moveTask": "نقل {{title}}",
       "viewLabel": "عرض لوحة المهام",
-      "mockHint": "عرض تجريبي تفاعلي: اسحب المهمة أو اختر حالتها لنقلها وإرجاعها. التغييرات مؤقتة، والمهام المؤجلة للعرض فقط.",
+      "hint": "اسحب مهامك أو اختر حالتها لنقلها. تكتمل المهمة بعد موافقة مشرفك عليها.",
+      "moveError": "تعذّر نقل المهمة.",
+      "unassigned": "غير مسندة",
+      "pullRequest": "طلب الدمج",
       "tabs": { "mine": "مهامي", "squad": "لوحة الفريق" },
       "columns": {
-        "backlog": "المهام المؤجلة",
         "todo": "مهام للتنفيذ",
         "inProgress": "مهام قيد التنفيذ",
         "inReview": "مهام قيد المراجعة",

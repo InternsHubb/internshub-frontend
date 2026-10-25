@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 import scrollIcon from '@/assets/dashboard/ic-scroll.svg';
 import projectIllustration from '@/assets/dashboard/illus-project.png';
-import { SAMPLE_PROJECT } from '@/data/internshipDashboard';
+import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/cn';
 
-import { ACTION_BUTTON, CARD } from './primitives';
+import { ACTION_BUTTON, CARD, PURPLE_GRADIENT } from './primitives';
 
 // "Your project" pill (shared by the squad project card and the project page header).
 export function YourProjectPill() {
@@ -18,8 +19,10 @@ export function YourProjectPill() {
   );
 }
 
-// Project card at the bottom of the squad screens ("squad completed", 31:33056).
-export function ProjectSummaryCard() {
+// Project card at the bottom of the squad screens ("squad completed", 31:33056). The API has
+// no project name or description, so the card names the track's squad project. Before the
+// Senior starts the squad it shows a status; afterwards it opens the project page.
+export function ProjectSummaryCard({ trackName, isActive }: { trackName: string; isActive: boolean }) {
   const { t } = useTranslation();
 
   return (
@@ -33,24 +36,21 @@ export function ProjectSummaryCard() {
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-[29px]">
         <div className="flex flex-col gap-4">
           <YourProjectPill />
-          <div className="flex flex-col gap-4">
-            <h2 id="squad-project-title" className="text-2xl font-semibold leading-tight text-black sm:text-[32px]">
-              <bdi>{SAMPLE_PROJECT.name}</bdi>
-            </h2>
-            <p className="text-sm font-medium leading-[15px] text-[#737373]"><bdi>{SAMPLE_PROJECT.description}</bdi></p>
-            <p className="text-sm font-medium leading-[15px] text-black">
-              <span className="text-base font-semibold">{t('dashboard.project.durationLabel')}</span>{' '}
-              {t('dashboard.project.durationValue', { count: SAMPLE_PROJECT.sprintCount })}
-            </p>
-          </div>
+          <h2 id="squad-project-title" className="text-2xl font-semibold leading-tight text-black sm:text-[32px]">
+            <bdi>{t('dashboard.project.squadProject', { track: trackName })}</bdi>
+          </h2>
+          <p className="text-sm font-medium leading-[15px] text-[#737373]">{t('dashboard.project.summary')}</p>
         </div>
-        {/* Status, not an action: the Senior starts the project. */}
-        <p
-          role="status"
-          className={cn(ACTION_BUTTON, 'bg-[#e7e7e7] text-[#676767] drop-shadow-[0_10px_11px_rgba(58,3,83,0.2)]')}
-        >
-          {t('dashboard.project.startsSoon')}
-        </p>
+        {isActive ? (
+          <Link to={ROUTES.dashboardProject} className={cn(ACTION_BUTTON, PURPLE_GRADIENT, 'text-white shadow-[0_10px_22px_rgba(58,3,83,0.2)]')}>
+            {t('dashboard.project.open')}
+          </Link>
+        ) : (
+          // Status, not an action: the Senior starts the project.
+          <p role="status" className={cn(ACTION_BUTTON, 'bg-[#e7e7e7] text-[#676767] drop-shadow-[0_10px_11px_rgba(58,3,83,0.2)]')}>
+            {t('dashboard.project.startsSoon')}
+          </p>
+        )}
       </div>
     </section>
   );

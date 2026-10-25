@@ -5,23 +5,49 @@ import dislikeIcon from '@/assets/dashboard/ic-dislike.svg';
 import githubIcon from '@/assets/dashboard/ic-github.svg';
 import { ACTION_BUTTON, IconHeading, OUTLINE_CARD, PURPLE_GRADIENT } from '@/components/dashboard/primitives';
 import type { GithubStatus } from '@/data/internshipDashboard';
+import { ApiError } from '@/lib/api/client';
+import { apiErrorKey } from '@/lib/api/errors';
+import { updateGithubUsername } from '@/lib/api/profile';
 import { cn } from '@/lib/cn';
+
+// GitHub username card on the waiting screens. Saving sends PUT /api/me/github. The API has no
+// way to read the saved username back, so the card always opens in its "add" state.
 
 const VALID_USERNAME = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i;
 
-export function GithubUsernameCard({ initialStatus, initialUsername, onStatusChange }: { initialStatus: GithubStatus; initialUsername: string; onStatusChange?: (status: GithubStatus, username: string) => void }) {
+export function GithubUsernameCard({ onStatusChange }: { onStatusChange?: (status: GithubStatus) => void }) {
   const { t } = useTranslation();
-  const [status, setStatus] = useState(initialStatus);
-  const [username, setUsername] = useState(initialUsername);
+  const [status, setStatus] = useState<GithubStatus>('add');
+  const [username, setUsername] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [errorKey, setErrorKey] = useState<string | null>(null);
   const invalid = status === 'invalid';
 
-  function saveUsername(event: FormEvent<HTMLFormElement>) {
+  const changeStatus = (next: GithubStatus) => {
+    setStatus(next);
+    onStatusChange?.(next);
+  };
+
+  async function saveUsername(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmedUsername = username.trim();
     setUsername(trimmedUsername);
-    const nextStatus = VALID_USERNAME.test(trimmedUsername) ? 'saved' : 'invalid';
-    setStatus(nextStatus);
-    onStatusChange?.(nextStatus, trimmedUsername);
+    setErrorKey(null);
+    if (!VALID_USERNAME.test(trimmedUsername)) {
+      changeStatus('invalid');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await updateGithubUsername(trimmedUsername);
+      changeStatus('saved');
+    } catch (error) {
+      // The API rejects usernames it can't use with 400.
+      if (error instanceof ApiError && error.status === 400) changeStatus('invalid');
+      else setErrorKey(apiErrorKey(error));
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -34,7 +60,7 @@ export function GithubUsernameCard({ initialStatus, initialUsername, onStatusCha
       <p role={invalid ? 'alert' : 'status'} id="github-feedback" className="mt-2 ps-8 text-xs font-semibold leading-[18px] text-[#828282]">
         {t(`dashboard.github.${status}.hint`)}
       </p>
-      <form onSubmit={saveUsername} className="mt-3 flex flex-col gap-4 sm:ps-[30px]">
+      <form onSubmit={(event) => void saveUsername(event)} className="mt-3 flex flex-col gap-4 sm:ps-[30px]">
         <div className={cn(status !== 'add' && 'flex flex-wrap items-center justify-between gap-2 py-2')}>
           <label htmlFor="github-username" className={cn('text-xs font-semibold', status === 'add' ? 'sr-only' : invalid ? 'flex items-center gap-2 text-[#a10000]' : 'text-[#828282]')}>
             {invalid && <img src={dislikeIcon} alt="" className="h-auto w-6" />}
@@ -46,7 +72,7 @@ export function GithubUsernameCard({ initialStatus, initialUsername, onStatusCha
             value={username}
             placeholder={t('dashboard.github.placeholder')}
             onChange={(event) => setUsername(event.target.value)}
-            readOnly={status !== 'add'}
+            readOnly={status !== 'add' || isSaving}
             aria-invalid={invalid}
             aria-describedby={invalid ? 'github-feedback github-error' : 'github-feedback'}
             autoCapitalize="none"
@@ -56,14 +82,17 @@ export function GithubUsernameCard({ initialStatus, initialUsername, onStatusCha
           />
           {invalid && <p id="github-error" className="w-full text-xs font-medium text-[#828282]">{t('dashboard.github.invalid.error')}</p>}
         </div>
+        {errorKey && <p role="alert" className="text-xs font-semibold text-[#a10000]">{t('dashboard.github.saveError')} {t(errorKey)}</p>}
         {status === 'add' ? (
           // Keys stop React from reusing one <button> for both, which would flip `type` mid-click.
-          <button key="save" type="submit" className={`${ACTION_BUTTON} ${PURPLE_GRADIENT} text-white shadow-[0_10px_22px_rgba(58,3,83,0.2)]`}>{t('dashboard.github.save')}</button>
+          <button key="save" type="submit" disabled={isSaving} className={`${ACTION_BUTTON} ${PURPLE_GRADIENT} text-white shadow-[0_10px_22px_rgba(58,3,83,0.2)] disabled:opacity-60`}>
+            {t(isSaving ? 'dashboard.github.saving' : 'dashboard.github.save')}
+          </button>
         ) : (
           <button
             key="edit"
             type="button"
-            onClick={() => { setStatus('add'); onStatusChange?.('add', username); }}
+            onClick={() => changeStatus('add')}
             className={cn(ACTION_BUTTON, invalid ? 'bg-[#a10000] text-white shadow-[0_10px_22px_rgba(58,3,83,0.2)]' : 'border-2 border-[#42046b] text-black')}
           >
             {t('dashboard.github.edit')}

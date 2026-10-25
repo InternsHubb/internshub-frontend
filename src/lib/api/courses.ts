@@ -3,7 +3,8 @@ import type { CourseDetailDto, CourseSummaryDto, PublicTrackCoursesDto } from '.
 
 export function getCourses(trackId?: string): Promise<CourseSummaryDto[]> {
   const query = trackId ? `?trackId=${encodeURIComponent(trackId)}` : '';
-  return apiRequest<CourseSummaryDto[]>(`/api/courses${query}`);
+  // Signed in, the summaries carry the learner's completedLessonsCount.
+  return apiRequest<CourseSummaryDto[]>(`/api/courses${query}`, { auth: true });
 }
 
 export function getPublicCourses(): Promise<PublicTrackCoursesDto[]> {

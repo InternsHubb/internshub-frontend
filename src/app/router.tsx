@@ -282,7 +282,7 @@ export const router = createBrowserRouter(
           element: <InternshipPage />,
         },
 
-        // Student dashboard: home, internship journey (?state= previews), project, courses and
+        // Student dashboard: home, internship journey, project, courses and
         // plans, inside the shared DashboardLayout. Route `handle` slots customise the layout's
         // sidebar footer and top-bar search. Wrapped in RequireAuth.
         {
