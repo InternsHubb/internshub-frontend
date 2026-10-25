@@ -1,4 +1,6 @@
 import { RequiredCoursesCard } from '@/components/dashboard/RequiredCoursesCard';
+import { useSearchParams } from 'react-router-dom';
+import { internshipPlan } from '@/data/internshipPackages';
 
 import { useInternshipState } from './useInternshipState';
 
@@ -7,6 +9,11 @@ import { useInternshipState } from './useInternshipState';
 export function InternshipSidebarFooter() {
   const { state } = useInternshipState();
   return state.requiredCourses ? <RequiredCoursesCard progress={state.requiredCourses} /> : null;
+}
+
+export function ProjectSidebarFooter() {
+  const [params] = useSearchParams();
+  return internshipPlan(params) === '3m' ? null : <RequiredCoursesCard progress={{ percent: 100, status: 'unlocked' }} />;
 }
 
 export default InternshipSidebarFooter;

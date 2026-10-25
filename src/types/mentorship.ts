@@ -14,6 +14,7 @@ export interface Mentor {
   tracks: string[];
   status: 'Available Slots' | 'No available slots';
   avatarUrl: string;
+  profileAvatarUrl?: string;
   description: string;
   about: string;
   expertise: string[];

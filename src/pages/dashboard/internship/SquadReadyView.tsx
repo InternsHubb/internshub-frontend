@@ -27,13 +27,12 @@ function SeniorCard() {
   );
 }
 
-function ReadinessMetric({ label, count }: { label: string; count: number }) {
-  const { t } = useTranslation();
+function ReadinessMetric({ label, count, countLabel }: { label: string; count: number; countLabel: string }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3 text-base">
         <p>{label}</p>
-        <p className="text-[#828282]">{t('dashboard.squad.seats', { value: count, max: SQUAD_SEATS })}</p>
+        <p className="text-[#828282]">{countLabel}</p>
       </div>
       <ProgressBar value={count} max={SQUAD_SEATS} label={label} />
     </div>
@@ -70,8 +69,8 @@ export function SquadReadyView({ state }: { state: SquadState }) {
               <Trans i18nKey="dashboard.squad.readinessTitle" components={{ purple: <span className="text-[#42046b]" /> }} />
             </h2>
           </IconHeading>
-          <ReadinessMetric label={t('dashboard.squad.seatsFilled')} count={filledSeats} />
-          <ReadinessMetric label={t('dashboard.squad.membersReady')} count={readyCount} />
+          <ReadinessMetric label={t('dashboard.squad.seatsFilled')} count={filledSeats} countLabel={t('dashboard.squad.seats', { value: filledSeats, max: SQUAD_SEATS })} />
+          <ReadinessMetric label={t('dashboard.squad.membersReady')} count={readyCount} countLabel={t('dashboard.squad.readyCount', { value: readyCount, max: SQUAD_SEATS })} />
           <button
             type="button"
             aria-pressed={hasPressedReady}

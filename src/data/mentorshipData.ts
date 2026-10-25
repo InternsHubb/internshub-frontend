@@ -1,3 +1,8 @@
+import aishaPhoto from '@/assets/mentorship/aisha-directory.png';
+import aishaProfilePhoto from '@/assets/mentorship/aisha-profile.png';
+import marcusPhoto from '@/assets/mentorship/marcus.png';
+import elenaPhoto from '@/assets/mentorship/elena.png';
+
 import type { Mentor, MentorshipBalance, MentorshipSession } from '@/types/mentorship';
 
 export const INITIAL_MENTORS: Mentor[] = [
@@ -8,7 +13,8 @@ export const INITIAL_MENTORS: Mentor[] = [
     companySubtitle: 'Senior Product Manager, Google / Ex-Frontend Architect',
     tracks: ['Frontend Development', 'Full Stack'],
     status: 'Available Slots',
-    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    avatarUrl: aishaPhoto,
+    profileAvatarUrl: aishaProfilePhoto,
     description:
       'Specializes in React component systems, career progression for junior engineers, and rigorous technical interview preparation.',
     about:
@@ -58,7 +64,7 @@ export const INITIAL_MENTORS: Mentor[] = [
     companySubtitle: 'Staff Engineer, Vercel • Next.js Core Contributor',
     tracks: ['Frontend Development'],
     status: 'Available Slots',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    avatarUrl: marcusPhoto,
     description:
       'Focuses on Next.js, web performance, CSS architecture, and navigating technical internship projects from conception to production.',
     about:
@@ -93,7 +99,7 @@ export const INITIAL_MENTORS: Mentor[] = [
     companySubtitle: 'Principal UI/UX Engineer, Stripe • Design Systems Lead',
     tracks: ['Frontend Development'],
     status: 'No available slots',
-    avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400',
+    avatarUrl: elenaPhoto,
     description:
       'Design systems, accessibility (a11y), and building intuitive interfaces with modern TypeScript. Currently guiding enterprise UX patterns.',
     about:
@@ -115,7 +121,7 @@ export const INITIAL_SESSIONS: MentorshipSession[] = [
     mentorId: 'marcus-vance',
     mentorName: 'Marcus Vance',
     mentorRole: 'Staff Engineer',
-    mentorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    mentorAvatar: marcusPhoto,
     month: 'OCT',
     day: '1',
     fullDate: 'Monday, Oct 1',
@@ -133,7 +139,7 @@ export const INITIAL_SESSIONS: MentorshipSession[] = [
     mentorId: 'marcus-vance',
     mentorName: 'Marcus Vance',
     mentorRole: 'Staff Engineer',
-    mentorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    mentorAvatar: marcusPhoto,
     month: 'OCT',
     day: '6',
     fullDate: 'Monday, Oct 6',

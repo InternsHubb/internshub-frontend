@@ -11,6 +11,7 @@ import waveOrange from '@/assets/dashboard/sb-wave-orange.svg';
 import wavePurple from '@/assets/dashboard/sb-wave-purple.svg';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/cn';
+import { internshipPlan } from '@/data/internshipPackages';
 
 import { useSidebar } from './SidebarContext';
 import { SIDEBAR_NAV_ITEMS, type SidebarNavItem, type SidebarSubItem } from './sidebarNav';
@@ -53,6 +54,11 @@ function ActiveIndicator({ isActive }: { isActive: boolean }) {
 
 function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCollapsed: boolean; onNavigate?: () => void }) {
   const { t } = useTranslation();
+  const location = useLocation();
+  // Keep the selected internship package when returning from its project preview.
+  const internshipTarget = item.id === 'internship' && location.pathname.startsWith(ROUTES.dashboardInternship)
+    ? `${item.to}?plan=${internshipPlan(new URLSearchParams(location.search))}`
+    : item.to;
   const label = t(item.labelKey);
   const shape = cn(
     'relative flex items-center rounded-lg transition-[width,height,padding,gap,background-color,color]',
@@ -100,7 +106,7 @@ function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCo
   return (
     <li>
       <NavLink
-        to={item.to}
+        to={internshipTarget!}
         end={item.end}
         onClick={onNavigate}
         title={isCollapsed ? label : undefined}

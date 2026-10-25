@@ -6,19 +6,16 @@ import {
   type InternshipState,
   type InternshipStateId,
 } from '@/data/internshipDashboard';
+import { internshipPlan, PACKAGE_JOURNEYS, type InternshipPlan } from '@/data/internshipPackages';
 
-// The internship page state, picked with `?state=<id>` until the API decides it. The 6- and
-// 12-month frames all read "6 Months"; `&plan=12m` shows the same journey as 12 Months.
-export function useInternshipState(): { stateId: InternshipStateId; state: InternshipState } {
+// URL-driven previews until the internship API supplies each package's journey.
+export function useInternshipState(): { stateId: InternshipStateId; state: InternshipState; plan: InternshipPlan } {
   const [searchParams] = useSearchParams();
   const requested = searchParams.get('state');
   const stateId = requested && Object.hasOwn(INTERNSHIP_STATES, requested)
     ? requested as InternshipStateId
     : DEFAULT_INTERNSHIP_STATE;
-  const state: InternshipState = INTERNSHIP_STATES[stateId];
-
-  if (state.kind === 'waiting' && state.stepper.withCourses && searchParams.get('plan') === '12m') {
-    return { stateId, state: { ...state, packageMonths: 12 } };
-  }
-  return { stateId, state };
+  const plan = internshipPlan(searchParams);
+  const state: InternshipState = PACKAGE_JOURNEYS[plan][stateId];
+  return { stateId, state, plan };
 }

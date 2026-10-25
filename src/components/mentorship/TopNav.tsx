@@ -7,9 +7,9 @@ interface TopNavProps {
 
 export const TopNav: React.FC<TopNavProps> = ({ onOpenMobile }) => {
   return (
-    <header className="h-[80px] px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 sticky top-0 z-20 bg-[#fdfdfe]/90 backdrop-blur-md transition-colors">
+    <header className="h-[80px] px-4 sm:px-6 flex items-center justify-between gap-6 transition-colors">
       {/* Search Bar / Mobile Menu Toggle (Figma 166:10899) */}
-      <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-[440px]">
+      <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-[420px]">
         {onOpenMobile && (
           <button
             type="button"
