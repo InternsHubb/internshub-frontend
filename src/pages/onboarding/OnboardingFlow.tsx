@@ -7,11 +7,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { apiErrorKey } from '@/lib/api/errors';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PackageSelection } from './PackageSelection';
-import { PolicyConsent } from './PolicyConsent';
 import { ProfileStep } from './ProfileStep';
 import { CV_STEP, PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
 import { TrackSelection } from './TrackSelection';
 import { CvUploadStep } from './CvUploadStep';
+import { PaymentPanel } from './PaymentPanel';
+import { hasPendingCheckout, usePaymentCheckout } from './usePaymentCheckout';
 import { useMyCv } from './useMyCv';
 import { EnrollmentChoiceError, useEnrollmentChoice } from './useEnrollmentChoice';
 import { VerifyAccountStep } from './VerifyAccountStep';
@@ -20,14 +21,9 @@ import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
 import { interviewTypeFor, SAMPLE_RESUME } from './interview/mockInterview';
 import { INITIAL_INTERVIEW_PROGRESS } from './interview/types';
 import type { InterviewProgress, InterviewProgressPatch } from './interview/types';
-import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
-import lockWhiteIcon from '../../assets/onboarding/lock-white.svg';
-import receiptPurpleIcon from '../../assets/onboarding/receipt-purple.svg';
-import shieldGreenIcon from '../../assets/onboarding/shield-green.svg';
 import shieldWhiteIcon from '../../assets/onboarding/shield-white.svg';
 import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
-import walletPurpleIcon from '../../assets/onboarding/wallet-purple.svg';
 import arrowRightWhiteIcon from '../../assets/onboarding/arrow-right-white.svg';
 import checkWhiteLgIcon from '../../assets/onboarding/check-white-lg.svg';
 import lockPurpleSmIcon from '../../assets/onboarding/lock-purple-sm.svg';
@@ -103,7 +99,8 @@ export default function OnboardingFlow() {
   // Step 01 counts as done only when the backend reports email and phone as confirmed, not when
   // the user has moved past it. National ID has no backend check, so it is not part of this.
   const isAccountVerified = user?.emailConfirmed === true && user.phoneNumberConfirmed === true;
-  const [currentStep, setCurrentStep] = useState(1);
+  // Coming back from Paymob reopens the Payment step, where the result is checked with the backend.
+  const [currentStep, setCurrentStep] = useState(() => (hasPendingCheckout() ? 5 : 1));
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
   const [resultState, setResultState] = useState<ResultState>('assigned');
   const activeResult = RESULT_STATES[resultState];
@@ -134,6 +131,7 @@ export default function OnboardingFlow() {
     savedChoice && savedChoice.packageValue === formData.selectedPackage && savedChoice.trackId === formData.selectedTrack
   );
 
+  const payment = usePaymentCheckout({ enrollment: enrollmentChoice.enrollment, onPaid: enrollmentChoice.refresh });
   const myCv = useMyCv();
   // The CV counts once the backend holds one whose parsing hasn't failed.
   const isCvReady = myCv.cv !== null && myCv.cv.parseStatus !== 'Failed';
@@ -695,52 +693,15 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5 relative">
-                  <div className="absolute top-6 right-6 w-8 h-8 bg-[#3A0353] rounded-lg flex items-center justify-center"><img src={lockWhiteIcon} alt="" aria-hidden="true" width={16} height={16} /></div>
-                  <div>
-                    <span className="text-[9px] font-bold text-[#8B5DB0] uppercase">SECURE CHECKOUT · DEMO</span>
-                    <h3 className="text-[22px] font-normal text-[#111827] mt-1">Choose how you’ll pay</h3>
-                    <p className="text-[9px] text-[#6B7280]">All methods remain subject to the final gateway configuration.</p>
-                  </div>
-
-                  <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                    <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
-                    <div><p className="font-bold">Gateway configuration pending</p><p className="text-[11px] mt-0.5">One Egyptian gateway supporting cards, wallets, and Fawry is planned. No gateway has been selected or connected here.</p></div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="p-4 bg-[#FBF7FE] border-2 border-[#5C1D87] rounded-[15px] flex items-center justify-between shadow-xs">
-                      <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={cardWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div><h4 className="text-xs font-normal text-[#111827]">Debit or credit card</h4><p className="text-[9px] text-[#6B7280]">Demo method · Egyptian pounds</p></div>
-                      </div>
-                      <div className="w-[22px] h-[22px] bg-[#16794A] text-white rounded-full flex items-center justify-center text-xs">✓</div>
-                    </div>
-                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
-                      <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] shrink-0 bg-[#F1EBF4] rounded-[12px] flex items-center justify-center"><img src={walletPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div><h4 className="text-xs font-normal text-[#111827]">Mobile wallet</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
-                      </div>
-                      <div className="w-5 h-5 rounded-full border border-slate-300"></div>
-                    </div>
-                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
-                      <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] shrink-0 bg-[#F1EBF4] rounded-[12px] flex items-center justify-center"><img src={receiptPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div><h4 className="text-xs font-normal text-[#111827]">Fawry</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
-                      </div>
-                      <div className="w-5 h-5 rounded-full border border-slate-300"></div>
-                    </div>
-                  </div>
-
-                  <PolicyConsent />
-
-                  <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Pay & Enroll →</button>
-
-                  <div className="text-center space-y-1 pt-2">
-                    <div className="flex flex-wrap items-center justify-center gap-1.5 text-[9px] text-[#16794A]"><img src={shieldGreenIcon} alt="" aria-hidden="true" width={14} height={14} /><span className="font-bold">Protected demo checkout</span> — No real payment details are collected or processed</div>
-                    <div><a href="#fail" className="text-[9px] text-[#5C1D87] underline">Preview payment failure state</a></div>
-                  </div>
-                </div>
+                <PaymentPanel
+                  enrollment={enrollmentChoice.enrollment}
+                  isTermsAccepted={user?.requiredPoliciesAccepted === true}
+                  state={payment.state}
+                  onPay={() => void payment.startCheckout()}
+                  onCheckAgain={payment.checkAgain}
+                  onReset={payment.reset}
+                  onContinue={() => setCurrentStep(6)}
+                />
 
                 <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5">
                   <div className="flex justify-between items-start gap-3">

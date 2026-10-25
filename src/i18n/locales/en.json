@@ -594,6 +594,52 @@
         "upload": "Your file couldn't be uploaded. Please try again."
       }
     },
+    "payment": {
+      "eyebrow": "Secure checkout · Paymob",
+      "title": "Choose how you’ll pay",
+      "subtitle": "You choose the payment method on Paymob's secure payment page.",
+      "gatewayTitle": "You'll pay on Paymob",
+      "gatewayBody": "Pay & Enroll opens Paymob's secure page. Card and wallet details are entered there, never on InternsHub.",
+      "methods": {
+        "card": "Debit or credit card",
+        "wallet": "Mobile wallet",
+        "fawry": "Fawry",
+        "onPaymob": "Available on the Paymob page",
+        "fawryNote": "Shown on the Paymob page if enabled"
+      },
+      "pay": "Pay & Enroll →",
+      "opening": "Opening Paymob…",
+      "acceptFirst": "Accept the terms above to continue to payment.",
+      "redirecting": "Taking you to Paymob's secure payment page…",
+      "verifying": "Checking your payment with InternsHub… This can take a few seconds.",
+      "pending": {
+        "title": "Your payment is still being processed",
+        "body": "We haven't received a final result yet. If you completed the payment, check again in a moment.",
+        "checkAgain": "Check again"
+      },
+      "failed": {
+        "failed": "Your payment didn't go through",
+        "cancelled": "Your payment was cancelled",
+        "body": "You haven't been enrolled. You can try again."
+      },
+      "review": {
+        "title": "Your payment is being reviewed",
+        "body": "We'll update your enrollment once the review is complete."
+      },
+      "paid": {
+        "title": "Payment confirmed — you're enrolled",
+        "amount": "Paid {{amount}}"
+      },
+      "tryAgain": "Try again",
+      "startOver": "Start a new payment",
+      "continue": "Continue to the AI interview →",
+      "secureTitle": "Secure payment",
+      "secureBody": "Card and wallet details are handled by Paymob",
+      "errors": {
+        "noEnrollment": "Choose your package and track before paying.",
+        "badRedirect": "We couldn't open the payment page. Please try again later."
+      }
+    },
     "verify": {
       "title": "Verify Your Account",
       "subtitle": "Confirm your email and phone number to secure your account.",

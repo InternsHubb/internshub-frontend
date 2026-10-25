@@ -88,5 +88,11 @@ export function useEnrollmentChoice() {
     [data, saved]
   );
 
-  return { enrollment, savedChoice, isLoading, error, reload, save };
+  // Re-reads everything from the backend, e.g. after a payment changed the enrollment's status.
+  const refresh = useCallback(() => {
+    setSaved(null);
+    reload();
+  }, [reload]);
+
+  return { enrollment, savedChoice, isLoading, error, reload, refresh, save };
 }
