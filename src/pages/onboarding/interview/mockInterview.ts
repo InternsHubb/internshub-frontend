@@ -1,14 +1,10 @@
 // LOCAL PLACEHOLDER DATA — not from the backend, an AI or a reviewer.
 //
-// The AI Interview API contract has not been published yet, so the interview screens are built
-// against these fixed sample values. Every screen that shows one of them labels it as a sample.
-// When the API arrives, replace this module with real session, question, result and appeal data;
-// the screens only read the shapes below.
+// Questions, answers and the result level come from the backend interview (useLiveInterview). The
+// backend has no endpoints for appeals, resume windows or retake countdowns yet, so those screens
+// and the outcome preview still use these fixed sample values, and label them as samples.
 
 import type { InterviewType } from './types';
-
-// Keys under `onboarding.interview.sample.questions` in the locale files.
-export const SAMPLE_QUESTION_KEYS = ['q1', 'q2', 'q3'] as const;
 
 // Keys under `onboarding.interview.levels`.
 export type LevelKey = 'junior' | 'mid';

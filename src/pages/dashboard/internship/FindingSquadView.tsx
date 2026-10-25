@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 
 import calendarIcon from '@/assets/dashboard/ic-calendar-add.svg';
-import dangerIcon from '@/assets/dashboard/ic-danger.svg';
 import githubErrorIcon from '@/assets/dashboard/ic-github-error.svg';
 import clockIcon from '@/assets/dashboard/ic-clock.svg';
 import codeIcon from '@/assets/dashboard/ic-code.svg';
@@ -12,7 +10,9 @@ import securityIcon from '@/assets/dashboard/ic-security-time.svg';
 import verifyIcon from '@/assets/dashboard/ic-verify.svg';
 import { CARD_LARGE, IconHeading, OUTLINE_CARD, StatusPill } from '@/components/dashboard/primitives';
 import { MemberAvatar } from '@/components/dashboard/SquadMemberCard';
-import { SAMPLE_INTERNSHIP, WAITING_AVATARS, type WaitingState } from '@/data/internshipDashboard';
+import { WAITING_AVATARS, type GithubStatus, type WaitingState } from '@/data/internshipDashboard';
+import type { InternshipData } from '@/hooks/useInternship';
+import { levelKey, waitingDay } from '@/lib/internship';
 
 import { GithubUsernameCard } from './GithubUsernameCard';
 
@@ -60,23 +60,24 @@ function NextSteps() {
   );
 }
 
-export function FindingSquadView({ state }: { state: WaitingState }) {
+// More than this many days on the waiting list shows the "taking longer" message.
+const USUAL_WAIT_DAYS = 7;
+
+export function FindingSquadView({ state, internship }: { state: WaitingState; internship: InternshipData }) {
   const { t, i18n } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const [githubStatus, setGithubStatus] = useState(state.github);
-  const [githubUsername, setGithubUsername] = useState(state.githubUsername);
-  // URL preview of the delayed Figma frame, until the API supplies waiting duration.
-  const delayed = searchParams.get('wait') === 'over7';
-  const waitingDate = new Intl.DateTimeFormat(i18n.language, {
-    year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
-  }).format(new Date(`${SAMPLE_INTERNSHIP.waitingSince}T00:00:00Z`));
+  const [githubStatus, setGithubStatus] = useState<GithubStatus>('add');
+  const day = waitingDay(internship.waitingSince, Date.now());
+  const delayed = day > USUAL_WAIT_DAYS;
+  const waitingDate = new Intl.DateTimeFormat(i18n.language, { year: 'numeric', month: 'long', day: 'numeric' })
+    .format(new Date(internship.waitingSince));
+  const level = internship.level ? t(`onboarding.interview.levels.${levelKey(internship.level)}`) : '—';
 
   return (
     <>
-      {(githubStatus === 'invalid' || (githubStatus === 'add' && !githubUsername)) && (
-        <div role="alert" className={`flex items-center gap-3 rounded-[14px] border p-4 text-xs ${githubStatus === 'invalid' ? 'border-red-100 bg-[#fde5e5] text-[#a10000]' : 'border-[#4c0585]/7 bg-[#fff7e6] text-[#9a5700]'}`}>
-          <img src={githubStatus === 'invalid' ? githubErrorIcon : dangerIcon} alt="" className="size-6 shrink-0" />
-          {t(githubStatus === 'invalid' ? 'dashboard.github.invalid.notification' : 'dashboard.github.missing')}
+      {githubStatus === 'invalid' && (
+        <div role="alert" className="flex items-center gap-3 rounded-[14px] border border-red-100 bg-[#fde5e5] p-4 text-xs text-[#a10000]">
+          <img src={githubErrorIcon} alt="" className="size-6 shrink-0" />
+          {t('dashboard.github.invalid.notification')}
         </div>
       )}
     <section aria-labelledby="internship-title" className={`${CARD_LARGE} flex min-w-0 flex-col gap-6 p-4 sm:p-6`}>
@@ -99,13 +100,13 @@ export function FindingSquadView({ state }: { state: WaitingState }) {
       </ul>
       <dl className="flex flex-wrap justify-between gap-x-8 gap-y-5 sm:px-10">
         {[
-          ['track', SAMPLE_INTERNSHIP.track],
+          ['track', internship.trackName || '—'],
           ['packageLabel', t('dashboard.waiting.months', { count: state.packageMonths })],
-          ['level', t(`dashboard.waiting.levels.${SAMPLE_INTERNSHIP.levelKey}`)],
+          ['level', level],
         ].map(([label, content]) => (
           <div key={label} className="text-center">
             <dt className="text-base font-bold">{t(`dashboard.waiting.${label}`)}</dt>
-            <dd className="mt-3 text-sm text-[#828282]">{content}</dd>
+            <dd className="mt-3 text-sm text-[#828282]"><bdi>{content}</bdi></dd>
           </div>
         ))}
       </dl>
@@ -114,13 +115,13 @@ export function FindingSquadView({ state }: { state: WaitingState }) {
           <p className="text-base font-semibold">{t('dashboard.waiting.since', { date: waitingDate })}</p>
         </IconHeading>
         <p className="text-sm font-semibold text-[#828282]">
-          {t(delayed ? 'dashboard.waiting.overSevenDays' : 'dashboard.waiting.day', { day: SAMPLE_INTERNSHIP.waitingDay })}
+          {t(delayed ? 'dashboard.waiting.overSevenDays' : 'dashboard.waiting.day', { day })}
         </p>
         {delayed && <p className="w-full text-sm font-medium text-[#737373]">{t('dashboard.waiting.delayed')}</p>}
       </div>
       <PackageTimeline variant={state.packageCard} />
       <NextSteps />
-      <GithubUsernameCard initialStatus={state.github} initialUsername={state.githubUsername} onStatusChange={(status, username) => { setGithubStatus(status); setGithubUsername(username); }} />
+      <GithubUsernameCard onStatusChange={setGithubStatus} />
     </section>
     </>
   );

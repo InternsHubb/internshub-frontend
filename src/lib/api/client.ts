@@ -7,8 +7,7 @@ import {
 import type { AccessTokenResponse, ProblemDetails } from './types';
 
 // Requests use same-origin /api/... URLs unless VITE_API_BASE_URL is set. The Vite dev-server proxy
-// (vite.config.ts) forwards them locally and the /api rewrite in vercel.json forwards them on Vercel,
-// so the browser never makes a cross-origin call (the backend's CORS only allows the production site).
+// (vite.config.ts) forwards them locally and the /api rewrite in vercel.json forwards them on Vercel.
 export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '');
 
 // status 0 means the request never got a response (offline, DNS, CORS, timeout).
