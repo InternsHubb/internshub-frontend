@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import sprintChevronIcon from '@/assets/dashboard/ic-sprint-chevron.svg';
-import sprintNoteIcon from '@/assets/dashboard/ic-sprint-note.svg';
 import layerIcon from '@/assets/dashboard/ic-layer.svg';
 import sprintIcon from '@/assets/dashboard/ic-link-square.svg';
 import completedIcon from '@/assets/dashboard/ic-task-square.svg';
@@ -20,6 +18,7 @@ import { daysLeft, toSquadMembers } from '@/lib/internship';
 
 import { InternshipError, InternshipLoading, InternshipNotice } from './InternshipStates';
 import { MyTasks, ProjectLinks } from './ProjectWork';
+import { SprintSelect } from './SprintSelect';
 import { TaskBoard } from './TaskBoard';
 import { useSquadBoard } from './useSquadBoard';
 
@@ -74,9 +73,10 @@ type SprintOverviewProps = {
   sprints: SprintSummaryDto[];
   board: SprintBoardDto;
   onSelect: (sprintId: string) => void;
+  isSwitching: boolean;
 };
 
-function SprintOverview({ sprints, board, onSelect }: SprintOverviewProps) {
+function SprintOverview({ sprints, board, onSelect, isSwitching }: SprintOverviewProps) {
   const { t, i18n } = useTranslation();
   const formatDay = (iso: string, withYear: boolean) =>
     new Intl.DateTimeFormat(i18n.language, { month: 'short', day: 'numeric', ...(withYear && { year: 'numeric' }) }).format(new Date(iso));
@@ -109,17 +109,7 @@ function SprintOverview({ sprints, board, onSelect }: SprintOverviewProps) {
             : t(`dashboard.sprint.statuses.${board.status}`)}
         </span>
       </div>
-      <div className="relative flex min-h-[52px] items-center gap-2 rounded-[20px] border border-[#909090] px-4">
-        <img src={sprintNoteIcon} alt="" className="size-6 shrink-0" />
-        <select aria-label={t('dashboard.sprint.select')} value={board.sprintId} onChange={(event) => onSelect(event.target.value)} className="min-w-0 flex-1 appearance-none bg-transparent pe-8 text-base font-bold">
-          {[...sprints].sort((a, b) => a.number - b.number).map((sprint) => (
-            <option key={sprint.id} value={sprint.id}>
-              {t(sprint.status === 'Active' ? 'dashboard.sprint.current' : 'dashboard.sprint.option', { number: sprint.number })}
-            </option>
-          ))}
-        </select>
-        <img src={sprintChevronIcon} alt="" className="pointer-events-none absolute end-4 h-[21.5px] w-[25px]" />
-      </div>
+      <SprintSelect sprints={sprints} value={board.sprintId} onChange={onSelect} isLoading={isSwitching} />
       <div className="flex flex-wrap items-end justify-end gap-4">
         <div className="text-end">
           <p className="text-[28px] font-semibold leading-none text-black">{t('dashboard.common.percent', { value: percent })}</p>
@@ -156,7 +146,7 @@ function ProjectWorkspace({ squad }: { squad: SquadDetailsDto }) {
   else {
     sprintContent = (
       <>
-        <SprintOverview sprints={squadBoard.sprints} board={board} onSelect={squadBoard.selectSprint} />
+        <SprintOverview sprints={squadBoard.sprints} board={board} onSelect={squadBoard.selectSprint} isSwitching={squadBoard.isSwitching} />
         <ProjectLinks repositoryUrl={squad.repositoryUrl} />
         <MyTasks tasks={board.tasks} myUserId={myUserId} />
         <TaskBoard tasks={board.tasks} myUserId={myUserId} onMove={(taskId, next) => void squadBoard.move(taskId, next)} moveErrorKey={squadBoard.moveErrorKey} />

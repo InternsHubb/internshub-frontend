@@ -1394,6 +1394,7 @@
     "sprint": {
       "select": "اختيار السبرنت",
       "current": "السبرنت {{number}} — الحالي",
+      "currentBadge": "الحالي",
       "option": "السبرنت {{number}}",
       "title": "السبرنت {{number}}",
       "dates": "{{start}} - {{end}}",

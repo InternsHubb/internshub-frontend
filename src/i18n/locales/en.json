@@ -1382,6 +1382,7 @@
     "sprint": {
       "select": "Select sprint",
       "current": "Sprint {{number}} — Current",
+      "currentBadge": "Current",
       "option": "Sprint {{number}}",
       "title": "Sprints {{number}}",
       "dates": "{{start}} - {{end}}",
