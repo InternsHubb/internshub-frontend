@@ -10,7 +10,13 @@ import { PathFieldError } from './PathFieldError';
 // "01 Select your package" on onboarding step 04 "Path" (articles 22:19127, 22:19161, 22:19195).
 // The cards are one native radio group: arrow keys move between them, and Enter submits the
 // step's form, so the same validation runs for the Confirm button, Enter and the progress bar.
-// Figma's "PRICING PENDING" badge is left out: the package prices are final.
+// Temporary display prices requested for these selection cards only. Remove this override
+// once the backend's prices are final; shared pricing and checkout amounts are unchanged.
+const SELECTION_PRICES: Record<PackageValue, number> = {
+  '3 Months': 1000,
+  '6 Months': 2000,
+  '12 Months': 3000,
+};
 
 type PackageSelectionProps = {
   value: PackageValue | null;
@@ -77,7 +83,7 @@ export function PackageSelection({ value, onChange, hasError }: PackageSelection
               <h3 className="pb-[5px] pt-1 text-[28px] font-normal leading-[42px] text-[#111827]">{name}</h3>
               <p id={`package-${item.key}-price`} className="flex flex-wrap items-end gap-[5px]">
                 <span className="text-xs font-bold text-[rgba(52,48,58,0.7)]">{t('onboarding.path.currency')}</span>
-                <span className="text-[28px] font-bold leading-none text-[#3A0353]">{formatPrice(item.priceEgp, i18n.language)}</span>
+                <span className="text-[28px] font-bold leading-none text-[#3A0353]">{formatPrice(SELECTION_PRICES[item.value], i18n.language)}</span>
                 <span className="text-[11px] text-[rgba(52,48,58,0.6)]">{t('onboarding.path.perPackage')}</span>
               </p>
               <ul className="flex flex-1 flex-col gap-3 py-6">
