@@ -18,9 +18,10 @@ import { EnrollmentChoiceError, useEnrollmentChoice } from './useEnrollmentChoic
 import { VerifyAccountStep } from './VerifyAccountStep';
 import { InterviewResultFlow } from './interview/InterviewResultFlow';
 import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
-import { interviewTypeFor, SAMPLE_RESUME } from './interview/mockInterview';
+import { interviewTypeFor } from './interview/mockInterview';
 import { INITIAL_INTERVIEW_PROGRESS } from './interview/types';
-import type { InterviewProgress, InterviewProgressPatch } from './interview/types';
+import type { InterviewProgress, InterviewProgressPatch, OutcomeScreen } from './interview/types';
+import { useLiveInterview } from './interview/useLiveInterview';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
 import shieldWhiteIcon from '../../assets/onboarding/shield-white.svg';
 import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
@@ -114,6 +115,7 @@ export default function OnboardingFlow() {
   const pathForm = useRef<HTMLFormElement>(null);
   const [interview, setInterview] = useState<InterviewProgress>(INITIAL_INTERVIEW_PROGRESS);
   const updateInterview = (patch: InterviewProgressPatch) => setInterview((current) => ({ ...current, ...patch }));
+  const liveInterview = useLiveInterview();
   const interviewType = interviewTypeFor(formData.selectedPackage ?? '');
   const selectedPackage = formData.selectedPackage ? PACKAGES_BY_VALUE[formData.selectedPackage] : null;
   const packageName = selectedPackage ? t(`onboarding.path.packages.${selectedPackage.key}.name`) : '';
@@ -221,20 +223,15 @@ export default function OnboardingFlow() {
   const usesProfileLayout = onInterviewScreens || onOutcomeScreens;
   const showProgressBar = !onOutcomeScreens || interview.outcome === 'result';
 
-  // The interview API isn't available yet, so finishing shows the sample outcome for this type.
-  const finishInterview = () => {
-    updateInterview({
-      screen: 'setup',
-      questionIndex: 0,
-      phase: 'answering',
-      outcome: interviewType === 'orientation' ? 'orientation' : 'result',
-    });
+  // Finishing shows the outcome of the backend attempt (see outcomeFor in useLiveInterview).
+  const finishInterview = (outcome: OutcomeScreen) => {
+    updateInterview({ screen: 'setup', phase: 'answering', outcome });
     setCurrentStep(7);
   };
 
-  // Resuming repeats the device check, then continues from the interrupted (sample) question.
+  // Resuming repeats the device check; reaching the questions resumes the interrupted attempt.
   const resumeInterview = () => {
-    updateInterview({ screen: 'device-check', questionIndex: SAMPLE_RESUME.questionIndex, phase: 'answering', outcome: null });
+    updateInterview({ screen: 'device-check', phase: 'answering', outcome: null });
     setCurrentStep(6);
   };
 
@@ -517,7 +514,7 @@ export default function OnboardingFlow() {
             />
           )}
 
-          {/* STEP 07: Setup and AI interview (frontend-only; see ./interview) */}
+          {/* STEP 07: Setup and the backend AI interview (see ./interview) */}
           {currentStep === 6 && (
             <InterviewSetupFlow
               progress={interview}
@@ -526,12 +523,13 @@ export default function OnboardingFlow() {
               track={trackName}
               cvUploaded={isCvReady}
               fullscreenTarget={interviewPage}
+              live={liveInterview}
               onExit={() => setCurrentStep(5)}
               onFinish={finishInterview}
             />
           )}
 
-          {/* STEP 08: Result. After an interview, its (sample) outcome; otherwise the result overview. */}
+          {/* STEP 08: Result. After an interview, its outcome; otherwise the result overview. */}
           {currentStep === 7 && interview.outcome && (
             <InterviewResultFlow
               outcome={interview.outcome}
@@ -540,6 +538,8 @@ export default function OnboardingFlow() {
               onAppealReasonChange={(appealReason) => updateInterview({ appealReason })}
               type={interviewType}
               track={trackName}
+              level={liveInterview.interview?.result?.level ?? null}
+              isPreview={liveInterview.interview === null}
               onContinue={() => setCurrentStep(8)}
               onHome={() => navigate(ROUTES.home)}
               onResume={resumeInterview}

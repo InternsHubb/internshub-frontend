@@ -710,8 +710,10 @@
         "orientation": "Track Orientation"
       },
       "levels": {
+        "notReady": "Not ready yet",
         "junior": "Junior",
-        "mid": "Mid"
+        "mid": "Mid",
+        "advanced": "Advanced"
       },
       "status": {
         "notChecked": "Not checked",
@@ -879,11 +881,20 @@
         "currentQuestion": "Current question",
         "voiceResponse": "Voice Response",
         "yourAnswer": "Your Answer",
-        "notRecorded": "Not recorded (demo)",
-        "sampleTranscript": "Sample transcript",
+        "recording": "Recording",
+        "notRecording": "Not recording",
         "answeringTitle": "Answer out loud",
-        "answeringBody": "This demo doesn't record or transcribe your answer. Select Done when you have finished.",
-        "transcriptNote": "Sample text, not your answer. Real transcripts will come from the interview service.",
+        "answeringBody": "Your answer is recorded from your microphone while the question is shown. Select Done when you have finished.",
+        "sending": "Sending your answer…",
+        "answerSaved": "Answer saved",
+        "answerSavedBody": "Your answer was sent to the interview. Continue when you are ready.",
+        "answerFailed": "Your answer wasn't sent",
+        "questionAudio": "Question audio",
+        "preparing": "Preparing your interview…",
+        "startFailed": "The interview couldn't start",
+        "retry": "Try again",
+        "endedTitle": "The interview has ended",
+        "endedBody": "Thank you. Your answers have been sent.",
         "done": "Done",
         "continue": "Continue",
         "finish": "Finish Interview",
@@ -908,16 +919,10 @@
         "restoreFailed": "Fullscreen didn't start. Please select Return to fullscreen again.",
         "statusLabel": "Fullscreen"
       },
-      "sample": {
-        "questions": {
-          "q1": "Walk us through a recent project you built. What was your role, and what would you change today?",
-          "q2": "How would you manage state in a large React application, and what factors would influence your approach?",
-          "q3": "How do you find and fix a performance problem in a web application?"
-        },
-        "transcripts": {
-          "q1": "I built a small task tracker with a teammate. I owned the frontend and the API calls. Today I would add tests earlier and agree on the data model before writing screens.",
-          "q2": "I separate local, shared, server and URL state. Local state stays in components, shared client state goes in a small store, and server data goes through a caching library. Team familiarity and app size decide the rest.",
-          "q3": "I measure first with the browser's performance tools, find the slowest step, fix that one thing, and measure again to confirm it helped."
+      "live": {
+        "errors": {
+          "recordingUnsupported": "This browser can't record audio from your microphone. Use a recent version of Chrome, Edge or Firefox.",
+          "emptyRecording": "No sound was recorded. Check your microphone, answer again and select Done."
         }
       },
       "result": {

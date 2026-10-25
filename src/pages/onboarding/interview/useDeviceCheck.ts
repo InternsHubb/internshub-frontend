@@ -402,12 +402,16 @@ export function useDeviceCheck() {
     };
   }, []);
 
+  // The live microphone stream, read when an answer starts recording.
+  const getMicrophoneStream = useCallback(() => streams.current.microphone, []);
+
   return {
     camera,
     microphone,
     screen,
     connection,
     cameraStream,
+    getMicrophoneStream,
     cameras,
     microphones,
     micLevel,

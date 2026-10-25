@@ -20,10 +20,13 @@ import {
   TITLE_TEXT,
 } from './parts';
 import { APPEAL_WINDOW_DAYS, RESUME_WINDOW_HOURS, RESUMES_ALLOWED, RETAKE_AFTER_HOURS, SAMPLE_RESULT, SAMPLE_RESUME, SAMPLE_RETAKE } from './mockInterview';
+import { levelKey } from './useLiveInterview';
+import type { InterviewLevel } from '@/lib/api/types';
 import type { InterviewType } from './types';
 
-// Outcome screens shown under Step 08 (Result). Every level, countdown and attempt count here is
-// sample data from mockInterview.ts and is marked with a Sample badge.
+// Outcome screens shown under Step 08 (Result). The Result level comes from the backend interview
+// when there is one; every other level, countdown and attempt count here is sample data from
+// mockInterview.ts and is marked with a Sample badge.
 
 const GRAY_PANEL = 'rounded-[12px] bg-[#f4f0f8] p-4';
 
@@ -37,7 +40,9 @@ function Card({ children }: { children: ReactNode }) {
   return <section className={`${ROUND_CARD} space-y-5 p-5 text-start sm:p-8`}>{children}</section>;
 }
 
-function CardHeader({ type, track, pill, eyebrow }: OutcomeProps & { pill: ReactNode; eyebrow?: boolean }) {
+type CardHeaderProps = OutcomeProps & { pill: ReactNode; eyebrow?: boolean; isSample?: boolean };
+
+function CardHeader({ type, track, pill, eyebrow, isSample = true }: CardHeaderProps) {
   const { t } = useTranslation();
   return (
     <InterviewHeader
@@ -46,7 +51,7 @@ function CardHeader({ type, track, pill, eyebrow }: OutcomeProps & { pill: React
       track={track}
       aside={
         <div className="flex flex-wrap items-center gap-2">
-          <SampleBadge />
+          {isSample && <SampleBadge />}
           {pill}
         </div>
       }
@@ -63,21 +68,23 @@ function HomeButton({ onHome }: { onHome: () => void }) {
   );
 }
 
-type ResultScreenProps = OutcomeProps & { onContinue: () => void; onAppeal: () => void };
+// `level` is the backend result; without one (preview) the sample level is shown.
+type ResultScreenProps = OutcomeProps & { level?: InterviewLevel | null; onContinue: () => void; onAppeal: () => void };
 
-export function ResultScreen({ type, track, onContinue, onAppeal }: ResultScreenProps) {
+export function ResultScreen({ type, track, level, onContinue, onAppeal }: ResultScreenProps) {
   const { t } = useTranslation();
   const k = (key: string, options?: Record<string, unknown>) => t(`onboarding.interview.result.${key}`, options);
+  const shownLevel = level ? levelKey(level) : SAMPLE_RESULT.level;
   return (
     <OutcomeLayout icon={<HeroIcon icon={Award} />}>
       <PageHeading centered title={k('title')} subtitle={k('subtitle', { type: t(`onboarding.interview.types.${type}`) })} />
       <Card>
-        <CardHeader type={type} track={track} pill={<StatusPill tone="success">{k('confirmed')}</StatusPill>} />
+        <CardHeader type={type} track={track} isSample={!level} pill={<StatusPill tone="success">{k('confirmed')}</StatusPill>} />
         <div className="border-t border-[#e7dbe9] pt-5">
           <p className={`text-[11px] font-bold uppercase tracking-[0.06em] ${BODY_TEXT}`}>{k('finalLevel')}</p>
           <p className="mt-2 rounded-[12px] border border-[#e7dbe9] bg-[#fbf0fe] px-6 py-5">
             <span className={`text-4xl font-bold tracking-[-0.02em] ${GRADIENT_TEXT}`}>
-              {t(`onboarding.interview.levels.${SAMPLE_RESULT.level}`)}
+              {t(`onboarding.interview.levels.${shownLevel}`)}
             </span>
           </p>
           <p className={`mt-3 text-sm ${BODY_TEXT}`}>{k('levelNote')}</p>
@@ -97,14 +104,16 @@ export function ResultScreen({ type, track, onContinue, onAppeal }: ResultScreen
   );
 }
 
-export function UnderReviewScreen({ type, track, onHome }: OutcomeProps & { onHome: () => void }) {
+type UnderReviewProps = OutcomeProps & { isSample?: boolean; onHome: () => void };
+
+export function UnderReviewScreen({ type, track, isSample, onHome }: UnderReviewProps) {
   const { t } = useTranslation();
   const k = (key: string) => t(`onboarding.interview.result.underReview.${key}`);
   return (
     <OutcomeLayout icon={<HeroIcon icon={Hourglass} />}>
       <PageHeading centered tone="brand" title={k('title')} subtitle={k('subtitle')} />
       <Card>
-        <CardHeader eyebrow type={type} track={track} pill={<StatusPill tone="warning">{k('badge')}</StatusPill>} />
+        <CardHeader eyebrow type={type} track={track} isSample={isSample} pill={<StatusPill tone="warning">{k('badge')}</StatusPill>} />
         <div className={`${GRAY_PANEL} flex items-start gap-3`}>
           <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-[#e7dbe9] bg-white text-[#5a127a]">
             <CalendarDays size={18} />

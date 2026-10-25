@@ -9,9 +9,10 @@ import { mediaOutage, screenOutage } from './deviceStatus';
 import { isFullscreenSupported } from './integrity/fullscreen';
 import { FULLSCREEN_MODE } from './integrity/policy';
 import { useIntegrityMonitor } from './integrity/useIntegrityMonitor';
-import { SAMPLE_QUESTION_KEYS } from './mockInterview';
 import { useDeviceCheck } from './useDeviceCheck';
-import type { InterviewProgress, InterviewProgressPatch, InterviewType, SetupScreen } from './types';
+import { outcomeFor } from './useLiveInterview';
+import type { LiveInterview } from './useLiveInterview';
+import type { InterviewProgress, InterviewProgressPatch, InterviewType, OutcomeScreen, SetupScreen } from './types';
 
 // Onboarding Step 07 (Setup): Get Ready → Overview → Recording Consent → Device Check → questions.
 // This component owns the camera, microphone and screen streams, so they stay open across these
@@ -32,8 +33,10 @@ type InterviewSetupFlowProps = {
   cvUploaded: boolean;
   // The element that goes fullscreen; it stays mounted for the whole of Step 07.
   fullscreenTarget: RefObject<HTMLDivElement | null>;
+  // The backend interview; owned by the onboarding flow so the Result step can read its outcome.
+  live: LiveInterview;
   onExit: () => void;
-  onFinish: () => void;
+  onFinish: (outcome: OutcomeScreen) => void;
 };
 
 export function InterviewSetupFlow({
@@ -43,11 +46,14 @@ export function InterviewSetupFlow({
   track,
   cvUploaded,
   fullscreenTarget,
+  live,
   onExit,
   onFinish,
 }: InterviewSetupFlowProps) {
   const devices = useDeviceCheck();
-  const { screen, questionIndex, phase } = progress;
+  const { screen, phase } = progress;
+  const { start: startLive } = live;
+  const hasLiveQuestion = live.interview?.status === 'InProgress' && live.interview.currentQuestion !== null;
   const { monitor, snapshot } = useIntegrityMonitor(screen === 'session');
   const [fullscreenFailedOn, setFullscreenFailedOn] = useState<SetupScreen | null>(null);
   const { camera, microphone, screen: screenShare } = devices;
@@ -56,6 +62,13 @@ export function InterviewSetupFlow({
     window.scrollTo({ top: 0 });
     fullscreenTarget.current?.scrollTo({ top: 0 });
   }, [screen, fullscreenTarget]);
+
+  // Reaching the questions starts (or resumes) the backend attempt, unless one is already open.
+  useEffect(() => {
+    if (screen === 'session' && !hasLiveQuestion) void startLive();
+    // Only on entering the questions; later answers move the attempt on by themselves.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen, startLive]);
 
   // Device outages during the questions become integrity intervals.
   useEffect(() => {
@@ -138,18 +151,14 @@ export function InterviewSetupFlow({
           />
         );
       case 'session': {
-        const handleBack = () => {
-          if (phase === 'answered') onChange({ phase: 'answering' });
-          else if (questionIndex > 0) onChange({ questionIndex: questionIndex - 1, phase: 'answered' });
-          else onChange({ screen: 'device-check' });
-        };
+        const interview = live.interview;
         const handleNext = () => {
-          if (questionIndex < SAMPLE_QUESTION_KEYS.length - 1) {
-            onChange({ questionIndex: questionIndex + 1, phase: 'answering' });
+          if (interview?.currentQuestion) {
+            onChange({ phase: 'answering' });
             return;
           }
           devices.stopAll();
-          onFinish();
+          onFinish(interview ? outcomeFor(interview) : 'under-review');
         };
         return (
           <InterviewSession
@@ -159,10 +168,11 @@ export function InterviewSetupFlow({
             withAppPrompt={(prompt) => monitor.withAppPrompt(prompt)}
             type={type}
             track={track}
-            questionIndex={questionIndex}
+            live={live}
             phase={phase}
+            canGoBack={phase === 'answering' && (interview?.answeredCount ?? 0) === 0}
             onAnswered={() => onChange({ phase: 'answered' })}
-            onBack={handleBack}
+            onBack={() => onChange({ screen: 'device-check' })}
             onNext={handleNext}
           />
         );
