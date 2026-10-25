@@ -1075,14 +1075,21 @@
         "afternoonNoName": "Good afternoon.",
         "eveningNoName": "Good evening."
       },
-      "modulesAway_one": "You're {{count}} module away from your technical interview. Keep the streak going.",
-      "modulesAway_other": "You're {{count}} modules away from your technical interview. Keep the streak going.",
-      "continueLearning": "Continue learning",
-      "levels": {
-        "junior": "Junior",
-        "mid": "Mid-level",
-        "senior": "Senior"
+      "next": {
+        "courses": "Finish your track courses to unlock your technical interview.",
+        "technicalInterview": "Your track courses are done. Your technical interview comes next.",
+        "review": "Your interview is being reviewed. We'll let you know your result.",
+        "findingSquad": "You're on the waiting list. We're matching you with a squad.",
+        "squadForming": "Your squad is forming. Your Senior will start it soon.",
+        "squadActive": "Your squad project is under way. Keep your sprint tasks moving."
       },
+      "noEnrollment": "Choose a package and track to start your journey.",
+      "continueLearning": "Continue learning",
+      "openInternship": "Open internship",
+      "continueOnboarding": "Continue onboarding",
+      "loading": "Loading…",
+      "loadError": "We couldn't load this right now.",
+      "retry": "Try again",
       "journey": {
         "label": "Your learning journey",
         "status": {
@@ -1094,8 +1101,9 @@
         "paymentCaption": "Done",
         "aiInterview": "AI interview",
         "aiInterviewCaption": "Level: {{level}}",
+        "aiInterviewPending": "Result pending",
         "courses": "Courses",
-        "coursesCaption": "{{done}} of {{total}} modules",
+        "coursesCaption": "{{value}}% complete",
         "technicalInterview": "Technical interview",
         "technicalInterviewCaption": "After courses",
         "internship": "Internship",
@@ -1105,46 +1113,74 @@
       },
       "todayTask": {
         "eyebrow": "Today's task",
-        "due": "Due tonight · {{time}}",
-        "open": "Open today's task"
+        "due": "Due {{date}} · end of sprint",
+        "open": "Open today's task",
+        "emptyTitle": "No tasks yet",
+        "emptyBody": "Your tasks appear here once you join a squad.",
+        "emptyForming": "Your tasks appear here once your Senior starts the squad.",
+        "doneTitle": "You're all caught up",
+        "doneBody": "No open tasks are assigned to you in the current sprint."
       },
       "nextSession": {
         "eyebrow": "Next session",
         "title": "1:1 with {{name}}",
+        "mentorFallback": "your mentor",
         "join": "Join",
-        "joinUnavailable": "Joining sessions isn't available yet."
+        "joinUnavailable": "The meeting link hasn't been added yet.",
+        "emptyTitle": "No session booked",
+        "emptyBody": "Book a 1:1 session with a mentor.",
+        "book": "Book"
       },
       "interview": {
         "title": "Interview result",
-        "metrics": {
-          "technicalAccuracy": "Technical accuracy",
-          "communication": "Communication",
-          "problemSolving": "Problem solving",
-          "depth": "Depth vs surface"
-        },
-        "focus": "Focus area: go deeper on why, not just what. Your Module {{module}} tasks target this."
+        "empty": "Your interview level appears here once your result is confirmed.",
+        "levelNote": "Your squad and project tasks are matched to this level."
       },
       "hub": {
         "title": "Your hub",
         "subtitle": "Four services, one journey",
         "courses": {
           "title": "Courses",
-          "status": "In progress",
-          "detail": "{{course}} · Module {{module}}",
+          "statuses": {
+            "inProgress": "In progress",
+            "completed": "Completed",
+            "notIncluded": "Not included",
+            "notStarted": "Not started"
+          },
+          "detail": "{{track}} track courses",
+          "notIncludedDetail": "Your package goes straight to the internship.",
+          "noPackage": "Included in the 6- and 12-month packages.",
           "progressLabel": "Course progress",
           "complete": "{{value}}% complete"
         },
         "internship": {
           "title": "Internship",
-          "status": "Locked",
-          "detail": "Opens after your technical interview",
-          "extra": "Squad of 10 · real project · senior supervision"
+          "statuses": {
+            "locked": "Locked",
+            "waiting": "Waiting list",
+            "forming": "Forming",
+            "active": "Active"
+          },
+          "details": {
+            "courses": "Opens after your technical interview",
+            "technicalInterview": "Opens after your technical interview",
+            "review": "Opens once your interview result is confirmed",
+            "findingSquad": "Matching you with a {{track}} squad",
+            "squadForming": "Your {{track}} squad is forming",
+            "squadActive": "Your {{track}} squad project is under way",
+            "none": "Starts after you choose and pay for a package"
+          },
+          "extra": "Real project · senior supervision"
         },
         "mentorship": {
           "title": "Mentorship",
-          "status": "Active",
-          "senior": "Senior: {{name}}",
-          "next": "Next 1:1 · {{date}}"
+          "statuses": {
+            "booked": "Booked",
+            "none": "No session"
+          },
+          "mentor": "Mentor: {{name}}",
+          "next": "Next 1:1 · {{date}}",
+          "empty": "No upcoming session"
         },
         "recruitment": {
           "title": "Recruitment",
@@ -1156,6 +1192,8 @@
       "squad": {
         "title": "Your squad",
         "viewAll": "View all {{count}}",
+        "open": "Open internship",
+        "empty": "Your squad appears here once you're matched.",
         "you": "(you)"
       }
     },

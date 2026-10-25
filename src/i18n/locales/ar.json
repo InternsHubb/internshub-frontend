@@ -1083,18 +1083,21 @@
         "afternoonNoName": "مساء الخير.",
         "eveningNoName": "مساء الخير."
       },
-      "modulesAway_zero": "أنت جاهز للمقابلة التقنية. حافظ على استمرارك.",
-      "modulesAway_one": "تبقّت وحدة واحدة على مقابلتك التقنية. حافظ على استمرارك.",
-      "modulesAway_two": "تبقّت وحدتان على مقابلتك التقنية. حافظ على استمرارك.",
-      "modulesAway_few": "تبقّت {{count}} وحدات على مقابلتك التقنية. حافظ على استمرارك.",
-      "modulesAway_many": "تبقّت {{count}} وحدة على مقابلتك التقنية. حافظ على استمرارك.",
-      "modulesAway_other": "تبقّت {{count}} وحدة على مقابلتك التقنية. حافظ على استمرارك.",
-      "continueLearning": "تابع التعلّم",
-      "levels": {
-        "junior": "مبتدئ",
-        "mid": "متوسط",
-        "senior": "متقدّم"
+      "next": {
+        "courses": "أكمل دورات مسارك لتفتح مقابلتك التقنية.",
+        "technicalInterview": "أنهيت دورات مسارك. مقابلتك التقنية هي الخطوة التالية.",
+        "review": "مقابلتك قيد المراجعة. سنبلغك بالنتيجة.",
+        "findingSquad": "أنت على قائمة الانتظار. نختار لك فريقًا مناسبًا.",
+        "squadForming": "فريقك قيد التكوين. سيبدأه مشرفك قريبًا.",
+        "squadActive": "مشروع فريقك جارٍ. واصل إنجاز مهام السبرنت."
       },
+      "noEnrollment": "اختر باقة ومسارًا لتبدأ رحلتك.",
+      "continueLearning": "تابع التعلّم",
+      "openInternship": "افتح التدريب",
+      "continueOnboarding": "تابع إعداد حسابك",
+      "loading": "جارٍ التحميل…",
+      "loadError": "تعذّر تحميل هذا الآن.",
+      "retry": "أعد المحاولة",
       "journey": {
         "label": "رحلة تعلّمك",
         "status": {
@@ -1106,8 +1109,9 @@
         "paymentCaption": "تم",
         "aiInterview": "مقابلة الذكاء الاصطناعي",
         "aiInterviewCaption": "المستوى: {{level}}",
+        "aiInterviewPending": "النتيجة قيد الانتظار",
         "courses": "الدورات",
-        "coursesCaption": "{{done}} من {{total}} وحدات",
+        "coursesCaption": "مكتمل {{value}}%",
         "technicalInterview": "المقابلة التقنية",
         "technicalInterviewCaption": "بعد الدورات",
         "internship": "التدريب",
@@ -1117,46 +1121,74 @@
       },
       "todayTask": {
         "eyebrow": "مهمة اليوم",
-        "due": "التسليم الليلة · {{time}}",
-        "open": "افتح مهمة اليوم"
+        "due": "التسليم {{date}} · نهاية السبرنت",
+        "open": "افتح مهمة اليوم",
+        "emptyTitle": "لا توجد مهام بعد",
+        "emptyBody": "ستظهر مهامك هنا بعد انضمامك إلى فريق.",
+        "emptyForming": "ستظهر مهامك هنا بعد أن يبدأ مشرفك الفريق.",
+        "doneTitle": "أنجزت كل مهامك",
+        "doneBody": "لا توجد مهام مفتوحة مسندة إليك في السبرنت الحالي."
       },
       "nextSession": {
         "eyebrow": "الجلسة القادمة",
         "title": "جلسة فردية مع {{name}}",
+        "mentorFallback": "مرشدك",
         "join": "انضم",
-        "joinUnavailable": "الانضمام إلى الجلسات غير متاح بعد."
+        "joinUnavailable": "لم يُضَف رابط الاجتماع بعد.",
+        "emptyTitle": "لا توجد جلسة محجوزة",
+        "emptyBody": "احجز جلسة فردية مع مرشد.",
+        "book": "احجز"
       },
       "interview": {
         "title": "نتيجة المقابلة",
-        "metrics": {
-          "technicalAccuracy": "الدقة التقنية",
-          "communication": "التواصل",
-          "problemSolving": "حل المشكلات",
-          "depth": "العمق مقابل السطحية"
-        },
-        "focus": "مجال التركيز: تعمّق في «لماذا» وليس «ماذا» فقط. مهام الوحدة {{module}} تستهدف ذلك."
+        "empty": "سيظهر مستواك هنا بعد تأكيد نتيجة مقابلتك.",
+        "levelNote": "فريقك ومهام مشروعك مناسبة لهذا المستوى."
       },
       "hub": {
         "title": "مركزك",
         "subtitle": "أربع خدمات ورحلة واحدة",
         "courses": {
           "title": "الدورات",
-          "status": "قيد التقدّم",
-          "detail": "{{course}} · الوحدة {{module}}",
+          "statuses": {
+            "inProgress": "قيد التقدّم",
+            "completed": "مكتملة",
+            "notIncluded": "غير مشمولة",
+            "notStarted": "لم تبدأ"
+          },
+          "detail": "دورات مسار {{track}}",
+          "notIncludedDetail": "باقتك تنتقل مباشرة إلى التدريب.",
+          "noPackage": "مشمولة في باقتَي 6 و12 شهرًا.",
           "progressLabel": "تقدّم الدورة",
           "complete": "مكتمل {{value}}%"
         },
         "internship": {
           "title": "التدريب",
-          "status": "مقفل",
-          "detail": "يُفتح بعد مقابلتك التقنية",
-          "extra": "فريق من 10 · مشروع حقيقي · إشراف من خبير"
+          "statuses": {
+            "locked": "مقفل",
+            "waiting": "قائمة الانتظار",
+            "forming": "قيد التكوين",
+            "active": "نشط"
+          },
+          "details": {
+            "courses": "يُفتح بعد مقابلتك التقنية",
+            "technicalInterview": "يُفتح بعد مقابلتك التقنية",
+            "review": "يُفتح بعد تأكيد نتيجة مقابلتك",
+            "findingSquad": "نختار لك فريقًا في مسار {{track}}",
+            "squadForming": "فريقك في مسار {{track}} قيد التكوين",
+            "squadActive": "مشروع فريقك في مسار {{track}} جارٍ",
+            "none": "يبدأ بعد اختيار باقة ودفع رسومها"
+          },
+          "extra": "مشروع حقيقي · إشراف من خبير"
         },
         "mentorship": {
           "title": "الإرشاد",
-          "status": "نشط",
-          "senior": "الخبير: {{name}}",
-          "next": "الجلسة الفردية القادمة · {{date}}"
+          "statuses": {
+            "booked": "محجوزة",
+            "none": "لا توجد جلسة"
+          },
+          "mentor": "المرشد: {{name}}",
+          "next": "الجلسة الفردية القادمة · {{date}}",
+          "empty": "لا توجد جلسة قادمة"
         },
         "recruitment": {
           "title": "التوظيف",
@@ -1168,6 +1200,8 @@
       "squad": {
         "title": "فريقك",
         "viewAll": "عرض الكل ({{count}})",
+        "open": "افتح التدريب",
+        "empty": "سيظهر فريقك هنا بعد اختيار فريق لك.",
         "you": "(أنت)"
       }
     },

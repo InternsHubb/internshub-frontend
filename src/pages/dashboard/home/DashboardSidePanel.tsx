@@ -1,71 +1,91 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { ProgressBar } from '@/components/dashboard/primitives';
 import { ROUTES } from '@/constants/routes';
-import {
-  INTERVIEW_SCORE_MAX,
-  SAMPLE_INTERVIEW_RESULT,
-  SAMPLE_LEARNER_PROGRESS,
-  SAMPLE_LEARNER_SQUAD,
-  SAMPLE_SQUAD_SIZE,
-} from '@/data/learnerDashboard';
+import type { useInternship } from '@/hooks/useInternship';
 import { cn } from '@/lib/cn';
 import { initialsOf } from '@/lib/initials';
+import { levelKey, toSquadMembers } from '@/lib/internship';
 
-import { HOME_CARD, formatScore } from './homeShared';
+import { CardError, SkeletonLines } from './HomeStates';
+import { HOME_CARD } from './homeShared';
 
-// Right column of the "Learner dashboard" reference: interview result and squad.
+// Right column of the "Learner dashboard" reference: interview result and squad, from the
+// internship journey (GET /api/me/interviews and GET /api/me/squad via useInternship).
 
-export function InterviewResultCard() {
-  const { t, i18n } = useTranslation();
-  const { metrics, focusMetric } = SAMPLE_INTERVIEW_RESULT;
+type Internship = ReturnType<typeof useInternship>;
+
+const TEXT = 'text-sm leading-relaxed text-[#6b5d78]';
+
+// The API returns the confirmed level only (no per-skill scores), so the card shows the level.
+export function InterviewResultCard({ internship }: { internship: Internship }) {
+  const { t } = useTranslation();
+  const level = internship.data?.level ?? null;
+
+  let content;
+  if (internship.status === 'loading') content = <SkeletonLines />;
+  else if (internship.status === 'error') content = <CardError errorKey={internship.errorKey} onRetry={internship.reload} />;
+  else if (!level) content = <p className={TEXT}>{t('dashboard.home.interview.empty')}</p>;
+  else content = <p className={cn(TEXT, 'rounded-2xl bg-[#f6f2f9] px-4 py-3')}>{t('dashboard.home.interview.levelNote')}</p>;
 
   return (
     <section aria-labelledby="interview-result-title" className={cn(HOME_CARD, 'flex flex-col gap-5 p-6')}>
       <div className="flex items-center justify-between gap-3">
         <h2 id="interview-result-title" className="text-lg font-bold text-[#1c0b2b]">{t('dashboard.home.interview.title')}</h2>
-        <span className="rounded-full bg-[#2a0640] px-3 py-1 text-[13px] font-semibold text-white">
-          {t(`dashboard.home.levels.${SAMPLE_LEARNER_PROGRESS.interviewLevel}`)}
-        </span>
+        {level && (
+          <span className="rounded-full bg-[#2a0640] px-3 py-1 text-[13px] font-semibold text-white">
+            {t(`onboarding.interview.levels.${levelKey(level)}`)}
+          </span>
+        )}
       </div>
-      <ul className="flex flex-col gap-4">
-        {metrics.map((metric) => {
-          const label = t(`dashboard.home.interview.metrics.${metric.id}`);
-          return (
-            <li key={metric.id} className="flex flex-col gap-2">
-              <div className="flex items-center justify-between gap-3 text-sm text-[#3d2c4d]">
-                <span>{label}</span>
-                <span className="font-semibold text-[#1c0b2b]">{formatScore(metric.score, i18n.language)}</span>
-              </div>
-              <ProgressBar
-                value={metric.score}
-                max={INTERVIEW_SCORE_MAX}
-                label={label}
-                trackClassName="bg-[#ede6f3]"
-                fillClassName={metric.id === focusMetric ? 'bg-[#f6a55b]' : 'bg-[#3b0454]'}
-              />
-            </li>
-          );
-        })}
-      </ul>
-      <p className="rounded-2xl bg-[#f6f2f9] px-4 py-3 text-sm leading-relaxed text-[#6b5d78]">
-        {t('dashboard.home.interview.focus', { module: SAMPLE_LEARNER_PROGRESS.currentModule })}
-      </p>
+      {content}
     </section>
   );
 }
 
 const AVATAR_TONES = ['bg-[#f1eaf7] text-[#4e0f7c]', 'bg-[#fdeedd] text-[#b4561a]'] as const;
 
-type SquadRow = { id: string; name: string; role: string; isYou: boolean };
+type SquadCardProps = { internship: Internship; userId: string | null; learnerName: string };
 
-export function SquadCard({ learnerName, learnerRole }: { learnerName: string; learnerRole: string }) {
+export function SquadCard({ internship, userId, learnerName }: SquadCardProps) {
   const { t } = useTranslation();
-  const rows: ReadonlyArray<SquadRow> = [
-    ...SAMPLE_LEARNER_SQUAD.map((member) => ({ ...member, isYou: false })),
-    { id: 'you', name: learnerName, role: learnerRole, isYou: true },
-  ];
+  const squad = internship.data?.squad ?? null;
+  const members = squad ? toSquadMembers(squad) : [];
+
+  let content;
+  if (internship.status === 'loading') content = <SkeletonLines widths={['w-2/3', 'w-1/2', 'w-3/5']} />;
+  else if (internship.status === 'error') content = <CardError errorKey={internship.errorKey} onRetry={internship.reload} />;
+  else if (members.length === 0) content = <p className={TEXT}>{t('dashboard.home.squad.empty')}</p>;
+  else {
+    content = (
+      <ul className="flex flex-col gap-4">
+        {members.map((member, index) => {
+          const isYou = member.id === userId;
+          const name = member.name || (isYou ? learnerName : '');
+          return (
+            <li key={member.id} className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className={cn(
+                  'flex size-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold',
+                  isYou ? 'bg-[#3b0454] text-white' : AVATAR_TONES[index % AVATAR_TONES.length],
+                )}
+              >
+                {initialsOf(name, name.includes('@'))}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-[15px] font-semibold text-[#1c0b2b]">
+                  <bdi>{name}</bdi>
+                  {isYou && <span className="font-normal text-[#6b5d78]"> {t('dashboard.home.squad.you')}</span>}
+                </p>
+                {member.track && <p className="truncate text-[13px] text-[#6b5d78]"><bdi>{member.track}</bdi></p>}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
 
   return (
     <section aria-labelledby="home-squad-title" className={cn(HOME_CARD, 'flex flex-col gap-4 p-6')}>
@@ -75,31 +95,10 @@ export function SquadCard({ learnerName, learnerRole }: { learnerName: string; l
           to={ROUTES.dashboardInternship}
           className="rounded text-sm font-semibold text-[#4e0f7c] outline-none hover:underline focus-visible:ring-2 focus-visible:ring-[#5a198f]"
         >
-          {t('dashboard.home.squad.viewAll', { count: SAMPLE_SQUAD_SIZE })}
+          {members.length > 0 ? t('dashboard.home.squad.viewAll', { count: members.length }) : t('dashboard.home.squad.open')}
         </Link>
       </div>
-      <ul className="flex flex-col gap-4">
-        {rows.map((member, index) => (
-          <li key={member.id} className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              className={cn(
-                'flex size-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold',
-                member.isYou ? 'bg-[#3b0454] text-white' : AVATAR_TONES[index % AVATAR_TONES.length],
-              )}
-            >
-              {initialsOf(member.name, false)}
-            </span>
-            <div className="min-w-0">
-              <p className="truncate text-[15px] font-semibold text-[#1c0b2b]">
-                <bdi>{member.name}</bdi>
-                {member.isYou && <span className="font-normal text-[#6b5d78]"> {t('dashboard.home.squad.you')}</span>}
-              </p>
-              {member.role && <p className="truncate text-[13px] text-[#6b5d78]"><bdi>{member.role}</bdi></p>}
-            </div>
-          </li>
-        ))}
-      </ul>
+      {content}
     </section>
   );
 }
