@@ -73,5 +73,8 @@ export const PROFILE_STEP = 2;
 // The Path step: every step after it needs a package and a track.
 export const PATH_STEP = 3;
 
+// The CV step: every step after it needs a CV uploaded to the backend.
+export const CV_STEP = 4;
+
 export const PACKAGE_ERROR_ID = 'package-error';
 export const TRACK_ERROR_ID = 'track-error';

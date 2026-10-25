@@ -558,6 +558,42 @@
       "accepted": "You've accepted the current terms.",
       "documentError": "We couldn't open this document. Please try again."
     },
+    "cv": {
+      "loading": "Checking your CV…",
+      "retry": "Try again",
+      "parsing": "We’re reading your CV. This usually takes a moment.",
+      "parseFailed": "We couldn’t read this CV. Please upload it again as a PDF or DOCX.",
+      "zone": {
+        "empty": "Drop your CV here",
+        "browse": "Drag and drop, or click to browse",
+        "added": "CV added successfully",
+        "replace": "Click anywhere to replace this file",
+        "wait": "Please keep this page open."
+      },
+      "stage": {
+        "uploading": "Uploading your CV…",
+        "confirming": "Checking the upload…",
+        "submitting": "Saving your CV…"
+      },
+      "badge": {
+        "waiting": "Waiting",
+        "parsing": "Parsing",
+        "parsed": "Parsed",
+        "failed": "Parse failed"
+      },
+      "file": {
+        "saved": "Your CV",
+        "size": "{{value}} MB",
+        "uploadedOn": "Uploaded {{date}}",
+        "view": "View"
+      },
+      "errors": {
+        "type": "Choose a PDF or DOCX file.",
+        "empty": "This file is empty. Choose another file.",
+        "size": "This file is larger than 5 MB. Choose a smaller file.",
+        "upload": "Your file couldn't be uploaded. Please try again."
+      }
+    },
     "verify": {
       "title": "Verify Your Account",
       "subtitle": "Confirm your email and phone number to secure your account.",

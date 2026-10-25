@@ -9,8 +9,10 @@ import { OnboardingHeader } from './OnboardingHeader';
 import { PackageSelection } from './PackageSelection';
 import { PolicyConsent } from './PolicyConsent';
 import { ProfileStep } from './ProfileStep';
-import { PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
+import { CV_STEP, PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
 import { TrackSelection } from './TrackSelection';
+import { CvUploadStep } from './CvUploadStep';
+import { useMyCv } from './useMyCv';
 import { EnrollmentChoiceError, useEnrollmentChoice } from './useEnrollmentChoice';
 import { VerifyAccountStep } from './VerifyAccountStep';
 import { InterviewResultFlow } from './interview/InterviewResultFlow';
@@ -24,10 +26,7 @@ import lockWhiteIcon from '../../assets/onboarding/lock-white.svg';
 import receiptPurpleIcon from '../../assets/onboarding/receipt-purple.svg';
 import shieldGreenIcon from '../../assets/onboarding/shield-green.svg';
 import shieldWhiteIcon from '../../assets/onboarding/shield-white.svg';
-import shieldWhiteNarrowIcon from '../../assets/onboarding/shield-white-narrow.svg';
 import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
-import uploadPurpleIcon from '../../assets/onboarding/upload-purple.svg';
-import uploadWhiteIcon from '../../assets/onboarding/upload-white.svg';
 import walletPurpleIcon from '../../assets/onboarding/wallet-purple.svg';
 import arrowRightWhiteIcon from '../../assets/onboarding/arrow-right-white.svg';
 import checkWhiteLgIcon from '../../assets/onboarding/check-white-lg.svg';
@@ -94,7 +93,6 @@ type OnboardingFormData = {
   // No package or track until the learner picks them on the Path step; later steps require both.
   selectedPackage: PackageValue | null;
   selectedTrack: TrackId | null;
-  cvUploaded: boolean;
   selectedMentor: string;
 };
 
@@ -112,7 +110,6 @@ export default function OnboardingFlow() {
   const [formData, setFormData] = useState<OnboardingFormData>({
     selectedPackage: null,
     selectedTrack: null,
-    cvUploaded: false,
     selectedMentor: 'Amina M.'
   });
   const [showPackageError, setShowPackageError] = useState(false);
@@ -136,6 +133,10 @@ export default function OnboardingFlow() {
   const isPathSaved = Boolean(
     savedChoice && savedChoice.packageValue === formData.selectedPackage && savedChoice.trackId === formData.selectedTrack
   );
+
+  const myCv = useMyCv();
+  // The CV counts once the backend holds one whose parsing hasn't failed.
+  const isCvReady = myCv.cv !== null && myCv.cv.parseStatus !== 'Failed';
 
   // An enrollment chosen earlier preselects its cards, once, unless the learner already picked some.
   const appliedSavedChoice = useRef(false);
@@ -168,6 +169,11 @@ export default function OnboardingFlow() {
     // ...and the choice must be saved as the learner's enrollment (Confirm does that).
     if (step > PATH_STEP && !isPathSaved) {
       setCurrentStep(PATH_STEP);
+      return;
+    }
+    // ...and a CV uploaded to the backend.
+    if (step > CV_STEP && !isCvReady) {
+      setCurrentStep(CV_STEP);
       return;
     }
     setCurrentStep(step);
@@ -500,102 +506,17 @@ export default function OnboardingFlow() {
 
           {/* STEP 4: CV */}
           {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Upload Your CV</h1>
-                <p className="text-[#69616D] text-base">Your CV helps us understand your background and prepare a relevant assessment.</p>
-              </div>
-
-              <div className="bg-white/88 p-4 rounded-[18px] border border-[#3A0353]/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-[38px] h-[38px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteNarrowIcon} alt="" aria-hidden="true" width={18} height={18} /></div>
-                  <div><h4 className="text-xs font-bold text-[#111827]">Required for every package</h4><p className="text-[9px] text-[#6B7280]">Your CV must be ready before the interview.</p></div>
-                </div>
-                <div className="flex flex-wrap items-center gap-4 text-[9px] text-[#5C1D87]">
-                  <span className="border-l border-[#E8E2EC] pl-3">PDF or DOCX</span>
-                  <span className="border-l border-[#E8E2EC] pl-3">5 MB maximum</span>
-                  <button onClick={() => setViewMode('cv-review')} className="px-3 py-1 bg-[#F3E9FA] font-bold rounded-full tracking-[0.72px] underline">PREVIEW CV REVIEW LAYOUT</button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white/92 p-7 rounded-[28px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between space-y-4">
-                  <div>
-                    <div className="flex justify-between items-center mb-6">
-                      <div><span className="text-[9px] font-bold text-[#8B5DB0] uppercase">01 · ADD YOUR FILE</span><h3 className="text-lg font-normal text-[#111827]">Upload from your device</h3></div>
-                      <div className="w-[42px] h-[42px] bg-[#FBF7FE] border border-[#E0D3E7] rounded-[13px] flex items-center justify-center text-xs font-bold text-[#5C1D87]">CV</div>
-                    </div>
-
-                    <div onClick={() => setFormData({...formData, cvUploaded: !formData.cvUploaded})} className={`border-2 border-dashed p-8 rounded-[24px] text-center cursor-pointer flex flex-col items-center justify-center ${formData.cvUploaded ? 'border-[#8AC8A7] bg-gradient-to-b from-[#FFFFFF] to-[#F1FBF5]' : 'border-[#BFA4CE] bg-gradient-to-b from-[#FDFBFF] to-[#F6EEFB]'}`}>
-                      <div className={`w-16 h-16 rounded-[20px] flex items-center justify-center text-xl mb-3 shadow-lg text-white ${formData.cvUploaded ? 'bg-[#16794A]' : 'bg-[#3A0353]'}`}>
-                        {formData.cvUploaded ? '✓' : <img src={uploadWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />}
-                      </div>
-                      <h4 className="text-base font-normal text-[#111827]">{formData.cvUploaded ? 'CV added successfully' : 'Drop your CV here'}</h4>
-                      <p className="text-xs text-[#6B7280] mb-4">{formData.cvUploaded ? 'Click anywhere to replace this file' : 'Drag and drop, or click to browse'}</p>
-                      <div className="flex justify-center gap-2">
-                        <span className="px-2.5 py-1 bg-white/70 text-[8px] text-[#5C1D87] border rounded-[7px]">PDF</span>
-                        <span className="px-2.5 py-1 bg-white/70 text-[8px] text-[#5C1D87] border rounded-[7px]">DOCX</span>
-                        <span className="px-2.5 py-1 bg-white/70 text-[8px] text-[#5C1D87] border rounded-[7px]">MAX 5 MB</span>
-                      </div>
-                    </div>
-
-                    {formData.cvUploaded && (
-                      <div className="mt-4 p-3 bg-white border border-[#E8E2EC] rounded-[12px] flex items-center justify-between shadow-xs">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-[#F3E9FA] text-[#5C1D87] rounded-[9px] flex items-center justify-center text-[10px] font-bold">DOC</div>
-                          <div><h5 className="text-xs text-[#111827]">InternsHub — Portals & Modules.docx</h5><p className="text-[9px] text-[#6B7280]">0.02 MB · Illustrative local upload</p></div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="px-2.5 py-1 bg-[#EAF8F0] text-[#16794A] text-[9px] font-bold rounded-full">success</span>
-                          <button onClick={() => setFormData({...formData, cvUploaded: false})} className="text-xs text-[#5C1D87] underline">Remove</button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div><a href="#parse-fail" className="text-[9px] text-[#6B7280] underline">Preview parse-failure state</a></div>
-                </div>
-
-                <div className="bg-white/92 p-7 rounded-[28px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <div><span className="text-[9px] font-bold text-[#8B5DB0] uppercase">02 · SMART REVIEW</span><h3 className="text-lg font-normal text-[#111827]">CV profile snapshot</h3></div>
-                      <span className={`px-3 py-1 text-[9px] font-bold rounded-full ${formData.cvUploaded ? 'bg-[#EAF8F0] text-[#16794A]' : 'bg-[#F1EEF2] text-[#685F6D]'}`}>{formData.cvUploaded ? 'Parsed' : 'Waiting'}</span>
-                    </div>
-
-                    <div className={`flex items-center justify-between px-4 py-3 rounded-[13px] text-[8px] mb-6 ${formData.cvUploaded ? 'bg-[#FAF8FB] text-[#16794A]' : 'bg-[#FAF8FB] text-[#AAA2AD]'}`}>
-                      <span>{formData.cvUploaded ? '✓' : '①'} Upload</span><span className={`flex-grow h-[1px] mx-3 ${formData.cvUploaded ? 'bg-[#16794A]' : 'bg-[#E8E2EC]'}`}></span>
-                      <span>{formData.cvUploaded ? '✓' : '②'} Parse</span><span className={`flex-grow h-[1px] mx-3 ${formData.cvUploaded ? 'bg-[#16794A]' : 'bg-[#E8E2EC]'}`}></span>
-                      <span>{formData.cvUploaded ? '✓' : '③'} Review</span>
-                    </div>
-
-                    {formData.cvUploaded ? (
-                      <div className="grid grid-cols-2 gap-3">
-                        {['SKILLS', 'EDUCATION', 'PROJECTS', 'EXPERIENCE'].map((cat) => (
-                          <div key={cat} className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1">
-                            <span className="text-[8px] text-[#8B5DB0] uppercase">{cat}</span>
-                            <h5 className="text-xs text-[#111827]">Review extracted {cat.toLowerCase()}</h5>
-                            <p className="text-[8px] text-[#16794A] pt-1">Ready to review</p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-6 text-[#6B7280]">
-                        <div className="w-[68px] h-[68px] bg-gradient-to-br from-white to-[#F4EAFA] border border-[#D9C8E3] rounded-[20px] mx-auto flex items-center justify-center mb-3 shadow-md"><img src={uploadPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <h4 className="text-sm font-normal text-[#111827]">Your profile preview starts here</h4>
-                        <p className="text-[11px] text-[#6B7280] max-w-[270px] mx-auto mt-1 leading-relaxed">Skills, education, projects, and experience will be organized for your review.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                <button onClick={() => setCurrentStep(3)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(5)} className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow flex items-center gap-2 ${formData.cvUploaded ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}>
-                  Continue to Payment →
-                </button>
-              </div>
-            </div>
+            <CvUploadStep
+              cv={myCv.cv}
+              isLoading={myCv.isLoading}
+              loadError={myCv.error}
+              stage={myCv.stage}
+              onRetry={myCv.retry}
+              onUpload={myCv.upload}
+              onBack={() => setCurrentStep(PATH_STEP)}
+              onContinue={() => goToStep(CV_STEP + 1)}
+              onPreviewReview={() => setViewMode('cv-review')}
+            />
           )}
 
           {/* STEP 07: Setup and AI interview (frontend-only; see ./interview) */}
@@ -605,7 +526,7 @@ export default function OnboardingFlow() {
               onChange={updateInterview}
               type={interviewType}
               track={trackName}
-              cvUploaded={formData.cvUploaded}
+              cvUploaded={isCvReady}
               fullscreenTarget={interviewPage}
               onExit={() => setCurrentStep(5)}
               onFinish={finishInterview}
