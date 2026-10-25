@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import checkIcon from '@/assets/dashboard/path-check.svg';
-import { formatPrice } from '@/constants/packages';
+import { formatPackagePrice, type PackagePrices } from '@/constants/packages';
 import { cn } from '@/lib/cn';
 
 import { ONBOARDING_PACKAGES, PACKAGE_ERROR_ID, PACKAGE_FEATURE_KEYS, type PackageValue } from './packages';
@@ -10,15 +10,17 @@ import { PathFieldError } from './PathFieldError';
 // "01 Select your package" on onboarding step 04 "Path" (articles 22:19127, 22:19161, 22:19195).
 // The cards are one native radio group: arrow keys move between them, and Enter submits the
 // step's form, so the same validation runs for the Confirm button, Enter and the progress bar.
-// Figma's "PRICING PENDING" badge is left out: the package prices are final.
+// Prices are the backend's (GET /api/packages); a dash shows for one it hasn't returned. Figma's
+// "PRICING PENDING" badge is left out.
 
 type PackageSelectionProps = {
   value: PackageValue | null;
   onChange: (value: PackageValue) => void;
   hasError: boolean;
+  prices: PackagePrices;
 };
 
-export function PackageSelection({ value, onChange, hasError }: PackageSelectionProps) {
+export function PackageSelection({ value, onChange, hasError, prices }: PackageSelectionProps) {
   const { t, i18n } = useTranslation();
 
   return (
@@ -77,7 +79,7 @@ export function PackageSelection({ value, onChange, hasError }: PackageSelection
               <h3 className="pb-[5px] pt-1 text-[28px] font-normal leading-[42px] text-[#111827]">{name}</h3>
               <p id={`package-${item.key}-price`} className="flex flex-wrap items-end gap-[5px]">
                 <span className="text-xs font-bold text-[rgba(52,48,58,0.7)]">{t('onboarding.path.currency')}</span>
-                <span className="text-[28px] font-bold leading-none text-[#3A0353]">{formatPrice(item.priceEgp, i18n.language)}</span>
+                <span className="text-[28px] font-bold leading-none text-[#3A0353]">{formatPackagePrice(prices, item.id, i18n.language)}</span>
                 <span className="text-[11px] text-[rgba(52,48,58,0.6)]">{t('onboarding.path.perPackage')}</span>
               </p>
               <ul className="flex flex-1 flex-col gap-3 py-6">

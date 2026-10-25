@@ -5,6 +5,7 @@ import { Layers, Award } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 
 import { formatPackagePrice } from '@/constants/packages'
+import { usePackagePrices } from '@/hooks/usePackagePrices'
 
 // The courses page each plan card opens.
 const PLAN_COURSES_ROUTES: Partial<Record<string, string>> = {
@@ -17,13 +18,15 @@ export const PricingSection: React.FC = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const isRtl = i18n.language === 'ar'
+  // Prices are the backend's (GET /api/packages); a dash shows until they arrive.
+  const { prices } = usePackagePrices()
 
   const plans = useMemo(
     () => [
       {
         id: '3m',
         name: t('pricing.plan3mName'),
-        price: formatPackagePrice('3m', 'en-US'),
+        price: formatPackagePrice(prices, '3m', 'en-US'),
         unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
         icon: Layers,
         features: [
@@ -37,7 +40,7 @@ export const PricingSection: React.FC = () => {
       {
         id: '6m',
         name: t('pricing.plan6mName'),
-        price: formatPackagePrice('6m', 'en-US'),
+        price: formatPackagePrice(prices, '6m', 'en-US'),
         unit: isRtl ? 'ج.م/شهرياً' : 'EGP/Month',
         icon: Award,
         features: [
@@ -53,7 +56,7 @@ export const PricingSection: React.FC = () => {
         id: '12m',
         name: t('pricing.plan12mName'),
         // One-time package price (same as onboarding), not monthly.
-        price: formatPackagePrice('12m', 'en-US'),
+        price: formatPackagePrice(prices, '12m', 'en-US'),
         unit: isRtl ? 'ج.م/للباقة' : 'EGP/Package',
         icon: Layers,
         features: [
@@ -66,7 +69,7 @@ export const PricingSection: React.FC = () => {
         isPopular: false,
       },
     ],
-    [t, isRtl],
+    [t, isRtl, prices],
   )
 
   return (

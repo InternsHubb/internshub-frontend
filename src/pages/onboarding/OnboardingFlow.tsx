@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { formatPrice, PACKAGES } from '@/constants/packages';
+import { formatPackagePrice, PACKAGES } from '@/constants/packages';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
+import { usePackagePrices } from '@/hooks/usePackagePrices';
 import { apiErrorKey } from '@/lib/api/errors';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PackageSelection } from './PackageSelection';
@@ -117,8 +118,10 @@ export default function OnboardingFlow() {
   const interviewType = interviewTypeFor(formData.selectedPackage ?? '');
   const selectedPackage = formData.selectedPackage ? PACKAGES_BY_VALUE[formData.selectedPackage] : null;
   const packageName = selectedPackage ? t(`onboarding.path.packages.${selectedPackage.key}.name`) : '';
+  // Shown prices are the backend's package prices; the amount charged is the backend invoice.
+  const { prices: packagePrices } = usePackagePrices();
   const packagePrice = selectedPackage
-    ? t('onboarding.path.priceAmount', { value: formatPrice(PACKAGES[selectedPackage.id].priceEgp, i18n.language) })
+    ? t('onboarding.path.priceAmount', { value: formatPackagePrice(packagePrices, selectedPackage.id, i18n.language) })
     : '';
   const trackName = formData.selectedTrack ? t(`onboarding.path.tracks.${formData.selectedTrack}.name`) : '';
   const isPathComplete = Boolean(formData.selectedPackage && formData.selectedTrack);
@@ -472,7 +475,7 @@ export default function OnboardingFlow() {
                 <p className="text-[#69616D] text-base">{t('onboarding.path.subtitle')}</p>
               </div>
 
-              <PackageSelection value={formData.selectedPackage} onChange={selectPackage} hasError={showPackageError} />
+              <PackageSelection value={formData.selectedPackage} onChange={selectPackage} hasError={showPackageError} prices={packagePrices} />
 
               <TrackSelection value={formData.selectedTrack} onChange={selectTrack} hasError={showTrackError} />
 
