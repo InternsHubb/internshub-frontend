@@ -436,6 +436,14 @@
   },
   "onboarding": {
     "path": {
+      "loading": "Loading packages and tracks…",
+      "saving": "Saving your choice…",
+      "retry": "Try again",
+      "errors": {
+        "notLoaded": "Packages and tracks haven't loaded yet. Please try again.",
+        "unavailable": "This package or track isn't available right now. Please choose another.",
+        "alreadyEnrolled": "You already have an active enrollment, so your package and track can't be changed here."
+      },
       "priceAmount": "{{value}} EGP",
       "tracksHeading": "Choose your technology track",
       "catalogNote": "Catalog managed by InternsHub",

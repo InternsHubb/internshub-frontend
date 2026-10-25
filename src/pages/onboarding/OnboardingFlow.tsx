@@ -1,15 +1,17 @@
-import React, { useRef, useState, type FormEvent } from 'react';
+import React, { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { formatPrice, PACKAGES } from '@/constants/packages';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
+import { apiErrorKey } from '@/lib/api/errors';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PackageSelection } from './PackageSelection';
 import { PolicyConsent } from './PolicyConsent';
 import { ProfileStep } from './ProfileStep';
 import { PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
 import { TrackSelection } from './TrackSelection';
+import { EnrollmentChoiceError, useEnrollmentChoice } from './useEnrollmentChoice';
 import { VerifyAccountStep } from './VerifyAccountStep';
 import { InterviewResultFlow } from './interview/InterviewResultFlow';
 import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
@@ -126,6 +128,24 @@ export default function OnboardingFlow() {
     : '';
   const trackName = formData.selectedTrack ? t(`onboarding.path.tracks.${formData.selectedTrack}.name`) : '';
   const isPathComplete = Boolean(formData.selectedPackage && formData.selectedTrack);
+  const enrollmentChoice = useEnrollmentChoice();
+  const { savedChoice } = enrollmentChoice;
+  const [isPathSaving, setIsPathSaving] = useState(false);
+  const [pathErrorKey, setPathErrorKey] = useState<string | null>(null);
+  // Path is done only once the cards on screen match the enrollment saved on the backend.
+  const isPathSaved = Boolean(
+    savedChoice && savedChoice.packageValue === formData.selectedPackage && savedChoice.trackId === formData.selectedTrack
+  );
+
+  // An enrollment chosen earlier preselects its cards, once, unless the learner already picked some.
+  const appliedSavedChoice = useRef(false);
+  useEffect(() => {
+    if (!savedChoice || appliedSavedChoice.current) return;
+    appliedSavedChoice.current = true;
+    setFormData((current) => current.selectedPackage || current.selectedTrack
+      ? current
+      : { ...current, selectedPackage: savedChoice.packageValue, selectedTrack: savedChoice.trackId });
+  }, [savedChoice]);
 
   // Every step after Path needs a package and a track: without both the learner is kept on (or
   // sent back to) Path with the missing choice flagged, whether they used Confirm, Enter or the
@@ -145,22 +165,45 @@ export default function OnboardingFlow() {
       requestAnimationFrame(() => pathForm.current?.querySelector<HTMLInputElement>(`input[name="${missing}"]`)?.focus());
       return;
     }
+    // ...and the choice must be saved as the learner's enrollment (Confirm does that).
+    if (step > PATH_STEP && !isPathSaved) {
+      setCurrentStep(PATH_STEP);
+      return;
+    }
     setCurrentStep(step);
   };
 
   const selectPackage = (value: PackageValue) => {
     setFormData((current) => ({ ...current, selectedPackage: value }));
     setShowPackageError(false);
+    setPathErrorKey(null);
   };
 
   const selectTrack = (value: TrackId) => {
     setFormData((current) => ({ ...current, selectedTrack: value }));
     setShowTrackError(false);
+    setPathErrorKey(null);
   };
 
-  const confirmPath = (event: FormEvent<HTMLFormElement>) => {
+  // Saves the choice (POST or PUT /api/enrollments) before moving on; nothing advances on failure.
+  const confirmPath = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    goToStep(PATH_STEP + 1);
+    if (isPathSaving) return;
+    if (!formData.selectedPackage || !formData.selectedTrack) {
+      goToStep(PATH_STEP + 1);
+      return;
+    }
+    setPathErrorKey(null);
+    setIsPathSaving(true);
+    try {
+      await enrollmentChoice.save({ packageValue: formData.selectedPackage, trackId: formData.selectedTrack });
+    } catch (error) {
+      setPathErrorKey(error instanceof EnrollmentChoiceError ? error.messageKey : apiErrorKey(error));
+      setIsPathSaving(false);
+      return;
+    }
+    setIsPathSaving(false);
+    setCurrentStep(PATH_STEP + 1);
   };
   // Holds the navbar, progress bar and step content (not the footer); the interview's Start
   // Interview click puts this in fullscreen.
@@ -429,15 +472,27 @@ export default function OnboardingFlow() {
 
               <TrackSelection value={formData.selectedTrack} onChange={selectTrack} hasError={showTrackError} />
 
+              {enrollmentChoice.isLoading && <p role="status" className="text-xs text-[#6B7280]">{t('onboarding.path.loading')}</p>}
+              {enrollmentChoice.error && !enrollmentChoice.isLoading && (
+                <div role="alert" className="bg-[#FEF0EF] p-4 rounded-[14px] text-xs text-[#B42318] flex flex-wrap items-center gap-3">
+                  <span>{t(apiErrorKey(enrollmentChoice.error))}</span>
+                  <button type="button" onClick={enrollmentChoice.reload} className="underline font-bold">{t('onboarding.path.retry')}</button>
+                </div>
+              )}
+              {pathErrorKey && <div role="alert" className="bg-[#FEF0EF] p-4 rounded-[14px] text-xs text-[#B42318]">{t(pathErrorKey)}</div>}
+
               <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
                 <button type="button" onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">{t('onboarding.path.back')}</button>
                 {/* Stays focusable without a package so a click explains what is missing (as on the CV step). */}
                 <button
                   type="submit"
-                  aria-disabled={!isPathComplete}
-                  className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow ${isPathComplete ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] rtl:bg-gradient-to-l text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}
+                  aria-disabled={!isPathComplete || isPathSaving || enrollmentChoice.isLoading}
+                  aria-busy={isPathSaving || undefined}
+                  className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow ${isPathComplete && !isPathSaving && !enrollmentChoice.isLoading ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] rtl:bg-gradient-to-l text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}
                 >
-                  {t('onboarding.path.confirm')} <span aria-hidden="true" className="inline-block rtl:-scale-x-100">→</span>
+                  {isPathSaving
+                    ? t('onboarding.path.saving')
+                    : <>{t('onboarding.path.confirm')} <span aria-hidden="true" className="inline-block rtl:-scale-x-100">→</span></>}
                 </button>
               </div>
             </form>
