@@ -1145,8 +1145,6 @@
     "topNav": {
       "search": "Search",
       "searchPlaceholder": "Search...",
-      "notifications": "Notifications",
-      "notificationsUnavailable": "Notifications are not available yet.",
       "darkMode": "Dark",
       "darkModeLabel": "Dark mode",
       "darkModeUnavailable": "Dark mode is not available yet."
@@ -1381,6 +1379,23 @@
       "upgradeWithPrice": "Upgrade Now - {{value}} EGP",
       "paymentUnavailable": "Online payment isn't available yet, so your plan hasn't changed."
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "buttonWithCount_one": "Notifications, {{count}} unread",
+    "buttonWithCount_other": "Notifications, {{count}} unread",
+    "unreadCount_one": "{{count}} unread",
+    "unreadCount_other": "{{count}} unread",
+    "unread": "Unread",
+    "markAllRead": "Mark all as read",
+    "loading": "Loading notifications…",
+    "loadError": "Notifications couldn't be loaded",
+    "retry": "Try again",
+    "emptyTitle": "No notifications yet",
+    "emptyBody": "Updates about your CV, enrollment, interview, squad and mentorship will appear here.",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "signedOut": "Sign in to see your notifications."
   },
   "api": {
     "errors": {

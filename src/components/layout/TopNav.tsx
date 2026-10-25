@@ -4,15 +4,16 @@ import { useTranslation } from 'react-i18next';
 import bellIcon from '@/assets/dashboard/topnav-bell.svg';
 import moonIcon from '@/assets/dashboard/topnav-moon.svg';
 import searchIcon from '@/assets/dashboard/topnav-search.svg';
+import { NotificationsMenu } from '@/components/layout/NotificationsMenu';
 import { SidebarTrigger } from '@/components/shared/Sidebar/SidebarTrigger';
 import { SAMPLE_PROFILE } from '@/data/internshipDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { initialsOf } from '@/lib/initials';
 
 // Dashboard top bar (Figma component "Top Nav", 30:16628): sidebar toggle, search, then the
-// "Actions" group (Bell, "Dark" theme toggle, profile). There is no notifications feature or
-// dark theme yet, so the bell and toggle are shown as in Figma but marked unavailable. The
-// bell's unread dot is left out: there is no notification data to back it.
+// "Actions" group (Bell, "Dark" theme toggle, profile). The bell opens the notifications panel
+// (NotificationsMenu). There is no dark theme yet, so the toggle is shown as in Figma but marked
+// unavailable.
 
 export const TOP_NAV_SEARCH_BOX =
   'flex h-12 w-full items-center gap-3 overflow-hidden rounded-[36px] bg-[#f4f4f4] px-5 shadow-[0_2px_10px_rgba(59,4,84,0.1)]';
@@ -62,21 +63,15 @@ function ProfileChip() {
 
 // Shared surface of the round top-bar controls ("Bell" and "Theme toggle" in "Top Nav").
 const ACTION_SURFACE =
-  'flex h-12 shrink-0 cursor-default items-center justify-center bg-[#f4f4f4] text-[#1f2937] outline-none focus-visible:ring-2 focus-visible:ring-[#5a198f]';
+  'flex h-12 shrink-0 items-center justify-center bg-[#f4f4f4] text-[#1f2937] outline-none focus-visible:ring-2 focus-visible:ring-[#5a198f]';
 
-// "Bell" (30:16636). Not wired: there is no notifications screen or API yet.
+// "Bell" (30:16636), with the unread count and the notifications panel.
 function NotificationsButton() {
-  const { t } = useTranslation();
   return (
-    <button
-      type="button"
-      aria-disabled="true"
-      aria-label={t('dashboard.topNav.notifications')}
-      title={t('dashboard.topNav.notificationsUnavailable')}
-      className={`${ACTION_SURFACE} w-12 rounded-full shadow-[0_2px_10px_rgba(59,4,84,0.1)]`}
-    >
-      <img src={bellIcon} alt="" aria-hidden="true" width={23.4} height={23.4} />
-    </button>
+    <NotificationsMenu
+      buttonClassName={`${ACTION_SURFACE} w-12 rounded-full hover:bg-[#ede8f5] shadow-[0_2px_10px_rgba(59,4,84,0.1)]`}
+      icon={<img src={bellIcon} alt="" aria-hidden="true" width={23.4} height={23.4} />}
+    />
   );
 }
 
@@ -90,7 +85,7 @@ function ThemeToggleButton() {
       aria-disabled="true"
       aria-label={t('dashboard.topNav.darkModeLabel')}
       title={t('dashboard.topNav.darkModeUnavailable')}
-      className={`${ACTION_SURFACE} gap-2 rounded-[36px] border-[0.8px] border-[#e9dcf8] px-5 drop-shadow-[0_2px_5px_rgba(59,4,84,0.1)]`}
+      className={`${ACTION_SURFACE} cursor-default gap-2 rounded-[36px] border-[0.8px] border-[#e9dcf8] px-5 drop-shadow-[0_2px_5px_rgba(59,4,84,0.1)]`}
     >
       <img src={moonIcon} alt="" aria-hidden="true" width={16} height={16} />
       <span aria-hidden="true" className="text-sm font-semibold leading-4">{t('dashboard.topNav.darkMode')}</span>

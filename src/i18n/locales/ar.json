@@ -1157,8 +1157,6 @@
     "topNav": {
       "search": "بحث",
       "searchPlaceholder": "ابحث...",
-      "notifications": "الإشعارات",
-      "notificationsUnavailable": "الإشعارات غير متاحة بعد.",
       "darkMode": "داكن",
       "darkModeLabel": "الوضع الداكن",
       "darkModeUnavailable": "الوضع الداكن غير متاح بعد."
@@ -1405,6 +1403,31 @@
       "upgradeWithPrice": "رقِّ الآن - {{value}} ج.م",
       "paymentUnavailable": "الدفع الإلكتروني غير متاح بعد، لذلك لم تتغيّر خطتك."
     }
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "buttonWithCount_zero": "الإشعارات، لا توجد إشعارات غير مقروءة",
+    "buttonWithCount_one": "الإشعارات، إشعار واحد غير مقروء",
+    "buttonWithCount_two": "الإشعارات، إشعاران غير مقروءين",
+    "buttonWithCount_few": "الإشعارات، {{count}} إشعارات غير مقروءة",
+    "buttonWithCount_many": "الإشعارات، {{count}} إشعارًا غير مقروء",
+    "buttonWithCount_other": "الإشعارات، {{count}} إشعار غير مقروء",
+    "unreadCount_zero": "لا شيء غير مقروء",
+    "unreadCount_one": "واحد غير مقروء",
+    "unreadCount_two": "اثنان غير مقروءين",
+    "unreadCount_few": "{{count}} غير مقروءة",
+    "unreadCount_many": "{{count}} غير مقروء",
+    "unreadCount_other": "{{count}} غير مقروء",
+    "unread": "غير مقروء",
+    "markAllRead": "تعليم الكل كمقروء",
+    "loading": "جارٍ تحميل الإشعارات…",
+    "loadError": "تعذّر تحميل الإشعارات",
+    "retry": "حاول مرة أخرى",
+    "emptyTitle": "لا توجد إشعارات بعد",
+    "emptyBody": "ستظهر هنا التحديثات الخاصة بسيرتك الذاتية والتسجيل والمقابلة والفريق والإرشاد.",
+    "loadMore": "عرض المزيد",
+    "loadingMore": "جارٍ التحميل…",
+    "signedOut": "سجّل الدخول لعرض إشعاراتك."
   },
   "api": {
     "errors": {
