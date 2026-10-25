@@ -52,7 +52,7 @@ export type WaitingState = JourneyExtras & {
   kind: 'waiting';
   stepper: StepperState;
   packageMonths: 3 | 6 | 12;
-  // 3-month frame: "Your Package Timeline"; 6-month frames: "Your package is active".
+  // Package-specific policy is resolved by internshipPackages.ts.
   packageCard: 'timeline' | 'active';
   github: GithubStatus;
   githubUsername: string;
@@ -80,7 +80,7 @@ export const INTERNSHIP_STATES = {
   // "internship plan 3 and 11" (31:32569)
   'finding-squad': {
     kind: 'waiting',
-    stepper: { firstNumber: 2, currentIndex: 1 },
+    stepper: { firstNumber: 1, currentIndex: 1 },
     packageMonths: 3,
     packageCard: 'timeline',
     github: 'add',
@@ -90,17 +90,25 @@ export const INTERNSHIP_STATES = {
   'github-invalid': {
     kind: 'waiting',
     stepper: { firstNumber: 1, currentIndex: 1 },
-    packageMonths: 6,
-    packageCard: 'active',
+    packageMonths: 3,
+    packageCard: 'timeline',
     github: 'invalid',
     githubUsername: 's.kassem',
+  },
+  'github-missing': {
+    kind: 'waiting',
+    stepper: { firstNumber: 1, currentIndex: 1 },
+    packageMonths: 3,
+    packageCard: 'timeline',
+    github: 'add',
+    githubUsername: '',
   },
   // "internship plan 14" (31:35111)
   'github-saved': {
     kind: 'waiting',
     stepper: { firstNumber: 1, currentIndex: 1 },
-    packageMonths: 6,
-    packageCard: 'active',
+    packageMonths: 3,
+    packageCard: 'timeline',
     github: 'saved',
     githubUsername: 's.kassem',
   },
@@ -120,18 +128,17 @@ export const INTERNSHIP_STATES = {
     hasPressedReady: true,
     membersReady: 2,
   },
-  // "internship plan 3 and 14" (31:34368). Figma's label still reads 2/4 while the bar
-  // shows 3/4; the bar is treated as the intended value.
+  // Latest 3-month completed squad (49:39516): four seats and four ready members.
   'squad-all-ready': {
     kind: 'squad',
-    stepper: { firstNumber: 1, currentIndex: 2 },
+    stepper: { firstNumber: 1, currentIndex: 3 },
     notice: 'allSet',
     hasPressedReady: true,
-    membersReady: 3,
+    membersReady: 4,
+    isSquadFull: true,
   },
 
-  // 6- and 12-month packages ("6 and 12 months", 35:9387). Every frame there reads
-  // "PACKAGE 6 Months"; the page shows 12 Months with `&plan=12m`.
+  // Shared visual states; internshipPackages.ts resolves each package independently.
   // "internship plan 6 or 12 incase uncompleted courses" (35:9388): no stepper in Figma.
   'courses-in-progress': {
     kind: 'courses',
@@ -166,7 +173,7 @@ export const INTERNSHIP_STATES = {
     kind: 'waiting',
     stepper: coursesStepper(2),
     packageMonths: 6,
-    packageCard: 'active',
+    packageCard: 'timeline',
     github: 'saved',
     githubUsername: 's.kassem',
     requiredCourses: { percent: 100, status: 'unlocked' },
@@ -176,7 +183,7 @@ export const INTERNSHIP_STATES = {
     kind: 'waiting',
     stepper: coursesStepper(2),
     packageMonths: 6,
-    packageCard: 'active',
+    packageCard: 'timeline',
     github: 'invalid',
     githubUsername: 's.kassem',
     requiredCourses: { percent: 100, status: 'unlocked' },
@@ -203,7 +210,7 @@ export const INTERNSHIP_STATES = {
   // "internship plan 3 and 10" (35:12438): 4/4 seats, 4/4 ready.
   'courses-squad-all-ready': {
     kind: 'squad',
-    stepper: coursesStepper(3),
+    stepper: coursesStepper(4),
     notice: 'allSet',
     hasPressedReady: true,
     membersReady: 4,
@@ -258,7 +265,7 @@ export const SAMPLE_PROJECT_TEAM: ReadonlyArray<SquadMember> = [
 ];
 
 export const SAMPLE_SPRINT = {
-  number: 1,
+  number: 4,
   startDate: '2026-10-10',
   endDate: '2026-10-17',
   daysLeft: 4,
@@ -297,7 +304,8 @@ export const SAMPLE_TOP_TASKS: ReadonlyArray<{ id: number; title: string; status
   { id: 18, title: 'Set Up Routing', status: 'todo' },
 ];
 
-export type BoardTask = { key: string; id: number; title: string; track: string };
+export type BoardTask = { key: string; id: number; title: string; track: string; assigneeId?: string; storyPoints?: number; changesRequested?: boolean };
+export const SAMPLE_BOARD_STUDENT_ID = 'merna';
 
 function placeholderTasks(prefix: string, count: number): ReadonlyArray<BoardTask> {
   // Every Figma board card reads "Task # 17 / Create Task List UI / UI/UX".
@@ -306,6 +314,9 @@ function placeholderTasks(prefix: string, count: number): ReadonlyArray<BoardTas
     id: 17,
     title: 'Create Task List UI',
     track: 'UI/UX',
+    assigneeId: SAMPLE_BOARD_STUDENT_ID,
+    storyPoints: 2,
+    changesRequested: prefix === 'progress' && index === 1,
   }));
 }
 

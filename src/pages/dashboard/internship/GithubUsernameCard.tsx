@@ -9,7 +9,7 @@ import { cn } from '@/lib/cn';
 
 const VALID_USERNAME = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i;
 
-export function GithubUsernameCard({ initialStatus, initialUsername }: { initialStatus: GithubStatus; initialUsername: string }) {
+export function GithubUsernameCard({ initialStatus, initialUsername, onStatusChange }: { initialStatus: GithubStatus; initialUsername: string; onStatusChange?: (status: GithubStatus, username: string) => void }) {
   const { t } = useTranslation();
   const [status, setStatus] = useState(initialStatus);
   const [username, setUsername] = useState(initialUsername);
@@ -19,17 +19,19 @@ export function GithubUsernameCard({ initialStatus, initialUsername }: { initial
     event.preventDefault();
     const trimmedUsername = username.trim();
     setUsername(trimmedUsername);
-    setStatus(VALID_USERNAME.test(trimmedUsername) ? 'saved' : 'invalid');
+    const nextStatus = VALID_USERNAME.test(trimmedUsername) ? 'saved' : 'invalid';
+    setStatus(nextStatus);
+    onStatusChange?.(nextStatus, trimmedUsername);
   }
 
   return (
-    <section aria-labelledby="github-title" className={cn(OUTLINE_CARD, 'p-6', invalid && 'border-2 border-[#c53131]')}>
+    <section aria-labelledby="github-title" className={cn(OUTLINE_CARD, 'p-6', invalid && 'border-[3px] border-[#c53131]')}>
       <IconHeading icon={githubIcon} className="gap-2">
         <h2 id="github-title" className={cn('text-base font-semibold', invalid ? 'text-[#a10000]' : 'text-[#42046b]')}>
           {t(`dashboard.github.${status}.title`)}
         </h2>
       </IconHeading>
-      <p role={invalid ? 'alert' : 'status'} id="github-feedback" className={cn('mt-2 ps-8 text-xs font-semibold leading-[18px]', invalid ? 'text-[#a10000]' : 'text-[#828282]')}>
+      <p role={invalid ? 'alert' : 'status'} id="github-feedback" className="mt-2 ps-8 text-xs font-semibold leading-[18px] text-[#828282]">
         {t(`dashboard.github.${status}.hint`)}
       </p>
       <form onSubmit={saveUsername} className="mt-3 flex flex-col gap-4 sm:ps-[30px]">
@@ -42,6 +44,7 @@ export function GithubUsernameCard({ initialStatus, initialUsername }: { initial
             id="github-username"
             dir="ltr"
             value={username}
+            placeholder={t('dashboard.github.placeholder')}
             onChange={(event) => setUsername(event.target.value)}
             readOnly={status !== 'add'}
             aria-invalid={invalid}
@@ -51,7 +54,7 @@ export function GithubUsernameCard({ initialStatus, initialUsername }: { initial
             spellCheck={false}
             className={cn('min-w-0 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[#5a198f]', status === 'add' ? 'w-full rounded-[13px] bg-[#e7e7e7] px-6 py-[15px]' : 'w-full rounded-sm bg-transparent text-end sm:w-1/2', invalid && 'text-[#a10000]')}
           />
-          {invalid && <p id="github-error" className="w-full text-xs font-medium text-[#a10000]">{t('dashboard.github.invalid.error')}</p>}
+          {invalid && <p id="github-error" className="w-full text-xs font-medium text-[#828282]">{t('dashboard.github.invalid.error')}</p>}
         </div>
         {status === 'add' ? (
           // Keys stop React from reusing one <button> for both, which would flip `type` mid-click.
@@ -60,7 +63,7 @@ export function GithubUsernameCard({ initialStatus, initialUsername }: { initial
           <button
             key="edit"
             type="button"
-            onClick={() => setStatus('add')}
+            onClick={() => { setStatus('add'); onStatusChange?.('add', username); }}
             className={cn(ACTION_BUTTON, invalid ? 'bg-[#a10000] text-white shadow-[0_10px_22px_rgba(58,3,83,0.2)]' : 'border-2 border-[#42046b] text-black')}
           >
             {t('dashboard.github.edit')}

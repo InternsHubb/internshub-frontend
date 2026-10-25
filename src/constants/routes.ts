@@ -33,6 +33,7 @@ export const ROUTES = {
   mentorship: '/mentorship',
   mentorshipMentors: '/mentorship/mentors',
   mentorshipMentorProfile: '/mentorship/mentors/:id',
+  mentorshipBookSession: '/mentorship/book/:id',
   mentorshipConfirmBooking: '/mentorship/book/confirm',
   mentorshipBookingSuccess: '/mentorship/book/success',
   mentorshipSessionDetails: '/mentorship/sessions/:id',

@@ -185,6 +185,7 @@
     "mentorImageAlt": "Professional mentor in lavender jacket with laptop"
   },
   "mentorship": {
+    "booking": {"back":"Back to Mentorship","title":"Book a Session","checkAvailability":"Check your mentor's availability.","viewProfile":"View Profile","noSlots":"No Available Slots","noSlotsDescription":"Check back later or explore other mentors.","updatedAvailability":"Availability is updated regularly.","otherMentors":"Explore Other Mentors","duration":"45 min session","subtitle":"Select a date and time that works for you.","available":"Available","oneToOne":"1:1 session","rulesTitle":"Booking rules","rules":"Cancel at least 24 hours before your session to receive your credit back.","selectDate":"Select Date","previousDates":"Previous dates","nextDates":"Next dates","timeSlots":"Available Time Slots","timeHint":"Select your preferred time","selected":"Selected","open":"Open","summary":"Booking Summary","mentor":"MENTOR","dateTime":"DATE & TIME","durationLabel":"DURATION","balance":"Session Balance","remaining":"{{remaining}} of {{total}} remaining","topic":"What would you like to discuss?","continue":"Continue to Confirmation","cancellation":"Cancel at least 24 hours in advance to keep your session credit."},
     "title": "Learn From People Who've Done It",
     "subtitle": "Get practical guidance, insights, and feedback from experienced professionals.",
     "cta": "Explore Mentorship",
@@ -1086,6 +1087,8 @@
       "months_other": "{{count}} Months",
       "since": "Waiting since {{date}}",
       "day": "Day {{day}} of waiting",
+      "overSevenDays": "Over 7 Days of waiting",
+      "delayed": "Taking longer than usual for this track, we will notify you as soon as your squad is ready.",
       "nextTitle": "What Happens Next?",
       "package": {
         "timeline": {
@@ -1113,6 +1116,8 @@
       }
     },
     "github": {
+      "placeholder": "Please enter your GitHub username",
+      "missing": "You can’t join a squad without adding your GitHub username first.",
       "usernameLabel": "GitHub username",
       "save": "Save Username",
       "edit": "Edit Username",
@@ -1123,7 +1128,8 @@
       "invalid": {
         "title": "Invalid user name",
         "hint": "Please enter valid username",
-        "error": "Invalid username edit it now!"
+        "error": "Invalid username edit it now!",
+        "notification": "Invalid GitHub username. Please enter a valid GitHub username to join a squad."
       },
       "saved": {
         "title": "GitHub username saved!",
@@ -1138,6 +1144,7 @@
       "readinessTitle": "<purple>Squad</purple> Readiness",
       "seatsFilled": "Seats filled",
       "membersReady": "Member ready",
+      "readyCount": "{{value}}/{{max}} Ready",
       "seats": "{{value}}/{{max}} Seats",
       "ready": "Ready",
       "emptySeatName": "Member {{number}}",
@@ -1156,6 +1163,8 @@
       "loading": "Loading"
     },
     "sprint": {
+      "select": "Select sprint",
+      "current": "Sprint {{number}} — Current",
       "title": "Sprints {{number}}",
       "dates": "{{start}} - {{end}}",
       "daysLeft_one": "{{count}} day left",
@@ -1178,6 +1187,7 @@
     "tasks": {
       "title": "My Tasks This Sprint",
       "topTasks": "My Top Tasks",
+      "empty": "No tasks assigned to you in this sprint yet.",
       "taskNumber": "Task #{{id}}",
       "taskNumberSpaced": "Task # {{id}}",
       "status": {
@@ -1188,7 +1198,16 @@
     },
     "board": {
       "title": "Task Board",
+      "empty": "No tasks here yet.",
+      "readOnly": "Read only",
+      "changesRequested": "Changes requested",
+      "points": "{{count}}pt",
+      "moveTask": "Move {{title}}",
+      "viewLabel": "Task board view",
+      "mockHint": "Interactive demo: drag a task or choose its status to move it and move it back. Changes are temporary; Backlog is read-only.",
+      "tabs": { "mine": "My tasks", "squad": "Squad board" },
       "columns": {
+        "backlog": "Backlog",
         "todo": "Task to do",
         "inProgress": "Tasks in progress",
         "inReview": "Tasks in review",

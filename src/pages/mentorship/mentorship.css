@@ -1,0 +1,23 @@
+.mentorship-app {
+  color-scheme: light;
+}
+
+.mentorship-app .mentor-directory-card {
+  min-height: 466px;
+}
+
+.mentorship-app .mentor-profile {
+  font-family: Arial, sans-serif;
+}
+
+.mentorship-app .mentor-profile h1 {
+  letter-spacing: -0.75px;
+}
+
+.mentorship-app .mentorship-main > .mentorship-confirmation {
+  max-width: 1088px;
+}
+
+.mentorship-app .mentorship-booking {
+  background: radial-gradient(ellipse at top right, #f0e5fc80, transparent 55%);
+}

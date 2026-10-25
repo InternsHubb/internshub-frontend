@@ -1,3 +1,4 @@
+import sessionAvatar from '@/assets/mentorship/aisha-session.png';
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
@@ -26,7 +27,7 @@ export const SessionDetailsPage: React.FC = () => {
     id: id || 'session-active',
     mentorName: 'Dr. Aisha Patel',
     mentorRole: 'Senior Product Manager, Google • Ex-Frontend Architect',
-    mentorAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    mentorAvatar: sessionAvatar,
     fullDate: 'Wednesday, Sep 23, 2026',
     time: '4:30 PM – 5:15 PM',
     duration: '45 min',
@@ -54,7 +55,7 @@ export const SessionDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="mentorship-session space-y-6 animate-in fade-in duration-300">
       {/* Breadcrumb */}
       <div>
         <Link
@@ -69,7 +70,7 @@ export const SessionDetailsPage: React.FC = () => {
       {/* Page Header */}
       <div>
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-extrabold text-[#0f172a] dark:text-white tracking-tight">
+          <h1 className="text-3xl font-extrabold text-[#0f172a] tracking-tight">
             Session Details
           </h1>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] text-[#047857] text-xs font-semibold">
@@ -77,7 +78,7 @@ export const SessionDetailsPage: React.FC = () => {
             {session.status}
           </span>
         </div>
-        <p className="text-[#64748b] dark:text-slate-400 text-xs font-semibold mt-1">
+        <p className="text-[#64748b] text-xs font-semibold mt-1">
           Track: Frontend Development
         </p>
       </div>
@@ -85,14 +86,14 @@ export const SessionDetailsPage: React.FC = () => {
       {/* 2-Column Unified Layout (Figma 142:8493 / 142:10391) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Main Session Card (~67% width / 8 cols) */}
-        <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-[24px] p-6 sm:p-8 border border-[#f1ecf7] dark:border-purple-900/40 shadow-sm space-y-6">
+        <div className="lg:col-span-8 bg-white rounded-2xl p-6 sm:p-8 border border-[#f1ecf7] shadow-sm space-y-6">
           {/* Section A: Mentor Header */}
           <div className="flex items-start gap-5">
             <div className="relative shrink-0">
               <img
                 src={session.mentorAvatar}
                 alt={session.mentorName}
-                className="size-20 rounded-2xl object-cover ring-2 ring-purple-100 dark:ring-purple-950 shadow-sm"
+                className="size-20 rounded-full object-cover ring-2 ring-purple-100 shadow-sm"
               />
               <span className="absolute -bottom-1 -right-1 size-6 rounded-full bg-[#5d198f] text-white flex items-center justify-center text-xs shadow-sm">
                 ✓
@@ -101,30 +102,30 @@ export const SessionDetailsPage: React.FC = () => {
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h2 className="text-xl font-bold text-[#0f172a] dark:text-white">
+                <h2 className="text-xl font-bold text-[#0f172a] ">
                   {session.mentorName}
                 </h2>
-                <span className="px-3 py-0.5 rounded-full bg-[#f4ecfa] dark:bg-purple-950/60 text-[#5d198f] dark:text-purple-300 text-xs font-semibold">
+                <span className="px-3 py-0.5 rounded-full bg-[#f4ecfa] text-[#5d198f] text-xs font-semibold">
                   Frontend Development
                 </span>
               </div>
-              <p className="text-xs text-[#64748b] dark:text-slate-400 leading-relaxed font-medium">
+              <p className="text-xs text-[#64748b] leading-relaxed font-medium">
                 {session.mentorRole}
               </p>
             </div>
           </div>
 
-          <div className="h-px bg-[rgba(243,232,255,0.6)] dark:border-purple-900/30" />
+          <div className="h-px bg-[rgba(243,232,255,0.6)] " />
 
           {/* Section B: Schedule & Logistics */}
           <div className="space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#94a3b8] dark:text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#94a3b8] ">
               SCHEDULE & LOGISTICS
             </span>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 text-xs text-[#0f172a] dark:text-white">
-                <div className="size-9 rounded-xl bg-[#f4ecfa] dark:bg-purple-950/60 text-[#5d198f] dark:text-purple-300 flex items-center justify-center shrink-0">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3 text-xs text-[#0f172a] ">
+                <div className="size-5 text-[#5d198f] flex items-center justify-center shrink-0">
                   <Calendar className="size-4" />
                 </div>
                 <span className="font-semibold">
@@ -132,18 +133,18 @@ export const SessionDetailsPage: React.FC = () => {
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-[#0f172a] dark:text-white">
-                <div className="size-9 rounded-xl bg-[#f4ecfa] dark:bg-purple-950/60 text-[#5d198f] dark:text-purple-300 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 text-xs text-[#0f172a] ">
+                <div className="size-9 rounded-xl bg-[#f4ecfa] text-[#5d198f] flex items-center justify-center shrink-0">
                   <Clock className="size-4" />
                 </div>
                 <div>
                   <span className="font-semibold">
                     {session.time}
                   </span>
-                  <span className="text-[#94a3b8] dark:text-slate-400 ml-1.5 font-normal">
+                  <span className="text-[#94a3b8] ml-1.5 font-normal">
                     (Eastern Time / EST)
                   </span>
-                  <span className="ml-2 px-2 py-0.5 rounded-full bg-[#f4f0f8] dark:bg-purple-950/50 text-[#5d198f] dark:text-purple-300 font-bold text-[10px]">
+                  <span className="ml-2 px-2 py-0.5 rounded-full bg-[#f4f0f8] text-[#5d198f] font-bold text-[10px]">
                     {session.duration}
                   </span>
                 </div>
@@ -151,22 +152,22 @@ export const SessionDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="h-px bg-[rgba(243,232,255,0.6)] dark:border-purple-900/30" />
+          <div className="h-px bg-[rgba(243,232,255,0.6)] " />
 
           {/* Section C: Discussion Topic */}
           <div className="space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#94a3b8] dark:text-slate-400 flex items-center gap-1.5">
-              <MessageSquare className="size-3.5 text-[#5d198f] dark:text-purple-300" />
+            <span className="text-xs font-bold uppercase tracking-wider text-[#94a3b8] flex items-center gap-1.5">
+              <MessageSquare className="size-3.5 text-[#5d198f] " />
               <span>DISCUSSION TOPIC</span>
             </span>
-            <p className="text-base font-bold text-[#0f172a] dark:text-white leading-snug">
+            <p className="text-base font-medium text-[#0f172a] leading-snug">
               {session.topic}
             </p>
           </div>
         </div>
 
         {/* Right Column: Compact Action Panel (~33% width / 4 cols) */}
-        <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-[24px] p-6 sm:p-7 border border-[#f1ecf7] dark:border-purple-900/40 shadow-sm space-y-6">
+        <div className="lg:col-span-4 bg-white rounded-2xl p-6 sm:p-7 border border-[#f1ecf7] shadow-sm space-y-6">
           {/* Primary CTA: Join Meeting */}
           <div className="space-y-3">
             <a
@@ -190,7 +191,7 @@ export const SessionDetailsPage: React.FC = () => {
                 <span>Opens in Google Meet</span>
               </div>
 
-              <div className="flex items-center justify-center gap-2 text-xs text-[#64748b] dark:text-slate-400 font-mono">
+              <div className="flex items-center justify-center gap-2 text-xs text-[#64748b] font-mono">
                 <span>meet.google.com/abc-defg-hij</span>
                 <button
                   type="button"
@@ -209,26 +210,26 @@ export const SessionDetailsPage: React.FC = () => {
           </div>
 
           {/* Compact Cancellation Policy Box */}
-          <div className="rounded-2xl p-4 bg-[#fffbeb] dark:bg-amber-950/30 border border-[#fef3c7] dark:border-amber-900/40 flex items-start gap-3 text-xs text-[#b45309] dark:text-amber-200">
-            <AlertCircle className="size-4 text-[#b45309] dark:text-amber-400 shrink-0 mt-0.5" />
+          <div className="rounded-2xl p-4 bg-[#fffbeb] border border-[#fef3c7] flex items-start gap-3 text-xs text-[#b45309] ">
+            <AlertCircle className="size-4 text-[#b45309] shrink-0 mt-0.5" />
             <p className="leading-relaxed">
               Cancel 24+ hours before the session to return it to your balance. Late cancellations use the session credit.
             </p>
           </div>
 
           {/* Mentorship Balance Module */}
-          <div className="space-y-2 pt-2 border-t border-[rgba(243,232,255,0.6)] dark:border-purple-900/30">
+          <div className="space-y-2 pt-2 border-t border-[rgba(243,232,255,0.6)] ">
             <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1.5 font-bold text-[#0f172a] dark:text-white">
-                <Hourglass className="size-3.5 text-[#5d198f] dark:text-purple-300" />
+              <div className="flex items-center gap-1.5 font-bold text-[#0f172a] ">
+                <Hourglass className="size-3.5 text-[#5d198f] " />
                 <span>Mentorship Balance</span>
               </div>
-              <span className="text-[#64748b] dark:text-slate-400 font-medium">
-                4 used • {balance.remaining} remaining
+              <span className="text-[#64748b] font-medium">
+                {balance.total - balance.remaining} used • {balance.remaining} remaining
               </span>
             </div>
 
-            <div className="h-2 w-full bg-[#f1edf5] dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-2 w-full bg-[#f1edf5] rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#5d198f] rounded-full"
                 style={{
@@ -243,7 +244,7 @@ export const SessionDetailsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCancelModalOpen(true)}
-              className="w-full py-2.5 px-4 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
             >
               <XCircle className="size-4" />
               <span>Cancel Session</span>

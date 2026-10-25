@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import sprintNoteIcon from '@/assets/dashboard/ic-sprint-note.svg';
+import sprintChevronIcon from '@/assets/dashboard/ic-sprint-chevron.svg';
 
 import layerIcon from '@/assets/dashboard/ic-layer.svg';
 import sprintIcon from '@/assets/dashboard/ic-link-square.svg';
@@ -89,6 +91,13 @@ function SprintOverview() {
         <span className="rounded-full bg-[#e7e7e7] px-2.5 py-1 text-[10px] font-medium text-[#545454]">
           {t('dashboard.sprint.daysLeft', { count: SAMPLE_SPRINT.daysLeft })}
         </span>
+      </div>
+      <div className="relative flex min-h-[52px] items-center gap-2 rounded-[20px] border border-[#909090] px-4">
+        <img src={sprintNoteIcon} alt="" className="size-6 shrink-0" />
+        <select aria-label={t('dashboard.sprint.select')} defaultValue={SAMPLE_SPRINT.number} className="min-w-0 flex-1 appearance-none bg-transparent pe-8 text-base font-bold">
+          <option value={SAMPLE_SPRINT.number}>{t('dashboard.sprint.current', { number: SAMPLE_SPRINT.number })}</option>
+        </select>
+        <img src={sprintChevronIcon} alt="" className="pointer-events-none absolute end-4 h-[21.5px] w-[25px]" />
       </div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0 flex-1">

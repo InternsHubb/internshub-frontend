@@ -8,10 +8,9 @@ import {
 } from 'react-router-dom';
 
 import { RequireAuth } from '@/components/auth/RequireAuth';
-import { RequiredCoursesCard } from '@/components/dashboard/RequiredCoursesCard';
 import type { DashboardRouteHandle } from '@/components/layout/DashboardLayout';
 import { CoursesSearch } from '@/pages/dashboard/courses/CoursesSearch';
-import { InternshipSidebarFooter } from '@/pages/dashboard/internship/InternshipSidebarFooter';
+import { InternshipSidebarFooter, ProjectSidebarFooter } from '@/pages/dashboard/internship/InternshipSidebarFooter';
 import {
   EMPLOYER_ROUTES,
   REGISTER_HASHES,
@@ -167,6 +166,7 @@ const MentorshipLayout = lazy(() => import('@/pages/mentorship/MentorshipLayout'
 const MentorshipDashboard = lazy(() => import('@/pages/mentorship/MentorshipDashboard'));
 const MentorsPage = lazy(() => import('@/pages/mentorship/MentorsPage'));
 const MentorProfilePage = lazy(() => import('@/pages/mentorship/MentorProfilePage'));
+const BookSessionPage = lazy(() => import('@/pages/mentorship/BookSessionPage'));
 const ConfirmBookingPage = lazy(() => import('@/pages/mentorship/ConfirmBookingPage'));
 const BookingSuccessPage = lazy(() => import('@/pages/mentorship/BookingSuccessPage'));
 const SessionDetailsPage = lazy(() => import('@/pages/mentorship/SessionDetailsPage'));
@@ -274,7 +274,7 @@ export const router = createBrowserRouter(
             {
               path: 'internship/project',
               element: <ProjectPage />,
-              handle: { sidebarFooter: RequiredCoursesCard } satisfies DashboardRouteHandle,
+              handle: { sidebarFooter: ProjectSidebarFooter } satisfies DashboardRouteHandle,
             },
             {
               path: 'courses',
@@ -295,6 +295,7 @@ export const router = createBrowserRouter(
             { index: true, element: <MentorshipDashboard /> },
             { path: 'mentors', element: <MentorsPage /> },
             { path: 'mentors/:id', element: <MentorProfilePage /> },
+            { path: 'book/:id', element: <BookSessionPage /> },
             { path: 'book/confirm', element: <ConfirmBookingPage /> },
             { path: 'book/success', element: <BookingSuccessPage /> },
             { path: 'sessions/:id', element: <SessionDetailsPage /> },

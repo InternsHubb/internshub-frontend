@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 
 import codeIcon from '@/assets/dashboard/ic-code.svg';
 import exportIcon from '@/assets/dashboard/ic-export.svg';
@@ -58,7 +59,9 @@ const STATUS_PILL: Record<Exclude<TaskStatus, 'completed'>, string> = {
 
 export function MyTasks() {
   const { t } = useTranslation();
-  const counts = Object.entries(SAMPLE_MY_TASK_COUNTS) as Array<[keyof typeof SAMPLE_MY_TASK_COUNTS, number]>;
+  const [params] = useSearchParams();
+  const empty = params.get('board') === 'empty';
+  const counts = Object.entries(empty ? { todo: 0, inProgress: 0, inReview: 0 } : SAMPLE_MY_TASK_COUNTS) as Array<[keyof typeof SAMPLE_MY_TASK_COUNTS, number]>;
 
   return (
     <section aria-labelledby="my-tasks-title" className={cn(CARD, 'flex flex-col gap-6 p-4 sm:p-[18px]')}>
@@ -75,6 +78,7 @@ export function MyTasks() {
         ))}
       </dl>
       <div>
+        {empty ? <p className="py-6 text-center text-lg text-[#737373]">{t('dashboard.tasks.empty')}</p> : <>
         <h3 className="text-lg text-black">{t('dashboard.tasks.topTasks')}</h3>
         <ol className="mt-4 flex flex-col">
           {SAMPLE_TOP_TASKS.map((task, index) => (
@@ -97,6 +101,7 @@ export function MyTasks() {
             </Fragment>
           ))}
         </ol>
+        </>}
       </div>
     </section>
   );
