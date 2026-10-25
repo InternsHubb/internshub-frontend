@@ -5,14 +5,12 @@ import bellIcon from '@/assets/dashboard/topnav-bell.svg';
 import moonIcon from '@/assets/dashboard/topnav-moon.svg';
 import searchIcon from '@/assets/dashboard/topnav-search.svg';
 import { NotificationsMenu } from '@/components/layout/NotificationsMenu';
+import { UserMenu } from '@/components/layout/UserMenu';
 import { SidebarTrigger } from '@/components/shared/Sidebar/SidebarTrigger';
-import { SAMPLE_PROFILE } from '@/data/internshipDashboard';
-import { useAuth } from '@/hooks/useAuth';
-import { initialsOf } from '@/lib/initials';
 
 // Dashboard top bar (Figma component "Top Nav", 30:16628): sidebar toggle, search, then the
 // "Actions" group (Bell, "Dark" theme toggle, profile). The bell opens the notifications panel
-// (NotificationsMenu). There is no dark theme yet, so the toggle is shown as in Figma but marked
+// (NotificationsMenu); the profile opens the account menu with "Sign out" (UserMenu). There is no dark theme yet, so the toggle is shown as in Figma but marked
 // unavailable.
 
 export const TOP_NAV_SEARCH_BOX =
@@ -31,33 +29,6 @@ export function TopNavSearch() {
         className="min-w-0 flex-1 bg-transparent text-sm leading-4 text-[#1f2937] outline-none placeholder:text-[#1f2937]"
       />
     </label>
-  );
-}
-
-function ProfileChip() {
-  const { user } = useAuth();
-  const fullName = user?.fullName?.trim() ?? '';
-  const email = user?.email?.trim() ?? '';
-  // Signed-in user first (email stands in when no name was registered); sample profile otherwise.
-  const primary = fullName || email || SAMPLE_PROFILE.name;
-  const secondary = user ? (fullName ? email : '') : SAMPLE_PROFILE.subtitle;
-  const initials = initialsOf(primary, !fullName && Boolean(email));
-
-  return (
-    <div className="flex min-w-0 items-center gap-3">
-      <span
-        aria-hidden="true"
-        className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#925DA8_0%,#C592FB_100%)] text-base font-bold leading-4 text-white"
-      >
-        {initials}
-      </span>
-      {/* Below lg only the avatar is shown, so the search box keeps a usable width. */}
-      <span className="sr-only lg:hidden">{primary}</span>
-      <div className="hidden min-w-0 max-w-[220px] flex-col gap-0.5 lg:flex">
-        <p className="truncate text-sm font-semibold leading-5 text-[#111827]"><bdi>{primary}</bdi></p>
-        {secondary && <p className="truncate text-xs leading-4 text-[#334155]"><bdi>{secondary}</bdi></p>}
-      </div>
-    </div>
   );
 }
 
@@ -104,7 +75,8 @@ export function TopNav({ search }: TopNavProps) {
       <div className="ms-auto flex shrink-0 items-center gap-3">
         <NotificationsButton />
         <ThemeToggleButton />
-        <ProfileChip />
+        {/* Below lg only the avatar is shown, so the search box keeps a usable width. */}
+        <UserMenu />
       </div>
     </header>
   );

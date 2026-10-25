@@ -1437,6 +1437,12 @@
       "paymentUnavailable": "الدفع الإلكتروني غير متاح بعد، لذلك لم تتغيّر خطتك."
     }
   },
+  "account": {
+    "menuLabel": "قائمة حساب {{name}}",
+    "loading": "جارٍ تحميل حسابك…",
+    "fallbackName": "حسابك",
+    "signOut": "تسجيل الخروج"
+  },
   "notifications": {
     "title": "الإشعارات",
     "buttonWithCount_zero": "الإشعارات، لا توجد إشعارات غير مقروءة",

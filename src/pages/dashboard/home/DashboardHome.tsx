@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, SquareCheckBig } from 'lucide-react';
 
 import { ROUTES } from '@/constants/routes';
-import { SAMPLE_PROFILE } from '@/data/internshipDashboard';
 import { SAMPLE_NEXT_SESSION, SAMPLE_TODAY_TASK } from '@/data/learnerDashboard';
 import { useAuth } from '@/hooks/useAuth';
+import { identityOf } from '@/lib/auth/identity';
 import { cn } from '@/lib/cn';
 
 import { DashboardHero } from './DashboardHero';
@@ -74,11 +74,10 @@ function NextSessionCard() {
 
 export default function DashboardHome() {
   const { user } = useAuth();
-  const fullName = user?.fullName?.trim() ?? '';
-  // Same identity rules as the top bar: session first, sample profile when signed out.
-  const displayName = fullName || user?.email?.trim() || SAMPLE_PROFILE.name;
-  const firstName = (user ? fullName : SAMPLE_PROFILE.name).split(/\s+/)[0] ?? '';
-  const role = user ? '' : SAMPLE_PROFILE.subtitle;
+  // Same identity rules as the top bar: the signed-in user's name, else their email. Until
+  // /api/me answers (or if it fails) the greeting has no name and the "you" row is blank.
+  const displayName = identityOf(user)?.primary ?? '';
+  const firstName = user?.fullName?.trim().split(/\s+/)[0] ?? '';
 
   return (
     <div className="flex min-w-0 flex-col gap-6">
@@ -94,7 +93,7 @@ export default function DashboardHome() {
         </div>
         <div className="grid min-w-0 content-start gap-6 md:grid-cols-2 xl:grid-cols-1">
           <InterviewResultCard />
-          <SquadCard learnerName={displayName} learnerRole={role} />
+          <SquadCard learnerName={displayName} learnerRole="" />
         </div>
       </div>
     </div>

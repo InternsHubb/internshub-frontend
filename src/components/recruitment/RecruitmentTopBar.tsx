@@ -2,9 +2,9 @@ import { Bell, Languages, Moon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import { UserMenu } from '@/components/layout/UserMenu';
 import { SidebarTrigger } from '@/components/shared/Sidebar/SidebarTrigger';
 import { ROUTES } from '@/constants/routes';
-import { CURRENT_APPLICANT } from '@/lib/recruitment/data';
 
 export function RecruitmentTopBar() {
   const { t, i18n } = useTranslation();
@@ -56,19 +56,8 @@ export function RecruitmentTopBar() {
           <span className="hidden sm:inline">{t('recruitment.shell.dark')}</span>
         </button>
 
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="flex size-11 shrink-0 sm:size-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,#8B5CF6_0%,#C084FC_100%)] text-[18px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
-            {CURRENT_APPLICANT.initials}
-          </span>
-          <div className="hidden min-w-0 sm:block">
-            <p className="truncate text-[16px] font-semibold text-[#151326]">
-              {CURRENT_APPLICANT.name}
-            </p>
-            <p className="mt-0.5 truncate text-[14px] text-[#4A4657]">
-              {CURRENT_APPLICANT.role}
-            </p>
-          </div>
-        </div>
+        {/* The signed-in user (from /api/me), with "Sign out". */}
+        <UserMenu avatarClassName="size-11 sm:size-14 text-[18px]" showNameFrom="sm" />
       </div>
     </header>
   );

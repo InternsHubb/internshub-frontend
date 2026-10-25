@@ -66,7 +66,7 @@ export type LearnerSquadMember = { id: string; name: string; role: string };
 
 export const SAMPLE_SQUAD_SIZE = 10;
 
-// The learner's own row is added by the page (name from the session, else SAMPLE_PROFILE).
+// The learner's own row is added by the page (name or email from /api/me).
 export const SAMPLE_LEARNER_SQUAD: ReadonlyArray<LearnerSquadMember> = [
   { id: 'ahmed-samir', name: 'Ahmed Samir', role: 'Backend developer' },
   { id: 'mariam-tarek', name: 'Mariam Tarek', role: 'Frontend developer' },

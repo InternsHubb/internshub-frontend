@@ -1413,6 +1413,12 @@
       "paymentUnavailable": "Online payment isn't available yet, so your plan hasn't changed."
     }
   },
+  "account": {
+    "menuLabel": "Account menu for {{name}}",
+    "loading": "Loading your account…",
+    "fallbackName": "Your account",
+    "signOut": "Sign out"
+  },
   "notifications": {
     "title": "Notifications",
     "buttonWithCount_one": "Notifications, {{count}} unread",
