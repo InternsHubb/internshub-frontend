@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PackageSelection } from './PackageSelection';
+import { PolicyConsent } from './PolicyConsent';
 import { ProfileStep } from './ProfileStep';
 import { PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
 import { TrackSelection } from './TrackSelection';
@@ -755,10 +756,7 @@ export default function OnboardingFlow() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-[#5C1D87] pt-2">
-                    <input type="checkbox" id="terms" className="w-4 h-4 rounded" />
-                    <label htmlFor="terms">I accept the enrollment terms and acknowledge the <a href="#refund" className="underline font-bold">Refund Policy</a>.</label>
-                  </div>
+                  <PolicyConsent />
 
                   <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Pay & Enroll →</button>
 

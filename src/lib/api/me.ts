@@ -41,8 +41,8 @@ export function getMyConsents(): Promise<MyConsentDto[]> {
 export function giveConsent(
   policyType: PolicyType,
   channel: 'Web' | 'Mobile' = 'Web'
-): Promise<void> {
-  return apiRequest<void>('/api/me/consents', {
+): Promise<MyConsentDto> {
+  return apiRequest<MyConsentDto>('/api/me/consents', {
     method: 'POST',
     body: { policyType, channel },
     auth: true,
@@ -52,8 +52,8 @@ export function giveConsent(
 export function revokeConsent(
   policyType: PolicyType,
   channel: 'Web' | 'Mobile' = 'Web'
-): Promise<void> {
-  return apiRequest<void>(`/api/me/consents/${encodeURIComponent(policyType)}/revoke`, {
+): Promise<MyConsentDto> {
+  return apiRequest<MyConsentDto>(`/api/me/consents/${encodeURIComponent(policyType)}/revoke`, {
     method: 'POST',
     body: { channel },
     auth: true,

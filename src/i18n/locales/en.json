@@ -534,6 +534,22 @@
         "notSaved": "Your profile wasn't saved. Please try again."
       }
     },
+    "policies": {
+      "label": "I accept the <terms/> and <privacy/> and acknowledge the <refund>Refund Policy</refund>.",
+      "names": {
+        "TermsOfService": "Terms of Service",
+        "PrivacyPolicy": "Privacy Policy",
+        "InterviewRecording": "Interview Recording Policy",
+        "PartnerDataSharing": "Partner Data Sharing Policy",
+        "CodeOwnership": "Code Ownership Policy"
+      },
+      "loading": "Loading the current terms…",
+      "retry": "Try again",
+      "empty": "There are no terms to accept right now.",
+      "saving": "Saving your acceptance…",
+      "accepted": "You've accepted the current terms.",
+      "documentError": "We couldn't open this document. Please try again."
+    },
     "verify": {
       "title": "Verify Your Account",
       "subtitle": "Confirm your email and phone number to secure your account.",
