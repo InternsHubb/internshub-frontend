@@ -506,6 +506,34 @@
         }
       }
     },
+    "profile": {
+      "title": "Let’s Get to Know You",
+      "subtitle": "Add the essential details needed to set up your InternsHub account.",
+      "asideTitleLine1": "Two essentials.",
+      "asideTitleLine2": "One clear start.",
+      "eyebrow": "Account essentials",
+      "cardTitle": "Your basic information",
+      "requiredBadge": "2 required",
+      "ageTitle": "Age requirement",
+      "ageText": "You must be 18 or older to join InternsHub.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Enter your full name",
+      "dateOfBirth": "Date of birth",
+      "dateOfBirthPlaceholder": "Enter your birthday",
+      "dateOfBirthNote": "Your date of birth is saved once and cannot be changed later.",
+      "dateOfBirthSaved": "Your date of birth is already saved and can't be changed.",
+      "back": "Back",
+      "save": "Save & Continue →",
+      "saving": "Saving…",
+      "errors": {
+        "fullNameRequired": "Enter your full name.",
+        "dateOfBirthRequired": "Enter your date of birth.",
+        "dateOfBirthInvalid": "Enter a valid date of birth.",
+        "dateOfBirthFuture": "Your date of birth can't be in the future.",
+        "underAge": "You must be at least 18 years old to join InternsHub.",
+        "notSaved": "Your profile wasn't saved. Please try again."
+      }
+    },
     "verify": {
       "title": "Verify Your Account",
       "subtitle": "Confirm your email and phone number to secure your account.",
@@ -1241,19 +1269,19 @@
       "upgradePriceHint": "Pay only the difference to upgrade from your current package.",
       "upgradeWithPrice": "Upgrade Now - {{value}} EGP",
       "paymentUnavailable": "Online payment isn't available yet, so your plan hasn't changed."
-    },
-    "api": {
-      "errors": {
-        "network": "We couldn't reach the server. Check your connection and try again.",
-        "validation": "Please check the entered information and try again.",
-        "badRequest": "The request could not be processed. Please try again.",
-        "unauthorized": "Please sign in to continue.",
-        "forbidden": "You do not have permission to perform this action.",
-        "notFound": "The requested item could not be found.",
-        "conflict": "This item or action conflicts with existing data. Please refresh and try again.",
-        "server": "Something went wrong on our side. Please try again in a moment.",
-        "unknown": "An unexpected error occurred. Please try again."
-      }
+    }
+  },
+  "api": {
+    "errors": {
+      "network": "We couldn't reach the server. Check your connection and try again.",
+      "validation": "Please check the entered information and try again.",
+      "badRequest": "The request could not be processed. Please try again.",
+      "unauthorized": "Please sign in to continue.",
+      "forbidden": "You do not have permission to perform this action.",
+      "notFound": "The requested item could not be found.",
+      "conflict": "This item or action conflicts with existing data. Please refresh and try again.",
+      "server": "Something went wrong on our side. Please try again in a moment.",
+      "unknown": "An unexpected error occurred. Please try again."
     }
   }
 }

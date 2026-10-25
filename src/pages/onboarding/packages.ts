@@ -58,6 +58,9 @@ export const ONBOARDING_TRACKS: ReadonlyArray<{ id: TrackId; code: string }> = [
   { id: 'data', code: 'DE' },
 ];
 
+// The Profile step: every step after it needs the profile saved on the backend.
+export const PROFILE_STEP = 2;
+
 // The Path step: every step after it needs a package and a track.
 export const PATH_STEP = 3;
 

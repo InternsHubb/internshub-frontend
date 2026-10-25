@@ -6,7 +6,8 @@ import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PackageSelection } from './PackageSelection';
-import { PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, type PackageValue, type TrackId } from './packages';
+import { ProfileStep } from './ProfileStep';
+import { PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
 import { TrackSelection } from './TrackSelection';
 import { VerifyAccountStep } from './VerifyAccountStep';
 import { InterviewResultFlow } from './interview/InterviewResultFlow';
@@ -14,10 +15,8 @@ import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
 import { interviewTypeFor, SAMPLE_RESUME } from './interview/mockInterview';
 import { INITIAL_INTERVIEW_PROGRESS } from './interview/types';
 import type { InterviewProgress, InterviewProgressPatch } from './interview/types';
-import calendarIcon from '../../assets/onboarding/calendar.svg';
 import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
-import lockMutedIcon from '../../assets/onboarding/lock-muted.svg';
 import lockWhiteIcon from '../../assets/onboarding/lock-white.svg';
 import receiptPurpleIcon from '../../assets/onboarding/receipt-purple.svg';
 import shieldGreenIcon from '../../assets/onboarding/shield-green.svg';
@@ -131,6 +130,11 @@ export default function OnboardingFlow() {
   // sent back to) Path with the missing choice flagged, whether they used Confirm, Enter or the
   // progress bar.
   const goToStep = (step: number) => {
+    // Steps after Profile also wait for the backend to stop listing CompleteProfile as missing.
+    if (step > PROFILE_STEP && user?.missingOnboardingSteps?.includes('CompleteProfile')) {
+      setCurrentStep(PROFILE_STEP);
+      return;
+    }
     if (step > PATH_STEP && !isPathComplete) {
       setCurrentStep(PATH_STEP);
       setShowPackageError(!formData.selectedPackage);
@@ -407,79 +411,8 @@ export default function OnboardingFlow() {
 
           {/* STEP 2: Profile */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Let’s Get to Know You</h1>
-                <p className="text-[#69616D] text-base mt-2">Add the essential details needed to set up your InternsHub account.</p>
-              </div>
-
-              <div className="bg-white/92 rounded-[28px] border border-[#3A0353]/10 max-w-[1020px] grid grid-cols-1 md:grid-cols-3 overflow-hidden shadow-xl">
-                <div className="p-8 bg-gradient-to-b from-[#551683] via-[#481170] to-[#2E054D] text-white flex flex-col justify-between relative overflow-hidden min-h-[420px]">
-                  <div className="absolute -right-16 -top-16 w-64 h-64 border-[24px] border-white/5 rounded-full pointer-events-none"></div>
-                  <div className="absolute right-4 top-20 w-36 h-36 border border-white/10 rounded-full pointer-events-none"></div>
-
-                  <div className="w-[52px] h-[52px] bg-white/12 border border-white/15 rounded-[14px] flex items-center justify-center font-extrabold text-sm tracking-wide z-10 text-white">
-                    18+
-                  </div>
-
-                  <div className="z-10 pb-2">
-                    <h4 className="text-[20px] font-normal text-white leading-snug">
-                      Two essentials.<br />
-                      One clear start.
-                    </h4>
-                  </div>
-                </div>
-
-                <div className="md:col-span-2 p-8 space-y-6 bg-white flex flex-col justify-between">
-                  <div className="space-y-5">
-                    <div className="flex items-center justify-between border-b border-[#E8E2EC] pb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div>
-                          <span className="text-[9px] font-bold text-[#8B5DB0] uppercase tracking-[0.9px]">ACCOUNT ESSENTIALS</span>
-                          <h3 className="text-[18px] font-normal text-[#111827]">Your basic information</h3>
-                        </div>
-                      </div>
-                      <span className="px-3 py-1 bg-[#F3E9FA] text-[#5C1D87] text-[9px] font-bold rounded-full tracking-[0.72px]">2 REQUIRED</span>
-                    </div>
-
-                    <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                      <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
-                      <div>
-                        <p className="font-bold">Age requirement</p>
-                        <p className="text-[11px] mt-0.5">You must be 18 or older to join InternsHub.</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[11px] text-[#34303A] mb-1 font-medium">Full name</label>
-                        <input type="text" placeholder="Enter your full name" className="w-full h-[52px] px-4 rounded-[12px] border border-[#E3DCE6] bg-[#FAF9FB] text-xs outline-none placeholder:text-slate-400" />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] text-[#34303A] mb-1 font-medium">Date of birth</label>
-                        <div className="relative flex items-center">
-                          <input type="text" placeholder="Enter your birthday" className="w-full h-[52px] px-4 rounded-[12px] border border-[#E3DCE6] bg-[#FAF9FB] text-xs outline-none placeholder:text-slate-400" />
-                          <span className="absolute right-4 flex"><img src={calendarIcon} alt="" aria-hidden="true" width={18} height={18} /></span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-[#6B7280] text-[11px] pt-1">
-                      <img src={lockMutedIcon} alt="" aria-hidden="true" width={16} height={16} />
-                      <p>Your date of birth is saved once and cannot be changed later.</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                    <button onClick={() => setCurrentStep(1)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                    <button onClick={() => setCurrentStep(3)} className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
-                      Save & Continue →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            // Moves on to Path only after PUT /api/me/profile succeeds and GET /api/me confirms it.
+            <ProfileStep onBack={() => setCurrentStep(PROFILE_STEP - 1)} onContinue={() => setCurrentStep(PATH_STEP)} />
           )}
 
           {/* STEP 3: Path */}
