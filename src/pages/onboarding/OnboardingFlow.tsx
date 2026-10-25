@@ -11,6 +11,7 @@ import { ProfileStep } from './ProfileStep';
 import { CV_STEP, PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
 import { TrackSelection } from './TrackSelection';
 import { CvUploadStep } from './CvUploadStep';
+import { CvReview } from './cv-review/CvReview';
 import { PaymentPanel } from './PaymentPanel';
 import { hasPendingCheckout, usePaymentCheckout } from './usePaymentCheckout';
 import { useMyCv } from './useMyCv';
@@ -24,7 +25,6 @@ import type { InterviewProgress, InterviewProgressPatch, OutcomeScreen } from '.
 import { useLiveInterview } from './interview/useLiveInterview';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
 import shieldWhiteIcon from '../../assets/onboarding/shield-white.svg';
-import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
 import arrowRightWhiteIcon from '../../assets/onboarding/arrow-right-white.svg';
 import checkWhiteLgIcon from '../../assets/onboarding/check-white-lg.svg';
 import lockPurpleSmIcon from '../../assets/onboarding/lock-purple-sm.svg';
@@ -250,141 +250,8 @@ export default function OnboardingFlow() {
     { num: '10', title: 'Mentorship' }
   ];
 
-  // CV Review Screen View
   if (viewMode === 'cv-review') {
-    return (
-      <div className="min-h-screen flex flex-col justify-between bg-[#F8F6FA] bg-[radial-gradient(circle_at_8%_2%,rgba(139,93,176,0.12),transparent_26%),radial-gradient(circle_at_96%_20%,rgba(221,111,13,0.06),transparent_25%)] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] overflow-x-hidden">
-        <header className="sticky top-0 z-50 flex items-center justify-between gap-4 px-4 md:px-[72px] h-[72px] bg-white/92 border-b border-[#E8E2EC]">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] rounded-[13px_13px_13px_4px] flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-sm">ih</span>
-              </div>
-              <span className="font-bold text-xl text-[#111827]">Interns<span className="text-[#4C0585]">Hub</span></span>
-              <span className="bg-[#F7F0FB] text-[#5C1D87] text-[10px] font-bold px-2.5 py-1 rounded-full">EDTECH</span>
-            </div>
-            <span className="text-[9px] font-normal tracking-[1.08px] text-[#6B7280] pl-2 border-l border-[#E8E2EC]">CV REVIEW</span>
-          </div>
-          <button onClick={() => setViewMode('onboarding')} className="px-4 py-2 bg-white border border-[#E8E2EC] text-[#5C1D87] text-xs font-normal rounded-[10px] hover:bg-slate-50">
-            Exit preview
-          </button>
-        </header>
-
-        <main className="flex-grow flex justify-center px-4 py-12">
-          <div className="w-full max-w-[1146px] min-w-0 space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-              <div className="space-y-3">
-                <span className="inline-block px-3 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full tracking-[0.72px]">ILLUSTRATIVE EXTRACTION PREVIEW</span>
-                <h1 className="text-[47px] font-extrabold text-[#21062E] tracking-[-2.115px]">Review your information</h1>
-                <p className="text-xs text-[#6B7280]">Check the information extracted from your CV and correct anything that needs attention.</p>
-              </div>
-              <div className="bg-white p-3.5 border border-[#E8E2EC] rounded-[15px] shadow-sm flex items-center gap-3 w-full max-w-[300px]">
-                <div className="w-9 h-9 bg-[#F3E9FA] text-[#5C1D87] rounded-[9px] flex items-center justify-center text-xs font-bold">PDF</div>
-                <div className="flex-grow">
-                  <h4 className="text-[10px] text-[#111827]">sample-cv.pdf</h4>
-                  <p className="text-[8px] text-[#6B7280]">Illustrative file · not user data</p>
-                </div>
-                <span className="px-2.5 py-1 bg-[#EAF8F0] text-[#16794A] text-[9px] font-bold rounded-full">Parsed</span>
-              </div>
-            </div>
-
-            <div className="bg-[#FBF7FE] p-4 rounded-[14px] border border-[#4C0585]/10 flex items-start gap-3">
-              <div className="w-[22px] h-[22px] rounded-full border border-[#3A0353] flex items-center justify-center text-[#3A0353] text-xs font-serif italic">i</div>
-              <div className="text-xs text-[#3A0353]">
-                <p className="font-bold">Sample content only</p>
-                <p className="text-[11px] mt-0.5">The information below demonstrates the review experience. It is not presented as data from a real user.</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
-              <div className="bg-white p-3 border border-[#E8E2EC] rounded-[18px] shadow-sm space-y-1">
-                {[{ id: '01', title: 'Personal information', active: true }, { id: '02', title: 'Education', active: false }, { id: '03', title: 'Skills', active: false }, { id: '04', title: 'Projects', active: false }, { id: '05', title: 'Experience', active: false }].map((nav) => (
-                  <div key={nav.id} className={`flex items-center gap-3 p-3 rounded-[10px] text-xs ${nav.active ? 'bg-[#F3E9FA] text-[#3A0353] font-bold' : 'text-[#6B7280]'}`}>
-                    <span className={`w-6 h-6 rounded-[8px] flex items-center justify-center text-[8px] ${nav.active ? 'bg-[#3A0353] text-white' : 'bg-[#F2EEF4]'}`}>{nav.id}</span>
-                    <span>{nav.title}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="md:col-span-3 space-y-4">
-                <div className="bg-white p-6 border border-[#3A0353]/10 rounded-[19px] shadow-xs space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2"><span className="text-[9px] text-[#DD6F0D]">01</span><h3 className="text-[15px] font-normal text-[#111827]">Personal information</h3></div>
-                    <button className="px-3 py-1 bg-white border border-[#DACDE1] text-[#5C1D87] text-[8px] font-bold rounded-[9px]">Edit</button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="p-3.5 bg-[#FAF8FB] rounded-[11px]"><span className="text-[7px] text-[#8B5DB0] tracking-[0.7px] uppercase block">FULL NAME</span><p className="text-[10px] text-[#111827] mt-1">Sample Student</p></div>
-                    <div className="p-3.5 bg-[#FAF8FB] rounded-[11px]"><span className="text-[7px] text-[#8B5DB0] tracking-[0.7px] uppercase block">EMAIL</span><p className="text-[10px] text-[#111827] mt-1">sample@example.com</p></div>
-                    <div className="p-3.5 bg-[#FAF8FB] rounded-[11px]"><span className="text-[7px] text-[#8B5DB0] tracking-[0.7px] uppercase block">PHONE</span><p className="text-[10px] text-[#111827] mt-1">+20 ••• ••• 4821</p></div>
-                    <div className="p-3.5 bg-[#FAF8FB] rounded-[11px]"><span className="text-[7px] text-[#8B5DB0] tracking-[0.7px] uppercase block">LOCATION</span><p className="text-[10px] text-[#111827] mt-1">Not extracted</p></div>
-                  </div>
-                </div>
-
-                <div className="bg-white p-6 border border-[#3A0353]/10 rounded-[19px] shadow-xs space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2"><span className="text-[9px] text-[#DD6F0D]">02</span><h3 className="text-[15px] font-normal text-[#111827]">Education</h3></div>
-                    <button className="px-3 py-1 bg-white border border-[#DACDE1] text-[#5C1D87] text-[8px] font-bold rounded-[9px]">Edit</button>
-                  </div>
-                  <div className="p-3.5 bg-[#FAF9FB] border border-[#E8E2EC] rounded-[12px] flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-[38px] h-[38px] bg-[#3A0353] text-white rounded-[11px] flex items-center justify-center text-[8px]">ED</div>
-                      <div><h4 className="text-[10px] text-[#111827]">Sample degree title</h4><p className="text-[8px] text-[#6B7280]">Sample institution · Graduation year unavailable</p></div>
-                    </div>
-                    <span className="px-3 py-1 bg-[#FFF7E6] text-[#9A5700] text-[9px] font-bold rounded-full">REVIEW NEEDED</span>
-                  </div>
-                </div>
-
-                <div className="bg-white p-6 border border-[#3A0353]/10 rounded-[19px] shadow-xs space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2"><span className="text-[9px] text-[#DD6F0D]">03</span><h3 className="text-[15px] font-normal text-[#111827]">Skills</h3></div>
-                    <button className="px-3 py-1 bg-white border border-[#DACDE1] text-[#5C1D87] text-[8px] font-bold rounded-[9px]">Edit</button>
-                  </div>
-                  <div className="flex gap-2">{['React', 'JavaScript', 'HTML', 'CSS'].map(skill => (<span key={skill} className="px-3 py-1.5 bg-[#F3E9FA] text-[#5C1D87] text-[8px] rounded-[8px]">{skill}</span>))}</div>
-                </div>
-
-                <div className="bg-white p-6 border border-[#3A0353]/10 rounded-[19px] shadow-xs space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2"><span className="text-[9px] text-[#DD6F0D]">04</span><h3 className="text-[15px] font-normal text-[#111827]">Projects</h3></div>
-                    <button className="px-3 py-1 bg-white border border-[#DACDE1] text-[#5C1D87] text-[8px] font-bold rounded-[9px]">Edit</button>
-                  </div>
-                  <div className="p-3.5 bg-[#FAF9FB] border border-[#E8E2EC] rounded-[12px] flex items-center gap-3">
-                    <div className="w-[38px] h-[38px] bg-[#3A0353] text-white rounded-[11px] flex items-center justify-center text-[8px]">PR</div>
-                    <div><h4 className="text-[10px] text-[#111827]">Illustrative portfolio project</h4><p className="text-[8px] text-[#6B7280]">Project description will use extracted CV content</p></div>
-                  </div>
-                </div>
-
-                <div className="bg-white p-6 border border-[#3A0353]/10 rounded-[19px] shadow-xs space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2"><span className="text-[9px] text-[#DD6F0D]">05</span><h3 className="text-[15px] font-normal text-[#111827]">Experience</h3></div>
-                    <button className="px-3 py-1 bg-white border border-[#DACDE1] text-[#5C1D87] text-[8px] font-bold rounded-[9px]">Add manually</button>
-                  </div>
-                  <div className="p-3.5 bg-[#FAF9FB] rounded-[12px] flex items-center gap-3">
-                    <img src={uploadMutedIcon} alt="" aria-hidden="true" width={20} height={20} />
-                    <div><h4 className="text-[10px] text-[#111827]">No experience information extracted</h4><p className="text-[8px] text-[#6B7280]">You can add it manually or continue if this section does not apply.</p></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap justify-end gap-3 pt-6">
-              <button className="px-6 py-3 bg-white border border-[#CCB8D8] text-[#3A0353] font-bold text-xs rounded-[13px]">Re-upload CV</button>
-              <button onClick={() => setViewMode('onboarding')} className="px-7 py-3 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-xs rounded-[13px] shadow">Confirm and continue →</button>
-            </div>
-          </div>
-        </main>
-
-        <footer className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 px-4 md:px-[72px] py-8 md:py-0 md:h-[130px] bg-gradient-to-tr from-[#22023C] via-[#22023C] to-[#8B5DB0]/30 text-white">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="w-[38px] h-[38px] bg-gradient-to-br from-[#5C1D87] to-[#3A0353] rounded-[13px_13px_13px_4px] flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">ih</span>
-            </div>
-            <span className="font-bold text-xl text-white">Interns<span className="text-[#4C0585]">Hub</span></span>
-            <span className="text-[11px] text-[#D7C8DF] pl-3 border-l border-white/20">From Student to a Tech Career.</span>
-          </div>
-          <span className="text-[9px] text-[#9F8DAC]">Modern Onboarding v6.0 · Interactive product demo</span>
-        </footer>
-      </div>
-    );
+    return <CvReview cv={myCv.cv} onBack={() => setViewMode('onboarding')} />;
   }
 
   return (
