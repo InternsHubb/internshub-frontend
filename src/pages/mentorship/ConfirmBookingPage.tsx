@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Calendar,
-  Clock,
-  FolderKanban,
-  Wallet,
-  AlertCircle,
-  Check,
-  Edit2,
-} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft, Calendar, Clock, Wallet, AlertCircle, Check } from 'lucide-react';
+import { ActionError, MentorAvatar, useTimeZoneLabel } from '@/components/mentorship/MentorshipParts';
 import { ROUTES } from '@/constants/routes';
 import { useMentorship } from '@/context/MentorshipContext';
+import { ApiError } from '@/lib/api/client';
+import { apiErrorKey } from '@/lib/api/errors';
+
+// Confirming books the selected slot (POST /api/mentors/{id}/slots/{slotId}/book). The booking API
+// takes no discussion topic, so none is asked for here.
+
+// A slot someone else just booked comes back as a conflict.
+function bookingErrorKey(error: unknown): string {
+  if (error instanceof ApiError && error.status === 409) return 'mentorship.live.slotTaken';
+  return apiErrorKey(error);
+}
 
 export const ConfirmBookingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { draft, balance, confirmBooking } = useMentorship();
-
-  const [topic, setTopic] = useState(
-    draft?.topic || 'React state management in a large application'
-  );
-  const [subtopic, setSubtopic] = useState(
-    draft?.subtopic || 'Architecture & modularization focus'
-  );
-  const [isEditingTopic, setIsEditingTopic] = useState(false);
+  const timeZoneLabel = useTimeZoneLabel();
+  const [isBooking, setIsBooking] = useState(false);
+  const [errorKey, setErrorKey] = useState<string | null>(null);
 
   if (!draft) {
     return (
@@ -46,12 +46,20 @@ export const ConfirmBookingPage: React.FC = () => {
     );
   }
 
-  const handleConfirm = () => {
-    confirmBooking();
-    navigate(ROUTES.mentorshipBookingSuccess);
+  const handleConfirm = async () => {
+    setIsBooking(true);
+    setErrorKey(null);
+    try {
+      const session = await confirmBooking();
+      navigate(ROUTES.mentorshipBookingSuccess, { state: { sessionId: session.id } });
+    } catch (error) {
+      setErrorKey(bookingErrorKey(error));
+      setIsBooking(false);
+    }
   };
 
-  const remainingAfter = Math.max(0, balance.remaining - 1);
+  const remainingAfter = balance ? Math.max(0, balance.remaining - 1) : 0;
+  const hasNoSessionsLeft = balance !== null && balance.remaining === 0;
 
   return (
     <div className="mentorship-confirmation max-w-[1088px] mx-auto space-y-6 animate-in fade-in duration-300">
@@ -61,7 +69,7 @@ export const ConfirmBookingPage: React.FC = () => {
           to={ROUTES.mentorshipBookSession.replace(':id', draft.mentor.id)}
           className="inline-flex items-center gap-2 text-xs font-semibold text-[#64748b] hover:text-[#5d198f] transition-colors"
         >
-          <ArrowLeft className="size-3.5" />
+          <ArrowLeft className="size-3.5 rtl:rotate-180" />
           <span>Back to Book a Session</span>
         </Link>
       </div>
@@ -94,27 +102,16 @@ export const ConfirmBookingPage: React.FC = () => {
         {/* Mentor Info Row */}
         <div className="p-4 sm:p-5 rounded-lg bg-[#faf7fc] border border-[#f3e8ff]/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <img
-                src={draft.mentor.avatarUrl}
-                alt={draft.mentor.name}
-                className="size-14 rounded-full object-cover ring-2 ring-purple-100 "
-              />
-              <span className="absolute -bottom-1 -right-1 size-4 rounded-full bg-[#5d198f] text-white flex items-center justify-center text-[10px]">
-                ✓
-              </span>
-            </div>
-
+            <MentorAvatar name={draft.mentor.name} className="size-14 rounded-full text-lg ring-2 ring-purple-100" />
             <div>
               <h3 className="font-bold text-[#0f172a] text-base">
-                {draft.mentor.name}
+                <bdi>{draft.mentor.name}</bdi>
               </h3>
-              <p className="text-xs text-[#64748b] mt-0.5">
-                {draft.mentor.role}
-              </p>
-              <p className="text-xs font-semibold text-[#672b97] mt-1">
-                Frontend Development Fellow Lead
-              </p>
+              {draft.mentor.trackNames.length > 0 && (
+                <p className="text-xs font-semibold text-[#672b97] mt-1">
+                  {draft.mentor.trackNames.join(' · ')}
+                </p>
+              )}
             </div>
           </div>
 
@@ -125,7 +122,6 @@ export const ConfirmBookingPage: React.FC = () => {
 
         {/* Date & Time Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Date Card */}
           <div className="p-4 rounded-lg bg-[#f7f2f9] border border-[#f1ecf7] flex items-start gap-3.5">
             <div className="size-10 rounded-xl bg-[#f3e8ff] text-[#5d198f] flex items-center justify-center shrink-0">
               <Calendar className="size-5" />
@@ -140,7 +136,6 @@ export const ConfirmBookingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Time & Timezone Card */}
           <div className="p-4 rounded-lg bg-[#f8fafc] border border-[#f1ecf7] flex items-start gap-3.5">
             <div className="size-10 rounded-xl bg-[#f3e8ff] text-[#5d198f] flex items-center justify-center shrink-0">
               <Clock className="size-5" />
@@ -153,87 +148,42 @@ export const ConfirmBookingPage: React.FC = () => {
                 {draft.slot.time} • {draft.slot.duration}
               </div>
               <div className="text-xs text-[#64748b] mt-0.5">
-                Eastern Time (EST / UTC-5)
+                {timeZoneLabel}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Selected Discussion Topic */}
-        <div className="p-5 rounded-lg bg-[#f8fafc] border border-[#f1ecf7] space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#94a3b8] uppercase tracking-wider">
-              <FolderKanban className="size-4 text-[#5d198f] " />
-              <span>Selected Discussion Topic</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsEditingTopic(!isEditingTopic)}
-              className="text-xs font-semibold text-[#5d198f] hover:opacity-80 flex items-center gap-1"
-            >
-              <Edit2 className="size-3" />
-              <span>{isEditingTopic ? 'Done' : 'Edit'}</span>
-            </button>
-          </div>
-
-          {isEditingTopic ? (
-            <div className="space-y-2 pt-1">
-              <input
-                type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="w-full text-sm font-bold text-[#0f172a] bg-white border border-purple-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5d198f]/30"
-              />
-              <input
-                type="text"
-                value={subtopic}
-                onChange={(e) => setSubtopic(e.target.value)}
-                className="w-full text-xs text-[#64748b] bg-white border border-purple-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5d198f]/30"
-              />
-            </div>
-          ) : (
-            <div>
-              <h4 className="text-sm font-bold text-[#0f172a] ">
-                {topic}
-              </h4>
-              <p className="text-xs text-[#64748b] mt-0.5">
-                {subtopic}
-              </p>
-            </div>
-          )}
-        </div>
-
         {/* Mentorship Balance Module */}
-        <div className="p-5 rounded-lg bg-[#f8f5fa] border border-[#f3e8ff]/80 space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 font-bold text-[#5d198f] ">
-              <Wallet className="size-4" />
-              <span>Mentorship Balance</span>
+        {balance && (
+          <div className="p-5 rounded-lg bg-[#f8f5fa] border border-[#f3e8ff]/80 space-y-3">
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2 font-bold text-[#5d198f] ">
+                <Wallet className="size-4" />
+                <span>Mentorship Balance</span>
+              </div>
+              <span className="text-[#64748b] ">
+                <strong className="text-[#0f172a] ">{balance.remaining} sessions</strong> remaining now
+              </span>
             </div>
-            <span className="text-[#64748b] ">
-              <strong className="text-[#0f172a] ">{balance.remaining} sessions</strong> remaining now
-            </span>
-          </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-[#475569] font-medium">
-              {remainingAfter} sessions remaining after booking
-            </span>
-            <span className="px-2 py-0.5 rounded-full bg-[#f3e8ff] text-[#5d198f] font-bold text-[11px]">
-              -1 session
-            </span>
-          </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[#475569] font-medium">
+                {remainingAfter} sessions remaining after booking
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-[#f3e8ff] text-[#5d198f] font-bold text-[11px]">
+                -1 session
+              </span>
+            </div>
 
-          {/* Progress bar */}
-          <div className="h-2 w-full bg-[#f1edf5] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#5d198f] rounded-full transition-all"
-              style={{
-                width: `${((balance.total - remainingAfter) / balance.total) * 100}%`,
-              }}
-            />
+            <div className="h-2 w-full bg-[#f1edf5] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#5d198f] rounded-full transition-all"
+                style={{ width: `${balance.total ? ((balance.total - remainingAfter) / balance.total) * 100 : 0}%` }}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Cancellation Policy Banner */}
         <div className="rounded-lg p-4 bg-[#fffbeb] border border-[#fef3c7] flex items-start gap-3 text-xs text-[#b45309] ">
@@ -244,13 +194,15 @@ export const ConfirmBookingPage: React.FC = () => {
           </p>
         </div>
 
+        {hasNoSessionsLeft && <ActionError messageKey="mentorship.live.noSessionsLeft" />}
+        <ActionError messageKey={errorKey} />
+
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
           <button
             type="button"
-            onClick={() =>
-              navigate(ROUTES.mentorshipBookSession.replace(':id', draft.mentor.id))
-            }
+            disabled={isBooking}
+            onClick={() => navigate(ROUTES.mentorshipBookSession.replace(':id', draft.mentor.id))}
             className="w-full sm:w-auto px-5 py-3 rounded-xl border border-[#e9d5ff] bg-white hover:bg-[#faf7fd] text-[#475569] font-semibold text-xs flex items-center justify-center gap-2 transition-colors shadow-sm"
           >
             <Calendar className="size-4 text-[#64748b]" />
@@ -259,15 +211,16 @@ export const ConfirmBookingPage: React.FC = () => {
 
           <button
             type="button"
-            onClick={handleConfirm}
-            className="w-full sm:w-auto flex-1 max-w-none py-3 px-6 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-all"
+            disabled={isBooking || hasNoSessionsLeft}
+            onClick={() => void handleConfirm()}
+            className="w-full sm:w-auto flex-1 max-w-none py-3 px-6 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-all disabled:cursor-not-allowed disabled:opacity-60"
             style={{
               backgroundImage:
                 'linear-gradient(162.62deg, rgba(106, 42, 138, 0.92) 0%, rgba(59, 4, 84, 0.96) 71.43%)',
             }}
           >
             <Check className="size-4" />
-            <span>Confirm Booking</span>
+            <span>{isBooking ? t('mentorship.live.booking') : 'Confirm Booking'}</span>
           </button>
         </div>
       </div>

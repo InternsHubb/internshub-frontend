@@ -5,6 +5,8 @@ interface CancelSessionModalProps {
   isOpen: boolean;
   isLate?: boolean;
   isLateCancellation?: boolean;
+  // The cancellation request is in flight; both buttons wait for it.
+  isSubmitting?: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -13,6 +15,7 @@ export const CancelSessionModal: React.FC<CancelSessionModalProps> = ({
   isOpen,
   isLate = false,
   isLateCancellation,
+  isSubmitting = false,
   onClose,
   onConfirm,
 }) => {
@@ -64,12 +67,14 @@ export const CancelSessionModal: React.FC<CancelSessionModalProps> = ({
           <button
             type="button"
             onClick={onConfirm}
-            className="w-full py-3 px-4 rounded-xl bg-[#e92126] hover:bg-[#b91c1c] text-white font-semibold text-sm transition-colors shadow-sm"
+            disabled={isSubmitting}
+            className="w-full py-3 px-4 rounded-xl bg-[#e92126] hover:bg-[#b91c1c] text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-60"
           >
-            Cancel Session
+            {isSubmitting ? 'Cancelling…' : 'Cancel Session'}
           </button>
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={onClose}
             className="w-full py-3 px-4 rounded-xl border border-[#e9d5ff] bg-white hover:bg-[#faf7fd] text-[#475569] font-semibold text-sm transition-colors shadow-sm"
           >
