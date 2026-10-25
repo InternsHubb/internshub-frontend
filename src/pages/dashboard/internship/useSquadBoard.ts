@@ -15,6 +15,8 @@ export type SquadBoard = {
   errorKey: string | null;
   sprints: SprintSummaryDto[];
   board: SprintBoardDto | null;
+  // A newly picked sprint's board is loading; `board` still holds the previous one.
+  isSwitching: boolean;
   selectSprint: (sprintId: string) => void;
   move: (taskId: string, status: SquadTaskStatus) => Promise<void>;
   moveErrorKey: string | null;
@@ -34,6 +36,7 @@ export function useSquadBoard(squadId: string): SquadBoard {
   const [board, setBoard] = useState<SprintBoardDto | null>(null);
   const [moveErrorKey, setMoveErrorKey] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const [isSwitching, setSwitching] = useState(false);
   // Latest board, for rolling back a failed move.
   const boardRef = useRef<SprintBoardDto | null>(null);
 
@@ -47,11 +50,16 @@ export function useSquadBoard(squadId: string): SquadBoard {
   useEffect(() => {
     let active = true;
     const key = `${squadId}:${attempt}`;
-    setStatus('loading');
-    setErrorKey(null);
+    // Switching sprints keeps the current board on screen (and the picker focused) until the next one loads.
+    const isSwitch = sprintsFor.current?.key === key;
+    if (isSwitch) setSwitching(true);
+    else {
+      setStatus('loading');
+      setErrorKey(null);
+    }
     setMoveErrorKey(null);
     (async () => {
-      const list = sprintsFor.current?.key === key ? sprintsFor.current.list : await getSquadSprints(squadId);
+      const list = isSwitch && sprintsFor.current ? sprintsFor.current.list : await getSquadSprints(squadId);
       sprintsFor.current = { key, list };
       const sprintId = requestedSprintId ?? defaultSprint(list)?.id ?? null;
       const loaded = sprintId ? await getSquadBoard(squadId, sprintId) : null;
@@ -59,10 +67,12 @@ export function useSquadBoard(squadId: string): SquadBoard {
       setSprints(list);
       setBoard(loaded);
       setStatus('ready');
+      setSwitching(false);
     })().catch((error: unknown) => {
       if (!active) return;
       setErrorKey(apiErrorKey(error));
       setStatus('error');
+      setSwitching(false);
     });
     return () => {
       active = false;
@@ -90,6 +100,7 @@ export function useSquadBoard(squadId: string): SquadBoard {
     errorKey,
     sprints,
     board,
+    isSwitching,
     selectSprint: setRequestedSprintId,
     move,
     moveErrorKey,

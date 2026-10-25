@@ -107,7 +107,7 @@ export function CvUploadStep({ cv, isLoading, loadError, stage, onRetry, onUploa
         <div className="flex flex-wrap items-center gap-4 text-[9px] text-[#5C1D87]">
           <span className="border-l border-[#E8E2EC] pl-3">PDF or DOCX</span>
           <span className="border-l border-[#E8E2EC] pl-3">5 MB maximum</span>
-          <button onClick={onPreviewReview} className="px-3 py-1 bg-[#F3E9FA] font-bold rounded-full tracking-[0.72px] underline">PREVIEW CV REVIEW LAYOUT</button>
+          <button type="button" disabled={isBusy} onClick={onPreviewReview} className="px-3 py-1 bg-[#F3E9FA] font-bold rounded-full underline disabled:opacity-50">{t('onboarding.cvReview.open')}</button>
         </div>
       </div>
 
@@ -193,12 +193,10 @@ export function CvUploadStep({ cv, isLoading, loadError, stage, onRetry, onUploa
               <div className="space-y-3">
                 {cv?.parsedSummary && <p className="text-[11px] text-[#5C5C5C] leading-relaxed" dir="auto">{cv.parsedSummary}</p>}
                 <div className="grid grid-cols-2 gap-3">
-                  {['SKILLS', 'EDUCATION', 'PROJECTS', 'EXPERIENCE'].map((cat) => (
-                    <div key={cat} className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1">
-                      <span className="text-[8px] text-[#8B5DB0] uppercase">{cat}</span>
-                      <h5 className="text-xs text-[#111827]">Review extracted {cat.toLowerCase()}</h5>
-                      <p className="text-[8px] text-[#16794A] pt-1">Ready to review</p>
-                    </div>
+                  {['skills', 'education', 'experience'].map((cat) => (
+                    <button type="button" onClick={onPreviewReview} key={cat} className="p-4 bg-[#FBF7FE] rounded-[12px] text-start text-xs text-[#5c1d87] underline">
+                      {t(`onboarding.cvReview.${cat}`)}
+                    </button>
                   ))}
                 </div>
               </div>
