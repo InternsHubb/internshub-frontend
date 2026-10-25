@@ -1,19 +1,14 @@
 import { RequiredCoursesCard } from '@/components/dashboard/RequiredCoursesCard';
-import { useSearchParams } from 'react-router-dom';
-import { internshipPlan } from '@/data/internshipPackages';
+import { useInternship } from '@/hooks/useInternship';
 
-import { useInternshipState } from './useInternshipState';
-
-// Sidebar footer of the internship page: the "Required Courses Progress" card in the
-// 6- and 12-month states ("6 and 12 months", 35:9387); the 3-month frames have none.
+// Sidebar footer of the internship and project pages: the "Required Courses Progress" card for
+// the 6- and 12-month packages ("6 and 12 months", 35:9387); 3-month packages have none.
 export function InternshipSidebarFooter() {
-  const { state } = useInternshipState();
-  return state.requiredCourses ? <RequiredCoursesCard progress={state.requiredCourses} /> : null;
+  const { data } = useInternship();
+  const progress = data?.state.requiredCourses;
+  return progress ? <RequiredCoursesCard progress={progress} /> : null;
 }
 
-export function ProjectSidebarFooter() {
-  const [params] = useSearchParams();
-  return internshipPlan(params) === '3m' ? null : <RequiredCoursesCard progress={{ percent: 100, status: 'unlocked' }} />;
-}
+export const ProjectSidebarFooter = InternshipSidebarFooter;
 
 export default InternshipSidebarFooter;

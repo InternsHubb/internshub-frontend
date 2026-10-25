@@ -5,14 +5,20 @@ import { BookOpen, BriefcaseBusiness, Lock, Target, Users, type LucideIcon } fro
 
 import { ProgressBar } from '@/components/dashboard/primitives';
 import { ROUTES } from '@/constants/routes';
-import { SAMPLE_LEARNER_PROGRESS, SAMPLE_NEXT_SESSION } from '@/data/learnerDashboard';
+import type { InternshipData, useInternship } from '@/hooks/useInternship';
+import type { MentorBookingDto } from '@/lib/api/types';
 import { cn } from '@/lib/cn';
 
 import { DecorRings } from './DecorRings';
+import { nextKeyFor, type NextKey } from './homeJourney';
+import { CardError, SkeletonLines } from './HomeStates';
 import { HOME_CARD, formatSessionDay, isolate } from './homeShared';
+import type { Loaded } from './useHomeActivity';
 
 // "Your hub" of the "Learner dashboard" reference: one card per service (Courses,
-// Internship, Mentorship) plus the full-width Recruitment card.
+// Internship, Mentorship) plus the full-width Recruitment card. Courses and Internship
+// follow the internship journey; Mentorship shows the next booked session. Recruitment
+// has no learner API yet, so its card stays descriptive.
 
 type PillTone = 'progress' | 'muted';
 
@@ -77,9 +83,99 @@ function HubCard({ titleId, title, icon: Icon, bannerClass, pill, to, children }
 
 const DETAIL = 'text-sm leading-snug text-[#6b5d78]';
 
-export function DashboardHub() {
+// Internship pill per journey step: locked until the interview, then waiting list, forming, active.
+const INTERNSHIP_STATUS: Record<NextKey, 'locked' | 'waiting' | 'forming' | 'active'> = {
+  courses: 'locked',
+  technicalInterview: 'locked',
+  review: 'locked',
+  findingSquad: 'waiting',
+  squadForming: 'forming',
+  squadActive: 'active',
+};
+
+function CoursesCard({ data }: { data: InternshipData | null }) {
+  const { t } = useTranslation();
+  const k = (key: string, options?: Record<string, unknown>) => t(`dashboard.home.hub.courses.${key}`, options);
+  const hasCourses = data !== null && data.plan !== '3m';
+  const percent = data?.coursesPercent ?? 0;
+
+  let pill = <HubPill tone="muted">{k(data ? 'statuses.notIncluded' : 'statuses.notStarted')}</HubPill>;
+  if (hasCourses) pill = <HubPill tone="progress">{k(percent >= 100 ? 'statuses.completed' : 'statuses.inProgress')}</HubPill>;
+
+  return (
+    <HubCard titleId="hub-courses" title={k('title')} icon={BookOpen} bannerClass="bg-[#4a0a7f]" to={ROUTES.dashboardCourses} pill={pill}>
+      {hasCourses ? (
+        <>
+          <p className={DETAIL}>{k('detail', { track: isolate(data.trackName) })}</p>
+          <ProgressBar value={percent} max={100} label={k('progressLabel')} className="mt-2" trackClassName="bg-[#ede6f3]" fillClassName="bg-[#3b0454]" />
+          <p className={cn(DETAIL, 'mt-1')}>{k('complete', { value: percent })}</p>
+        </>
+      ) : (
+        <p className={DETAIL}>{k(data ? 'notIncludedDetail' : 'noPackage')}</p>
+      )}
+    </HubCard>
+  );
+}
+
+function InternshipCard({ data }: { data: InternshipData | null }) {
+  const { t } = useTranslation();
+  const k = (key: string, options?: Record<string, unknown>) => t(`dashboard.home.hub.internship.${key}`, options);
+  const next = data ? nextKeyFor(data) : null;
+  const status = next ? INTERNSHIP_STATUS[next] : 'locked';
+
+  return (
+    <HubCard
+      titleId="hub-internship"
+      title={k('title')}
+      icon={BriefcaseBusiness}
+      bannerClass="bg-[#2a0640]"
+      to={ROUTES.dashboardInternship}
+      pill={<HubPill tone={status === 'active' ? 'progress' : 'muted'} icon={status === 'locked' ? Lock : undefined}>{k(`statuses.${status}`)}</HubPill>}
+    >
+      <p className={DETAIL}>{next && data ? k(`details.${next}`, { track: isolate(data.trackName) }) : k('details.none')}</p>
+      <p className={cn(DETAIL, 'mt-1')}>{k('extra')}</p>
+    </HubCard>
+  );
+}
+
+function MentorshipCard({ session }: { session: Loaded<MentorBookingDto | null> }) {
   const { t, i18n } = useTranslation();
-  const progress = SAMPLE_LEARNER_PROGRESS;
+  const k = (key: string, options?: Record<string, unknown>) => t(`dashboard.home.hub.mentorship.${key}`, options);
+  const booking = session.value;
+
+  let content;
+  if (session.status === 'loading') content = <SkeletonLines />;
+  else if (session.status === 'error') content = <CardError errorKey={session.errorKey} onRetry={session.reload} />;
+  else if (!booking) content = <p className={DETAIL}>{k('empty')}</p>;
+  else {
+    content = (
+      <>
+        <p className={DETAIL}>{k('mentor', { name: isolate(booking.mentorName || t('dashboard.home.nextSession.mentorFallback')) })}</p>
+        <p className={cn(DETAIL, 'mt-1')}>{k('next', { date: formatSessionDay(booking.startsAt, i18n.language) })}</p>
+      </>
+    );
+  }
+
+  return (
+    <HubCard
+      titleId="hub-mentorship"
+      title={k('title')}
+      icon={Users}
+      bannerClass="bg-[#6b2fa0]"
+      // A retry button can't sit inside a link, so the card links only when there is nothing to retry.
+      to={session.status === 'error' ? undefined : ROUTES.mentorship}
+      pill={<HubPill tone="muted">{k(booking ? 'statuses.booked' : 'statuses.none')}</HubPill>}
+    >
+      {content}
+    </HubCard>
+  );
+}
+
+type DashboardHubProps = { internship: ReturnType<typeof useInternship>; session: Loaded<MentorBookingDto | null> };
+
+export function DashboardHub({ internship, session }: DashboardHubProps) {
+  const { t } = useTranslation();
+  const isLoading = internship.status === 'loading';
 
   return (
     <section aria-labelledby="hub-title" className="flex flex-col gap-4">
@@ -89,52 +185,29 @@ export function DashboardHub() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <HubCard
-          titleId="hub-courses"
-          title={t('dashboard.home.hub.courses.title')}
-          icon={BookOpen}
-          bannerClass="bg-[#4a0a7f]"
-          to={ROUTES.dashboardCourses}
-          pill={<HubPill tone="progress">{t('dashboard.home.hub.courses.status')}</HubPill>}
-        >
-          <p className={DETAIL}>
-            {t('dashboard.home.hub.courses.detail', { course: isolate(progress.courseName), module: progress.currentModule })}
-          </p>
-          <ProgressBar
-            value={progress.coursePercent}
-            max={100}
-            label={t('dashboard.home.hub.courses.progressLabel')}
-            className="mt-2"
-            trackClassName="bg-[#ede6f3]"
-            fillClassName="bg-[#3b0454]"
-          />
-          <p className={cn(DETAIL, 'mt-1')}>{t('dashboard.home.hub.courses.complete', { value: progress.coursePercent })}</p>
-        </HubCard>
-
-        <HubCard
-          titleId="hub-internship"
-          title={t('dashboard.home.hub.internship.title')}
-          icon={BriefcaseBusiness}
-          bannerClass="bg-[#2a0640]"
-          to={ROUTES.dashboardInternship}
-          pill={<HubPill tone="muted" icon={Lock}>{t('dashboard.home.hub.internship.status')}</HubPill>}
-        >
-          <p className={DETAIL}>{t('dashboard.home.hub.internship.detail')}</p>
-          <p className={cn(DETAIL, 'mt-1')}>{t('dashboard.home.hub.internship.extra')}</p>
-        </HubCard>
-
-        <HubCard
-          titleId="hub-mentorship"
-          title={t('dashboard.home.hub.mentorship.title')}
-          icon={Users}
-          bannerClass="bg-[#6b2fa0]"
-          pill={<HubPill tone="muted">{t('dashboard.home.hub.mentorship.status')}</HubPill>}
-        >
-          <p className={DETAIL}>{t('dashboard.home.hub.mentorship.senior', { name: isolate(SAMPLE_NEXT_SESSION.mentor) })}</p>
-          <p className={cn(DETAIL, 'mt-1')}>
-            {t('dashboard.home.hub.mentorship.next', { date: formatSessionDay(SAMPLE_NEXT_SESSION.startsAt, i18n.language) })}
-          </p>
-        </HubCard>
+        {isLoading && (
+          <>
+            <article className={cn(HOME_CARD, 'p-5')}><SkeletonLines widths={['w-1/3', 'w-3/4', 'w-1/2']} /></article>
+            <article className={cn(HOME_CARD, 'p-5')}><SkeletonLines widths={['w-1/3', 'w-3/4', 'w-1/2']} /></article>
+          </>
+        )}
+        {internship.status === 'error' && (
+          <>
+            <HubCard titleId="hub-courses" title={t('dashboard.home.hub.courses.title')} icon={BookOpen} bannerClass="bg-[#4a0a7f]" pill={null}>
+              <CardError errorKey={internship.errorKey} onRetry={internship.reload} />
+            </HubCard>
+            <HubCard titleId="hub-internship" title={t('dashboard.home.hub.internship.title')} icon={BriefcaseBusiness} bannerClass="bg-[#2a0640]" pill={null}>
+              <CardError errorKey={internship.errorKey} onRetry={internship.reload} />
+            </HubCard>
+          </>
+        )}
+        {!isLoading && internship.status !== 'error' && (
+          <>
+            <CoursesCard data={internship.data} />
+            <InternshipCard data={internship.data} />
+          </>
+        )}
+        <MentorshipCard session={session} />
       </div>
 
       <HubCard

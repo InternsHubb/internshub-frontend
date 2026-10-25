@@ -58,8 +58,23 @@ export const ONBOARDING_TRACKS: ReadonlyArray<{ id: TrackId; code: string }> = [
   { id: 'data', code: 'DE' },
 ];
 
+// `code` above is the card's display badge; the backend identifies tracks by these codes
+// (GET /api/tracks).
+export const BACKEND_TRACK_CODES: Readonly<Record<TrackId, string>> = {
+  frontend: 'FRONTEND',
+  backend: 'BACKEND',
+  mobile: 'MOBILE',
+  data: 'DATA_ENGINEERING',
+};
+
+// The Profile step: every step after it needs the profile saved on the backend.
+export const PROFILE_STEP = 2;
+
 // The Path step: every step after it needs a package and a track.
 export const PATH_STEP = 3;
+
+// The CV step: every step after it needs a CV uploaded to the backend.
+export const CV_STEP = 4;
 
 export const PACKAGE_ERROR_ID = 'package-error';
 export const TRACK_ERROR_ID = 'track-error';

@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { AppealDecision, AppealForm, AppealSubmitted } from './AppealScreens';
 import { CannotResumeScreen, OrientationScreen, ResultScreen, ResumeScreen, UnderReviewScreen } from './InterviewOutcome';
 import { MUTED_TEXT, SampleBadge } from './parts';
+import type { InterviewLevel } from '@/lib/api/types';
 import type { InterviewType, OutcomeScreen } from './types';
 
-// Step 08 (Result) once an interview has ended. Until the interview API exists, the outcome is a
-// sample: the switcher lets reviewers preview each Figma state and is labelled as such.
+// Step 08 (Result) once an interview has ended. After a backend interview the outcome and level
+// are its own. Without one, the outcome is a sample: the switcher lets reviewers preview each Figma
+// state and is labelled as such. Appeals have no backend endpoint yet and stay samples.
 
 type PreviewTab = { screen: OutcomeScreen; labelKey: string };
 
@@ -59,6 +61,10 @@ type InterviewResultFlowProps = {
   onAppealReasonChange: (reason: string) => void;
   type: InterviewType;
   track: string;
+  // The backend result level, when the interview produced one.
+  level: InterviewLevel | null;
+  // No backend interview behind the outcome: the sample switcher is shown.
+  isPreview: boolean;
   onContinue: () => void;
   onHome: () => void;
   onResume: () => void;
@@ -71,12 +77,14 @@ export function InterviewResultFlow({
   onAppealReasonChange,
   type,
   track,
+  level,
+  isPreview,
   onContinue,
   onHome,
   onResume,
 }: InterviewResultFlowProps) {
   const tabs = type === 'orientation' ? ORIENTATION_TABS : TECHNICAL_TABS;
-  const showSwitcher = tabs.some((tab) => tab.screen === outcome);
+  const showSwitcher = isPreview && tabs.some((tab) => tab.screen === outcome);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -85,9 +93,11 @@ export function InterviewResultFlow({
   const screen = (() => {
     switch (outcome) {
       case 'result':
-        return <ResultScreen type={type} track={track} onContinue={onContinue} onAppeal={() => onOutcomeChange('appeal-form')} />;
+        return (
+          <ResultScreen type={type} track={track} level={level} onContinue={onContinue} onAppeal={() => onOutcomeChange('appeal-form')} />
+        );
       case 'under-review':
-        return <UnderReviewScreen type={type} track={track} onHome={onHome} />;
+        return <UnderReviewScreen type={type} track={track} isSample={isPreview} onHome={onHome} />;
       case 'resume':
         return <ResumeScreen type={type} track={track} onResume={onResume} onHome={onHome} />;
       case 'cannot-resume':

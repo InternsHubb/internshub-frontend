@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, loadEnv } from "vite";
 
-const DEFAULT_API_PROXY_TARGET = "https://internshub.runasp.net";
+const DEFAULT_API_PROXY_TARGET = "https://api.16-171-93-217.sslip.io";
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],

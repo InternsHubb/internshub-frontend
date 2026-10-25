@@ -1,32 +1,30 @@
-import React, { useRef, useState, type FormEvent } from 'react';
+import React, { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { formatPrice, PACKAGES } from '@/constants/packages';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
+import { apiErrorKey } from '@/lib/api/errors';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PackageSelection } from './PackageSelection';
-import { PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, type PackageValue, type TrackId } from './packages';
+import { ProfileStep } from './ProfileStep';
+import { CV_STEP, PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
 import { TrackSelection } from './TrackSelection';
+import { CvUploadStep } from './CvUploadStep';
+import { PaymentPanel } from './PaymentPanel';
+import { hasPendingCheckout, usePaymentCheckout } from './usePaymentCheckout';
+import { useMyCv } from './useMyCv';
+import { EnrollmentChoiceError, useEnrollmentChoice } from './useEnrollmentChoice';
 import { VerifyAccountStep } from './VerifyAccountStep';
 import { InterviewResultFlow } from './interview/InterviewResultFlow';
 import { InterviewSetupFlow } from './interview/InterviewSetupFlow';
-import { interviewTypeFor, SAMPLE_RESUME } from './interview/mockInterview';
+import { interviewTypeFor } from './interview/mockInterview';
 import { INITIAL_INTERVIEW_PROGRESS } from './interview/types';
-import type { InterviewProgress, InterviewProgressPatch } from './interview/types';
-import calendarIcon from '../../assets/onboarding/calendar.svg';
-import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
+import type { InterviewProgress, InterviewProgressPatch, OutcomeScreen } from './interview/types';
+import { useLiveInterview } from './interview/useLiveInterview';
 import clockMutedIcon from '../../assets/onboarding/clock-muted.svg';
-import lockMutedIcon from '../../assets/onboarding/lock-muted.svg';
-import lockWhiteIcon from '../../assets/onboarding/lock-white.svg';
-import receiptPurpleIcon from '../../assets/onboarding/receipt-purple.svg';
-import shieldGreenIcon from '../../assets/onboarding/shield-green.svg';
 import shieldWhiteIcon from '../../assets/onboarding/shield-white.svg';
-import shieldWhiteNarrowIcon from '../../assets/onboarding/shield-white-narrow.svg';
 import uploadMutedIcon from '../../assets/onboarding/upload-muted.svg';
-import uploadPurpleIcon from '../../assets/onboarding/upload-purple.svg';
-import uploadWhiteIcon from '../../assets/onboarding/upload-white.svg';
-import walletPurpleIcon from '../../assets/onboarding/wallet-purple.svg';
 import arrowRightWhiteIcon from '../../assets/onboarding/arrow-right-white.svg';
 import checkWhiteLgIcon from '../../assets/onboarding/check-white-lg.svg';
 import lockPurpleSmIcon from '../../assets/onboarding/lock-purple-sm.svg';
@@ -92,7 +90,6 @@ type OnboardingFormData = {
   // No package or track until the learner picks them on the Path step; later steps require both.
   selectedPackage: PackageValue | null;
   selectedTrack: TrackId | null;
-  cvUploaded: boolean;
   selectedMentor: string;
 };
 
@@ -103,14 +100,14 @@ export default function OnboardingFlow() {
   // Step 01 counts as done only when the backend reports email and phone as confirmed, not when
   // the user has moved past it. National ID has no backend check, so it is not part of this.
   const isAccountVerified = user?.emailConfirmed === true && user.phoneNumberConfirmed === true;
-  const [currentStep, setCurrentStep] = useState(1);
+  // Coming back from Paymob reopens the Payment step, where the result is checked with the backend.
+  const [currentStep, setCurrentStep] = useState(() => (hasPendingCheckout() ? 5 : 1));
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
   const [resultState, setResultState] = useState<ResultState>('assigned');
   const activeResult = RESULT_STATES[resultState];
   const [formData, setFormData] = useState<OnboardingFormData>({
     selectedPackage: null,
     selectedTrack: null,
-    cvUploaded: false,
     selectedMentor: 'Amina M.'
   });
   const [showPackageError, setShowPackageError] = useState(false);
@@ -118,6 +115,7 @@ export default function OnboardingFlow() {
   const pathForm = useRef<HTMLFormElement>(null);
   const [interview, setInterview] = useState<InterviewProgress>(INITIAL_INTERVIEW_PROGRESS);
   const updateInterview = (patch: InterviewProgressPatch) => setInterview((current) => ({ ...current, ...patch }));
+  const liveInterview = useLiveInterview();
   const interviewType = interviewTypeFor(formData.selectedPackage ?? '');
   const selectedPackage = formData.selectedPackage ? PACKAGES_BY_VALUE[formData.selectedPackage] : null;
   const packageName = selectedPackage ? t(`onboarding.path.packages.${selectedPackage.key}.name`) : '';
@@ -126,11 +124,39 @@ export default function OnboardingFlow() {
     : '';
   const trackName = formData.selectedTrack ? t(`onboarding.path.tracks.${formData.selectedTrack}.name`) : '';
   const isPathComplete = Boolean(formData.selectedPackage && formData.selectedTrack);
+  const enrollmentChoice = useEnrollmentChoice();
+  const { savedChoice } = enrollmentChoice;
+  const [isPathSaving, setIsPathSaving] = useState(false);
+  const [pathErrorKey, setPathErrorKey] = useState<string | null>(null);
+  // Path is done only once the cards on screen match the enrollment saved on the backend.
+  const isPathSaved = Boolean(
+    savedChoice && savedChoice.packageValue === formData.selectedPackage && savedChoice.trackId === formData.selectedTrack
+  );
+
+  const payment = usePaymentCheckout({ enrollment: enrollmentChoice.enrollment, onPaid: enrollmentChoice.refresh });
+  const myCv = useMyCv();
+  // The CV counts once the backend holds one whose parsing hasn't failed.
+  const isCvReady = myCv.cv !== null && myCv.cv.parseStatus !== 'Failed';
+
+  // An enrollment chosen earlier preselects its cards, once, unless the learner already picked some.
+  const appliedSavedChoice = useRef(false);
+  useEffect(() => {
+    if (!savedChoice || appliedSavedChoice.current) return;
+    appliedSavedChoice.current = true;
+    setFormData((current) => current.selectedPackage || current.selectedTrack
+      ? current
+      : { ...current, selectedPackage: savedChoice.packageValue, selectedTrack: savedChoice.trackId });
+  }, [savedChoice]);
 
   // Every step after Path needs a package and a track: without both the learner is kept on (or
   // sent back to) Path with the missing choice flagged, whether they used Confirm, Enter or the
   // progress bar.
   const goToStep = (step: number) => {
+    // Steps after Profile also wait for the backend to stop listing CompleteProfile as missing.
+    if (step > PROFILE_STEP && user?.missingOnboardingSteps?.includes('CompleteProfile')) {
+      setCurrentStep(PROFILE_STEP);
+      return;
+    }
     if (step > PATH_STEP && !isPathComplete) {
       setCurrentStep(PATH_STEP);
       setShowPackageError(!formData.selectedPackage);
@@ -140,22 +166,50 @@ export default function OnboardingFlow() {
       requestAnimationFrame(() => pathForm.current?.querySelector<HTMLInputElement>(`input[name="${missing}"]`)?.focus());
       return;
     }
+    // ...and the choice must be saved as the learner's enrollment (Confirm does that).
+    if (step > PATH_STEP && !isPathSaved) {
+      setCurrentStep(PATH_STEP);
+      return;
+    }
+    // ...and a CV uploaded to the backend.
+    if (step > CV_STEP && !isCvReady) {
+      setCurrentStep(CV_STEP);
+      return;
+    }
     setCurrentStep(step);
   };
 
   const selectPackage = (value: PackageValue) => {
     setFormData((current) => ({ ...current, selectedPackage: value }));
     setShowPackageError(false);
+    setPathErrorKey(null);
   };
 
   const selectTrack = (value: TrackId) => {
     setFormData((current) => ({ ...current, selectedTrack: value }));
     setShowTrackError(false);
+    setPathErrorKey(null);
   };
 
-  const confirmPath = (event: FormEvent<HTMLFormElement>) => {
+  // Saves the choice (POST or PUT /api/enrollments) before moving on; nothing advances on failure.
+  const confirmPath = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    goToStep(PATH_STEP + 1);
+    if (isPathSaving) return;
+    if (!formData.selectedPackage || !formData.selectedTrack) {
+      goToStep(PATH_STEP + 1);
+      return;
+    }
+    setPathErrorKey(null);
+    setIsPathSaving(true);
+    try {
+      await enrollmentChoice.save({ packageValue: formData.selectedPackage, trackId: formData.selectedTrack });
+    } catch (error) {
+      setPathErrorKey(error instanceof EnrollmentChoiceError ? error.messageKey : apiErrorKey(error));
+      setIsPathSaving(false);
+      return;
+    }
+    setIsPathSaving(false);
+    setCurrentStep(PATH_STEP + 1);
   };
   // Holds the navbar, progress bar and step content (not the footer); the interview's Start
   // Interview click puts this in fullscreen.
@@ -169,20 +223,15 @@ export default function OnboardingFlow() {
   const usesProfileLayout = onInterviewScreens || onOutcomeScreens;
   const showProgressBar = !onOutcomeScreens || interview.outcome === 'result';
 
-  // The interview API isn't available yet, so finishing shows the sample outcome for this type.
-  const finishInterview = () => {
-    updateInterview({
-      screen: 'setup',
-      questionIndex: 0,
-      phase: 'answering',
-      outcome: interviewType === 'orientation' ? 'orientation' : 'result',
-    });
+  // Finishing shows the outcome of the backend attempt (see outcomeFor in useLiveInterview).
+  const finishInterview = (outcome: OutcomeScreen) => {
+    updateInterview({ screen: 'setup', phase: 'answering', outcome });
     setCurrentStep(7);
   };
 
-  // Resuming repeats the device check, then continues from the interrupted (sample) question.
+  // Resuming repeats the device check; reaching the questions resumes the interrupted attempt.
   const resumeInterview = () => {
-    updateInterview({ screen: 'device-check', questionIndex: SAMPLE_RESUME.questionIndex, phase: 'answering', outcome: null });
+    updateInterview({ screen: 'device-check', phase: 'answering', outcome: null });
     setCurrentStep(6);
   };
 
@@ -407,79 +456,8 @@ export default function OnboardingFlow() {
 
           {/* STEP 2: Profile */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Let’s Get to Know You</h1>
-                <p className="text-[#69616D] text-base mt-2">Add the essential details needed to set up your InternsHub account.</p>
-              </div>
-
-              <div className="bg-white/92 rounded-[28px] border border-[#3A0353]/10 max-w-[1020px] grid grid-cols-1 md:grid-cols-3 overflow-hidden shadow-xl">
-                <div className="p-8 bg-gradient-to-b from-[#551683] via-[#481170] to-[#2E054D] text-white flex flex-col justify-between relative overflow-hidden min-h-[420px]">
-                  <div className="absolute -right-16 -top-16 w-64 h-64 border-[24px] border-white/5 rounded-full pointer-events-none"></div>
-                  <div className="absolute right-4 top-20 w-36 h-36 border border-white/10 rounded-full pointer-events-none"></div>
-
-                  <div className="w-[52px] h-[52px] bg-white/12 border border-white/15 rounded-[14px] flex items-center justify-center font-extrabold text-sm tracking-wide z-10 text-white">
-                    18+
-                  </div>
-
-                  <div className="z-10 pb-2">
-                    <h4 className="text-[20px] font-normal text-white leading-snug">
-                      Two essentials.<br />
-                      One clear start.
-                    </h4>
-                  </div>
-                </div>
-
-                <div className="md:col-span-2 p-8 space-y-6 bg-white flex flex-col justify-between">
-                  <div className="space-y-5">
-                    <div className="flex items-center justify-between border-b border-[#E8E2EC] pb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div>
-                          <span className="text-[9px] font-bold text-[#8B5DB0] uppercase tracking-[0.9px]">ACCOUNT ESSENTIALS</span>
-                          <h3 className="text-[18px] font-normal text-[#111827]">Your basic information</h3>
-                        </div>
-                      </div>
-                      <span className="px-3 py-1 bg-[#F3E9FA] text-[#5C1D87] text-[9px] font-bold rounded-full tracking-[0.72px]">2 REQUIRED</span>
-                    </div>
-
-                    <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                      <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
-                      <div>
-                        <p className="font-bold">Age requirement</p>
-                        <p className="text-[11px] mt-0.5">You must be 18 or older to join InternsHub.</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[11px] text-[#34303A] mb-1 font-medium">Full name</label>
-                        <input type="text" placeholder="Enter your full name" className="w-full h-[52px] px-4 rounded-[12px] border border-[#E3DCE6] bg-[#FAF9FB] text-xs outline-none placeholder:text-slate-400" />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] text-[#34303A] mb-1 font-medium">Date of birth</label>
-                        <div className="relative flex items-center">
-                          <input type="text" placeholder="Enter your birthday" className="w-full h-[52px] px-4 rounded-[12px] border border-[#E3DCE6] bg-[#FAF9FB] text-xs outline-none placeholder:text-slate-400" />
-                          <span className="absolute right-4 flex"><img src={calendarIcon} alt="" aria-hidden="true" width={18} height={18} /></span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-[#6B7280] text-[11px] pt-1">
-                      <img src={lockMutedIcon} alt="" aria-hidden="true" width={16} height={16} />
-                      <p>Your date of birth is saved once and cannot be changed later.</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                    <button onClick={() => setCurrentStep(1)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                    <button onClick={() => setCurrentStep(3)} className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
-                      Save & Continue →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            // Moves on to Path only after PUT /api/me/profile succeeds and GET /api/me confirms it.
+            <ProfileStep onBack={() => setCurrentStep(PROFILE_STEP - 1)} onContinue={() => setCurrentStep(PATH_STEP)} />
           )}
 
           {/* STEP 3: Path */}
@@ -495,15 +473,27 @@ export default function OnboardingFlow() {
 
               <TrackSelection value={formData.selectedTrack} onChange={selectTrack} hasError={showTrackError} />
 
+              {enrollmentChoice.isLoading && <p role="status" className="text-xs text-[#6B7280]">{t('onboarding.path.loading')}</p>}
+              {enrollmentChoice.error && !enrollmentChoice.isLoading && (
+                <div role="alert" className="bg-[#FEF0EF] p-4 rounded-[14px] text-xs text-[#B42318] flex flex-wrap items-center gap-3">
+                  <span>{t(apiErrorKey(enrollmentChoice.error))}</span>
+                  <button type="button" onClick={enrollmentChoice.reload} className="underline font-bold">{t('onboarding.path.retry')}</button>
+                </div>
+              )}
+              {pathErrorKey && <div role="alert" className="bg-[#FEF0EF] p-4 rounded-[14px] text-xs text-[#B42318]">{t(pathErrorKey)}</div>}
+
               <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
                 <button type="button" onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">{t('onboarding.path.back')}</button>
                 {/* Stays focusable without a package so a click explains what is missing (as on the CV step). */}
                 <button
                   type="submit"
-                  aria-disabled={!isPathComplete}
-                  className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow ${isPathComplete ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] rtl:bg-gradient-to-l text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}
+                  aria-disabled={!isPathComplete || isPathSaving || enrollmentChoice.isLoading}
+                  aria-busy={isPathSaving || undefined}
+                  className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow ${isPathComplete && !isPathSaving && !enrollmentChoice.isLoading ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] rtl:bg-gradient-to-l text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}
                 >
-                  {t('onboarding.path.confirm')} <span aria-hidden="true" className="inline-block rtl:-scale-x-100">→</span>
+                  {isPathSaving
+                    ? t('onboarding.path.saving')
+                    : <>{t('onboarding.path.confirm')} <span aria-hidden="true" className="inline-block rtl:-scale-x-100">→</span></>}
                 </button>
               </div>
             </form>
@@ -511,119 +501,35 @@ export default function OnboardingFlow() {
 
           {/* STEP 4: CV */}
           {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-[36px] sm:text-[46px] lg:text-[58px] leading-[1.08] font-extrabold text-[#21062E] tracking-[-0.045em] text-balance">Upload Your CV</h1>
-                <p className="text-[#69616D] text-base">Your CV helps us understand your background and prepare a relevant assessment.</p>
-              </div>
-
-              <div className="bg-white/88 p-4 rounded-[18px] border border-[#3A0353]/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-[38px] h-[38px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={shieldWhiteNarrowIcon} alt="" aria-hidden="true" width={18} height={18} /></div>
-                  <div><h4 className="text-xs font-bold text-[#111827]">Required for every package</h4><p className="text-[9px] text-[#6B7280]">Your CV must be ready before the interview.</p></div>
-                </div>
-                <div className="flex flex-wrap items-center gap-4 text-[9px] text-[#5C1D87]">
-                  <span className="border-l border-[#E8E2EC] pl-3">PDF or DOCX</span>
-                  <span className="border-l border-[#E8E2EC] pl-3">5 MB maximum</span>
-                  <button onClick={() => setViewMode('cv-review')} className="px-3 py-1 bg-[#F3E9FA] font-bold rounded-full tracking-[0.72px] underline">PREVIEW CV REVIEW LAYOUT</button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white/92 p-7 rounded-[28px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between space-y-4">
-                  <div>
-                    <div className="flex justify-between items-center mb-6">
-                      <div><span className="text-[9px] font-bold text-[#8B5DB0] uppercase">01 · ADD YOUR FILE</span><h3 className="text-lg font-normal text-[#111827]">Upload from your device</h3></div>
-                      <div className="w-[42px] h-[42px] bg-[#FBF7FE] border border-[#E0D3E7] rounded-[13px] flex items-center justify-center text-xs font-bold text-[#5C1D87]">CV</div>
-                    </div>
-
-                    <div onClick={() => setFormData({...formData, cvUploaded: !formData.cvUploaded})} className={`border-2 border-dashed p-8 rounded-[24px] text-center cursor-pointer flex flex-col items-center justify-center ${formData.cvUploaded ? 'border-[#8AC8A7] bg-gradient-to-b from-[#FFFFFF] to-[#F1FBF5]' : 'border-[#BFA4CE] bg-gradient-to-b from-[#FDFBFF] to-[#F6EEFB]'}`}>
-                      <div className={`w-16 h-16 rounded-[20px] flex items-center justify-center text-xl mb-3 shadow-lg text-white ${formData.cvUploaded ? 'bg-[#16794A]' : 'bg-[#3A0353]'}`}>
-                        {formData.cvUploaded ? '✓' : <img src={uploadWhiteIcon} alt="" aria-hidden="true" width={20} height={20} />}
-                      </div>
-                      <h4 className="text-base font-normal text-[#111827]">{formData.cvUploaded ? 'CV added successfully' : 'Drop your CV here'}</h4>
-                      <p className="text-xs text-[#6B7280] mb-4">{formData.cvUploaded ? 'Click anywhere to replace this file' : 'Drag and drop, or click to browse'}</p>
-                      <div className="flex justify-center gap-2">
-                        <span className="px-2.5 py-1 bg-white/70 text-[8px] text-[#5C1D87] border rounded-[7px]">PDF</span>
-                        <span className="px-2.5 py-1 bg-white/70 text-[8px] text-[#5C1D87] border rounded-[7px]">DOCX</span>
-                        <span className="px-2.5 py-1 bg-white/70 text-[8px] text-[#5C1D87] border rounded-[7px]">MAX 5 MB</span>
-                      </div>
-                    </div>
-
-                    {formData.cvUploaded && (
-                      <div className="mt-4 p-3 bg-white border border-[#E8E2EC] rounded-[12px] flex items-center justify-between shadow-xs">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-[#F3E9FA] text-[#5C1D87] rounded-[9px] flex items-center justify-center text-[10px] font-bold">DOC</div>
-                          <div><h5 className="text-xs text-[#111827]">InternsHub — Portals & Modules.docx</h5><p className="text-[9px] text-[#6B7280]">0.02 MB · Illustrative local upload</p></div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="px-2.5 py-1 bg-[#EAF8F0] text-[#16794A] text-[9px] font-bold rounded-full">success</span>
-                          <button onClick={() => setFormData({...formData, cvUploaded: false})} className="text-xs text-[#5C1D87] underline">Remove</button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div><a href="#parse-fail" className="text-[9px] text-[#6B7280] underline">Preview parse-failure state</a></div>
-                </div>
-
-                <div className="bg-white/92 p-7 rounded-[28px] border border-[#3A0353]/10 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <div><span className="text-[9px] font-bold text-[#8B5DB0] uppercase">02 · SMART REVIEW</span><h3 className="text-lg font-normal text-[#111827]">CV profile snapshot</h3></div>
-                      <span className={`px-3 py-1 text-[9px] font-bold rounded-full ${formData.cvUploaded ? 'bg-[#EAF8F0] text-[#16794A]' : 'bg-[#F1EEF2] text-[#685F6D]'}`}>{formData.cvUploaded ? 'Parsed' : 'Waiting'}</span>
-                    </div>
-
-                    <div className={`flex items-center justify-between px-4 py-3 rounded-[13px] text-[8px] mb-6 ${formData.cvUploaded ? 'bg-[#FAF8FB] text-[#16794A]' : 'bg-[#FAF8FB] text-[#AAA2AD]'}`}>
-                      <span>{formData.cvUploaded ? '✓' : '①'} Upload</span><span className={`flex-grow h-[1px] mx-3 ${formData.cvUploaded ? 'bg-[#16794A]' : 'bg-[#E8E2EC]'}`}></span>
-                      <span>{formData.cvUploaded ? '✓' : '②'} Parse</span><span className={`flex-grow h-[1px] mx-3 ${formData.cvUploaded ? 'bg-[#16794A]' : 'bg-[#E8E2EC]'}`}></span>
-                      <span>{formData.cvUploaded ? '✓' : '③'} Review</span>
-                    </div>
-
-                    {formData.cvUploaded ? (
-                      <div className="grid grid-cols-2 gap-3">
-                        {['SKILLS', 'EDUCATION', 'PROJECTS', 'EXPERIENCE'].map((cat) => (
-                          <div key={cat} className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1">
-                            <span className="text-[8px] text-[#8B5DB0] uppercase">{cat}</span>
-                            <h5 className="text-xs text-[#111827]">Review extracted {cat.toLowerCase()}</h5>
-                            <p className="text-[8px] text-[#16794A] pt-1">Ready to review</p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-6 text-[#6B7280]">
-                        <div className="w-[68px] h-[68px] bg-gradient-to-br from-white to-[#F4EAFA] border border-[#D9C8E3] rounded-[20px] mx-auto flex items-center justify-center mb-3 shadow-md"><img src={uploadPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <h4 className="text-sm font-normal text-[#111827]">Your profile preview starts here</h4>
-                        <p className="text-[11px] text-[#6B7280] max-w-[270px] mx-auto mt-1 leading-relaxed">Skills, education, projects, and experience will be organized for your review.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
-                <button onClick={() => setCurrentStep(3)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button onClick={() => setCurrentStep(5)} className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow flex items-center gap-2 ${formData.cvUploaded ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}>
-                  Continue to Payment →
-                </button>
-              </div>
-            </div>
+            <CvUploadStep
+              cv={myCv.cv}
+              isLoading={myCv.isLoading}
+              loadError={myCv.error}
+              stage={myCv.stage}
+              onRetry={myCv.retry}
+              onUpload={myCv.upload}
+              onBack={() => setCurrentStep(PATH_STEP)}
+              onContinue={() => goToStep(CV_STEP + 1)}
+              onPreviewReview={() => setViewMode('cv-review')}
+            />
           )}
 
-          {/* STEP 07: Setup and AI interview (frontend-only; see ./interview) */}
+          {/* STEP 07: Setup and the backend AI interview (see ./interview) */}
           {currentStep === 6 && (
             <InterviewSetupFlow
               progress={interview}
               onChange={updateInterview}
               type={interviewType}
               track={trackName}
-              cvUploaded={formData.cvUploaded}
+              cvUploaded={isCvReady}
               fullscreenTarget={interviewPage}
+              live={liveInterview}
               onExit={() => setCurrentStep(5)}
               onFinish={finishInterview}
             />
           )}
 
-          {/* STEP 08: Result. After an interview, its (sample) outcome; otherwise the result overview. */}
+          {/* STEP 08: Result. After an interview, its outcome; otherwise the result overview. */}
           {currentStep === 7 && interview.outcome && (
             <InterviewResultFlow
               outcome={interview.outcome}
@@ -632,6 +538,8 @@ export default function OnboardingFlow() {
               onAppealReasonChange={(appealReason) => updateInterview({ appealReason })}
               type={interviewType}
               track={trackName}
+              level={liveInterview.interview?.result?.level ?? null}
+              isPreview={liveInterview.interview === null}
               onContinue={() => setCurrentStep(8)}
               onHome={() => navigate(ROUTES.home)}
               onResume={resumeInterview}
@@ -785,55 +693,15 @@ export default function OnboardingFlow() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5 relative">
-                  <div className="absolute top-6 right-6 w-8 h-8 bg-[#3A0353] rounded-lg flex items-center justify-center"><img src={lockWhiteIcon} alt="" aria-hidden="true" width={16} height={16} /></div>
-                  <div>
-                    <span className="text-[9px] font-bold text-[#8B5DB0] uppercase">SECURE CHECKOUT · DEMO</span>
-                    <h3 className="text-[22px] font-normal text-[#111827] mt-1">Choose how you’ll pay</h3>
-                    <p className="text-[9px] text-[#6B7280]">All methods remain subject to the final gateway configuration.</p>
-                  </div>
-
-                  <div className="bg-[#FFF7E6] p-4 rounded-[14px] border border-[#9A5700]/20 flex gap-3 text-xs text-[#9A5700]">
-                    <span aria-hidden="true" className="mt-px flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border border-current text-[13px] leading-none">i</span>
-                    <div><p className="font-bold">Gateway configuration pending</p><p className="text-[11px] mt-0.5">One Egyptian gateway supporting cards, wallets, and Fawry is planned. No gateway has been selected or connected here.</p></div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="p-4 bg-[#FBF7FE] border-2 border-[#5C1D87] rounded-[15px] flex items-center justify-between shadow-xs">
-                      <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] shrink-0 bg-[#3A0353] rounded-[12px] flex items-center justify-center"><img src={cardWhiteIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div><h4 className="text-xs font-normal text-[#111827]">Debit or credit card</h4><p className="text-[9px] text-[#6B7280]">Demo method · Egyptian pounds</p></div>
-                      </div>
-                      <div className="w-[22px] h-[22px] bg-[#16794A] text-white rounded-full flex items-center justify-center text-xs">✓</div>
-                    </div>
-                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
-                      <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] shrink-0 bg-[#F1EBF4] rounded-[12px] flex items-center justify-center"><img src={walletPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div><h4 className="text-xs font-normal text-[#111827]">Mobile wallet</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
-                      </div>
-                      <div className="w-5 h-5 rounded-full border border-slate-300"></div>
-                    </div>
-                    <div className="p-4 bg-white border border-[#E8E2EC] rounded-[15px] flex items-center justify-between opacity-75">
-                      <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] shrink-0 bg-[#F1EBF4] rounded-[12px] flex items-center justify-center"><img src={receiptPurpleIcon} alt="" aria-hidden="true" width={20} height={20} /></div>
-                        <div><h4 className="text-xs font-normal text-[#111827]">Fawry</h4><p className="text-[9px] text-[#6B7280]">Availability depends on final gateway</p></div>
-                      </div>
-                      <div className="w-5 h-5 rounded-full border border-slate-300"></div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-xs text-[#5C1D87] pt-2">
-                    <input type="checkbox" id="terms" className="w-4 h-4 rounded" />
-                    <label htmlFor="terms">I accept the enrollment terms and acknowledge the <a href="#refund" className="underline font-bold">Refund Policy</a>.</label>
-                  </div>
-
-                  <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Pay & Enroll →</button>
-
-                  <div className="text-center space-y-1 pt-2">
-                    <div className="flex flex-wrap items-center justify-center gap-1.5 text-[9px] text-[#16794A]"><img src={shieldGreenIcon} alt="" aria-hidden="true" width={14} height={14} /><span className="font-bold">Protected demo checkout</span> — No real payment details are collected or processed</div>
-                    <div><a href="#fail" className="text-[9px] text-[#5C1D87] underline">Preview payment failure state</a></div>
-                  </div>
-                </div>
+                <PaymentPanel
+                  enrollment={enrollmentChoice.enrollment}
+                  isTermsAccepted={user?.requiredPoliciesAccepted === true}
+                  state={payment.state}
+                  onPay={() => void payment.startCheckout()}
+                  onCheckAgain={payment.checkAgain}
+                  onReset={payment.reset}
+                  onContinue={() => setCurrentStep(6)}
+                />
 
                 <div className="bg-white/92 p-7 rounded-[26px] border border-[#3A0353]/10 shadow-sm space-y-5">
                   <div className="flex justify-between items-start gap-3">

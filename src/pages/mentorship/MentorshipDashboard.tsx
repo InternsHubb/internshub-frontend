@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Calendar,
   Clock,
@@ -13,37 +14,62 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
+import { useAuth } from '@/hooks/useAuth';
 import { useMentorship } from '@/context/MentorshipContext';
 import { CancelSessionModal } from '@/components/mentorship/CancelSessionModal';
+import { ActionError, useTimeZoneLabel } from '@/components/mentorship/MentorshipParts';
+import { apiErrorKey } from '@/lib/api/errors';
+import { LATE_CANCELLATION_MS } from '@/lib/mentorship';
+
+const REMINDER_WINDOW_MS = 60 * 60_000;
+
+function greetingKey(hour: number): string {
+  if (hour < 12) return 'morning';
+  if (hour < 18) return 'afternoon';
+  return 'evening';
+}
 
 export const MentorshipDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    sessions,
-    balance,
-    reminderDismissed,
-    dismissReminder,
-    cancelSession,
-  } = useMentorship();
+  const { t, i18n } = useTranslation();
+  const { user } = useAuth();
+  const { sessions, balance, trackName, reminderDismissed, dismissReminder, cancelSession } = useMentorship();
+  const timeZoneLabel = useTimeZoneLabel();
 
   const [cancelModalSessionId, setCancelModalSessionId] = useState<string | null>(null);
-  const [isLateCancel, setIsLateCancel] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelErrorKey, setCancelErrorKey] = useState<string | null>(null);
 
-  // Filter to upcoming sessions for the dashboard list
+  const now = Date.now();
   const upcomingSessions = sessions.filter((s) => s.status === 'Upcoming');
+  const cancelTarget = upcomingSessions.find((s) => s.id === cancelModalSessionId);
+  const isLateCancel = cancelTarget ? new Date(cancelTarget.startsAt).getTime() - now < LATE_CANCELLATION_MS : false;
+  // The reminder appears only when a booked session starts within the hour.
+  const soonSession = upcomingSessions.find((s) => {
+    const startsIn = new Date(s.startsAt).getTime() - now;
+    return startsIn > 0 && startsIn <= REMINDER_WINDOW_MS;
+  });
+  const firstName = user?.fullName?.trim().split(/\s+/)[0] ?? '';
+  const today = new Intl.DateTimeFormat(i18n.language, { weekday: 'long', month: 'short', day: 'numeric' }).format(new Date());
+  const greeting = t(`mentorship.live.greeting.${greetingKey(new Date().getHours())}`, {
+    name: firstName,
+    context: firstName ? undefined : 'anonymous',
+  });
 
-  const handleOpenCancel = (sessionId: string) => {
-    const isLate = sessionId === 'session-active';
-    setIsLateCancel(isLate);
-    setCancelModalSessionId(sessionId);
-  };
-
-  const handleConfirmCancel = () => {
-    if (cancelModalSessionId) {
-      cancelSession(cancelModalSessionId, isLateCancel);
-      const targetId = cancelModalSessionId;
+  const handleConfirmCancel = async () => {
+    if (!cancelModalSessionId) return;
+    const targetId = cancelModalSessionId;
+    setIsCancelling(true);
+    setCancelErrorKey(null);
+    try {
+      await cancelSession(targetId);
       setCancelModalSessionId(null);
       navigate(ROUTES.mentorshipSessionCancelled.replace(':id', targetId));
+    } catch (error) {
+      setCancelModalSessionId(null);
+      setCancelErrorKey(apiErrorKey(error));
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -53,16 +79,18 @@ export const MentorshipDashboard: React.FC = () => {
       <div className="border-b border-[rgba(243,232,255,0.8)] pb-[25px] flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           {/* Track Context Pill (Figma 142:9132) */}
-          <div className="bg-[#f4f0f8] inline-flex items-center gap-[6px] px-[12px] py-[4px] rounded-full mb-1">
-            <Layers className="size-[12px] text-[#3b0454] " />
-            <span className="font-bold text-[#3b0454] text-[12px] leading-[16px]">
-              Track: Frontend Development
-            </span>
-          </div>
+          {trackName && (
+            <div className="bg-[#f4f0f8] inline-flex items-center gap-[6px] px-[12px] py-[4px] rounded-full mb-1">
+              <Layers className="size-[12px] text-[#3b0454] " />
+              <span className="font-bold text-[#3b0454] text-[12px] leading-[16px]">
+                {t('mentorship.live.track', { track: trackName })}
+              </span>
+            </div>
+          )}
 
           {/* Date Stamp (Figma 142:9138) */}
           <div className="pt-[6px] text-[#94a3b8] font-bold text-[12px] tracking-[0.6px] uppercase leading-[16px]">
-            MONDAY, SEP 23
+            {today}
           </div>
 
           {/* Heading 1 (Figma 142:9140) */}
@@ -73,7 +101,7 @@ export const MentorshipDashboard: React.FC = () => {
           {/* Greeting (Figma 142:9143) */}
           <div className="flex items-center gap-[6px] mt-0.5">
             <span className="text-[#475569] text-[16px] leading-[24px]">
-              Good morning, Ahmed
+              <bdi>{greeting}</bdi>
             </span>
             <span className="text-[20px] leading-[28px]">👋</span>
           </div>
@@ -131,9 +159,11 @@ export const MentorshipDashboard: React.FC = () => {
                 </div>
               </div>
               <p className="text-[#94a3b8] text-[12px] leading-[16px] mt-1">
-                Times shown in your local time zone
+                {timeZoneLabel}
               </p>
             </div>
+
+            <ActionError messageKey={cancelErrorKey} />
 
             {/* Session Cards List */}
             {upcomingSessions.length === 0 ? (
@@ -183,7 +213,7 @@ export const MentorshipDashboard: React.FC = () => {
                       {/* Date Block (Figma 142:9178) */}
                       <div className="bg-[#f4f0f8] border border-[#f3e8ff] rounded-[12px] p-[9px] w-[64px] flex flex-col items-center justify-center shrink-0">
                         <span className="text-[#672b97] text-[11px] font-bold tracking-[0.55px] uppercase leading-[16.5px]">
-                          OCT
+                          {session.month}
                         </span>
                         <div className="pt-[2px]">
                           <span
@@ -198,28 +228,19 @@ export const MentorshipDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Mentor & Topic Info (Figma 142:9184) */}
+                      {/* Mentor Info (Figma 142:9184) */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <h3 className="text-[#0f172a] text-[16px] font-bold leading-[20px]">
-                              {session.mentorName}
-                            </h3>
-                            <p className="text-[#64748b] text-[12px] leading-[16px]">
-                              {session.mentorRole}
-                            </p>
-                          </div>
+                          <h3 className="text-[#0f172a] text-[16px] font-bold leading-[20px]">
+                            <bdi>{session.mentorName}</bdi>
+                          </h3>
                           <div className="flex items-center gap-[4px] text-[#64748b] text-[12px] shrink-0">
                             <Clock className="size-[11.67px]" />
                             <span>{session.duration}</span>
                           </div>
                         </div>
 
-                        <div className="pt-[8px] text-[#475569] text-[12px] leading-[16px]">
-                          {session.topic.startsWith('Topic:') ? session.topic : `Topic: ${session.topic}`}
-                        </div>
-
-                        <div className="pt-[4px] flex items-center gap-[6px] text-[#64748b] text-[12px] leading-[16px]">
+                        <div className="pt-[8px] flex items-center gap-[6px] text-[#64748b] text-[12px] leading-[16px]">
                           <Calendar className="size-[12.5px]" />
                           <span>{session.fullDate} • {session.time}</span>
                         </div>
@@ -244,7 +265,7 @@ export const MentorshipDashboard: React.FC = () => {
 
                       <button
                         type="button"
-                        onClick={() => handleOpenCancel(session.id)}
+                        onClick={() => setCancelModalSessionId(session.id)}
                         className="border border-[rgba(243,232,255,0.8)] rounded-[12px] px-[17px] py-[8px] flex items-center gap-[4px] text-[#64748b] hover:text-rose-600 hover:border-rose-300 text-[12px] transition-colors"
                       >
                         <XCircle className="size-[12.5px]" />
@@ -268,16 +289,16 @@ export const MentorshipDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Session Reminder Alert (Figma 142:9258) */}
-          {!reminderDismissed && (
+          {/* Session Reminder Alert (Figma 142:9258), only for a session starting within the hour */}
+          {soonSession && !reminderDismissed && (
             <div className="bg-[#eff6ff] border border-[rgba(191,219,254,0.8)] rounded-[12px] p-[17px] flex gap-[12px] items-start">
               <AlertCircle className="size-[20px] text-[#1d4ed8] shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-[#172554] text-[12px] leading-[15px] mb-1">
-                  Session starts in 1 hour
+                  {t('mentorship.live.reminderTitle')}
                 </div>
                 <div className="text-[#1d4ed8] text-[12px] leading-[16.5px]">
-                  Your session with Dr. Aisha Patel starts at 3:00 PM. Have your questions and code repository ready.
+                  {t('mentorship.live.reminderBody', { mentor: soonSession.mentorName, time: soonSession.time })}
                 </div>
               </div>
               <button
@@ -301,60 +322,60 @@ export const MentorshipDashboard: React.FC = () => {
               <span className="text-[#94a3b8] text-[11px] font-bold tracking-[0.55px] uppercase leading-[16.5px]">
                 YOUR SESSIONS
               </span>
-              <div className="bg-[#f4f0f8] px-[12px] py-[4px] rounded-full">
-                <span className="text-[#672b97] font-bold text-[12px] leading-[16px]">
-                  {balance.packageName}
-                </span>
-              </div>
+              {balance && (
+                <div className="bg-[#f4f0f8] px-[12px] py-[4px] rounded-full">
+                  <span className="text-[#672b97] font-bold text-[12px] leading-[16px]">
+                    {balance.packageName}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Total Count + Active Badge (Figma 142:9278) */}
-            <div className="flex items-baseline justify-between">
-              <div className="flex items-baseline gap-[8px]">
-                <span className="text-[#0f172a] text-[30px] font-bold leading-[30px]">
-                  {balance.total}
-                </span>
-                <span className="text-[#64748b] text-[14px] leading-[20px]">
-                  sessions total
-                </span>
-              </div>
-              <div className="bg-[#ecfdf5] px-[10px] py-[2px] rounded-full">
-                <span className="text-[#047857] font-bold text-[12px] leading-[16px]">
-                  Active
-                </span>
-              </div>
-            </div>
+            {balance ? (
+              <>
+                {/* Total Count (Figma 142:9278) */}
+                <div className="flex items-baseline gap-[8px]">
+                  <span className="text-[#0f172a] text-[30px] font-bold leading-[30px]">
+                    {balance.total}
+                  </span>
+                  <span className="text-[#64748b] text-[14px] leading-[20px]">
+                    sessions total
+                  </span>
+                </div>
 
-            {/* Progress Bar Track (Figma 142:9284) */}
-            <div className="bg-[#f1edf5] h-[10px] rounded-full overflow-hidden">
-              <div
-                className="bg-[#5d198f] h-full rounded-full transition-all duration-500"
-                style={{ width: `${balance.total ? balance.completed / balance.total * 100 : 0}%` }}
-              />
-            </div>
+                {/* Progress Bar Track (Figma 142:9284) */}
+                <div className="bg-[#f1edf5] h-[10px] rounded-full overflow-hidden">
+                  <div
+                    className="bg-[#5d198f] h-full rounded-full transition-all duration-500"
+                    style={{ width: `${balance.total ? Math.min(100, (balance.used / balance.total) * 100) : 0}%` }}
+                  />
+                </div>
 
-            {/* Split Completed vs Remaining Boxes (Figma 142:9286) */}
-            <div className="grid grid-cols-2 gap-[14px] pt-[4px]">
-              {/* Completed Box */}
-              <div className="bg-[#f8f5fa] border border-[rgba(243,232,255,0.5)] rounded-[12px] px-[17px] py-[15px] flex flex-col items-center justify-center">
-                <span className="text-[#1e293b] text-[24px] font-bold leading-[30px]">
-                  {balance.completed}
-                </span>
-                <span className="text-[#64748b] text-[12px] leading-[16px] pt-[2px]">
-                  Completed
-                </span>
-              </div>
+                {/* Split Completed vs Remaining Boxes (Figma 142:9286) */}
+                <div className="grid grid-cols-2 gap-[14px] pt-[4px]">
+                  <div className="bg-[#f8f5fa] border border-[rgba(243,232,255,0.5)] rounded-[12px] px-[17px] py-[15px] flex flex-col items-center justify-center">
+                    <span className="text-[#1e293b] text-[24px] font-bold leading-[30px]">
+                      {balance.completed}
+                    </span>
+                    <span className="text-[#64748b] text-[12px] leading-[16px] pt-[2px]">
+                      Completed
+                    </span>
+                  </div>
 
-              {/* Remaining Box */}
-              <div className="bg-[#f8f5fa] border border-[rgba(243,232,255,0.5)] rounded-[12px] px-[17px] py-[15px] flex flex-col items-center justify-center">
-                <span className="text-[#5d198f] text-[24px] font-bold leading-[30px]">
-                  {balance.remaining}
-                </span>
-                <span className="text-[rgba(93,25,143,0.8)] font-bold text-[12px] leading-[16px] pt-[2px]">
-                  Remaining
-                </span>
-              </div>
-            </div>
+                  <div className="bg-[#f8f5fa] border border-[rgba(243,232,255,0.5)] rounded-[12px] px-[17px] py-[15px] flex flex-col items-center justify-center">
+                    <span className="text-[#5d198f] text-[24px] font-bold leading-[30px]">
+                      {balance.remaining}
+                    </span>
+                    <span className="text-[rgba(93,25,143,0.8)] font-bold text-[12px] leading-[16px] pt-[2px]">
+                      Remaining
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[11px] leading-[16px] text-[#94a3b8]">{t('mentorship.live.balanceNote')}</p>
+              </>
+            ) : (
+              <p className="text-[13px] leading-[20px] text-[#64748b]">{t('mentorship.live.noBalance')}</p>
+            )}
           </div>
 
           {/* Primary Action Card / CTA (Figma 142:9299) */}
@@ -366,7 +387,6 @@ export const MentorshipDashboard: React.FC = () => {
             }}
             data-node-id="142:9299"
           >
-            {/* Tag (Figma 142:9301) */}
             <div className="flex items-center gap-[8px]">
               <Sparkles className="size-[16.67px] text-[#e9d5ff]" />
               <span className="text-[#e9d5ff] font-bold text-[12px] tracking-[0.6px] uppercase leading-[16px]">
@@ -374,17 +394,14 @@ export const MentorshipDashboard: React.FC = () => {
               </span>
             </div>
 
-            {/* Heading (Figma 142:9306) */}
             <h3 className="font-bold text-[18px] text-white leading-[22.5px] pt-1">
               Ready for your next review?
             </h3>
 
-            {/* Description (Figma 142:9308) */}
             <p className="text-[12px] text-[rgba(243,232,255,0.8)] leading-[19.5px] pb-2">
               Find a mentor in your track and book an available 1:1 session.
             </p>
 
-            {/* Button (Figma 142:9310) */}
             <Link
               to={ROUTES.mentorshipMentors}
               className="bg-white rounded-[12px] py-[14px] px-[16px] flex items-center justify-center gap-[8px] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] hover:bg-slate-50 transition-colors w-full group"
@@ -408,7 +425,6 @@ export const MentorshipDashboard: React.FC = () => {
             className="bg-[#f8fafc] border border-[rgba(243,232,255,0.6)] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] rounded-[20px] p-[17px] flex flex-col gap-[10px]"
             data-node-id="142:9318"
           >
-            {/* Header (Figma 142:9319) */}
             <div className="flex items-center gap-[6px]">
               <Sparkles className="size-[15px] text-[#334155] " />
               <h4 className="font-bold text-[#334155] text-[12px] tracking-[0.3px] uppercase leading-[16px]">
@@ -416,7 +432,6 @@ export const MentorshipDashboard: React.FC = () => {
               </h4>
             </div>
 
-            {/* Guidelines List (Figma 142:9324) */}
             <div className="flex flex-col gap-[8px]">
               <div className="flex gap-[6px] items-start text-[#64748b] text-[11px] leading-[16.5px]">
                 <CheckCircle2 className="size-[13.5px] text-[#5d198f] shrink-0 mt-0.5" />
@@ -440,8 +455,9 @@ export const MentorshipDashboard: React.FC = () => {
         <CancelSessionModal
           isOpen={true}
           isLateCancellation={isLateCancel}
+          isSubmitting={isCancelling}
           onClose={() => setCancelModalSessionId(null)}
-          onConfirm={handleConfirmCancel}
+          onConfirm={() => void handleConfirmCancel()}
         />
       )}
     </div>

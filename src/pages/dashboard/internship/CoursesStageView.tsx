@@ -18,9 +18,6 @@ import { LockedCoursesIllustration } from '@/pages/dashboard/courses/LockedCours
 const CTA =
   'flex min-h-[50px] w-full items-center justify-center gap-[9px] rounded-[13px] bg-[linear-gradient(177deg,#4c0585_0%,#3a0353_100%)] px-6 text-[13px] font-bold tracking-[0.13px] text-white shadow-[0_10px_11px_rgba(58,3,83,0.2)] outline-none transition focus-visible:ring-2 focus-visible:ring-[#5a198f] focus-visible:ring-offset-2';
 
-// Sample progress of "Required track courses" (35:9504).
-const REQUIRED_COURSES_PERCENT = 65;
-
 function StageDot({ size }: { size: 'lg' | 'sm' }) {
   return (
     <span
@@ -52,7 +49,8 @@ function LockedStage({ title, lockTitle, lockHint }: { title: string; lockTitle:
   );
 }
 
-function CoursesInProgress() {
+// `percent`: share of the track's lessons completed ("Required track courses", 35:9504).
+function CoursesInProgress({ percent }: { percent: number }) {
   const { t } = useTranslation();
   const k = (key: string) => t(`dashboard.coursesStage.inProgress.${key}`);
 
@@ -78,15 +76,15 @@ function CoursesInProgress() {
                 aria-label={k('requiredTrack')}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-valuenow={REQUIRED_COURSES_PERCENT}
+                aria-valuenow={percent}
                 className="h-2 flex-1 overflow-hidden rounded-full border border-[#ae8fc8] bg-[#f4f0f8]"
               >
                 <div
                   className="h-full rounded-full bg-[linear-gradient(90deg,#3b0454_0%,#7a3d9c_100%)] rtl:bg-[linear-gradient(270deg,#3b0454_0%,#7a3d9c_100%)]"
-                  style={{ width: `${REQUIRED_COURSES_PERCENT}%` }}
+                  style={{ width: `${percent}%` }}
                 />
               </div>
-              <span className="w-[34px] shrink-0 text-xs leading-4 text-[#22023c]">{t('dashboard.common.percent', { value: REQUIRED_COURSES_PERCENT })}</span>
+              <span className="w-[34px] shrink-0 text-xs leading-4 text-[#22023c]">{t('dashboard.common.percent', { value: percent })}</span>
             </div>
             <p className="text-xs leading-4 text-[#6b7280]">{k('continueLearning')}</p>
           </div>
@@ -121,8 +119,8 @@ function CoursesCompleted() {
   );
 }
 
-export function CoursesStageView({ state }: { state: CoursesState }) {
-  return state.status === 'inProgress' ? <CoursesInProgress /> : <CoursesCompleted />;
+export function CoursesStageView({ state, percent }: { state: CoursesState; percent: number }) {
+  return state.status === 'inProgress' ? <CoursesInProgress percent={percent} /> : <CoursesCompleted />;
 }
 
 export default CoursesStageView;

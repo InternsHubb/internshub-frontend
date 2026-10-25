@@ -1,5 +1,7 @@
 import React from 'react';
 import { Search, Bell, Moon, Menu } from 'lucide-react';
+import { NotificationsMenu } from '@/components/layout/NotificationsMenu';
+import { UserMenu } from '@/components/layout/UserMenu';
 
 interface TopNavProps {
   onOpenMobile?: () => void;
@@ -33,15 +35,11 @@ export const TopNav: React.FC<TopNavProps> = ({ onOpenMobile }) => {
 
       {/* Right Controls: Notifications, Dark mode button (kept matching Figma), User Profile */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {/* Notifications Button (Figma 166:10899 Bell) */}
-        <button
-          type="button"
-          className="relative size-[44px] sm:size-[48px] rounded-[24px] bg-[#f4f4f4] hover:bg-[#ede8f5] flex items-center justify-center text-slate-700 shadow-[0px_2px_10px_0px_rgba(59,4,84,0.06)] transition-all"
-          aria-label="Notifications"
-        >
-          <Bell className="size-[20px] text-slate-600" />
-          <span className="absolute top-[12px] right-[13px] size-[9px] rounded-full bg-[#3a0353] border-[1.6px] border-white" />
-        </button>
+        {/* Notifications Button (Figma 166:10899 Bell), with the real unread count and panel */}
+        <NotificationsMenu
+          buttonClassName="size-[44px] sm:size-[48px] rounded-[24px] bg-[#f4f4f4] hover:bg-[#ede8f5] flex items-center justify-center text-slate-700 shadow-[0px_2px_10px_0px_rgba(59,4,84,0.06)] transition-all"
+          icon={<Bell aria-hidden="true" className="size-[20px] text-slate-600" />}
+        />
 
         {/* Dark Button (kept exactly matching Figma 166:10899 Theme toggle) */}
         <button
@@ -52,25 +50,9 @@ export const TopNav: React.FC<TopNavProps> = ({ onOpenMobile }) => {
           <span className="hidden sm:inline">Dark</span>
         </button>
 
-        {/* User Profile (Figma 166:10899 Profile) */}
-        <div className="flex items-center gap-2.5 sm:gap-3 pl-1">
-          <div
-            className="size-[44px] sm:size-[48px] rounded-[24px] text-white flex items-center justify-center font-bold text-[15px] shadow-sm shrink-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(135deg, rgb(146, 93, 168) 0%, rgb(197, 146, 251) 100%)',
-            }}
-          >
-            SM
-          </div>
-          <div className="text-left hidden lg:block">
-            <div className="text-[14px] font-semibold text-[#111827] leading-tight">
-              Sarah Mahmoud
-            </div>
-            <div className="text-[12px] text-[#334155] font-normal">
-              HR · NovaTech
-            </div>
-          </div>
+        {/* User Profile (Figma 166:10899 Profile): the signed-in user, with "Sign out" */}
+        <div className="ps-1">
+          <UserMenu avatarClassName="size-[44px] sm:size-[48px] text-[15px] shadow-sm" />
         </div>
       </div>
     </header>

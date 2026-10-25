@@ -8,24 +8,26 @@ import {
   ArrowLeft,
   Calendar,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { MentorshipNotice } from '@/components/mentorship/MentorshipParts';
 import { ROUTES } from '@/constants/routes';
 import { useMentorship } from '@/context/MentorshipContext';
 
 export const SessionCancelledPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const { getSessionById, balance } = useMentorship();
+  const session = getSessionById(id ?? '');
 
-  const session = getSessionById(id || '') || {
-    id: id || 'session-cancelled',
-    mentorName: 'Dr. Aisha Patel',
-    mentorRole: 'Senior Product Manager, Google • Ex-Frontend Architect',
-    fullDate: 'Wednesday, Sep 23, 2026',
-    time: '4:30 PM – 5:15 PM EST',
-    topic: 'React state management in a large application',
-    isLateCancellation: false,
-  };
+  if (!session || session.status !== 'Cancelled') {
+    return (
+      <MentorshipNotice title={t('mentorship.live.sessionNotFound')}>
+        <Link to={ROUTES.mentorship} className="text-sm font-semibold text-[#5d198f]">Back to Mentorship</Link>
+      </MentorshipNotice>
+    );
+  }
 
-  const isLate = !!session.isLateCancellation;
+  const isLate = session.isLateCancellation;
 
   return (
     <div className="max-w-[680px] mx-auto py-6 space-y-6 animate-in zoom-in-95 duration-300">
@@ -72,30 +74,19 @@ export const SessionCancelledPage: React.FC = () => {
         <div className="rounded-xl bg-[#f7f1f9] border border-[#f1ecf7] p-5 space-y-3.5 text-xs">
           <div className="flex items-center justify-between pb-3 border-b border-[rgba(243,232,255,0.6)] ">
             <span className="text-[#64748b] font-medium">Mentor</span>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-[#0f172a] ">{session.mentorName}</span>
-              <span className="px-2 py-0.5 rounded-full bg-[#f4ecfa] text-[#5d198f] text-[10px] font-bold">
-                Frontend Lead
-              </span>
-            </div>
+            <span className="font-bold text-[#0f172a] "><bdi>{session.mentorName}</bdi></span>
           </div>
 
-          <div className="flex items-center justify-between pb-3 border-b border-[rgba(243,232,255,0.6)] ">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-[#64748b] font-medium">Original Schedule</span>
             <span className="font-semibold text-[#0f172a] ">
               {session.fullDate} • {session.time}
             </span>
           </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-[#64748b] font-medium">Topic</span>
-            <span className="font-semibold text-[#0f172a] text-right max-w-xs truncate">
-              {session.topic}
-            </span>
-          </div>
         </div>
 
         {/* Mentorship Balance Module */}
+        {balance && (
         <div className="rounded-xl bg-[#f8f5fa] border border-[#f3e8ff]/80 p-5 space-y-2.5">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 font-bold text-[#5d198f] ">
@@ -112,7 +103,7 @@ export const SessionCancelledPage: React.FC = () => {
             <div
               className="h-full bg-[#5d198f] rounded-full"
               style={{
-                width: `${(balance.remaining / balance.total) * 100}%`,
+                width: `${balance.total ? (balance.remaining / balance.total) * 100 : 0}%`,
               }}
             />
           </div>
@@ -121,6 +112,7 @@ export const SessionCancelledPage: React.FC = () => {
             <strong className="text-[#0f172a] ">{balance.remaining} sessions</strong> remaining
           </div>
         </div>
+        )}
 
         {/* Action Buttons */}
         <div className="pt-2 flex flex-col items-center gap-3">

@@ -56,8 +56,9 @@ export function SquadMemberCard({ member, seatNumber, showContacts = true }: Squ
   const { t } = useTranslation();
   const name = member?.name ?? t('dashboard.squad.emptySeatName', { number: seatNumber });
   const track = member?.track ?? t('dashboard.squad.emptySeatTrack', { number: seatNumber });
-  const github = member?.github || t('dashboard.squad.emptySeatGithub');
-  const email = member?.email || t('dashboard.squad.emptySeatEmail');
+  // Empty seats show Figma's placeholder texts; a member's missing contact row is left out.
+  const github = member ? member.github : t('dashboard.squad.emptySeatGithub');
+  const email = member ? member.email : t('dashboard.squad.emptySeatEmail');
 
   return (
     <li className="flex w-full max-w-[209px] flex-col items-center gap-6">
@@ -66,20 +67,24 @@ export function SquadMemberCard({ member, seatNumber, showContacts = true }: Squ
         <p className="text-center text-base font-bold tracking-[0.13px] text-black"><bdi>{name}</bdi></p>
         <TrackBadge label={track} tone={member?.trackTone ?? 'other'} size={showContacts ? 'sm' : 'md'} />
       </div>
-      {showContacts && (
+      {showContacts && (github || email) && (
         <dl className="flex w-full flex-col gap-2 text-sm font-medium tracking-[0.13px] text-black">
-          <div className="flex items-center gap-2">
-            <dt className="shrink-0">
-              <img src={githubIcon} alt={t('dashboard.squad.github')} className="size-6" />
-            </dt>
-            <dd className="truncate"><bdi>{github}</bdi></dd>
-          </div>
-          <div className="flex items-center gap-2.5">
-            <dt className="shrink-0">
-              <img src={googleIcon} alt={t('dashboard.squad.gmail')} className="size-6" />
-            </dt>
-            <dd className="truncate"><bdi>{email}</bdi></dd>
-          </div>
+          {github && (
+            <div className="flex items-center gap-2">
+              <dt className="shrink-0">
+                <img src={githubIcon} alt={t('dashboard.squad.github')} className="size-6" />
+              </dt>
+              <dd className="truncate"><bdi>{github}</bdi></dd>
+            </div>
+          )}
+          {email && (
+            <div className="flex items-center gap-2.5">
+              <dt className="shrink-0">
+                <img src={googleIcon} alt={t('dashboard.squad.gmail')} className="size-6" />
+              </dt>
+              <dd className="truncate"><bdi>{email}</bdi></dd>
+            </div>
+          )}
         </dl>
       )}
     </li>

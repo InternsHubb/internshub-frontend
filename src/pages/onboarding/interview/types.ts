@@ -23,7 +23,6 @@ export type AnswerPhase = 'answering' | 'answered';
 export type InterviewProgress = {
   screen: SetupScreen;
   consented: boolean;
-  questionIndex: number;
   phase: AnswerPhase;
   outcome: OutcomeScreen | null;
   appealReason: string;
@@ -34,7 +33,6 @@ export type InterviewProgressPatch = Partial<InterviewProgress>;
 export const INITIAL_INTERVIEW_PROGRESS: InterviewProgress = {
   screen: 'setup',
   consented: false,
-  questionIndex: 0,
   phase: 'answering',
   outcome: null,
   appealReason: '',
