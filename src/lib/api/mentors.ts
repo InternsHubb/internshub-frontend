@@ -1,9 +1,11 @@
 import { apiRequest } from './client';
 import type {
+  FeaturedMentorDto,
   MentorBookingDto,
   MentorProfileDto,
   MentorSlotDto,
   MentorSummaryDto,
+  UpdateMyMentorProfileCommand,
 } from './types';
 
 export function getMentors(params?: {
@@ -14,27 +16,30 @@ export function getMentors(params?: {
   if (params?.trackId) query.set('trackId', params.trackId);
   if (params?.limit) query.set('limit', params.limit.toString());
   const queryString = query.toString() ? `?${query.toString()}` : '';
-  return apiRequest<MentorSummaryDto[]>(`/api/mentors${queryString}`);
+  return apiRequest<MentorSummaryDto[]>(`/api/mentors${queryString}`, {
+    auth: true,
+  });
 }
 
-export function getPublicMentors(): Promise<MentorSummaryDto[]> {
-  return apiRequest<MentorSummaryDto[]>('/api/public/mentors');
+export function getPublicMentors(limit?: number): Promise<FeaturedMentorDto[]> {
+  const query = limit ? `?limit=${encodeURIComponent(limit)}` : '';
+  return apiRequest<FeaturedMentorDto[]>(`/api/public/mentors${query}`);
 }
 
 export function getMentorSlots(mentorUserId: string): Promise<MentorSlotDto[]> {
-  return apiRequest<MentorSlotDto[]>(`/api/mentors/${encodeURIComponent(mentorUserId)}/slots`);
+  return apiRequest<MentorSlotDto[]>(`/api/mentors/${encodeURIComponent(mentorUserId)}/slots`, {
+    auth: true,
+  });
 }
 
 export function bookMentorSlot(
   mentorUserId: string,
-  slotId: string,
-  topic?: string
+  slotId: string
 ): Promise<MentorBookingDto> {
   return apiRequest<MentorBookingDto>(
     `/api/mentors/${encodeURIComponent(mentorUserId)}/slots/${encodeURIComponent(slotId)}/book`,
     {
       method: 'POST',
-      body: topic ? { topic } : {},
       auth: true,
     }
   );
@@ -55,10 +60,12 @@ export function getMyMentorProfile(): Promise<MentorProfileDto> {
   return apiRequest<MentorProfileDto>('/api/mentors/me', { auth: true });
 }
 
-export function updateMyMentorProfile(bio: string): Promise<void> {
-  return apiRequest<void>('/api/mentors/me', {
+export function updateMyMentorProfile(
+  body: UpdateMyMentorProfileCommand
+): Promise<MentorProfileDto> {
+  return apiRequest<MentorProfileDto>('/api/mentors/me', {
     method: 'PUT',
-    body: { bio },
+    body,
     auth: true,
   });
 }

@@ -1,10 +1,9 @@
 import { apiRequest } from './client';
-import type { InterviewDto } from './types';
+import type { AnswerQuestionRequest, InterviewDto } from './types';
 
-export function startInterview(trackId: string): Promise<InterviewDto> {
+export function startInterview(): Promise<InterviewDto> {
   return apiRequest<InterviewDto>('/api/interviews', {
     method: 'POST',
-    body: { trackId },
     auth: true,
   });
 }
@@ -15,17 +14,13 @@ export function getInterview(id: string): Promise<InterviewDto> {
 
 export function submitInterviewAnswer(
   interviewId: string,
-  data: {
-    questionId: string;
-    answerText?: string;
-    audioBase64?: string;
-  }
+  body: AnswerQuestionRequest
 ): Promise<InterviewDto> {
   return apiRequest<InterviewDto>(
     `/api/interviews/${encodeURIComponent(interviewId)}/answers`,
     {
       method: 'POST',
-      body: data,
+      body,
       auth: true,
     }
   );

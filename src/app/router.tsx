@@ -231,27 +231,51 @@ export const router = createBrowserRouter(
         },
         {
           path: ROUTES.courseDetails,
-          element: <CourseDetailsPage />,
+          element: (
+            <RequireAuth>
+              <CourseDetailsPage />
+            </RequireAuth>
+          ),
         },
         {
           path: ROUTES.courseDetailsDefault,
-          element: <CourseDetailsPage />,
+          element: (
+            <RequireAuth>
+              <CourseDetailsPage />
+            </RequireAuth>
+          ),
         },
         {
           path: ROUTES.courseVideo,
-          element: <CourseVideoPage />,
+          element: (
+            <RequireAuth>
+              <CourseVideoPage />
+            </RequireAuth>
+          ),
         },
         {
           path: ROUTES.courseVideoDefault,
-          element: <CourseVideoPage />,
+          element: (
+            <RequireAuth>
+              <CourseVideoPage />
+            </RequireAuth>
+          ),
         },
         {
           path: ROUTES.courseQuiz,
-          element: <CourseQuizPage />,
+          element: (
+            <RequireAuth>
+              <CourseQuizPage />
+            </RequireAuth>
+          ),
         },
         {
           path: ROUTES.courseQuizDefault,
-          element: <CourseQuizPage />,
+          element: (
+            <RequireAuth>
+              <CourseQuizPage />
+            </RequireAuth>
+          ),
         },
         {
           path: `${ROUTES.internship}/*`,
@@ -260,10 +284,14 @@ export const router = createBrowserRouter(
 
         // Student dashboard: home, internship journey (?state= previews), project, courses and
         // plans, inside the shared DashboardLayout. Route `handle` slots customise the layout's
-        // sidebar footer and top-bar search. Not wrapped in RequireAuth.
+        // sidebar footer and top-bar search. Wrapped in RequireAuth.
         {
           path: ROUTES.dashboard,
-          element: <DashboardLayout />,
+          element: (
+            <RequireAuth>
+              <DashboardLayout />
+            </RequireAuth>
+          ),
           children: [
             { index: true, element: <DashboardHome /> },
             {
@@ -287,10 +315,14 @@ export const router = createBrowserRouter(
           ],
         },
 
-        // Mentorship Flow
+        // Mentorship Flow (requires sign-in)
         {
           path: ROUTES.mentorship,
-          element: <MentorshipLayout />,
+          element: (
+            <RequireAuth>
+              <MentorshipLayout />
+            </RequireAuth>
+          ),
           children: [
             { index: true, element: <MentorshipDashboard /> },
             { path: 'mentors', element: <MentorsPage /> },

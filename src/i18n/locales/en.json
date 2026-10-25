@@ -1241,6 +1241,19 @@
       "upgradePriceHint": "Pay only the difference to upgrade from your current package.",
       "upgradeWithPrice": "Upgrade Now - {{value}} EGP",
       "paymentUnavailable": "Online payment isn't available yet, so your plan hasn't changed."
+    },
+    "api": {
+      "errors": {
+        "network": "We couldn't reach the server. Check your connection and try again.",
+        "validation": "Please check the entered information and try again.",
+        "badRequest": "The request could not be processed. Please try again.",
+        "unauthorized": "Please sign in to continue.",
+        "forbidden": "You do not have permission to perform this action.",
+        "notFound": "The requested item could not be found.",
+        "conflict": "This item or action conflicts with existing data. Please refresh and try again.",
+        "server": "Something went wrong on our side. Please try again in a moment.",
+        "unknown": "An unexpected error occurred. Please try again."
+      }
     }
   }
 }

@@ -1,9 +1,19 @@
 import { apiRequest } from './client';
 import type { CursorPage, NotificationDto, UnreadCountDto } from './types';
 
-export function getNotifications(cursor?: string): Promise<CursorPage<NotificationDto>> {
-  const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
-  return apiRequest<CursorPage<NotificationDto>>(`/api/notifications${query}`, { auth: true });
+export function getNotifications(params?: {
+  cursor?: string;
+  limit?: number;
+  unreadOnly?: boolean;
+}): Promise<CursorPage<NotificationDto>> {
+  const query = new URLSearchParams();
+  if (params?.cursor) query.set('cursor', params.cursor);
+  if (params?.limit) query.set('limit', params.limit.toString());
+  if (params?.unreadOnly !== undefined) query.set('unreadOnly', String(params.unreadOnly));
+  const queryString = query.toString() ? `?${query.toString()}` : '';
+  return apiRequest<CursorPage<NotificationDto>>(`/api/notifications${queryString}`, {
+    auth: true,
+  });
 }
 
 export function getUnreadNotificationsCount(): Promise<UnreadCountDto> {
