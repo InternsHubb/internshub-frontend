@@ -1,9 +1,9 @@
-import type { PackageId } from '@/constants/packages';
+import { PACKAGES, type PackageId } from '@/constants/packages';
 
 // Packages and technology tracks offered on onboarding step 04 "Path" ("Step 04 Path · Default
 // (Package + Track)", 22:19043). Package values are the strings the rest of the flow already
 // uses ('12 Months' selects the Orientation interview, see interview/mockInterview.ts). Prices
-// come from the backend (usePackagePrices); benefits are the existing prototype values.
+// come from the shared package config; benefits are the existing prototype values.
 
 export type PackageValue = '3 Months' | '6 Months' | '12 Months';
 
@@ -14,17 +14,19 @@ export type OnboardingPackage = {
   value: PackageValue;
   key: PackageKey;
   id: PackageId;
+  priceEgp: number;
   // 5px bar across the top of the card (22:19160, 22:19194, 22:19226).
   barClass: string;
   isPopular?: boolean;
 };
 
 export const ONBOARDING_PACKAGES: ReadonlyArray<OnboardingPackage> = [
-  { value: '3 Months', key: 'threeMonths', id: '3m', barClass: 'bg-[#e5d8ec]' },
+  { value: '3 Months', key: 'threeMonths', id: '3m', priceEgp: PACKAGES['3m'].priceEgp, barClass: 'bg-[#e5d8ec]' },
   {
     value: '6 Months',
     key: 'sixMonths',
     id: '6m',
+    priceEgp: PACKAGES['6m'].priceEgp,
     barClass: 'bg-gradient-to-r from-[#8b5db0] to-[#5c1d87] rtl:bg-gradient-to-l',
     isPopular: true,
   },
@@ -32,6 +34,7 @@ export const ONBOARDING_PACKAGES: ReadonlyArray<OnboardingPackage> = [
     value: '12 Months',
     key: 'twelveMonths',
     id: '12m',
+    priceEgp: PACKAGES['12m'].priceEgp,
     barClass: 'bg-gradient-to-r from-[#dd6f0d] to-[#8b5db0] rtl:bg-gradient-to-l',
   },
 ];
