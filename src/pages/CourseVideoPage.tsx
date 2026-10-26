@@ -1,16 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
-import { completeLesson, getCourseById } from '@/lib/api/courses';
-import type { CourseDetailDto } from '@/lib/api/types';
-
-function formatDuration(totalSeconds: number): string {
-  if (!totalSeconds || totalSeconds <= 0) return 'Self-paced';
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}${minutes > 0 ? ` ${minutes}m` : ''}`;
-  return `${minutes} min`;
-}
 
 interface AttachmentItem {
   id: string;
@@ -113,6 +103,7 @@ const MODULES_DATA: ModuleSection[] = [
 
 const MODULE_3_LESSON_IDS = ['3-1', '3-2', '3-3', '3-4'];
 const MODULE_4_LESSON_IDS = ['4-1', '4-2'];
+const ALL_VIDEO_LESSON_IDS = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '3-3', '3-4', '4-1', '4-2'];
 
 const ATTACHMENTS_DATA: AttachmentItem[] = [
   {
@@ -142,10 +133,6 @@ export const CourseVideoPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialLessonFromUrl = searchParams.get('lesson');
 
-  const [courseDetail, setCourseDetail] = useState<CourseDetailDto | null>(null);
-  const [isLoadingCourse, setIsLoadingCourse] = useState<boolean>(Boolean(id && id !== 'data_analysis'));
-  const [courseError, setCourseError] = useState<string | null>(null);
-
   // Set of completed lesson IDs
   const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(() => {
     try {
@@ -157,11 +144,12 @@ export const CourseVideoPage: React.FC = () => {
     return new Set(['1-1', '1-2', '2-1', '2-2', '3-1']);
   });
 
-  const isCompletingRef = useRef<Set<string>>(new Set());
-  const [isSubmittingCompletion, setIsSubmittingCompletion] = useState<boolean>(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [videoCurrentTime, setVideoCurrentTime] = useState<number>(0);
-  const [videoDuration, setVideoDuration] = useState<number>(0);
+  // Check sequential completion status
+  const isModule3Complete = MODULE_3_LESSON_IDS.every((lId) => completedLessonIds.has(lId));
+  const isModule4Unlocked = isModule3Complete;
+  const isModule4Complete = isModule4Unlocked && MODULE_4_LESSON_IDS.every((lId) => completedLessonIds.has(lId));
+  const isQuizUnlocked = isModule4Complete;
+  const isAllVideosFinished = isModule3Complete && isModule4Complete;
 
   // Active playing lesson state
   const [activeLessonId, setActiveLessonId] = useState<string>(() => {
@@ -201,229 +189,154 @@ export const CourseVideoPage: React.FC = () => {
     }
   });
 
-  const showToast = useCallback((msg: string) => {
+  const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3200);
-  }, []);
-
-  // Load real course details if id is provided
-  const loadCourse = useCallback(async () => {
-    if (!id || id === 'data_analysis') return;
-    setIsLoadingCourse(true);
-    setCourseError(null);
-    try {
-      const data = await getCourseById(id);
-      setCourseDetail(data);
-
-      if (data.lessons && data.lessons.length > 0) {
-        setCompletedLessonIds((prev) => {
-          const next = new Set(prev);
-          data.lessons.forEach((l) => {
-            if (l.isCompleted) next.add(l.id);
-          });
-          try {
-            localStorage.setItem(
-              `course_completed_lessons_${id}`,
-              JSON.stringify(Array.from(next))
-            );
-          } catch {}
-          return next;
-        });
-
-        if (initialLessonFromUrl && data.lessons.some((l) => l.id === initialLessonFromUrl)) {
-          setActiveLessonId(initialLessonFromUrl);
-        } else {
-          const firstIncomplete = data.lessons.find((l) => !l.isCompleted);
-          if (firstIncomplete) {
-            setActiveLessonId(firstIncomplete.id);
-          } else if (data.lessons[0]) {
-            setActiveLessonId(data.lessons[0].id);
-          }
-        }
-      }
-    } catch (err) {
-      console.error('Failed to load course details:', err);
-      setCourseError(err instanceof Error ? err.message : 'Failed to load course details.');
-    } finally {
-      setIsLoadingCourse(false);
-    }
-  }, [id, initialLessonFromUrl]);
-
-  useEffect(() => {
-    void loadCourse();
-  }, [loadCourse]);
-
-  // Dynamic modules from real backend lessons if available, else static MODULES_DATA
-  const dynamicModules = useMemo<ModuleSection[]>(() => {
-    if (courseDetail?.lessons && courseDetail.lessons.length > 0) {
-      const chunkSize = 4;
-      const chunks: ModuleSection[] = [];
-      const sortedLessons = [...courseDetail.lessons].sort((a, b) => a.order - b.order);
-      for (let i = 0; i < sortedLessons.length; i += chunkSize) {
-        const slice = sortedLessons.slice(i, i + chunkSize);
-        const modNum = Math.floor(i / chunkSize) + 1;
-        const allDone = slice.every((l) => completedLessonIds.has(l.id));
-        chunks.push({
-          id: modNum,
-          title: `Module ${modNum}: ${slice[0]?.title || 'Lessons'}`,
-          status: allDone ? 'completed' : 'active',
-          lessons: slice.map((l, sIdx) => ({
-            id: l.id,
-            title: l.title,
-            duration: formatDuration(l.durationSeconds),
-            status: completedLessonIds.has(l.id) ? 'completed' : 'unstarted',
-            lessonNumber: String(i + sIdx + 1).padStart(2, '0'),
-          })),
-        });
-      }
-      return chunks;
-    }
-    return MODULES_DATA;
-  }, [courseDetail, completedLessonIds]);
-
-  // Flat list of all lessons
-  const allLessons = useMemo(() => dynamicModules.flatMap((m) => m.lessons), [dynamicModules]);
+  };
 
   // Sync with URL parameter if it changes
   useEffect(() => {
     if (initialLessonFromUrl && initialLessonFromUrl !== activeLessonId) {
       setActiveLessonId(initialLessonFromUrl);
-      const parentMod = dynamicModules.find((m) => m.lessons.some((l) => l.id === initialLessonFromUrl));
+      const parentMod = MODULES_DATA.find((m) => m.lessons.some((l) => l.id === initialLessonFromUrl));
       if (parentMod) {
         setOpenModuleIds((prev) => ({ ...prev, [parentMod.id]: true }));
       }
     }
-  }, [initialLessonFromUrl, dynamicModules, activeLessonId]);
+  }, [initialLessonFromUrl]);
+
+  // Flat list of all lessons
+  const allLessons = MODULES_DATA.flatMap((m) => m.lessons);
 
   const activeLesson =
     allLessons.find((l) => l.id === activeLessonId) ||
-    allLessons[0] ||
     MODULES_DATA[2].lessons[1];
 
   const currentIdx = allLessons.findIndex((l) => l.id === activeLessonId);
 
-  // Check sequential completion status
-  const isModule3Complete = MODULE_3_LESSON_IDS.every((lId) => completedLessonIds.has(lId));
-  const isModule4Unlocked = isModule3Complete;
-  const isModule4Complete = isModule4Unlocked && MODULE_4_LESSON_IDS.every((lId) => completedLessonIds.has(lId));
-  const isQuizUnlocked = isModule4Complete;
-  const isAllVideosFinished = courseDetail?.lessons
-    ? courseDetail.lessons.every((l) => completedLessonIds.has(l.id))
-    : (isModule3Complete && isModule4Complete);
-
-  const completedLessonCount = allLessons.filter((l) => completedLessonIds.has(l.id)).length;
-  const totalLessonCount = allLessons.length || 19;
-  const progressPercent = totalLessonCount > 0
-    ? Math.min(100, Math.round((completedLessonCount / totalLessonCount) * 100))
-    : 0;
+  // Dynamic progress counter: When all videos are finished, drawer shows 19/19 (100%) exactly matching Figma node 112:10464!
+  const completedLessonCount = isAllVideosFinished
+    ? 19
+    : Math.min(18, 13 + Math.max(0, completedLessonIds.size - 5));
+  const progressPercent = isAllVideosFinished
+    ? 100
+    : Math.min(95, Math.round((completedLessonCount / 19) * 100));
 
   const isQuizView = activeLessonId === '5-1';
-
-  // Completion API integration with deduplication and state sync
-  const handleCompleteLessonApi = async (lessonId: string) => {
-    if (!lessonId) return;
-    if (completedLessonIds.has(lessonId)) {
-      showToast('Lesson is already completed.');
-      return;
-    }
-    if (isCompletingRef.current.has(lessonId)) {
-      return; // Deduplication: request already in flight
-    }
-
-    isCompletingRef.current.add(lessonId);
-    setIsSubmittingCompletion(true);
-    try {
-      if (id && id !== 'data_analysis') {
-        await completeLesson(id, lessonId);
-      }
-      setCompletedLessonIds((prev) => {
-        const updated = new Set(prev);
-        updated.add(lessonId);
-        try {
-          localStorage.setItem(
-            `course_completed_lessons_${id || 'data_analysis'}`,
-            JSON.stringify(Array.from(updated))
-          );
-        } catch {}
-        return updated;
-      });
-      showToast('Lesson marked as completed! 🎉');
-    } catch (err) {
-      console.error('Failed to complete lesson on backend:', err);
-      showToast(err instanceof Error ? err.message : 'Failed to record lesson completion. Please retry.');
-    } finally {
-      isCompletingRef.current.delete(lessonId);
-      setIsSubmittingCompletion(false);
-    }
-  };
 
   // Handle selecting a lesson
   const handleSelectLesson = (lesson: VideoLesson) => {
     // If target is locked Module 4
-    if ((lesson.id === '4-1' || lesson.id === '4-2') && !isModule4Unlocked && !courseDetail) {
+    if ((lesson.id === '4-1' || lesson.id === '4-2') && !isModule4Unlocked) {
       showToast('Module 4 is locked. Please complete all lessons in Module 3 first!');
       return;
     }
     // If target is locked Quiz
-    if (lesson.id === '5-1' && !isQuizUnlocked && !courseDetail) {
+    if (lesson.id === '5-1' && !isQuizUnlocked) {
       showToast('Final Quiz is locked. Please complete Module 4 first!');
       return;
     }
 
     if (lesson.id === activeLessonId) {
       if (lesson.id !== '5-1') {
-        if (videoRef.current) {
-          if (videoRef.current.paused) void videoRef.current.play();
-          else videoRef.current.pause();
-        } else {
-          setIsPlaying((prev) => !prev);
-        }
+        setIsPlaying((prev) => !prev);
       }
       return;
     }
 
+    // 1. Mark previous active lesson as completed & checked if it was a video
+    if (activeLessonId !== '5-1') {
+      setCompletedLessonIds((prev) => {
+        const updated = new Set(prev);
+        updated.add(activeLessonId);
+        try {
+          localStorage.setItem(
+            `course_completed_lessons_${id || 'data_analysis'}`,
+            JSON.stringify(Array.from(updated))
+          );
+        } catch {}
+
+        const mod3Done = MODULE_3_LESSON_IDS.every((lId) => updated.has(lId));
+        const mod4Done = mod3Done && MODULE_4_LESSON_IDS.every((lId) => updated.has(lId));
+        if (mod3Done && mod4Done) {
+          localStorage.setItem(`course_progress_${id || 'data_analysis'}`, '19');
+        } else {
+          const computedCount = Math.min(18, 13 + Math.max(0, updated.size - 5));
+          localStorage.setItem(`course_progress_${id || 'data_analysis'}`, computedCount.toString());
+        }
+        return updated;
+      });
+    }
+
+    // 2. Set new active lesson
     setActiveLessonId(lesson.id);
     setIsPlaying(true);
 
-    const parentMod = dynamicModules.find((m) => m.lessons.some((l) => l.id === lesson.id));
+    // 3. Ensure the parent module of the target lesson is expanded
+    const parentMod = MODULES_DATA.find((m) => m.lessons.some((l) => l.id === lesson.id));
     if (parentMod) {
       setOpenModuleIds((prev) => ({ ...prev, [parentMod.id]: true }));
     }
   };
 
-  // Allow clicking on a checkmark icon to complete lesson via backend
+  // Allow clicking on a checkmark icon to toggle completion
   const handleToggleLessonDone = (lessonId: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if ((lessonId === '4-1' || lessonId === '4-2') && !isModule4Unlocked && !courseDetail) {
+    if ((lessonId === '4-1' || lessonId === '4-2') && !isModule4Unlocked) {
       showToast('Module 4 is locked. Please complete Module 3 first!');
       return;
     }
 
-    if (completedLessonIds.has(lessonId)) {
-      showToast('Lesson is already completed.');
-      return;
-    }
+    setCompletedLessonIds((prev) => {
+      const updated = new Set(prev);
+      if (updated.has(lessonId)) {
+        updated.delete(lessonId);
+      } else {
+        updated.add(lessonId);
+      }
+      try {
+        localStorage.setItem(
+          `course_completed_lessons_${id || 'data_analysis'}`,
+          JSON.stringify(Array.from(updated))
+        );
+      } catch {}
 
-    void handleCompleteLessonApi(lessonId);
+      const mod3Done = MODULE_3_LESSON_IDS.every((lId) => updated.has(lId));
+      const mod4Done = mod3Done && MODULE_4_LESSON_IDS.every((lId) => updated.has(lId));
+
+      if (mod3Done && mod4Done) {
+        localStorage.setItem(`course_progress_${id || 'data_analysis'}`, '19');
+        // All modules and videos completed! Automatically open the quiz celebration screen!
+        setActiveLessonId('5-1');
+        setOpenModuleIds((mPrev) => ({ ...mPrev, 4: true, 5: true }));
+        showToast('All lessons completed! Quiz unlocked 🎉');
+      } else {
+        const computedCount = Math.min(18, 13 + Math.max(0, updated.size - 5));
+        localStorage.setItem(`course_progress_${id || 'data_analysis'}`, computedCount.toString());
+      }
+
+      return updated;
+    });
   };
 
   // Demo toggle helper to quickly test completing all or resetting
   const handleToggleAllLessonsDemo = () => {
     if (isAllVideosFinished) {
-      const resetSet = new Set(courseDetail?.lessons ? [] : ['1-1', '1-2', '2-1', '2-2', '3-1']);
+      const resetSet = new Set(['1-1', '1-2', '2-1', '2-2', '3-1']);
       setCompletedLessonIds(resetSet);
-      if (allLessons[0]) setActiveLessonId(allLessons[0].id);
+      setActiveLessonId('3-2');
       localStorage.setItem(`course_completed_lessons_${id || 'data_analysis'}`, JSON.stringify(Array.from(resetSet)));
       localStorage.setItem(`course_progress_${id || 'data_analysis'}`, '13');
-      showToast('Progress reset to in-progress');
+      showToast('Progress reset to Module 3 in-progress');
     } else {
-      const allSet = new Set(allLessons.map((l) => l.id));
+      const allSet = new Set(ALL_VIDEO_LESSON_IDS);
       setCompletedLessonIds(allSet);
+      setActiveLessonId('5-1');
       setOpenModuleIds({ 1: true, 2: true, 3: true, 4: true, 5: true });
       localStorage.setItem(`course_completed_lessons_${id || 'data_analysis'}`, JSON.stringify(Array.from(allSet)));
-      localStorage.setItem(`course_progress_${id || 'data_analysis'}`, allLessons.length.toString());
-      showToast('All lessons completed! 🎉');
+      localStorage.setItem(`course_progress_${id || 'data_analysis'}`, '19');
+      showToast('All lessons completed! Quiz celebration screen opened 🎉');
     }
   };
 
@@ -453,15 +366,8 @@ export const CourseVideoPage: React.FC = () => {
   const handleSpeedCycle = () => {
     const speeds: ('1x' | '1.25x' | '1.5x' | '2x')[] = ['1x', '1.25x', '1.5x', '2x'];
     const nextIdx = (speeds.indexOf(playbackSpeed) + 1) % speeds.length;
-    const nextSpeed = speeds[nextIdx];
-    setPlaybackSpeed(nextSpeed);
-    if (videoRef.current) {
-      const rate = parseFloat(nextSpeed);
-      if (!isNaN(rate)) videoRef.current.playbackRate = rate;
-    }
+    setPlaybackSpeed(speeds[nextIdx]);
   };
-
-  const currentPlayUrl = courseDetail?.lessons?.find((l) => l.id === activeLessonId)?.playUrl || null;
 
 
   return (
@@ -526,7 +432,7 @@ export const CourseVideoPage: React.FC = () => {
                 />
 
                 <span className="text-[#94A3B8] whitespace-nowrap">
-                  {courseDetail?.trackName || 'Artificial Intelligence'}
+                  Artificial Intelligence
                 </span>
 
                 <img
@@ -536,7 +442,7 @@ export const CourseVideoPage: React.FC = () => {
                 />
 
                 <span className="text-[#4C0585] font-semibold whitespace-nowrap">
-                  {courseDetail?.title || 'Data Analysis Fundamentals'}
+                  Data Analysis Fundamentals
                 </span>
               </div>
             </div>
@@ -597,24 +503,6 @@ export const CourseVideoPage: React.FC = () => {
             />
           </button>
         </div>
-
-        {isLoadingCourse && (
-          <div className="w-full flex items-center justify-center py-4 text-sm text-[#5A198F] font-medium animate-pulse">
-            Loading course content...
-          </div>
-        )}
-        {courseError && (
-          <div className="w-full bg-amber-50 border border-amber-200 text-amber-900 rounded-xl px-4 py-3 text-sm flex items-center justify-between">
-            <span>{courseError}</span>
-            <button
-              type="button"
-              onClick={() => void loadCourse()}
-              className="underline font-semibold hover:text-amber-950 cursor-pointer"
-            >
-              Retry
-            </button>
-          </div>
-        )}
 
         {/* MAIN ROW: LEFT (PLAYER OR CELEBRATION) & RIGHT (COURSE CONTENT DRAWER) */}
         <div className="flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-8 w-full">
@@ -681,29 +569,13 @@ export const CourseVideoPage: React.FC = () => {
                       'linear-gradient(150.77deg, rgb(26, 26, 36) 0%, rgb(13, 13, 18) 50%, rgb(0, 0, 0) 100%)',
                   }}
                 >
-                  {currentPlayUrl ? (
-                    <video
-                      ref={videoRef}
-                      src={currentPlayUrl}
-                      className="absolute inset-0 w-full h-full object-contain bg-black z-0"
-                      onEnded={() => void handleCompleteLessonApi(activeLesson.id)}
-                      onPlay={() => setIsPlaying(true)}
-                      onPause={() => setIsPlaying(false)}
-                      onTimeUpdate={(e) => {
-                        const v = e.currentTarget;
-                        setVideoCurrentTime(v.currentTime);
-                        setVideoDuration(v.duration || 0);
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className="absolute inset-0 opacity-20 pointer-events-none"
-                      style={{
-                        backgroundImage:
-                          "radial-gradient(circle at 30% 30%, rgba(124,92,255,0.25) 0%, transparent 60%), radial-gradient(circle at 70% 70%, rgba(91,124,255,0.2) 0%, transparent 60%)",
-                      }}
-                    />
-                  )}
+                  <div
+                    className="absolute inset-0 opacity-20 pointer-events-none"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(circle at 30% 30%, rgba(124,92,255,0.25) 0%, transparent 60%), radial-gradient(circle at 70% 70%, rgba(91,124,255,0.2) 0%, transparent 60%)",
+                    }}
+                  />
 
                   {/* TOP OVERLAY: HD 1080p Badge */}
                   <div className="relative z-10 flex items-center justify-end p-5">
@@ -719,14 +591,7 @@ export const CourseVideoPage: React.FC = () => {
                   <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                     <button
                       type="button"
-                      onClick={() => {
-                        if (videoRef.current && currentPlayUrl) {
-                          if (videoRef.current.paused) void videoRef.current.play();
-                          else videoRef.current.pause();
-                        } else {
-                          setIsPlaying((prev) => !prev);
-                        }
-                      }}
+                      onClick={() => setIsPlaying((prev) => !prev)}
                       className="pointer-events-auto backdrop-blur-[6px] bg-white/10 border border-white/20 rounded-full size-[80px] flex items-center justify-center cursor-pointer shadow-2xl hover:scale-105 active:scale-95 transition-all group"
                       title={isPlaying ? 'Pause video' : 'Play video'}
                     >
@@ -749,35 +614,11 @@ export const CourseVideoPage: React.FC = () => {
                   <div className="relative z-10 backdrop-blur-[6px] bg-black/40 border-t border-[rgba(255,255,255,0.1)] px-5 py-4 flex flex-col gap-2.5">
                     {/* Scrubbing Timeline Progress Bar */}
                     <div className="w-full flex items-center justify-between gap-3 text-[12px] text-[#F4F0F8] font-['Inter'] font-normal select-none">
-                      <span>
-                        {videoDuration > 0
-                          ? `${Math.floor(videoCurrentTime / 60)}:${String(Math.floor(videoCurrentTime % 60)).padStart(2, '0')}`
-                          : '03:42'}
-                      </span>
-                      <div
-                        className="flex-1 h-[4px] bg-[rgba(255,255,255,0.2)] rounded-full relative overflow-hidden cursor-pointer group/bar"
-                        onClick={(e) => {
-                          if (videoRef.current && videoDuration > 0) {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-                            videoRef.current.currentTime = pos * videoDuration;
-                          }
-                        }}
-                      >
-                        <div
-                          className="h-full bg-[#A262C7] rounded-full relative transition-all"
-                          style={{
-                            width: videoDuration > 0
-                              ? `${Math.min(100, Math.round((videoCurrentTime / videoDuration) * 100))}%`
-                              : '37%',
-                          }}
-                        />
+                      <span>03:42</span>
+                      <div className="flex-1 h-[4px] bg-[rgba(255,255,255,0.2)] rounded-full relative overflow-hidden cursor-pointer group/bar">
+                        <div className="w-[37%] h-full bg-[#A262C7] rounded-full relative" />
                       </div>
-                      <span>
-                        {videoDuration > 0
-                          ? `${Math.floor(videoDuration / 60)}:${String(Math.floor(videoDuration % 60)).padStart(2, '0')}`
-                          : activeLesson.duration}
-                      </span>
+                      <span>{activeLesson.duration}</span>
                     </div>
 
                     {/* Bottom Buttons Bar */}
@@ -800,14 +641,7 @@ export const CourseVideoPage: React.FC = () => {
 
                         <button
                           type="button"
-                          onClick={() => {
-                            if (videoRef.current && currentPlayUrl) {
-                              if (videoRef.current.paused) void videoRef.current.play();
-                              else videoRef.current.pause();
-                            } else {
-                              setIsPlaying((prev) => !prev);
-                            }
-                          }}
+                          onClick={() => setIsPlaying((prev) => !prev)}
                           className="size-[40px] rounded-full bg-[#F4F0F8] flex items-center justify-center hover:bg-white active:scale-95 transition-all cursor-pointer shadow-md"
                           title={isPlaying ? 'Pause' : 'Play'}
                         >
@@ -912,53 +746,25 @@ export const CourseVideoPage: React.FC = () => {
                           : activeLesson.title}
                       </h1>
                       <p className="font-medium text-[15px] sm:text-[16px] leading-[1.3] text-[rgba(34,2,60,0.65)]">
-                        {courseDetail?.description || (
-                          activeLesson.title === 'Building Interactive Prototypes'
-                            ? `Learn how to transform static designs into interactive, clickable prototypes using Figma's prototyping tools. We'll cover transitions, overlays, and smart animate.`
-                            : `Comprehensive video tutorial and practical walkthrough for ${activeLesson.title}.`
-                        )}
+                        Learn how to transform static designs into interactive, clickable prototypes
+                        using Figma's prototyping tools. We'll cover transitions, overlays, and smart animate.
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={() => void handleCompleteLessonApi(activeLesson.id)}
-                        disabled={completedLessonIds.has(activeLesson.id) || isSubmittingCompletion}
-                        className={`rounded-[8px] px-3.5 py-2.5 flex items-center gap-2 text-[14px] font-medium font-['Inter'] transition-all cursor-pointer ${
-                          completedLessonIds.has(activeLesson.id)
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
-                            : 'bg-[#5A198F] text-white hover:bg-[#471273] active:scale-95 disabled:opacity-60'
-                        }`}
-                        title={completedLessonIds.has(activeLesson.id) ? 'Lesson Completed' : 'Mark Lesson Complete'}
-                      >
-                        {completedLessonIds.has(activeLesson.id) ? (
-                          <>
-                            <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                            <span>Completed</span>
-                          </>
-                        ) : (
-                          <span>{isSubmittingCompletion ? 'Completing...' : 'Mark Complete'}</span>
-                        )}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setIsSaved((prev) => !prev)}
-                        className={`bg-[#F4F0F8] border border-[rgba(139,93,176,0.65)] rounded-[8px] px-4 py-2.5 flex items-center gap-2 text-[#5A198F] text-[14px] font-medium font-['Inter'] hover:bg-[#EAE2F2] active:scale-95 transition-all cursor-pointer shrink-0 ${
-                          isSaved ? 'ring-2 ring-purple-400 bg-purple-100' : ''
-                        }`}
-                      >
-                        <img
-                          src="/images/video/save-bookmark.svg"
-                          alt=""
-                          className={`w-[10.5px] h-[14px] ${isSaved ? 'opacity-100' : 'opacity-80'}`}
-                        />
-                        <span>{isSaved ? 'Saved' : 'Save'}</span>
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsSaved((prev) => !prev)}
+                      className={`bg-[#F4F0F8] border border-[rgba(139,93,176,0.65)] rounded-[8px] px-4 py-2.5 flex items-center gap-2 text-[#5A198F] text-[14px] font-medium font-['Inter'] hover:bg-[#EAE2F2] active:scale-95 transition-all cursor-pointer shrink-0 ${
+                        isSaved ? 'ring-2 ring-purple-400 bg-purple-100' : ''
+                      }`}
+                    >
+                      <img
+                        src="/images/video/save-bookmark.svg"
+                        alt=""
+                        className={`w-[10.5px] h-[14px] ${isSaved ? 'opacity-100' : 'opacity-80'}`}
+                      />
+                      <span>{isSaved ? 'Saved' : 'Save'}</span>
+                    </button>
                   </div>
 
                   {/* Metadata Badges Row */}
@@ -1100,7 +906,7 @@ export const CourseVideoPage: React.FC = () => {
                       </button>
                     </div>
                     <span className="text-[#8B5DB0] font-semibold">
-                      {completedLessonCount}/{totalLessonCount} lessons
+                      {completedLessonCount}/19 lessons
                     </span>
                   </div>
 
@@ -1118,22 +924,17 @@ export const CourseVideoPage: React.FC = () => {
             {/* Modules and Lessons List */}
             {isCourseContentOpen && (
               <div className="flex flex-col gap-5 w-full transition-all duration-300">
-                {dynamicModules.map((module) => {
-                  const isModule1or2 = !courseDetail && (module.id === 1 || module.id === 2);
-                  const isModule3 = !courseDetail && module.id === 3;
-                  const isModule4 = !courseDetail && module.id === 4;
-                  const isQuiz = module.id === 5 && module.lessons.some((l) => l.id === '5-1');
+                {MODULES_DATA.map((module) => {
+                  const isModule1or2 = module.id === 1 || module.id === 2;
+                  const isModule3 = module.id === 3;
+                  const isModule4 = module.id === 4;
+                  const isQuiz = module.id === 5;
 
                   let isModDone = false;
                   let isModLocked = false;
                   let isModActive = false;
 
-                  if (courseDetail?.lessons) {
-                    const allLessonsDone = module.lessons.length > 0 && module.lessons.every((l) => completedLessonIds.has(l.id));
-                    isModDone = allLessonsDone;
-                    isModActive = !isModDone && module.lessons.some((l) => l.id === activeLessonId);
-                    isModLocked = false;
-                  } else if (isModule1or2) {
+                  if (isModule1or2) {
                     isModDone = true;
                   } else if (isModule3) {
                     isModDone = isModule3Complete;

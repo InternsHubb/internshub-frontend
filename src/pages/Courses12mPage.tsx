@@ -1,17 +1,7 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Lock } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
-import { getCourses } from '@/lib/api/courses';
-import type { CourseSummaryDto } from '@/lib/api/types';
-
-function formatDuration(totalSeconds: number): string {
-  if (!totalSeconds || totalSeconds <= 0) return 'Self-paced';
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}${minutes > 0 ? ` ${minutes}m` : ''}`;
-  return `${minutes} min`;
-}
 
 interface Course {
   id: string;
@@ -248,50 +238,9 @@ export const Courses12mPage: React.FC = () => {
     });
   };
 
-  const [backendCourses, setBackendCourses] = useState<CourseSummaryDto[]>([]);
-  const [isLoadingCourses, setIsLoadingCourses] = useState<boolean>(true);
-  const [courseLoadError, setCourseLoadError] = useState<string | null>(null);
-
-  const fetchCourseList = useCallback(async () => {
-    setIsLoadingCourses(true);
-    setCourseLoadError(null);
-    try {
-      const dtos = await getCourses();
-      setBackendCourses(dtos);
-    } catch {
-      setCourseLoadError('Unable to load courses from the server. Please try again.');
-    } finally {
-      setIsLoadingCourses(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchCourseList();
-  }, [fetchCourseList]);
-
-  const activeCatalog = useMemo<Course[]>(() => {
-    if (backendCourses.length > 0) {
-      return backendCourses.map((c) => ({
-        id: c.id,
-        title: c.title,
-        category: c.trackName || 'General',
-        instructor: c.trackName ? `${c.trackName} Specialist` : 'Course Instructor',
-        instructorAvatar: '/images/avatar-elena-figma.jpg',
-        rating: 4.8,
-        reviews: c.completedLessonsCount !== null ? `(${c.completedLessonsCount} completed)` : `(${c.lessonCount} lessons)`,
-        duration: formatDuration(c.totalDurationSeconds),
-        level: 'All Levels',
-        lessons: `${c.lessonCount} lessons`,
-        thumbnail: '/images/course-thumb-figma-2.jpg',
-        isRequired: c.order <= 3,
-      }));
-    }
-    return COURSES_12M_CATALOG;
-  }, [backendCourses]);
-
   // Filtered courses for 12m catalog
   const filteredCourses = useMemo(() => {
-    let result = activeCatalog.filter((course) => {
+    let result = COURSES_12M_CATALOG.filter((course) => {
       const matchesSearch =
         course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         course.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -322,7 +271,7 @@ export const Courses12mPage: React.FC = () => {
       result = [...result].reverse();
     }
     return result;
-  }, [activeCatalog, searchQuery, sortOption, requiredFilter, appliedTracks, appliedLevels]);
+  }, [searchQuery, sortOption, requiredFilter, appliedTracks, appliedLevels]);
 
   return (
     <div className="min-h-screen bg-[#FEFEFE] relative overflow-hidden font-['Plus_Jakarta_Sans',sans-serif] text-slate-800 flex justify-start selection:bg-purple-200 selection:text-purple-900">
@@ -1126,31 +1075,9 @@ export const Courses12mPage: React.FC = () => {
               </div>
 
               {/* 4-Column Responsive Grid (Matching Figma 112:16548) */}
-              {isLoadingCourses ? (
-                <div className="w-full py-16 flex items-center justify-center bg-[#F9FAFB] rounded-[28px]">
-                  <div className="size-8 animate-spin rounded-full border-3 border-[#5A198F] border-t-transparent" />
-                </div>
-              ) : courseLoadError ? (
-                <div className="w-full py-8 px-6 flex flex-col items-center justify-center text-center bg-[#FFF1F0] rounded-[28px] border border-[#FFA39E] gap-2">
-                  <p className="text-[#CF1322] font-medium text-[14px]">{courseLoadError}</p>
-                  <button
-                    type="button"
-                    onClick={() => void fetchCourseList()}
-                    className="px-4 py-1.5 bg-[#5A198F] text-white rounded-full text-xs font-semibold hover:bg-[#471273] transition-colors"
-                  >
-                    Retry
-                  </button>
-                </div>
-              ) : filteredCourses.length === 0 ? (
-                <div className="w-full py-12 px-6 flex flex-col items-center justify-center text-center bg-[#F9FAFB] rounded-[28px] border border-dashed border-[#E2E8F0]">
-                  <p className="text-[#64748B] font-medium text-[14px]">
-                    No courses found matching your current filter criteria.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,240px),1fr))] gap-[20px] w-full">
-                  {filteredCourses.map((course) => {
-                    const isEnrolled = !!enrolledCourses[course.id];
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,240px),1fr))] gap-[20px] w-full">
+                {filteredCourses.map((course) => {
+                  const isEnrolled = !!enrolledCourses[course.id];
                   return (
                     <div
                       key={course.id}
@@ -1245,7 +1172,6 @@ export const Courses12mPage: React.FC = () => {
                   );
                 })}
               </div>
-              )}
             </div>
           ) : (
             /* =========================================================================
