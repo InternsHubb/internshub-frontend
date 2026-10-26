@@ -1,4 +1,13 @@
 import { ApiError } from './client';
+import type { OnboardingStep } from './types';
+
+// A 403 "Onboarding required" response lists the steps the backend still expects, e.g.
+// { "missingSteps": ["AcceptPolicies"] } from POST /api/enrollments. Empty for any other error.
+export function missingOnboardingSteps(error: unknown): OnboardingStep[] {
+  if (!(error instanceof ApiError) || error.status !== 403) return [];
+  const steps = error.problem?.missingSteps;
+  return Array.isArray(steps) ? steps : [];
+}
 
 export function apiErrorKey(error: unknown): string {
   if (!(error instanceof ApiError)) {
@@ -21,7 +30,7 @@ export function apiErrorKey(error: unknown): string {
   }
 
   if (error.status === 403) {
-    return 'api.errors.forbidden';
+    return missingOnboardingSteps(error).length > 0 ? 'api.errors.onboardingRequired' : 'api.errors.forbidden';
   }
 
   if (error.status === 404) {

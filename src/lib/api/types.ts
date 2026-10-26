@@ -47,12 +47,14 @@ export type MeDto = {
 };
 
 // RFC 9110 problem details as returned by ASP.NET; `errors` maps a code or field to messages.
+// `missingSteps` comes with a 403 "Onboarding required" (not in Swagger, seen on POST /api/enrollments).
 export type ProblemDetails = {
   type?: string | null;
   title?: string | null;
   status?: number | string | null;
   detail?: string | null;
   errors?: Record<string, string[]>;
+  missingSteps?: OnboardingStep[] | null;
 };
 
 export type CursorPage<T> = { items: T[]; nextCursor: string | null };

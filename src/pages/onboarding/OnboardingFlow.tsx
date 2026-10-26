@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { formatPrice, PACKAGES } from '@/constants/packages';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
-import { apiErrorKey } from '@/lib/api/errors';
+import { apiErrorKey, missingOnboardingSteps } from '@/lib/api/errors';
 import { OnboardingHeader } from './OnboardingHeader';
+import { PolicyConsent } from './PolicyConsent';
 import { PackageSelection } from './PackageSelection';
 import { ProfileStep } from './ProfileStep';
 import { CV_STEP, PACKAGE_FEATURE_KEYS, PACKAGES_BY_VALUE, PATH_STEP, PROFILE_STEP, type PackageValue, type TrackId } from './packages';
@@ -86,6 +87,8 @@ const RESULT_STATES: Record<ResultState, {
 
 const RESULT_STATE_ORDER: ResultState[] = ['assigned', 'pending', 'incomplete'];
 
+const POLICIES_ERROR_KEY = 'onboarding.path.errors.acceptPolicies';
+
 type OnboardingFormData = {
   // No package or track until the learner picks them on the Path step; later steps require both.
   selectedPackage: PackageValue | null;
@@ -96,7 +99,7 @@ type OnboardingFormData = {
 export default function OnboardingFlow() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, reloadUser } = useAuth();
   // Step 01 counts as done only when the backend reports email and phone as confirmed, not when
   // the user has moved past it. National ID has no backend check, so it is not part of this.
   const isAccountVerified = user?.emailConfirmed === true && user.phoneNumberConfirmed === true;
@@ -132,6 +135,15 @@ export default function OnboardingFlow() {
   const isPathSaved = Boolean(
     savedChoice && savedChoice.packageValue === formData.selectedPackage && savedChoice.trackId === formData.selectedTrack
   );
+  // POST/PUT /api/enrollments answers 403 "Onboarding required" (missingSteps: AcceptPolicies) until
+  // the required policies are accepted, so Path asks for them before saving a new or changed choice.
+  // An unchanged saved choice isn't sent again, so it doesn't need them.
+  const needsPolicies = user?.requiredPoliciesAccepted !== true && !isPathSaved;
+  // The "accept the terms" error goes away once GET /api/me reports the terms accepted.
+  const arePoliciesAccepted = user?.requiredPoliciesAccepted === true;
+  useEffect(() => {
+    if (arePoliciesAccepted) setPathErrorKey((key) => (key === POLICIES_ERROR_KEY ? null : key));
+  }, [arePoliciesAccepted]);
 
   const payment = usePaymentCheckout({ enrollment: enrollmentChoice.enrollment, onPaid: enrollmentChoice.refresh });
   const myCv = useMyCv();
@@ -199,12 +211,23 @@ export default function OnboardingFlow() {
       goToStep(PATH_STEP + 1);
       return;
     }
+    if (needsPolicies) {
+      setPathErrorKey(POLICIES_ERROR_KEY);
+      pathForm.current?.querySelector<HTMLInputElement>('#terms')?.focus();
+      return;
+    }
     setPathErrorKey(null);
     setIsPathSaving(true);
     try {
       await enrollmentChoice.save({ packageValue: formData.selectedPackage, trackId: formData.selectedTrack });
     } catch (error) {
-      setPathErrorKey(error instanceof EnrollmentChoiceError ? error.messageKey : apiErrorKey(error));
+      if (missingOnboardingSteps(error).includes('AcceptPolicies')) {
+        // The backend still lacks the consents (e.g. accepted in another tab): resync the flag.
+        setPathErrorKey(POLICIES_ERROR_KEY);
+        void reloadUser();
+      } else {
+        setPathErrorKey(error instanceof EnrollmentChoiceError ? error.messageKey : apiErrorKey(error));
+      }
       setIsPathSaving(false);
       return;
     }
@@ -340,6 +363,9 @@ export default function OnboardingFlow() {
 
               <TrackSelection value={formData.selectedTrack} onChange={selectTrack} hasError={showTrackError} />
 
+              {/* Same consent as on Payment; the learner ticks it themselves before the choice is saved. */}
+              <PolicyConsent />
+
               {enrollmentChoice.isLoading && <p role="status" className="text-xs text-[#6B7280]">{t('onboarding.path.loading')}</p>}
               {enrollmentChoice.error && !enrollmentChoice.isLoading && (
                 <div role="alert" className="bg-[#FEF0EF] p-4 rounded-[14px] text-xs text-[#B42318] flex flex-wrap items-center gap-3">
@@ -349,14 +375,18 @@ export default function OnboardingFlow() {
               )}
               {pathErrorKey && <div role="alert" className="bg-[#FEF0EF] p-4 rounded-[14px] text-xs text-[#B42318]">{t(pathErrorKey)}</div>}
 
+              {needsPolicies && isPathComplete && pathErrorKey !== POLICIES_ERROR_KEY && (
+                <p className="text-[11px] text-[#6B7280] text-end">{t('onboarding.path.acceptFirst')}</p>
+              )}
+
               <div className="flex flex-wrap justify-end items-center gap-4 pt-4">
                 <button type="button" onClick={() => setCurrentStep(2)} className="font-bold text-sm text-[#5C1D87]">{t('onboarding.path.back')}</button>
                 {/* Stays focusable without a package so a click explains what is missing (as on the CV step). */}
                 <button
                   type="submit"
-                  aria-disabled={!isPathComplete || isPathSaving || enrollmentChoice.isLoading}
+                  aria-disabled={!isPathComplete || needsPolicies || isPathSaving || enrollmentChoice.isLoading}
                   aria-busy={isPathSaving || undefined}
-                  className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow ${isPathComplete && !isPathSaving && !enrollmentChoice.isLoading ? 'bg-gradient-to-r from-[#4C0585] to-[#3A0353] rtl:bg-gradient-to-l text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}
+                  className={`px-7 py-3.5 font-bold text-sm rounded-[13px] shadow ${isPathComplete && !needsPolicies && !isPathSaving && !enrollmentChoice.isLoading ?'bg-gradient-to-r from-[#4C0585] to-[#3A0353] rtl:bg-gradient-to-l text-white' : 'bg-[#ECEAED] text-[#9A939E] cursor-not-allowed'}`}
                 >
                   {isPathSaving
                     ? t('onboarding.path.saving')
