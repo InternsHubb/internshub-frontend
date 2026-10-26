@@ -122,16 +122,56 @@ function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCo
 // outline icon, 14px label and an optional count pill.
 function NavSubItem({ item, onNavigate }: { item: SidebarSubItem; onNavigate?: () => void }) {
   const { t } = useTranslation();
+  const location = useLocation();
   const Icon = item.icon;
+  const isHashItem = item.to.includes('#');
+  const [targetPath, targetHash] = item.to.split('#');
+  const isQueryItem = item.to.includes('?');
+  const [pathWithoutQuery, searchPart] = item.to.split('?');
+  const targetParams = new URLSearchParams(searchPart || '');
+
   return (
     <li>
       <NavLink
         to={item.to}
         end={item.end}
-        onClick={onNavigate}
-        className={({ isActive }) =>
-          cn('flex h-8 w-full items-center gap-2.5 rounded-lg ps-3 pe-2 transition-colors', FOCUS_RING, isActive ? ACTIVE_ITEM : IDLE_ITEM)
-        }
+        onClick={() => {
+          onNavigate?.();
+          if (isHashItem && targetHash) {
+            const el = document.getElementById(targetHash);
+            if (el) {
+              setTimeout(() => {
+                el.scrollIntoView({ behavior: 'smooth' });
+              }, 50);
+            }
+          }
+        }}
+        className={({ isActive }) => {
+          let active = isActive;
+          if (isHashItem) {
+            active = location.pathname === targetPath && location.hash === `#${targetHash}`;
+          } else if (isQueryItem) {
+            const currentParams = new URLSearchParams(location.search);
+            const isPathMatch = location.pathname === pathWithoutQuery;
+            let matchesParams = isPathMatch;
+            if (isPathMatch) {
+              targetParams.forEach((val, key) => {
+                if (currentParams.get(key) !== val) {
+                  matchesParams = false;
+                }
+              });
+              if (!currentParams.get('step') && targetParams.get('step') === 'technicalInterview') {
+                matchesParams = true;
+              }
+            }
+            active = matchesParams;
+          }
+          return cn(
+            'flex h-8 w-full items-center gap-2.5 rounded-lg ps-3 pe-2 transition-colors',
+            FOCUS_RING,
+            active ? ACTIVE_ITEM : IDLE_ITEM,
+          );
+        }}
       >
         <Icon className="size-4 shrink-0" aria-hidden={true} />
         <span className="truncate text-sm leading-none">{t(item.labelKey)}</span>
@@ -145,7 +185,7 @@ function NavSubItem({ item, onNavigate }: { item: SidebarSubItem; onNavigate?: (
   );
 }
 
-// Item with a nested menu (Recruitment). Expanded, the row toggles the menu, which opens by
+// Item with a nested menu (Recruitment or Internship). Expanded, the row toggles the menu, which opens by
 // itself on any page under the group's route and stays as the user leaves it while on those
 // pages. In the icon-only rail there is no room for the menu, so the icon links to the group's
 // first page instead.
@@ -176,9 +216,10 @@ function NavGroup({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isC
         className={cn(
           'relative flex h-10 w-full items-center gap-3 rounded-lg ps-3 pe-2 text-start transition-colors',
           FOCUS_RING,
-          isInGroup ? 'font-semibold text-white hover:bg-white/[0.07]' : IDLE_ITEM,
+          isInGroup ? (isOpen ? 'font-semibold text-white hover:bg-white/[0.07]' : ACTIVE_ITEM) : IDLE_ITEM,
         )}
       >
+        <ActiveIndicator isActive={isInGroup} />
         <img src={item.icon} alt="" aria-hidden="true" className="size-[17px] shrink-0 object-contain" />
         <span className="truncate text-sm leading-none">{t(item.labelKey)}</span>
         <ChevronDown

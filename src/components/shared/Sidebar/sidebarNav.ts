@@ -1,10 +1,15 @@
 import type { ComponentType } from 'react';
 import {
   Bell,
+  BookOpen,
   BriefcaseBusiness,
   CalendarDays,
+  CheckCircle2,
+  ClipboardCheck,
   ClipboardList,
+  Clock,
   FileText,
+  FolderKanban,
   House,
   Star,
   UserRound,
@@ -15,6 +20,7 @@ import chatIcon from '@/assets/dashboard/sb-chat.svg';
 import coursesIcon from '@/assets/dashboard/sb-courses.svg';
 import dashboardIcon from '@/assets/dashboard/sb-dashboard.svg';
 import internshipIcon from '@/assets/dashboard/sb-internship.svg';
+import navMentorshipIcon from '@/assets/dashboard/nav-mentorship.svg';
 import progressIcon from '@/assets/dashboard/sb-progress.svg';
 import recruitmentIcon from '@/assets/dashboard/sb-recruitment.svg';
 import sprintsIcon from '@/assets/dashboard/sb-sprints.svg';
@@ -48,6 +54,40 @@ export type SidebarNavItem = {
   children?: ReadonlyArray<SidebarSubItem>;
 };
 
+// Sub-items of the Internship dropdown group (journey stages)
+export const INTERNSHIP_ITEMS: ReadonlyArray<SidebarSubItem> = [
+  {
+    id: 'internship-courses',
+    labelKey: 'dashboard.journey.courses',
+    icon: BookOpen,
+    to: `${ROUTES.dashboardInternship}?step=courses`,
+  },
+  {
+    id: 'internship-technical-interview',
+    labelKey: 'dashboard.journey.technicalInterview',
+    icon: ClipboardCheck,
+    to: `${ROUTES.dashboardInternship}?step=technicalInterview`,
+  },
+  {
+    id: 'internship-waiting-for-squad',
+    labelKey: 'dashboard.journey.waitingForSquad',
+    icon: Clock,
+    to: `${ROUTES.dashboardInternship}?step=waitingForSquad`,
+  },
+  {
+    id: 'internship-squad-ready',
+    labelKey: 'dashboard.journey.squadReady',
+    icon: CheckCircle2,
+    to: `${ROUTES.dashboardInternship}?step=squadReady`,
+  },
+  {
+    id: 'internship-project',
+    labelKey: 'dashboard.journey.project',
+    icon: FolderKanban,
+    to: ROUTES.dashboardProject,
+  },
+];
+
 // Sample counts carried over from the recruitment flow's sidebar (PR #31); there is no
 // notifications API yet.
 const RECRUITMENT_ITEMS: ReadonlyArray<SidebarSubItem> = [
@@ -75,9 +115,21 @@ const RECRUITMENT_ITEMS: ReadonlyArray<SidebarSubItem> = [
 
 export const SIDEBAR_NAV_ITEMS: ReadonlyArray<SidebarNavItem> = [
   { id: 'dashboard', labelKey: 'dashboard.sidebar.dashboard', icon: dashboardIcon, to: ROUTES.dashboard, end: true },
-  { id: 'internship', labelKey: 'dashboard.sidebar.internship', icon: internshipIcon, to: ROUTES.dashboardInternship },
+  {
+    id: 'internship',
+    labelKey: 'dashboard.sidebar.internship',
+    icon: internshipIcon,
+    to: ROUTES.dashboardInternship,
+    children: INTERNSHIP_ITEMS,
+  },
   { id: 'squad', labelKey: 'dashboard.sidebar.mySquad', icon: squadIcon },
   { id: 'courses', labelKey: 'dashboard.sidebar.courses', icon: coursesIcon, to: ROUTES.dashboardCourses },
+  {
+    id: 'mentorship',
+    labelKey: 'dashboard.sidebar.mentorship',
+    icon: navMentorshipIcon,
+    to: ROUTES.mentorship,
+  },
   {
     id: 'recruitment',
     labelKey: 'dashboard.sidebar.recruitment',

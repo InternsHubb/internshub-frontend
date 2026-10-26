@@ -21,7 +21,11 @@
       "brandEyebrow": "FROM STUDENT TO A TECH CAREER",
       "brandTitle": "Welcome back to\nyour next chapter.",
       "brandDescription": "Continue learning, building, and moving closer to the career you want.",
-      "brandHighlights": ["Skills", "Experience", "Career"],
+      "brandHighlights": [
+        "Skills",
+        "Experience",
+        "Career"
+      ],
       "brandStepOne": "Learn with structure",
       "brandStepTwo": "Build real experience",
       "imageAlt": "Students collaborating on a technology project",
@@ -60,7 +64,11 @@
       "brandEyebrow": "START YOUR INTERNSHUB JOURNEY",
       "brandTitle": "Turn your potential\ninto a tech career.",
       "brandDescription": "Create one account to begin a structured journey through learning, practical experience, and mentorship.",
-      "brandHighlights": ["Learn", "Practice", "Grow"],
+      "brandHighlights": [
+        "Learn",
+        "Practice",
+        "Grow"
+      ],
       "imageAlt": "Students beginning a collaborative technology journey",
       "stepCreate": "Create your account",
       "stepProfile": "Build your profile",
@@ -185,7 +193,38 @@
     "mentorImageAlt": "Professional mentor in lavender jacket with laptop"
   },
   "mentorship": {
-    "booking": {"back":"Back to Mentorship","title":"Book a Session","checkAvailability":"Check your mentor's availability.","viewProfile":"View Profile","noSlots":"No Available Slots","noSlotsDescription":"Check back later or explore other mentors.","updatedAvailability":"Availability is updated regularly.","otherMentors":"Explore Other Mentors","duration":"45 min session","subtitle":"Select a date and time that works for you.","available":"Available","oneToOne":"1:1 session","rulesTitle":"Booking rules","rules":"Cancel at least 24 hours before your session to receive your credit back.","selectDate":"Select Date","previousDates":"Previous dates","nextDates":"Next dates","timeSlots":"Available Time Slots","timeHint":"Select your preferred time","selected":"Selected","open":"Open","summary":"Booking Summary","mentor":"MENTOR","dateTime":"DATE & TIME","durationLabel":"DURATION","balance":"Session Balance","remaining":"{{remaining}} of {{total}} remaining","topic":"What would you like to discuss?","continue":"Continue to Confirmation","cancellation":"Cancel at least 24 hours in advance to keep your session credit."},
+    "booking": {
+      "back": "Back to Mentorship",
+      "title": "Book a Session",
+      "checkAvailability": "Check your mentor's availability.",
+      "viewProfile": "View Profile",
+      "noSlots": "No Available Slots",
+      "noSlotsDescription": "Check back later or explore other mentors.",
+      "updatedAvailability": "Availability is updated regularly.",
+      "otherMentors": "Explore Other Mentors",
+      "duration": "45 min session",
+      "subtitle": "Select a date and time that works for you.",
+      "available": "Available",
+      "oneToOne": "1:1 session",
+      "rulesTitle": "Booking rules",
+      "rules": "Cancel at least 24 hours before your session to receive your credit back.",
+      "selectDate": "Select Date",
+      "previousDates": "Previous dates",
+      "nextDates": "Next dates",
+      "timeSlots": "Available Time Slots",
+      "timeHint": "Select your preferred time",
+      "selected": "Selected",
+      "open": "Open",
+      "summary": "Booking Summary",
+      "mentor": "MENTOR",
+      "dateTime": "DATE & TIME",
+      "durationLabel": "DURATION",
+      "balance": "Session Balance",
+      "remaining": "{{remaining}} of {{total}} remaining",
+      "topic": "What would you like to discuss?",
+      "continue": "Continue to Confirmation",
+      "cancellation": "Cancel at least 24 hours in advance to keep your session credit."
+    },
     "live": {
       "loading": "Loading your mentorship…",
       "loadError": "We couldn't load your mentorship.",
@@ -468,7 +507,61 @@
     }
   },
   "onboarding": {
-    "cvReview": {"title":"Review your information","description":"Review the information saved to your career profile and correct anything that needs attention.","back":"Back to CV upload","done":"Done reviewing","personal":"Personal information","personalHint":"These details come from your account. You can correct them in the Profile onboarding step.","notProvided":"Not provided","skills":"Skills","education":"Education","experience":"Experience","loading":"Loading your career profile…","saved":"Your changes have been saved.","save":"Save","saving":"Saving…","cancel":"Cancel","edit":"Edit","present":"Present","level":"Proficiency level","unspecified":"Not specified","searchSkills":"Search skills by name","noSkills":"No matching skills available to add. Try another name.","manualFallback":"Your CV could not be parsed. You can add your career information manually below.","invalidRecord":"Complete the required fields and make sure the end date is not before the start date.","open":"Review your information","add":{"skills":"Add a skill","education":"Add education","experience":"Add experience"},"empty":{"skills":"No skills in your career profile yet.","education":"No education in your career profile yet.","experience":"No experience in your career profile yet."},"levels":{"Beginner":"Beginner","Intermediate":"Intermediate","Advanced":"Advanced","Expert":"Expert"},"fields":{"name":"Full name","email":"Email","phone":"Phone","institution":"Institution","degree":"Degree","fieldOfStudy":"Field of study (optional)","companyName":"Company","jobTitle":"Job title","description":"Description (optional)","startDate":"Start date","endDate":"End date (leave empty if current)"}},
+    "cvReview": {
+      "title": "Review your information",
+      "description": "Review the information saved to your career profile and correct anything that needs attention.",
+      "back": "Back to CV upload",
+      "done": "Done reviewing",
+      "personal": "Personal information",
+      "personalHint": "These details come from your account. You can correct them in the Profile onboarding step.",
+      "notProvided": "Not provided",
+      "skills": "Skills",
+      "education": "Education",
+      "experience": "Experience",
+      "loading": "Loading your career profile…",
+      "saved": "Your changes have been saved.",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "present": "Present",
+      "level": "Proficiency level",
+      "unspecified": "Not specified",
+      "searchSkills": "Search skills by name",
+      "noSkills": "No matching skills available to add. Try another name.",
+      "manualFallback": "Your CV could not be parsed. You can add your career information manually below.",
+      "invalidRecord": "Complete the required fields and make sure the end date is not before the start date.",
+      "open": "Review your information",
+      "add": {
+        "skills": "Add a skill",
+        "education": "Add education",
+        "experience": "Add experience"
+      },
+      "empty": {
+        "skills": "No skills in your career profile yet.",
+        "education": "No education in your career profile yet.",
+        "experience": "No experience in your career profile yet."
+      },
+      "levels": {
+        "Beginner": "Beginner",
+        "Intermediate": "Intermediate",
+        "Advanced": "Advanced",
+        "Expert": "Expert"
+      },
+      "fields": {
+        "name": "Full name",
+        "email": "Email",
+        "phone": "Phone",
+        "institution": "Institution",
+        "degree": "Degree",
+        "fieldOfStudy": "Field of study (optional)",
+        "companyName": "Company",
+        "jobTitle": "Job title",
+        "description": "Description (optional)",
+        "startDate": "Start date",
+        "endDate": "End date (leave empty if current)"
+      }
+    },
     "path": {
       "loading": "Loading packages and tracks…",
       "saving": "Saving your choice…",
@@ -1225,6 +1318,7 @@
       "internship": "Internship",
       "mySquad": "My Squad",
       "courses": "Courses",
+      "mentorship": "Mentorship",
       "recruitment": "Recruitment",
       "sprints": "Sprints",
       "progress": "Progress",
@@ -1444,7 +1538,10 @@
       "moveError": "We couldn't move the task.",
       "unassigned": "Unassigned",
       "pullRequest": "Pull request",
-      "tabs": { "mine": "My tasks", "squad": "Squad board" },
+      "tabs": {
+        "mine": "My tasks",
+        "squad": "Squad board"
+      },
       "columns": {
         "todo": "Task to do",
         "inProgress": "Tasks in progress",

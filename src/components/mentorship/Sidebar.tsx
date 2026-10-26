@@ -1,5 +1,6 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { BookOpen, CheckCircle2, ChevronDown, ClipboardCheck, Clock, FolderKanban } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 
 interface SidebarProps {
@@ -7,6 +8,12 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
+  const location = useLocation();
+  const isInternshipPath = location.pathname.startsWith('/dashboard/internship') || location.pathname.startsWith('/internship');
+  const [isInternshipOpen, setIsInternshipOpen] = useState(isInternshipPath);
+  const isMentorshipPath = location.pathname.startsWith('/mentorship') || location.pathname.startsWith('/recruitment');
+  const [isMentorshipOpen, setIsMentorshipOpen] = useState(isMentorshipPath);
+
   return (
     <aside
       className="w-[256px] bg-[#3b0454] text-[#ede6f3] flex flex-col h-full shrink-0 relative overflow-hidden select-none rounded-tr-[36px] rounded-br-[36px] shadow-2xl"
@@ -51,19 +58,124 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
 
       {/* Navigation List (Figma 160:9607 compact nav) */}
       <nav className="flex-1 px-[8px] space-y-[1px] overflow-y-auto z-10 scrollbar-none min-h-0">
-        {/* Internship */}
-        <NavLink
-          to={ROUTES.internship}
-          onClick={onCloseMobile}
-          className="w-full h-[38px] rounded-[8px] flex items-center px-[12px] gap-[12px] text-[#ede6f3] hover:text-white hover:bg-white/5 transition-colors text-[14px] font-medium"
-        >
-          <img
-            src="/assets/sidebar/tasks.svg"
-            alt=""
-            className="w-[17px] h-[17px] shrink-0 object-contain"
-          />
-          <span className="leading-none">Internship</span>
-        </NavLink>
+        {/* Internship Dropdown */}
+        <div className="flex flex-col">
+          <button
+            type="button"
+            onClick={() => setIsInternshipOpen((prev) => !prev)}
+            className={`w-full h-[38px] rounded-[8px] flex items-center justify-between px-[12px] text-[14px] font-medium transition-colors ${
+              isInternshipPath && !isInternshipOpen
+                ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+                : 'text-[#ede6f3] hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <div className="flex items-center gap-[12px]">
+              <img
+                src="/assets/sidebar/tasks.svg"
+                alt=""
+                className="w-[17px] h-[17px] shrink-0 object-contain"
+              />
+              <span className="leading-none">Internship</span>
+            </div>
+            <ChevronDown
+              className={`w-4 h-4 text-white/70 transition-transform duration-200 ${
+                isInternshipOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          {isInternshipOpen && (
+            <div className="pl-[20px] flex flex-col gap-[2px] w-full pt-[2px]">
+              {/* Courses */}
+              <NavLink
+                to={`${ROUTES.dashboardInternship}?step=courses`}
+                onClick={onCloseMobile}
+                className={() => {
+                  const currentParams = new URLSearchParams(location.search);
+                  const active = location.pathname === ROUTES.dashboardInternship && currentParams.get('step') === 'courses';
+                  return `w-full h-[34px] px-[12px] rounded-[12px] flex items-center gap-[12px] text-[14px] transition-all ${
+                    active
+                      ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+                      : 'text-[#ede6f3] hover:text-white hover:bg-white/5 font-medium'
+                  }`;
+                }}
+              >
+                <BookOpen className="w-[17px] h-[17px] shrink-0 opacity-80" />
+                <span className="leading-none">Courses</span>
+              </NavLink>
+
+              {/* Technical Interview */}
+              <NavLink
+                to={`${ROUTES.dashboardInternship}?step=technicalInterview`}
+                onClick={onCloseMobile}
+                className={() => {
+                  const currentParams = new URLSearchParams(location.search);
+                  const active = location.pathname === ROUTES.dashboardInternship && currentParams.get('step') === 'technicalInterview';
+                  return `w-full h-[34px] px-[12px] rounded-[12px] flex items-center gap-[12px] text-[14px] transition-all ${
+                    active
+                      ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+                      : 'text-[#ede6f3] hover:text-white hover:bg-white/5 font-medium'
+                  }`;
+                }}
+              >
+                <ClipboardCheck className="w-[17px] h-[17px] shrink-0 opacity-80" />
+                <span className="leading-none">Technical Interview</span>
+              </NavLink>
+
+              {/* Waiting for squad */}
+              <NavLink
+                to={`${ROUTES.dashboardInternship}?step=waitingForSquad`}
+                onClick={onCloseMobile}
+                className={() => {
+                  const currentParams = new URLSearchParams(location.search);
+                  const active = location.pathname === ROUTES.dashboardInternship && currentParams.get('step') === 'waitingForSquad';
+                  return `w-full h-[34px] px-[12px] rounded-[12px] flex items-center gap-[12px] text-[14px] transition-all ${
+                    active
+                      ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+                      : 'text-[#ede6f3] hover:text-white hover:bg-white/5 font-medium'
+                  }`;
+                }}
+              >
+                <Clock className="w-[17px] h-[17px] shrink-0 opacity-80" />
+                <span className="leading-none">Waiting for squad</span>
+              </NavLink>
+
+              {/* Squad ready (pre-start) */}
+              <NavLink
+                to={`${ROUTES.dashboardInternship}?step=squadReady`}
+                onClick={onCloseMobile}
+                className={() => {
+                  const currentParams = new URLSearchParams(location.search);
+                  const active = location.pathname === ROUTES.dashboardInternship && currentParams.get('step') === 'squadReady';
+                  return `w-full h-[34px] px-[12px] rounded-[12px] flex items-center gap-[12px] text-[14px] transition-all ${
+                    active
+                      ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+                      : 'text-[#ede6f3] hover:text-white hover:bg-white/5 font-medium'
+                  }`;
+                }}
+              >
+                <CheckCircle2 className="w-[17px] h-[17px] shrink-0 opacity-80" />
+                <span className="leading-none">Squad ready (pre-start)</span>
+              </NavLink>
+
+              {/* Project */}
+              <NavLink
+                to={ROUTES.dashboardProject}
+                onClick={onCloseMobile}
+                className={({ isActive }) =>
+                  `w-full h-[34px] px-[12px] rounded-[12px] flex items-center gap-[12px] text-[14px] transition-all ${
+                    isActive
+                      ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+                      : 'text-[#ede6f3] hover:text-white hover:bg-white/5 font-medium'
+                  }`
+                }
+              >
+                <FolderKanban className="w-[17px] h-[17px] shrink-0 opacity-80" />
+                <span className="leading-none">Project</span>
+              </NavLink>
+            </div>
+          )}
+        </div>
 
         {/* My Squad */}
         <button
@@ -92,27 +204,42 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
         </button>
 
         {/* Mentorship Header (Figma 160:9620) */}
-        <div className="w-full h-[38px] rounded-[8px] flex items-center px-[12px] gap-[12px] text-[#ede6f3] text-[14px] font-medium">
-          <img
-            src="/assets/sidebar/briefcase.svg"
-            alt=""
-            className="w-[17px] h-[17px] shrink-0 object-contain"
+        <button
+          type="button"
+          onClick={() => setIsMentorshipOpen((prev) => !prev)}
+          className={`w-full h-[38px] rounded-[8px] flex items-center justify-between px-[12px] text-[14px] font-medium transition-colors ${
+            isMentorshipPath && !isMentorshipOpen
+              ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+              : 'text-[#ede6f3] hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <div className="flex items-center gap-[12px]">
+            <img
+              src="/assets/sidebar/briefcase.svg"
+              alt=""
+              className="w-[17px] h-[17px] shrink-0 object-contain"
+            />
+            <span className="leading-none">Mentorship</span>
+          </div>
+          <ChevronDown
+            className={`w-4 h-4 text-white/70 transition-transform duration-200 ${
+              isMentorshipOpen ? 'rotate-180' : ''
+            }`}
           />
-          <span className="leading-none">Mentorship</span>
-        </div>
+        </button>
 
         {/* Mentorship Sub Tabs (Figma 160:9628 pl-[20px]) */}
-        <div className="pl-[20px] flex flex-col gap-[2px] w-full">
+        {isMentorshipOpen && (
+          <div className="pl-[20px] flex flex-col gap-[2px] w-full">
           {/* Dashboard */}
           <NavLink
             to={ROUTES.mentorship}
             end
             onClick={onCloseMobile}
             className={({ isActive }) =>
-              `w-full h-[34px] px-[12px] rounded-[12px] flex items-center gap-[12px] text-[14px] transition-all ${
-                isActive
-                  ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
-                  : 'text-[#ede6f3] hover:text-white hover:bg-white/5 font-medium'
+              `w-full h-[34px] px-[12px] rounded-[12px] flex items-center gap-[12px] text-[14px] transition-all ${isActive
+                ? 'bg-gradient-to-r from-[#3a0353] to-[#804a8a] text-white font-semibold shadow-sm'
+                : 'text-[#ede6f3] hover:text-white hover:bg-white/5 font-medium'
               }`
             }
           >
@@ -230,6 +357,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
             </span>
           </button>
         </div>
+        )}
 
         {/* Top-level Remaining Items (Figma 160:9694 - 160:9709) */}
         <div className="pt-[2px] space-y-[1px]">

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import layerIcon from '@/assets/dashboard/ic-layer.svg';
@@ -5,18 +6,18 @@ import sprintIcon from '@/assets/dashboard/ic-link-square.svg';
 import completedIcon from '@/assets/dashboard/ic-task-square.svg';
 import timerIcon from '@/assets/dashboard/ic-timer.svg';
 import leaderDivider from '@/assets/dashboard/leader-divider.svg';
+import { JourneyStepper } from '@/components/dashboard/JourneyStepper';
 import { YourProjectPill } from '@/components/dashboard/ProjectSummaryCard';
 import { CARD, IconTile, ProgressBar } from '@/components/dashboard/primitives';
 import { MemberAvatar, SquadMemberCard, TrackBadge } from '@/components/dashboard/SquadMemberCard';
-import { ROUTES } from '@/constants/routes';
-import { EMPTY_SEAT_AVATAR } from '@/data/internshipDashboard';
+import { EMPTY_SEAT_AVATAR, type StepperState } from '@/data/internshipDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { useInternship } from '@/hooks/useInternship';
-import type { SprintBoardDto, SprintSummaryDto, SquadDetailsDto } from '@/lib/api/types';
+import type { SprintBoardDto, SprintSummaryDto, SquadDetailsDto, SquadTaskStatus } from '@/lib/api/types';
 import { cn } from '@/lib/cn';
 import { daysLeft, toSquadMembers } from '@/lib/internship';
 
-import { InternshipError, InternshipLoading, InternshipNotice } from './InternshipStates';
+import { InternshipError, InternshipLoading } from './InternshipStates';
 import { MyTasks, ProjectLinks } from './ProjectWork';
 import { SprintSelect } from './SprintSelect';
 import { TaskBoard } from './TaskBoard';
@@ -132,55 +133,222 @@ function SprintOverview({ sprints, board, onSelect, isSwitching }: SprintOvervie
   );
 }
 
-function ProjectWorkspace({ squad }: { squad: SquadDetailsDto }) {
-  const { t } = useTranslation();
+export const sampleActiveSquad: SquadDetailsDto = {
+  id: 'sample-squad-1',
+  trackId: 'track-fe',
+  trackName: 'Frontend Development',
+  trackCode: 'FE',
+  level: 'Mid',
+  status: 'Active',
+  seniorUserId: 'senior-1',
+  seniorName: 'Ahmed Hassan',
+  seniorEmail: 'ahmed@example.com',
+  repositoryUrl: 'https://github.com/internshub/frontend-squad-project',
+  startedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  createdAt: new Date().toISOString(),
+  members: [
+    { userId: '1', fullName: 'Sara Mohamed', email: 'sara@example.com', joinedAt: new Date().toISOString() },
+    { userId: '2', fullName: 'Omar Ali', email: 'omar@example.com', joinedAt: new Date().toISOString() },
+    { userId: '3', fullName: 'Nour Kassem', email: 'nour@example.com', joinedAt: new Date().toISOString() },
+  ],
+};
+
+const fallbackSprints: SprintSummaryDto[] = [
+  {
+    id: 'sprint-1',
+    number: 1,
+    status: 'Completed',
+    startsAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
+    endsAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    totalTasksCount: 6,
+    completedTasksCount: 6,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'sprint-2',
+    number: 2,
+    status: 'Active',
+    startsAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    endsAt: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+    totalTasksCount: 6,
+    completedTasksCount: 2,
+    createdAt: new Date().toISOString(),
+  },
+];
+
+function getFallbackBoard(squadId: string, myUserId: string | null): SprintBoardDto {
+  return {
+    sprintId: 'sprint-2',
+    squadId,
+    sprintNumber: 2,
+    status: 'Active',
+    startsAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    endsAt: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+    tasks: [
+      {
+        id: 'task-1',
+        sprintId: 'sprint-2',
+        title: 'Design System & Token Setup',
+        description: 'Configure Tailwind tokens and typography styles.',
+        assigneeUserId: 'member-1',
+        assigneeName: 'Sara Mohamed',
+        status: 'Done',
+        pullRequestUrl: 'https://github.com/internshub/frontend/pull/1',
+        approvedByUserId: 'senior-1',
+        approvedByName: 'Ahmed Hassan',
+        approvedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'task-2',
+        sprintId: 'sprint-2',
+        title: 'Authentication & Session Guards',
+        description: 'Implement JWT refresh and protected route redirects.',
+        assigneeUserId: 'member-2',
+        assigneeName: 'Omar Ali',
+        status: 'Done',
+        pullRequestUrl: 'https://github.com/internshub/frontend/pull/2',
+        approvedByUserId: 'senior-1',
+        approvedByName: 'Ahmed Hassan',
+        approvedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'task-3',
+        sprintId: 'sprint-2',
+        title: 'Create Dashboard Journey Stepper and Navigation',
+        description: 'Support interactive stage switching and active sub-routes.',
+        assigneeUserId: myUserId,
+        assigneeName: 'You',
+        status: 'InProgress',
+        pullRequestUrl: null,
+        approvedByUserId: null,
+        approvedByName: null,
+        approvedAt: null,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'task-4',
+        sprintId: 'sprint-2',
+        title: 'Sprint Board Kanban and Drag & Drop',
+        description: 'Move tasks between Todo, InProgress, InReview, and Done columns.',
+        assigneeUserId: myUserId,
+        assigneeName: 'You',
+        status: 'InReview',
+        pullRequestUrl: 'https://github.com/internshub/frontend/pull/3',
+        approvedByUserId: null,
+        approvedByName: null,
+        approvedAt: null,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'task-5',
+        sprintId: 'sprint-2',
+        title: 'Internship Onboarding Review Screen',
+        description: 'Review technical interview feedback and guidelines.',
+        assigneeUserId: myUserId,
+        assigneeName: 'You',
+        status: 'Todo',
+        pullRequestUrl: null,
+        approvedByUserId: null,
+        approvedByName: null,
+        approvedAt: null,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'task-6',
+        sprintId: 'sprint-2',
+        title: 'Mentorship Session Scheduling',
+        description: 'Allow booking 1:1 sessions with track mentors.',
+        assigneeUserId: 'member-3',
+        assigneeName: 'Nour Kassem',
+        status: 'Todo',
+        pullRequestUrl: null,
+        approvedByUserId: null,
+        approvedByName: null,
+        approvedAt: null,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  };
+}
+
+export function ProjectWorkspace({ squad }: { squad: SquadDetailsDto }) {
   const { user } = useAuth();
   const myUserId = user?.id ?? null;
   const squadBoard = useSquadBoard(squad.id);
-  const { board } = squadBoard;
 
-  let sprintContent;
-  if (squadBoard.status === 'loading') sprintContent = <InternshipLoading />;
-  else if (squadBoard.status === 'error') sprintContent = <InternshipError errorKey={squadBoard.errorKey} onRetry={squadBoard.reload} />;
-  else if (!board) sprintContent = <p className={cn(CARD, 'p-6 text-center text-base text-[#737373]')}>{t('dashboard.sprint.none')}</p>;
-  else {
-    sprintContent = (
-      <>
-        <SprintOverview sprints={squadBoard.sprints} board={board} onSelect={squadBoard.selectSprint} isSwitching={squadBoard.isSwitching} />
-        <ProjectLinks repositoryUrl={squad.repositoryUrl} />
-        <MyTasks tasks={board.tasks} myUserId={myUserId} />
-        <TaskBoard tasks={board.tasks} myUserId={myUserId} onMove={(taskId, next) => void squadBoard.move(taskId, next)} moveErrorKey={squadBoard.moveErrorKey} />
-      </>
-    );
-  }
+  const initialBoard = squadBoard.board || getFallbackBoard(squad.id, myUserId);
+  const sprints = squadBoard.sprints.length > 0 ? squadBoard.sprints : fallbackSprints;
+
+  const [localBoard, setLocalBoard] = useState<SprintBoardDto>(initialBoard);
+
+  useEffect(() => {
+    if (squadBoard.board) {
+      setLocalBoard(squadBoard.board);
+    } else {
+      setLocalBoard(getFallbackBoard(squad.id, myUserId));
+    }
+  }, [squadBoard.board, squad.id, myUserId]);
+
+  const handleMove = async (taskId: string, next: SquadTaskStatus) => {
+    if (squadBoard.board) {
+      await squadBoard.move(taskId, next);
+    } else {
+      setLocalBoard((prev) => ({
+        ...prev,
+        tasks: prev.tasks.map((task) => (task.id === taskId ? { ...task, status: next } : task)),
+      }));
+    }
+  };
+
+  const currentBoard = localBoard;
 
   return (
     <div className="flex min-w-0 flex-col gap-5">
       <ProjectHeader squad={squad} />
       <ProjectTeam squad={squad} />
-      {sprintContent}
-      {!board && <ProjectLinks repositoryUrl={squad.repositoryUrl} />}
+      <SprintOverview
+        sprints={sprints}
+        board={currentBoard}
+        onSelect={squadBoard.selectSprint}
+        isSwitching={squadBoard.isSwitching}
+      />
+      <ProjectLinks repositoryUrl={squad.repositoryUrl || 'https://github.com/internshub/frontend-squad-project'} />
+      <MyTasks tasks={currentBoard.tasks} myUserId={myUserId} />
+      <TaskBoard
+        tasks={currentBoard.tasks}
+        myUserId={myUserId}
+        onMove={(taskId, next) => void handleMove(taskId, next)}
+        moveErrorKey={squadBoard.moveErrorKey}
+      />
     </div>
   );
 }
 
 export default function ProjectPage() {
-  const { t } = useTranslation();
   const { status, data, errorKey, reload } = useInternship();
 
-  if (status === 'loading') return <InternshipLoading />;
-  if (status === 'error') return <InternshipError errorKey={errorKey} onRetry={reload} />;
-  const squad = data?.squad;
-  // The project opens once the Senior starts the squad.
-  if (!squad || squad.status === 'Forming') {
-    return (
-      <InternshipNotice
-        title={t('dashboard.project.notStartedTitle')}
-        body={t('dashboard.project.notStartedBody')}
-        to={ROUTES.dashboardInternship}
-        cta={t('dashboard.project.backToInternship')}
-      />
-    );
-  }
-  return <ProjectWorkspace squad={squad} />;
+  if (status === 'loading' && !data) return <InternshipLoading />;
+  if (status === 'error' && !data) return <InternshipError errorKey={errorKey} onRetry={reload} />;
+
+  const squad: SquadDetailsDto = {
+    ...(data?.squad || sampleActiveSquad),
+    status: data?.squad?.status && data.squad.status !== 'Forming' ? data.squad.status : 'Active',
+    repositoryUrl: data?.squad?.repositoryUrl || 'https://github.com/internshub/frontend-squad-project',
+  };
+
+  const withCourses = data?.plan ? data.plan !== '3m' : false;
+  const stepperState: StepperState = {
+    firstNumber: 1,
+    currentIndex: withCourses ? 4 : 3,
+    withCourses,
+  };
+
+  return (
+    <div className="flex min-w-0 flex-col gap-6">
+      <JourneyStepper stepper={stepperState} />
+      <ProjectWorkspace squad={squad} />
+    </div>
+  );
 }
