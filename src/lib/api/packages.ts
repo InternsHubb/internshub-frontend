@@ -5,6 +5,7 @@ import type {
   EnrollmentDto,
   InvoiceDto,
   PackageDto,
+  PlanChangeQuoteDto,
 } from './types';
 
 export function getPackages(): Promise<PackageDto[]> {
@@ -61,3 +62,31 @@ export function cancelEnrollment(
 export function getMyInvoices(): Promise<InvoiceDto[]> {
   return apiRequest<InvoiceDto[]>('/api/me/invoices', { auth: true });
 }
+
+export function getUpgradeQuote(
+  enrollmentId: string,
+  packageId: string,
+  promoCode?: string
+): Promise<PlanChangeQuoteDto> {
+  const query = new URLSearchParams({ packageId });
+  if (promoCode) query.set('promoCode', promoCode);
+  return apiRequest<PlanChangeQuoteDto>(
+    `/api/enrollments/${encodeURIComponent(enrollmentId)}/upgrade-quote?${query.toString()}`,
+    { auth: true }
+  );
+}
+
+export function requestUpgrade(
+  enrollmentId: string,
+  packageId: string
+): Promise<EnrollmentDto> {
+  return apiRequest<EnrollmentDto>(
+    `/api/enrollments/${encodeURIComponent(enrollmentId)}/upgrade`,
+    {
+      method: 'POST',
+      body: { packageId },
+      auth: true,
+    }
+  );
+}
+

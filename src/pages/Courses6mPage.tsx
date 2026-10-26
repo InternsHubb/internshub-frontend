@@ -1,10 +1,20 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu,
   X,
 } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
+import { getCourses } from '@/lib/api/courses';
+import type { CourseSummaryDto } from '@/lib/api/types';
+
+function formatDuration(totalSeconds: number): string {
+  if (!totalSeconds || totalSeconds <= 0) return 'Self-paced';
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}${minutes > 0 ? ` ${minutes}m` : ''}`;
+  return `${minutes} min`;
+}
 
 interface Course {
   id: string;
@@ -421,15 +431,76 @@ export const Courses6mPage: React.FC = () => {
     });
   };
 
+  const [backendCourses, setBackendCourses] = useState<CourseSummaryDto[]>([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState<boolean>(true);
+  const [courseLoadError, setCourseLoadError] = useState<string | null>(null);
+
+  const fetchCourseList = useCallback(async () => {
+    setIsLoadingCourses(true);
+    setCourseLoadError(null);
+    try {
+      const dtos = await getCourses();
+      setBackendCourses(dtos);
+    } catch {
+      setCourseLoadError('Unable to load courses from the server. Please try again.');
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchCourseList();
+  }, [fetchCourseList]);
+
+  const activeTrackCourses = useMemo<Course[]>(() => {
+    if (backendCourses.length > 0) {
+      return backendCourses.map((c) => ({
+        id: c.id,
+        title: c.title,
+        category: c.trackName || 'General',
+        instructor: c.trackName ? `${c.trackName} Specialist` : 'Course Instructor',
+        instructorAvatar: '/images/avatar-elena-figma.jpg',
+        rating: 4.8,
+        reviews: c.completedLessonsCount !== null ? `(${c.completedLessonsCount} completed)` : `(${c.lessonCount} lessons)`,
+        duration: formatDuration(c.totalDurationSeconds),
+        level: 'All Levels',
+        lessons: `${c.lessonCount} lessons`,
+        thumbnail: '/images/course-thumb-figma-2.jpg',
+        isRequired: c.order <= 3,
+      }));
+    }
+    return TRACK_COURSES_DATA;
+  }, [backendCourses]);
+
+  const activePopularCourses = useMemo<Course[]>(() => {
+    if (backendCourses.length > 5) {
+      return backendCourses.slice(5).map((c) => ({
+        id: c.id,
+        title: c.title,
+        category: c.trackName || 'General',
+        instructor: c.trackName ? `${c.trackName} Specialist` : 'Course Instructor',
+        instructorAvatar: '/images/avatar-elena-figma.jpg',
+        rating: 4.7,
+        reviews: `(${c.lessonCount} lessons)`,
+        duration: formatDuration(c.totalDurationSeconds),
+        level: 'All Levels',
+        lessons: `${c.lessonCount} lessons`,
+        thumbnail: '/images/course-thumb-figma-2.jpg',
+        isRequired: false,
+      }));
+    }
+    return POPULAR_COURSES_DATA;
+  }, [backendCourses]);
+
   // Top Section Courses:
   // When viewMyCoursesOnly is active, shows all added/enrolled courses in one place.
   // When normal, shows track-specific courses.
   const filteredTrackCourses = useMemo(() => {
     const sourceList = viewMyCoursesOnly
-      ? [...TRACK_COURSES_DATA, ...POPULAR_COURSES_DATA].filter(
+      ? [...activeTrackCourses, ...activePopularCourses].filter(
           (course) => enrolledCourses[course.id]
         )
-      : TRACK_COURSES_DATA;
+      : activeTrackCourses;
 
     let result = sourceList.filter((course) => {
       const matchesSearch =
@@ -461,13 +532,13 @@ export const Courses6mPage: React.FC = () => {
     }
 
     return result;
-  }, [searchQuery, requiredFilter, viewMyCoursesOnly, enrolledCourses, appliedTracks, appliedLevels, sortOption]);
+  }, [searchQuery, requiredFilter, viewMyCoursesOnly, enrolledCourses, appliedTracks, appliedLevels, sortOption, activeTrackCourses, activePopularCourses]);
 
   // Bottom Section Courses:
   // Shows popular courses, strictly excluding any course already enrolled or present in the top section
   // so no course can ever appear twice on the screen.
   const filteredPopularCourses = useMemo(() => {
-    return POPULAR_COURSES_DATA.filter((course) => {
+    return activePopularCourses.filter((course) => {
       // If viewing my courses, popular courses only displays courses that are NOT yet enrolled
       const matchesEnrolled = !viewMyCoursesOnly || !enrolledCourses[course.id];
 
@@ -1824,7 +1895,22 @@ export const Courses6mPage: React.FC = () => {
             </div>
 
             {/* Course Cards Row (Figma node 112:9092: height: 344px, gap: 24px) */}
-            {filteredTrackCourses.length === 0 ? (
+            {isLoadingCourses ? (
+              <div className="w-full py-12 px-6 flex items-center justify-center bg-[#F9FAFB] rounded-[16px]">
+                <div className="size-8 animate-spin rounded-full border-3 border-[#5A198F] border-t-transparent" />
+              </div>
+            ) : courseLoadError ? (
+              <div className="w-full py-8 px-6 flex flex-col items-center justify-center text-center bg-[#FFF1F0] rounded-[16px] border border-[#FFA39E] gap-2">
+                <p className="text-[#CF1322] font-medium text-[14px]">{courseLoadError}</p>
+                <button
+                  type="button"
+                  onClick={() => void fetchCourseList()}
+                  className="px-4 py-1.5 bg-[#5A198F] text-white rounded-full text-xs font-semibold hover:bg-[#471273] transition-colors"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : filteredTrackCourses.length === 0 ? (
               <div className="w-full py-12 px-6 flex flex-col items-center justify-center text-center bg-[#F9FAFB] rounded-[16px] border border-dashed border-[#E2E8F0]">
                 <p className="text-[#64748B] font-['Plus_Jakarta_Sans'] font-medium text-[14px]">
                   {viewMyCoursesOnly

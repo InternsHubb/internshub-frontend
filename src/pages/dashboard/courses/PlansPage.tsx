@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import badge3m from '@/assets/dashboard/plan-badge-3m-mask.png';
@@ -6,43 +6,112 @@ import badge6m from '@/assets/dashboard/plan-badge-mask.png';
 import check3m from '@/assets/dashboard/plan-check-3m.svg';
 import check6m from '@/assets/dashboard/plan-check.svg';
 import { PACKAGES } from '@/constants/packages';
+import { useInternship } from '@/hooks/useInternship';
+import {
+  checkoutEnrollment,
+  getMyEnrollments,
+  getPackages,
+  getUpgradeQuote,
+  requestUpgrade,
+} from '@/lib/api/packages';
+import type { EnrollmentDto, PackageDto, PlanChangeQuoteDto } from '@/lib/api/types';
 
 import { CoursesEmptyState } from './CoursesEmptyState';
 import { PlanCard } from './PlanCard';
 
 // "Choose Your Growth Plan" under the locked courses state ("courses 3m plan", 30:179) and
 // the selected 6-month card with the upgrade price (30:632).
-// UI ONLY: there is no payment, checkout or subscription API, so "Upgrade Now" only shows a
-// notice. Prices come from the shared package config.
+// Prices come from backend package and quote APIs, falling back to shared package config.
 const CURRENT_PRICE = PACKAGES['3m'].priceEgp;
 const UPGRADE_PLAN_PRICE = PACKAGES['6m'].priceEgp;
-const UPGRADE_PRICE = UPGRADE_PLAN_PRICE - CURRENT_PRICE;
+const FALLBACK_UPGRADE_PRICE = UPGRADE_PLAN_PRICE - CURRENT_PRICE;
 
 const PILL_BUTTON =
   'flex min-h-[52px] w-full items-center justify-center rounded-full px-6 text-base font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-[#5a198f] focus-visible:ring-offset-2';
-const PRIMARY_BUTTON = `${PILL_BUTTON} bg-[#5a1a8f] text-white shadow-[0_10px_22px_rgba(90,26,143,0.28)] hover:bg-[#4e0f7c]`;
+const PRIMARY_BUTTON = `${PILL_BUTTON} bg-[#5a1a8f] text-white shadow-[0_10px_22px_rgba(90,26,143,0.28)] hover:bg-[#4e0f7c] disabled:opacity-60 disabled:cursor-not-allowed`;
 
-function UpgradeDetails({ onUpgrade, isNoticeShown }: { onUpgrade: () => void; isNoticeShown: boolean }) {
+function isSafeRedirect(url: string): boolean {
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+type UpgradeDetailsProps = {
+  quote: PlanChangeQuoteDto | null;
+  quoteLoading: boolean;
+  quoteError: string | null;
+  isUpgrading: boolean;
+  upgradeError: string | null;
+  upgradeSuccess: boolean;
+  onUpgrade: () => void;
+  fallbackPrice: number;
+};
+
+function UpgradeDetails({
+  quote,
+  quoteLoading,
+  quoteError,
+  isUpgrading,
+  upgradeError,
+  upgradeSuccess,
+  onUpgrade,
+  fallbackPrice,
+}: UpgradeDetailsProps) {
   const { t } = useTranslation();
   const priceRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     priceRef.current?.focus();
   }, []);
 
+  const upgradeAmount = quote ? quote.amountDue : fallbackPrice;
+
   return (
     <>
       {/* Focus moves here when the card expands, because the button that opened it is gone. */}
-      <div ref={priceRef} tabIndex={-1} className="rounded-[20px] bg-[#f2f2f2] px-6 py-6 text-start shadow-[0_4px_4px_rgba(0,0,0,0.25)] outline-none">
+      <div
+        ref={priceRef}
+        tabIndex={-1}
+        className="rounded-[20px] bg-[#f2f2f2] px-6 py-6 text-start shadow-[0_4px_4px_rgba(0,0,0,0.25)] outline-none"
+      >
         <p className="text-base font-medium text-[#1f1f1f]">{t('dashboard.plans.upgradePriceTitle')}</p>
-        <p className="mt-4 text-base text-[#1f1f1f]">{t('dashboard.plans.amount', { value: UPGRADE_PRICE })}</p>
+        <p className="mt-4 text-base text-[#1f1f1f]">
+          {quoteLoading
+            ? t('dashboard.plans.quoteLoading')
+            : t('dashboard.plans.amount', { value: upgradeAmount })}
+        </p>
         <p className="mt-4 text-sm leading-6 text-[#6b6b6b]">{t('dashboard.plans.upgradePriceHint')}</p>
       </div>
-      <button type="button" onClick={onUpgrade} className={PRIMARY_BUTTON}>
-        {t('dashboard.plans.upgradeWithPrice', { value: UPGRADE_PRICE })}
+
+      <button
+        type="button"
+        onClick={onUpgrade}
+        disabled={isUpgrading || quoteLoading || upgradeSuccess}
+        className={PRIMARY_BUTTON}
+      >
+        {isUpgrading
+          ? t('dashboard.plans.upgrading')
+          : upgradeSuccess
+          ? t('dashboard.plans.upgradeSuccess')
+          : t('dashboard.plans.upgradeWithPrice', { value: upgradeAmount })}
       </button>
-      {isNoticeShown && (
-        <p role="status" className="rounded-[14px] bg-[#fff7e6] px-4 py-3 text-center text-sm text-[#9a5700]">
-          {t('dashboard.plans.paymentUnavailable')}
+
+      {quoteError && (
+        <p role="alert" className="rounded-[14px] bg-[#fff1f0] px-4 py-3 text-center text-sm text-[#cf1322]">
+          {quoteError}
+        </p>
+      )}
+
+      {upgradeError && (
+        <p role="alert" className="rounded-[14px] bg-[#fff1f0] px-4 py-3 text-center text-sm text-[#cf1322]">
+          {upgradeError}
+        </p>
+      )}
+
+      {upgradeSuccess && (
+        <p role="status" className="rounded-[14px] bg-[#f6ffed] px-4 py-3 text-center text-sm text-[#389e0d]">
+          {t('dashboard.plans.upgradeSuccess')}
         </p>
       )}
     </>
@@ -51,25 +120,128 @@ function UpgradeDetails({ onUpgrade, isNoticeShown }: { onUpgrade: () => void; i
 
 export default function PlansPage() {
   const { t } = useTranslation();
+  const { reload: reloadInternship } = useInternship();
   const [isUpgradeOpen, setUpgradeOpen] = useState(false);
-  const [isNoticeShown, setNoticeShown] = useState(false);
+  const [activeEnrollment, setActiveEnrollment] = useState<EnrollmentDto | null>(null);
+  const [targetPackage, setTargetPackage] = useState<PackageDto | null>(null);
+  const [currentPackage, setCurrentPackage] = useState<PackageDto | null>(null);
+  const [quote, setQuote] = useState<PlanChangeQuoteDto | null>(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [isUpgrading, setIsUpgrading] = useState(false);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
+  const [upgradeSuccess, setUpgradeSuccess] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    Promise.all([getMyEnrollments(), getPackages()])
+      .then(([enrollments, pkgs]) => {
+        if (!active) return;
+        const activeEnr =
+          enrollments.find((e) => e.status === 'Active') ||
+          enrollments.find((e) => e.status === 'PendingPayment') ||
+          null;
+        setActiveEnrollment(activeEnr);
+
+        const target = pkgs.find((p) => p.durationMonths === 6 || p.code === '6m') ?? null;
+        setTargetPackage(target);
+
+        const current = activeEnr
+          ? pkgs.find((p) => p.id === activeEnr.packageId) ??
+            pkgs.find((p) => p.durationMonths === 3) ??
+            null
+          : pkgs.find((p) => p.durationMonths === 3) ?? null;
+        setCurrentPackage(current);
+      })
+      .catch(() => {
+        // Fallback to constants if backend list is temporarily unreachable
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Fetch upgrade quote when the upgrade card is expanded
+  useEffect(() => {
+    if (!isUpgradeOpen || !activeEnrollment || !targetPackage) return;
+    let active = true;
+    setQuoteLoading(true);
+    setQuoteError(null);
+    getUpgradeQuote(activeEnrollment.id, targetPackage.id)
+      .then((q) => {
+        if (!active) return;
+        setQuote(q);
+        setQuoteLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setQuoteLoading(false);
+        setQuoteError(t('dashboard.plans.quoteError'));
+      });
+    return () => {
+      active = false;
+    };
+  }, [isUpgradeOpen, activeEnrollment, targetPackage, t]);
+
+  const handleUpgrade = useCallback(async () => {
+    if (!activeEnrollment || !targetPackage) {
+      setUpgradeError(t('dashboard.plans.noActiveEnrollment'));
+      return;
+    }
+    setIsUpgrading(true);
+    setUpgradeError(null);
+    try {
+      const upgraded = await requestUpgrade(activeEnrollment.id, targetPackage.id);
+      if (upgraded.status === 'PendingPayment') {
+        const { invoiceId, redirectUrl } = await checkoutEnrollment(upgraded.id);
+        if (!isSafeRedirect(redirectUrl)) {
+          setUpgradeError(t('dashboard.plans.upgradeError'));
+          setIsUpgrading(false);
+          return;
+        }
+        try {
+          window.sessionStorage.setItem(
+            'internshub_pending_checkout',
+            JSON.stringify({ invoiceId, enrollmentId: upgraded.id })
+          );
+        } catch {
+          // sessionStorage may be restricted
+        }
+        window.location.assign(redirectUrl);
+        return;
+      }
+      // Immediate upgrade completion (Active status)
+      setUpgradeSuccess(true);
+      setIsUpgrading(false);
+      reloadInternship();
+    } catch {
+      setIsUpgrading(false);
+      setUpgradeError(t('dashboard.plans.upgradeError'));
+    }
+  }, [activeEnrollment, targetPackage, reloadInternship, t]);
 
   const plan6mFeatures = [1, 2, 3, 4].map((n) => t(`pricing.plan6mFeature${n}`));
   const plan3mFeatures = [1, 2, 3].map((n) => t(`pricing.plan3mFeature${n}`));
+
+  const display6mPrice = targetPackage?.price ?? UPGRADE_PLAN_PRICE;
+  const display3mPrice = currentPackage?.price ?? CURRENT_PRICE;
+  const fallbackDiff = display6mPrice - display3mPrice > 0 ? display6mPrice - display3mPrice : FALLBACK_UPGRADE_PRICE;
 
   return (
     <div className="flex flex-col items-center">
       <CoursesEmptyState variant="upgrade" />
 
       <section aria-labelledby="plans-title" className="mt-14 flex w-full flex-col items-center text-center">
-        <h2 id="plans-title" className="text-2xl font-semibold text-[#111] sm:text-[32px]">{t('pricing.title')}</h2>
+        <h2 id="plans-title" className="text-2xl font-semibold text-[#111] sm:text-[32px]">
+          {t('pricing.title')}
+        </h2>
         <p className="mt-6 max-w-[820px] text-lg text-[#555] sm:text-2xl">{t('pricing.subtitle')}</p>
 
         <div className="mt-12 grid w-full max-w-[794px] grid-cols-1 justify-items-center gap-x-[30px] gap-y-10 md:grid-cols-2">
           <PlanCard
             id="6m"
             name={t('pricing.plan6mName')}
-            price={String(UPGRADE_PLAN_PRICE)}
+            price={String(display6mPrice)}
             badgeIcon={badge6m}
             checkIcon={check6m}
             features={plan6mFeatures}
@@ -77,7 +249,16 @@ export default function PlansPage() {
             badge={t('pricing.popularBadge')}
           >
             {isUpgradeOpen ? (
-              <UpgradeDetails onUpgrade={() => setNoticeShown(true)} isNoticeShown={isNoticeShown} />
+              <UpgradeDetails
+                quote={quote}
+                quoteLoading={quoteLoading}
+                quoteError={quoteError}
+                isUpgrading={isUpgrading}
+                upgradeError={upgradeError}
+                upgradeSuccess={upgradeSuccess}
+                onUpgrade={handleUpgrade}
+                fallbackPrice={fallbackDiff}
+              />
             ) : (
               <button
                 type="button"
@@ -92,7 +273,7 @@ export default function PlansPage() {
           <PlanCard
             id="3m"
             name={t('pricing.plan3mName')}
-            price={String(CURRENT_PRICE)}
+            price={String(display3mPrice)}
             badgeIcon={badge3m}
             checkIcon={check3m}
             features={plan3mFeatures}
