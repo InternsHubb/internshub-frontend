@@ -33,65 +33,65 @@ interface Course {
 
 const TRACK_COURSES_DATA: Course[] = [
   {
-    id: 'track-1',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
+    id: 'landing-course-1',
+    title: 'Advanced Design Systems & Component Libraries',
+    category: 'UI/UX Design',
     instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
-    rating: 4.7,
+    instructorAvatar: '/images/course-avatar-elena.webp',
+    rating: 4.8,
     reviews: '(1,802)',
     duration: '22 hours',
     level: 'Advanced',
     lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
+    thumbnail: '/images/course-thumb-1.webp',
     isRequired: true,
   },
   {
-    id: 'track-2',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
-    instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
-    rating: 4.7,
-    reviews: '(1,802)',
-    duration: '22 hours',
-    level: 'Advanced',
-    lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
+    id: 'landing-course-2',
+    title: 'Frontend Web Development with React & Tailwind',
+    category: 'Web Development',
+    instructor: 'Ahmed Hassan',
+    instructorAvatar: '/images/mentor-ahmed-figma.webp',
+    rating: 4.9,
+    reviews: '(2,140)',
+    duration: '30 hours',
+    level: 'Intermediate',
+    lessons: '48 lessons',
+    thumbnail: '/images/course-thumb-2.webp',
     isRequired: true,
   },
   {
-    id: 'track-3',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
-    instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
-    rating: 4.7,
-    reviews: '(1,802)',
-    duration: '22 hours',
+    id: 'landing-course-3',
+    title: 'Full-Stack Web Applications & REST APIs',
+    category: 'Web Development',
+    instructor: 'Nadia Mansour',
+    instructorAvatar: '/images/mentor-nadia-figma.webp',
+    rating: 4.8,
+    reviews: '(1,650)',
+    duration: '28 hours',
     level: 'Advanced',
-    lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
+    lessons: '42 lessons',
+    thumbnail: '/images/course-thumb-3.webp',
     isRequired: true,
   },
   {
-    id: 'track-4',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
+    id: 'landing-course-4',
+    title: 'Mobile App Development with Flutter & Dart',
+    category: 'Mobile Development',
     instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
+    instructorAvatar: '/images/course-avatar-elena.webp',
     rating: 4.7,
-    reviews: '(1,802)',
-    duration: '22 hours',
-    level: 'Advanced',
-    lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
+    reviews: '(1,290)',
+    duration: '24 hours',
+    level: 'Intermediate',
+    lessons: '36 lessons',
+    thumbnail: '/images/course-thumb-4.webp',
     isRequired: false,
   },
   {
-    id: 'track-5',
+    id: 'landing-course-5',
     title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
+    category: 'Data Science',
     instructor: 'Elena Vasquez',
     instructorAvatar: '/images/avatar-elena-figma.jpg',
     rating: 4.7,
@@ -101,14 +101,84 @@ const TRACK_COURSES_DATA: Course[] = [
     lessons: '40 lessons',
     thumbnail: '/images/course-thumb-figma-2.jpg',
     isRequired: true,
+  },
+  {
+    id: 'landing-course-6',
+    title: 'Data Cleaning & Exploratory Data Analysis',
+    category: 'Data Science',
+    instructor: 'Elena Vasquez',
+    instructorAvatar: '/images/avatar-elena-figma.jpg',
+    rating: 4.8,
+    reviews: '(1,530)',
+    duration: '16 hours',
+    level: 'Beginner',
+    lessons: '24 lessons',
+    thumbnail: '/images/course-thumb-figma-1.jpg',
+    isRequired: false,
   },
 ];
 
 const POPULAR_COURSES_DATA: Course[] = [
   {
-    id: 'popular-1',
+    id: 'popular-landing-1',
+    title: 'Advanced Design Systems & Component Libraries',
+    category: 'UI/UX Design',
+    instructor: 'Elena Vasquez',
+    instructorAvatar: '/images/course-avatar-elena.webp',
+    rating: 4.8,
+    reviews: '(1,802)',
+    duration: '22 hours',
+    level: 'Advanced',
+    lessons: '40 lessons',
+    thumbnail: '/images/course-thumb-1.webp',
+    isRequired: false,
+  },
+  {
+    id: 'popular-landing-2',
+    title: 'Modern UI/UX Design & Prototyping in Figma',
+    category: 'UI/UX Design',
+    instructor: 'Elena Vasquez',
+    instructorAvatar: '/images/course-avatar-elena.webp',
+    rating: 4.9,
+    reviews: '(2,310)',
+    duration: '20 hours',
+    level: 'Intermediate',
+    lessons: '32 lessons',
+    thumbnail: '/images/course-thumb-2.webp',
+    isRequired: false,
+  },
+  {
+    id: 'popular-landing-3',
+    title: 'Full-Stack Development with Node.js & React',
+    category: 'Web Development',
+    instructor: 'Ahmed Hassan',
+    instructorAvatar: '/images/mentor-ahmed-figma.webp',
+    rating: 4.8,
+    reviews: '(1,940)',
+    duration: '32 hours',
+    level: 'Advanced',
+    lessons: '44 lessons',
+    thumbnail: '/images/course-thumb-3.webp',
+    isRequired: false,
+  },
+  {
+    id: 'popular-landing-4',
+    title: 'Cross-Platform Mobile Apps with React Native',
+    category: 'Mobile Development',
+    instructor: 'Nadia Mansour',
+    instructorAvatar: '/images/mentor-nadia-figma.webp',
+    rating: 4.7,
+    reviews: '(1,420)',
+    duration: '26 hours',
+    level: 'Intermediate',
+    lessons: '38 lessons',
+    thumbnail: '/images/course-thumb-4.webp',
+    isRequired: false,
+  },
+  {
+    id: 'popular-landing-5',
     title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
+    category: 'Data Science',
     instructor: 'Elena Vasquez',
     instructorAvatar: '/images/avatar-elena-figma.jpg',
     rating: 4.7,
@@ -120,59 +190,17 @@ const POPULAR_COURSES_DATA: Course[] = [
     isRequired: false,
   },
   {
-    id: 'popular-2',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
+    id: 'popular-landing-6',
+    title: 'Product Management Fundamentals & Strategy',
+    category: 'Product Management',
     instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
-    rating: 4.7,
-    reviews: '(1,802)',
-    duration: '22 hours',
-    level: 'Advanced',
-    lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
-    isRequired: false,
-  },
-  {
-    id: 'popular-3',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
-    instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
-    rating: 4.7,
-    reviews: '(1,802)',
-    duration: '22 hours',
-    level: 'Advanced',
-    lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
-    isRequired: false,
-  },
-  {
-    id: 'popular-4',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
-    instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
-    rating: 4.7,
-    reviews: '(1,802)',
-    duration: '22 hours',
-    level: 'Advanced',
-    lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
-    isRequired: false,
-  },
-  {
-    id: 'popular-5',
-    title: 'Data Analysis with Python & SQL',
-    category: 'Data & AI',
-    instructor: 'Elena Vasquez',
-    instructorAvatar: '/images/avatar-elena-figma.jpg',
-    rating: 4.7,
-    reviews: '(1,802)',
-    duration: '22 hours',
-    level: 'Advanced',
-    lessons: '40 lessons',
-    thumbnail: '/images/course-thumb-figma-2.jpg',
+    instructorAvatar: '/images/course-avatar-elena.webp',
+    rating: 4.9,
+    reviews: '(980)',
+    duration: '18 hours',
+    level: 'Beginner',
+    lessons: '28 lessons',
+    thumbnail: '/images/experience-thumb-1.webp',
     isRequired: false,
   },
 ];
@@ -333,7 +361,11 @@ function useEdgeScroll<T extends HTMLElement>() {
   return ref;
 }
 
-export const Courses6mPage: React.FC = () => {
+export interface Courses6mPageProps {
+  embedded?: boolean;
+}
+
+export const Courses6mPage: React.FC<Courses6mPageProps> = ({ embedded = false }) => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -440,9 +472,10 @@ export const Courses6mPage: React.FC = () => {
     setCourseLoadError(null);
     try {
       const dtos = await getCourses();
-      setBackendCourses(dtos);
+      setBackendCourses(dtos || []);
     } catch {
-      setCourseLoadError('Unable to load courses from the server. Please try again.');
+      // Gracefully fall back to the landing page courses
+      setBackendCourses([]);
     } finally {
       setIsLoadingCourses(false);
     }
@@ -454,40 +487,46 @@ export const Courses6mPage: React.FC = () => {
 
   const activeTrackCourses = useMemo<Course[]>(() => {
     if (backendCourses.length > 0) {
-      return backendCourses.map((c) => ({
+      const mapped = backendCourses.map((c, idx) => ({
         id: c.id,
         title: c.title,
-        category: c.trackName || 'General',
-        instructor: c.trackName ? `${c.trackName} Specialist` : 'Course Instructor',
-        instructorAvatar: '/images/avatar-elena-figma.jpg',
+        category: c.trackName || 'Web Development',
+        instructor: c.trackName ? `${c.trackName} Specialist` : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
         rating: 4.8,
         reviews: c.completedLessonsCount !== null ? `(${c.completedLessonsCount} completed)` : `(${c.lessonCount} lessons)`,
         duration: formatDuration(c.totalDurationSeconds),
         level: 'All Levels',
         lessons: `${c.lessonCount} lessons`,
-        thumbnail: '/images/course-thumb-figma-2.jpg',
+        thumbnail: ['/images/course-thumb-1.webp', '/images/course-thumb-2.webp', '/images/course-thumb-3.webp', '/images/course-thumb-4.webp'][idx % 4],
         isRequired: c.order <= 3,
       }));
+      const existingTitles = new Set(mapped.map((m) => m.title.toLowerCase()));
+      const landingToAdd = TRACK_COURSES_DATA.filter((t) => !existingTitles.has(t.title.toLowerCase()));
+      return [...landingToAdd, ...mapped];
     }
     return TRACK_COURSES_DATA;
   }, [backendCourses]);
 
   const activePopularCourses = useMemo<Course[]>(() => {
     if (backendCourses.length > 5) {
-      return backendCourses.slice(5).map((c) => ({
+      const mapped = backendCourses.slice(5).map((c, idx) => ({
         id: c.id,
         title: c.title,
-        category: c.trackName || 'General',
-        instructor: c.trackName ? `${c.trackName} Specialist` : 'Course Instructor',
-        instructorAvatar: '/images/avatar-elena-figma.jpg',
+        category: c.trackName || 'UI/UX Design',
+        instructor: c.trackName ? `${c.trackName} Specialist` : 'Elena Vasquez',
+        instructorAvatar: '/images/course-avatar-elena.webp',
         rating: 4.7,
         reviews: `(${c.lessonCount} lessons)`,
         duration: formatDuration(c.totalDurationSeconds),
         level: 'All Levels',
         lessons: `${c.lessonCount} lessons`,
-        thumbnail: '/images/course-thumb-figma-2.jpg',
+        thumbnail: ['/images/course-thumb-2.webp', '/images/course-thumb-3.webp', '/images/course-thumb-4.webp', '/images/course-thumb-1.webp'][idx % 4],
         isRequired: false,
       }));
+      const existingTitles = new Set(mapped.map((m) => m.title.toLowerCase()));
+      const landingToAdd = POPULAR_COURSES_DATA.filter((t) => !existingTitles.has(t.title.toLowerCase()));
+      return [...landingToAdd, ...mapped];
     }
     return POPULAR_COURSES_DATA;
   }, [backendCourses]);
@@ -568,61 +607,79 @@ export const Courses6mPage: React.FC = () => {
   }, [searchQuery, viewMyCoursesOnly, enrolledCourses, appliedTracks, appliedLevels, filteredTrackCourses]);
 
   return (
-    <div className="min-h-screen bg-[#FEFEFE] relative overflow-hidden font-['Plus_Jakarta_Sans',sans-serif] text-slate-800 flex justify-start selection:bg-purple-200 selection:text-purple-900">
+    <div
+      className={
+        embedded
+          ? "w-full flex flex-col min-w-0 font-['Plus_Jakarta_Sans',sans-serif] text-slate-800"
+          : "min-h-screen bg-[#FEFEFE] relative overflow-hidden font-['Plus_Jakarta_Sans',sans-serif] text-slate-800 flex justify-start selection:bg-purple-200 selection:text-purple-900"
+      }
+    >
       {/* Decorative blurred background blobs matching Figma CSS */}
-      <div
-        className="absolute pointer-events-none w-[290px] h-[296px] left-[252px] bottom-[549px] bg-[#C693FD] opacity-20 blur-[29.0732px] rounded-[9084.46px] -rotate-[2.19deg]"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute pointer-events-none w-[222.84px] h-[172.61px] left-[1253px] top-[100px] bg-[#C693FD] opacity-20 blur-[29.0732px] rounded-[9084.46px] -rotate-[129.7deg]"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute pointer-events-none w-[222.84px] h-[172.61px] left-[523px] bottom-[55.39px] bg-[#C693FD] opacity-20 blur-[29.0732px] rounded-[9084.46px] -rotate-[129.7deg]"
-        aria-hidden="true"
-      />
+      {!embedded && (
+        <>
+          <div
+            className="absolute pointer-events-none w-[290px] h-[296px] left-[252px] bottom-[549px] bg-[#C693FD] opacity-20 blur-[29.0732px] rounded-[9084.46px] -rotate-[2.19deg]"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute pointer-events-none w-[222.84px] h-[172.61px] left-[1253px] top-[100px] bg-[#C693FD] opacity-20 blur-[29.0732px] rounded-[9084.46px] -rotate-[129.7deg]"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute pointer-events-none w-[222.84px] h-[172.61px] left-[523px] bottom-[55.39px] bg-[#C693FD] opacity-20 blur-[29.0732px] rounded-[9084.46px] -rotate-[129.7deg]"
+            aria-hidden="true"
+          />
+        </>
+      )}
 
       {/* Main Canvas Container - aligned closer to browser edge */}
-      <div className="w-full min-h-[1024px] flex flex-col lg:flex-row pl-1.5 sm:pl-2 lg:pl-6 pr-3 sm:pr-4 lg:pr-6 py-4 lg:py-6 gap-5 lg:gap-6 relative z-10 flow-page-enter">
-        {/* Mobile Header (screen < 1024px) */}
-        <div className="lg:hidden flex items-center justify-between bg-[#3B0454] text-white px-5 py-4 rounded-[24px] shadow-lg mb-2">
-          <Link to={ROUTES.home} className="flex items-center gap-3">
-            {/* reicon:grad-cap-filled (Figma node 112:9043: exact vector) */}
-            <svg width="34" height="26" viewBox="0 0 43 32" fill="none" className="shrink-0">
-              <path
-                d="M22.4981 0.122721C21.54 -0.040907 20.561 -0.040907 19.6028 0.122721C18.517 0.309054 17.4976 0.773096 15.912 1.49155L4.02067 6.88805C3.13559 7.28939 2.39026 7.62622 1.83484 7.93976C1.29734 8.24435 0.681007 8.65643 0.34059 9.32114C0.116757 9.75681 0 10.2396 0 10.7294C0 11.2192 0.116757 11.702 0.34059 12.1376C0.681007 12.8023 1.29734 13.2162 1.83663 13.519C2.39205 13.8326 3.13559 14.1712 4.02246 14.5725L15.9155 19.9672C17.4994 20.6875 18.5188 21.1497 19.6046 21.3361C20.5628 21.4997 21.5417 21.4997 22.4999 21.3361C23.5857 21.1497 24.6051 20.6875 26.1908 19.9672L37.6252 14.7803V23.2711C37.6252 23.6274 37.7667 23.9692 38.0187 24.2212C38.2707 24.4732 38.6125 24.6148 38.9689 24.6148C39.3253 24.6148 39.6671 24.4732 39.9191 24.2212C40.1711 23.9692 40.3127 23.6274 40.3127 23.2711V13.4921C40.8412 13.1911 41.4325 12.7826 41.7639 12.1358C41.9878 11.7002 42.1045 11.2174 42.1045 10.7276C42.1045 10.2378 41.9878 9.75502 41.7639 9.31935C41.4235 8.65643 40.8072 8.24076 40.2679 7.93797C39.7125 7.62443 38.9689 7.2876 38.082 6.88626L26.189 1.48976C24.6051 0.771304 23.5857 0.307263 22.4999 0.120929"
-                fill="white"
-              />
-              <path
-                d="M15.2096 21.7392L7.16505 18.2562V23.7315C7.16505 25.4873 7.8638 27.3489 9.52646 28.4418C11.6872 29.8644 15.611 31.7815 21.0505 31.7815C26.49 31.7815 30.4137 29.8644 32.5745 28.4418C34.2353 27.3489 34.9359 25.4873 34.9359 23.7315V18.2562L26.8913 21.7392C25.4544 22.3627 24.2056 22.9038 22.8493 23.1259C21.658 23.3214 20.4429 23.3214 19.2516 23.1259C17.8953 22.9038 16.6465 22.3627 15.2096 21.7392Z"
-                fill="white"
-              />
-            </svg>
-            <span className="font-bold text-2xl tracking-tight">Interns HUB</span>
-          </Link>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-            aria-label="Toggle navigation"
-          >
-            {mobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-          </button>
-        </div>
+      <div
+        className={
+          embedded
+            ? "w-full flex flex-col min-w-0 relative z-10"
+            : "w-full min-h-[1024px] flex flex-col lg:flex-row pl-1.5 sm:pl-2 lg:pl-6 pr-3 sm:pr-4 lg:pr-6 py-4 lg:py-6 gap-5 lg:gap-6 relative z-10 flow-page-enter"
+        }
+      >
+        {!embedded && (
+          <>
+            {/* Mobile Header (screen < 1024px) */}
+            <div className="lg:hidden flex items-center justify-between bg-[#3B0454] text-white px-5 py-4 rounded-[24px] shadow-lg mb-2">
+              <Link to={ROUTES.home} className="flex items-center gap-3">
+                {/* reicon:grad-cap-filled (Figma node 112:9043: exact vector) */}
+                <svg width="34" height="26" viewBox="0 0 43 32" fill="none" className="shrink-0">
+                  <path
+                    d="M22.4981 0.122721C21.54 -0.040907 20.561 -0.040907 19.6028 0.122721C18.517 0.309054 17.4976 0.773096 15.912 1.49155L4.02067 6.88805C3.13559 7.28939 2.39026 7.62622 1.83484 7.93976C1.29734 8.24435 0.681007 8.65643 0.34059 9.32114C0.116757 9.75681 0 10.2396 0 10.7294C0 11.2192 0.116757 11.702 0.34059 12.1376C0.681007 12.8023 1.29734 13.2162 1.83663 13.519C2.39205 13.8326 3.13559 14.1712 4.02246 14.5725L15.9155 19.9672C17.4994 20.6875 18.5188 21.1497 19.6046 21.3361C20.5628 21.4997 21.5417 21.4997 22.4999 21.3361C23.5857 21.1497 24.6051 20.6875 26.1908 19.9672L37.6252 14.7803V23.2711C37.6252 23.6274 37.7667 23.9692 38.0187 24.2212C38.2707 24.4732 38.6125 24.6148 38.9689 24.6148C39.3253 24.6148 39.6671 24.4732 39.9191 24.2212C40.1711 23.9692 40.3127 23.6274 40.3127 23.2711V13.4921C40.8412 13.1911 41.4325 12.7826 41.7639 12.1358C41.9878 11.7002 42.1045 11.2174 42.1045 10.7276C42.1045 10.2378 41.9878 9.75502 41.7639 9.31935C41.4235 8.65643 40.8072 8.24076 40.2679 7.93797C39.7125 7.62443 38.9689 7.2876 38.082 6.88626L26.189 1.48976C24.6051 0.771304 23.5857 0.307263 22.4999 0.120929"
+                    fill="white"
+                  />
+                  <path
+                    d="M15.2096 21.7392L7.16505 18.2562V23.7315C7.16505 25.4873 7.8638 27.3489 9.52646 28.4418C11.6872 29.8644 15.611 31.7815 21.0505 31.7815C26.49 31.7815 30.4137 29.8644 32.5745 28.4418C34.2353 27.3489 34.9359 25.4873 34.9359 23.7315V18.2562L26.8913 21.7392C25.4544 22.3627 24.2056 22.9038 22.8493 23.1259C21.658 23.3214 20.4429 23.3214 19.2516 23.1259C17.8953 22.9038 16.6465 22.3627 15.2096 21.7392Z"
+                    fill="white"
+                  />
+                </svg>
+                <span className="font-bold text-2xl tracking-tight">Interns HUB</span>
+              </Link>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                aria-label="Toggle navigation"
+              >
+                {mobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+              </button>
+            </div>
 
-        {/* Mobile Backdrop */}
-        {mobileMenuOpen && (
-          <div
-            onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 lg:hidden"
-          />
-        )}
+            {/* Mobile Backdrop */}
+            {mobileMenuOpen && (
+              <div
+                onClick={() => setMobileMenuOpen(false)}
+                className="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 lg:hidden"
+              />
+            )}
 
-        {/* =========================================================================
-            EXACT FIGMA SIDEBAR (Node 112:8998)
-            Dimensions: width 308px, height 976px
-            Background: #3B0454, Border-Radius: 34px
-           ========================================================================= */}
+            {/* =========================================================================
+                EXACT FIGMA SIDEBAR (Node 112:8998)
+                Dimensions: width 308px, height 976px
+                Background: #3B0454, Border-Radius: 34px
+               ========================================================================= */}
         <aside
           className={`fixed lg:sticky top-4 lg:top-6 left-1.5 sm:left-2 lg:left-6 w-[308px] h-[976px] bg-[#3B0454] rounded-[34px] shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out shrink-0 select-none ${
             mobileMenuOpen ? 'translate-x-0' : '-translate-x-[340px] lg:translate-x-0'
@@ -1018,6 +1075,8 @@ export const Courses6mPage: React.FC = () => {
             </div>
           </div>
         </aside>
+      </>
+    )}
 
         {/* =========================================================================
             MAIN CONTENT AREA (Figma node 112:9054: width: 1060px, height: 912px)
@@ -1331,22 +1390,24 @@ export const Courses6mPage: React.FC = () => {
             </button>
 
             {/* 3. User Profile Pill (Figma node 112:9067: width: 248px, height: 62px, bg: #F4F4F4, radius: 999px) */}
-            <div className="w-full md:w-[248px] h-[62px] bg-[#F4F4F4] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-[999px] px-[16px] flex items-center gap-[12px] shrink-0 hover:bg-gray-100 transition-colors cursor-pointer">
-              <img
-                src="/images/avatar-maya-figma.jpg"
-                alt="Maya Johnson"
-                className="size-[40px] rounded-full object-cover shadow-xs border border-white shrink-0"
-              />
-              <div className="flex flex-col text-start justify-center">
-                <span className="font-['Plus_Jakarta_Sans'] font-normal text-[14px] leading-[20px] text-[#1E293B]">
-                  Maya Johnson
-                </span>
-                <span className="font-['Plus_Jakarta_Sans'] font-normal text-[12px] leading-[16px] text-[#6B7280] flex items-center gap-1.5">
-                  <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
-                  AI track - 6 Month Plan
-                </span>
+            {!embedded && (
+              <div className="w-full md:w-[248px] h-[62px] bg-[#F4F4F4] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-[999px] px-[16px] flex items-center gap-[12px] shrink-0 hover:bg-gray-100 transition-colors cursor-pointer">
+                <img
+                  src="/images/avatar-maya-figma.jpg"
+                  alt="Maya Johnson"
+                  className="size-[40px] rounded-full object-cover shadow-xs border border-white shrink-0"
+                />
+                <div className="flex flex-col text-start justify-center">
+                  <span className="font-['Plus_Jakarta_Sans'] font-normal text-[14px] leading-[20px] text-[#1E293B]">
+                    Maya Johnson
+                  </span>
+                  <span className="font-['Plus_Jakarta_Sans'] font-normal text-[12px] leading-[16px] text-[#6B7280] flex items-center gap-1.5">
+                    <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
+                    AI track - 6 Month Plan
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {viewMyCoursesOnly ? (

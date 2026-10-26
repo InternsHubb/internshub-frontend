@@ -464,7 +464,7 @@ export const CourseDetailsPage: React.FC = () => {
               type="button"
               onClick={() => {
                 setActiveNav('courses');
-                navigate(ROUTES.courses6m);
+                navigate(ROUTES.dashboardCourses);
               }}
               className={`w-[44px] h-[43px] rounded-[8px] flex items-center justify-center shadow-md cursor-pointer transition-all ${
                 activeNav === 'courses' ? 'bg-gradient-to-r from-[#3A0353] to-[#804A8A]' : 'hover:bg-white/10'

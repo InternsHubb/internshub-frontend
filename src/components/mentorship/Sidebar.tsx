@@ -4,4 +4,3 @@
  * any broken imports across the project.
  */
 export { Sidebar, Sidebar as default } from '@/components/shared/Sidebar/Sidebar';
-
