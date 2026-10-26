@@ -10,6 +10,7 @@ import { useInternship } from '@/hooks/useInternship';
 import {
   checkoutEnrollment,
   getMyEnrollments,
+  getMyInvoices,
   getPackages,
   getUpgradeQuote,
   requestUpgrade,
@@ -190,11 +191,24 @@ export default function PlansPage() {
     }
     setIsUpgrading(true);
     setUpgradeError(null);
+
+    const width = 600;
+    const height = 750;
+    const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - width) / 2));
+    const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - height) / 2));
+    let popup: Window | null = null;
+    try {
+      popup = window.open('about:blank', 'paymob_upgrade', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
+    } catch {
+      popup = null;
+    }
+
     try {
       const upgraded = await requestUpgrade(activeEnrollment.id, targetPackage.id);
       if (upgraded.status === 'PendingPayment') {
         const { invoiceId, redirectUrl } = await checkoutEnrollment(upgraded.id);
         if (!isSafeRedirect(redirectUrl)) {
+          if (popup && !popup.closed) popup.close();
           setUpgradeError(t('dashboard.plans.upgradeError'));
           setIsUpgrading(false);
           return;
@@ -207,14 +221,53 @@ export default function PlansPage() {
         } catch {
           // sessionStorage may be restricted
         }
-        window.location.assign(redirectUrl);
+
+        if (popup && !popup.closed) {
+          popup.location.href = redirectUrl;
+          popup.focus();
+        } else {
+          window.location.assign(redirectUrl);
+          return;
+        }
+
+        let active = true;
+        const poll = async () => {
+          try {
+            const invoices = await getMyInvoices();
+            const inv = invoices.find((item) => item.id === invoiceId);
+            if (!active) return;
+            if (inv?.status === 'Paid') {
+              window.setTimeout(() => {
+                try {
+                  if (popup && !popup.closed) popup.close();
+                } catch {
+                  // ignore
+                }
+              }, 2000);
+              setUpgradeSuccess(true);
+              setIsUpgrading(false);
+              reloadInternship();
+              return;
+            }
+          } catch {
+            // retry next poll
+          }
+          if (active && (!popup || !popup.closed)) {
+            window.setTimeout(poll, 3000);
+          } else {
+            setIsUpgrading(false);
+          }
+        };
+        void poll();
         return;
       }
       // Immediate upgrade completion (Active status)
+      if (popup && !popup.closed) popup.close();
       setUpgradeSuccess(true);
       setIsUpgrading(false);
       reloadInternship();
     } catch {
+      if (popup && !popup.closed) popup.close();
       setIsUpgrading(false);
       setUpgradeError(t('dashboard.plans.upgradeError'));
     }

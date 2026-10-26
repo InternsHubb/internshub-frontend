@@ -5,7 +5,6 @@ import { formatPrice, PACKAGES } from '@/constants/packages';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { apiErrorKey, missingOnboardingSteps } from '@/lib/api/errors';
-import { isUserDataComplete } from '@/lib/auth/redirect';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PolicyConsent } from './PolicyConsent';
 import { PackageSelection } from './PackageSelection';
@@ -116,20 +115,6 @@ export default function OnboardingFlow() {
     return 1;
   });
 
-  useEffect(() => {
-    if (isUserDataComplete(user)) {
-      navigate(ROUTES.dashboard, { replace: true });
-      return;
-    }
-    if (currentStep === 1 && user?.emailConfirmed && user?.phoneNumberConfirmed) {
-      if (!user.fullName?.trim() || !user.dateOfBirth || user.missingOnboardingSteps?.includes('CompleteProfile')) {
-        setCurrentStep(2);
-      } else {
-        setCurrentStep(3);
-      }
-    }
-  }, [user, navigate, currentStep]);
-
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
   const [resultState, setResultState] = useState<ResultState>('assigned');
   const activeResult = RESULT_STATES[resultState];
@@ -194,6 +179,45 @@ export default function OnboardingFlow() {
       ? current
       : { ...current, selectedPackage: savedChoice.packageValue, selectedTrack: savedChoice.trackId });
   }, [savedChoice]);
+
+  // When opening onboarding to continue, resume at the furthest step the learner needs to complete
+  const initialStepResumed = useRef(false);
+  useEffect(() => {
+    if (initialStepResumed.current) return;
+    if (hasPendingCheckout()) {
+      initialStepResumed.current = true;
+      setCurrentStep(5);
+      return;
+    }
+    if (!user) return;
+
+    if (!user.emailConfirmed || !user.phoneNumberConfirmed) {
+      initialStepResumed.current = true;
+      setCurrentStep(1);
+      return;
+    }
+
+    if (!user.fullName?.trim() || !user.dateOfBirth || user.missingOnboardingSteps?.includes('CompleteProfile')) {
+      initialStepResumed.current = true;
+      setCurrentStep(2);
+      return;
+    }
+
+    // Wait for enrollment choice & CV to finish loading before deciding beyond step 3
+    if (enrollmentChoice.isLoading || myCv.isLoading) return;
+
+    initialStepResumed.current = true;
+
+    if (enrollmentChoice.enrollment?.status === 'Active') {
+      setCurrentStep(6);
+    } else if (enrollmentChoice.enrollment?.status === 'PendingPayment' && isCvReady) {
+      setCurrentStep(5);
+    } else if (savedChoice) {
+      setCurrentStep(isCvReady ? 5 : 4);
+    } else {
+      setCurrentStep(3);
+    }
+  }, [user, enrollmentChoice.isLoading, enrollmentChoice.enrollment, savedChoice, myCv.isLoading, isCvReady]);
 
   // Every step after Path needs a package and a track: without both the learner is kept on (or
   // sent back to) Path with the missing choice flagged, whether they used Confirm, Enter or the
