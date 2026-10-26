@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { ROUTES } from '@/constants/routes';
+import { EMPLOYER_ROUTES, ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { isUserDataComplete, type RedirectState } from '@/lib/auth/redirect';
 
@@ -38,9 +38,13 @@ export function RequireAuth({ children }: RequireAuthProps) {
   }
 
   // If user is authenticated but their data is not complete, redirect them to onboarding first.
+  // Employer routes are exempt: the onboarding steps are the student journey, so an employer
+  // account is not expected to complete them.
   const isExcludedFromOnboardingCheck =
     location.pathname === ROUTES.onboarding ||
-    location.pathname.startsWith('/auth');
+    location.pathname.startsWith('/auth') ||
+    location.pathname === EMPLOYER_ROUTES.root ||
+    location.pathname.startsWith(`${EMPLOYER_ROUTES.root}/`);
 
   if (!isExcludedFromOnboardingCheck && !isUserDataComplete(user)) {
     return <Navigate to={ROUTES.onboarding} replace />;
