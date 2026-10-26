@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertCircle, Check, CircleSlash, Loader2, Mic, PauseCircle, X } from 'lucide-react';
+import { AlertCircle, Check, Loader2, MicOff, PauseCircle, X } from 'lucide-react';
 import type { InterviewQuestionDto } from '@/lib/api/types';
 import {
   BackArrow,
@@ -26,11 +26,15 @@ import type { DeviceCheckApi } from './useDeviceCheck';
 import type { IntegritySnapshot } from './integrity/integrityMonitor';
 import type { LiveInterview } from './useLiveInterview';
 import type { AnswerPhase, InterviewType } from './types';
+import { VoiceIndicator } from './VoiceIndicator';
 
 // Question screen (Figma 24:284 answering, 24:447 answered). The question comes from the backend
 // interview (useLiveInterview), with its audio when the backend sends it. The answer is recorded
 // from the microphone while the question is shown; Done uploads it and sends it, and the answered
-// frame confirms it was saved (the backend returns no transcript). If the camera, microphone or
+// frame confirms it was saved (the backend returns no transcript). While recording, the voice
+// indicator follows the microphone level and shows when the candidate is actually speaking. An
+// answer that couldn't be sent is kept: the candidate sends it again or records a new one, and no
+// recording runs meanwhile. If the camera, microphone or
 // screen share stops, the interview pauses and the recording is discarded until it is restored
 // (research §18.6). If the candidate leaves fullscreen, the question is replaced by the fullscreen
 // warning until they return (§17.4). Page-hidden and focus-loss intervals are kept by the integrity
@@ -162,7 +166,20 @@ export function InterviewSession({
 }: InterviewSessionProps) {
   const { t } = useTranslation();
   const k = (key: string, options?: Record<string, unknown>) => t(`onboarding.interview.session.${key}`, options);
-  const { interview, status, errorKey, isRecording, startRecording, cancelRecording, submitAnswer } = live;
+  const {
+    interview,
+    status,
+    errorKey,
+    recordingErrorKey,
+    isRecording,
+    hasPendingAnswer,
+    startRecording,
+    cancelRecording,
+    submitAnswer,
+    resendAnswer,
+    discardPendingAnswer,
+    clearRecordingError,
+  } = live;
   const { getMicrophoneStream } = devices;
   const devicesPaused = !requiredChecksReady(devices);
   const paused = devicesPaused || integrity.fullscreenWarning;
@@ -175,7 +192,14 @@ export function InterviewSession({
   const hasNextQuestion = Boolean(interview?.currentQuestion);
   const ended = status === 'ready' && !answered && !hasNextQuestion;
   const questionNumber = (interview?.answeredCount ?? 0) + (answered ? 0 : 1);
-  const canRecord = !answered && !isSending && status === 'ready' && question !== null && !paused;
+  const canRecord =
+    !answered &&
+    !isSending &&
+    status === 'ready' &&
+    question !== null &&
+    !paused &&
+    !hasPendingAnswer &&
+    recordingErrorKey === null;
 
   // Records while the question is shown and the interview isn't paused. A pause, or leaving the
   // questions, discards the take; the candidate answers again once it resumes.
@@ -185,10 +209,11 @@ export function InterviewSession({
     return cancelRecording;
   }, [canRecord, question?.orderIndex, startRecording, cancelRecording, getMicrophoneStream]);
 
-  const sendAnswer = async () => {
+  // Done sends the take being recorded; Send again sends the kept one.
+  const sendAnswer = async (send: typeof submitAnswer) => {
     const current = interview?.currentQuestion ?? null;
     setIsSending(true);
-    const next = await submitAnswer();
+    const next = await send();
     if (next) {
       setAnsweredQuestion(current);
       onAnswered();
@@ -214,7 +239,7 @@ export function InterviewSession({
       return (
         <section className={`${CARD} space-y-4 p-6 sm:p-8`}>
           <p className={`text-lg font-semibold ${TITLE_TEXT}`}>{k('endedTitle')}</p>
-          <p className={`whitespace-pre-line text-sm ${BODY_TEXT}`}>{interview.closingText ?? k('endedBody')}</p>
+          <p dir={interview.closingText ? 'auto' : undefined} className={`whitespace-pre-line text-sm ${BODY_TEXT}`}>{interview.closingText ?? k('endedBody')}</p>
           <div className="flex justify-end">
             <PrimaryButton size="lg" disabled={paused} onClick={onNext}>
               {k('finish')}
@@ -235,13 +260,37 @@ export function InterviewSession({
 
         <section className={`${CARD} p-6 sm:p-8`}>
           <p className="text-xs font-bold uppercase tracking-[0.06em] text-[#5a127a]">{k('currentQuestion')}</p>
-          <p className={`mt-3 whitespace-pre-line text-xl font-semibold leading-[1.45] sm:text-2xl ${TITLE_TEXT}`}>{question?.text}</p>
+          {/* The question's language comes from the backend, not the UI language: dir="auto" keeps
+              an English question's punctuation in place on the Arabic (RTL) page. */}
+          <p dir="auto" className={`mt-3 whitespace-pre-line text-xl font-semibold leading-[1.45] sm:text-2xl ${TITLE_TEXT}`}>{question?.text}</p>
           {question && !answered && <QuestionAudio question={question} />}
         </section>
 
         {errorKey && (
           <Notice tone="warning" icon={AlertCircle} title={k('answerFailed')}>
             <p>{t(errorKey)}</p>
+            {hasPendingAnswer && (
+              <>
+                <p className="mt-1">{k('answerKept')}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <SecondaryButton disabled={isSending || paused} onClick={() => void sendAnswer(resendAnswer)}>
+                    {k('sendAgain')}
+                  </SecondaryButton>
+                  <TextButton disabled={isSending} onClick={discardPendingAnswer}>
+                    {k('recordNewAnswer')}
+                  </TextButton>
+                </div>
+              </>
+            )}
+          </Notice>
+        )}
+
+        {recordingErrorKey && (
+          <Notice tone="warning" icon={MicOff} title={k('recordingProblem')}>
+            <p>{t(recordingErrorKey)}</p>
+            <div className="mt-3">
+              <SecondaryButton onClick={clearRecordingError}>{k('recordAgain')}</SecondaryButton>
+            </div>
           </Notice>
         )}
 
@@ -263,10 +312,14 @@ export function InterviewSession({
               <p className={`mt-4 max-w-[440px] text-sm ${BODY_TEXT}`}>{k('answerSavedBody')}</p>
             </div>
           ) : (
-            <div className="flex flex-col items-center py-8 text-center">
-              <span aria-hidden="true" className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#5a127a] shadow-[0_4px_14px_rgba(59,4,84,0.12)]">
-                {paused ? <CircleSlash size={26} /> : <Mic size={26} />}
-              </span>
+            <div className="flex flex-col items-center py-6 text-center">
+              <VoiceIndicator
+                isRecording={isRecording}
+                isProcessing={isSending}
+                isPaused={paused}
+                hasError={recordingErrorKey !== null}
+                level={devices.micLevel}
+              />
               <p className={`mt-4 text-lg font-semibold ${TITLE_TEXT}`}>{k('answeringTitle')}</p>
               <p className={`mt-1 max-w-[440px] text-sm ${BODY_TEXT}`}>{k(isSending ? 'sending' : 'answeringBody')}</p>
             </div>
@@ -285,7 +338,7 @@ export function InterviewSession({
                 <ForwardArrow />
               </PrimaryButton>
             ) : (
-              <PrimaryButton size="lg" disabled={paused || isSending || !isRecording} onClick={() => void sendAnswer()}>
+              <PrimaryButton size="lg" disabled={paused || isSending || !isRecording} onClick={() => void sendAnswer(submitAnswer)}>
                 {k('done')}
                 <ForwardArrow />
               </PrimaryButton>

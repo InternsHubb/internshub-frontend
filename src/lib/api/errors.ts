@@ -41,6 +41,12 @@ export function apiErrorKey(error: unknown): string {
     return 'api.errors.conflict';
   }
 
+  // 502/503/504: the backend (or a service it depends on) is down or overloaded; retrying later
+  // can succeed, unlike a 500.
+  if (error.status === 502 || error.status === 503 || error.status === 504) {
+    return 'api.errors.unavailable';
+  }
+
   if (error.status >= 500) {
     return 'api.errors.server';
   }
