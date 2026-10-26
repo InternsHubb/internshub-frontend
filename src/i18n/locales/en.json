@@ -675,7 +675,8 @@
       },
       "paid": {
         "title": "Payment confirmed — you're enrolled",
-        "amount": "Paid {{amount}}"
+        "amount": "Paid {{amount}}",
+        "autoContinuing": "Continuing to the remaining steps automatically..."
       },
       "tryAgain": "Try again",
       "startOver": "Start a new payment",

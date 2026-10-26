@@ -5,6 +5,7 @@ import { formatPrice, PACKAGES } from '@/constants/packages';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/useAuth';
 import { apiErrorKey, missingOnboardingSteps } from '@/lib/api/errors';
+import { isUserDataComplete } from '@/lib/auth/redirect';
 import { OnboardingHeader } from './OnboardingHeader';
 import { PolicyConsent } from './PolicyConsent';
 import { PackageSelection } from './PackageSelection';
@@ -104,7 +105,31 @@ export default function OnboardingFlow() {
   // the user has moved past it. National ID has no backend check, so it is not part of this.
   const isAccountVerified = user?.emailConfirmed === true && user.phoneNumberConfirmed === true;
   // Coming back from Paymob reopens the Payment step, where the result is checked with the backend.
-  const [currentStep, setCurrentStep] = useState(() => (hasPendingCheckout() ? 5 : 1));
+  const [currentStep, setCurrentStep] = useState(() => {
+    if (hasPendingCheckout()) return 5;
+    if (user?.emailConfirmed && user?.phoneNumberConfirmed) {
+      if (!user.fullName?.trim() || !user.dateOfBirth || user.missingOnboardingSteps?.includes('CompleteProfile')) {
+        return 2;
+      }
+      return 3;
+    }
+    return 1;
+  });
+
+  useEffect(() => {
+    if (isUserDataComplete(user)) {
+      navigate(ROUTES.dashboard, { replace: true });
+      return;
+    }
+    if (currentStep === 1 && user?.emailConfirmed && user?.phoneNumberConfirmed) {
+      if (!user.fullName?.trim() || !user.dateOfBirth || user.missingOnboardingSteps?.includes('CompleteProfile')) {
+        setCurrentStep(2);
+      } else {
+        setCurrentStep(3);
+      }
+    }
+  }, [user, navigate, currentStep]);
+
   const [viewMode, setViewMode] = useState<'onboarding' | 'cv-review'>('onboarding');
   const [resultState, setResultState] = useState<ResultState>('assigned');
   const activeResult = RESULT_STATES[resultState];
@@ -448,7 +473,7 @@ export default function OnboardingFlow() {
               level={liveInterview.interview?.result?.level ?? null}
               isPreview={liveInterview.interview === null}
               onContinue={() => setCurrentStep(8)}
-              onHome={() => navigate(ROUTES.home)}
+              onHome={() => navigate(ROUTES.dashboard)}
               onResume={resumeInterview}
             />
           )}
@@ -647,7 +672,9 @@ export default function OnboardingFlow() {
               <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
                 <button onClick={() => setCurrentStep(4)} className="font-bold text-sm text-[#5C1D87]">Back</button>
                 <button onClick={() => setCurrentStep(6)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
-                  Preview Interview Setup →
+                  {payment.state.kind === 'paid' || enrollmentChoice.enrollment?.status === 'Active'
+                    ? 'Continue to Interview Setup →'
+                    : 'Preview Interview Setup →'}
                 </button>
               </div>
             </div>
@@ -710,6 +737,9 @@ export default function OnboardingFlow() {
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
                 <button onClick={() => setCurrentStep(7)} className="font-bold text-sm text-[#5C1D87]">Back</button>
+                <button onClick={() => navigate(ROUTES.dashboard)} className="px-6 py-3.5 bg-white border border-[#CCB8D8] text-[#3A0353] font-bold text-sm rounded-[13px] hover:bg-[#F3E9FA] transition">
+                  Go to Dashboard
+                </button>
                 <button onClick={() => setCurrentStep(9)} className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2">
                   Explore Mentorship →
                 </button>
@@ -804,14 +834,24 @@ export default function OnboardingFlow() {
                   <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">TRACK</span><h5 className="text-xs font-normal text-[#111827]">Selected track</h5></div>
                   <div className="p-4 bg-[#FBF7FE] rounded-[12px] space-y-1"><span className="text-[8px] text-[#8B5DB0] uppercase block">TOPIC</span><h5 className="text-xs font-normal text-[#111827]">Add your topic</h5></div>
                   <div className="flex items-center gap-2 text-[9px] text-[#6B7280] pt-1"><img src={clockMutedIcon} alt="" aria-hidden="true" width={14} height={14} /><p>Sessions are 45 minutes. Maximum two upcoming sessions at a time.</p></div>
-                  <button disabled className="w-full h-[50px] bg-[#ECEAED] text-[#9A939E] font-bold text-xs rounded-[13px] cursor-not-allowed">Confirm Booking</button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(ROUTES.dashboard)}
+                    className="w-full h-[50px] bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-xs rounded-[13px] shadow transition hover:opacity-95"
+                  >
+                    Go to Dashboard →
+                  </button>
                 </div>
               </div>
 
               <div className="flex flex-wrap justify-end items-center gap-4 pt-[34px]">
                 <button onClick={() => setCurrentStep(8)} className="font-bold text-sm text-[#5C1D87]">Back</button>
-                <button disabled className="px-7 py-3.5 bg-[#ECEAED] text-[#9A939E] font-bold text-sm rounded-[13px] flex items-center gap-2 cursor-not-allowed">
-                  Confirm Booking →
+                <button
+                  type="button"
+                  onClick={() => navigate(ROUTES.dashboard)}
+                  className="px-7 py-3.5 bg-gradient-to-r from-[#4C0585] to-[#3A0353] text-white font-bold text-sm rounded-[13px] shadow flex items-center gap-2"
+                >
+                  Go to Dashboard →
                 </button>
               </div>
             </div>
