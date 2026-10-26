@@ -72,10 +72,23 @@ type Options = { enrollment: EnrollmentDto | null; onPaid: () => void };
 export function usePaymentCheckout({ enrollment, onPaid }: Options) {
   const [state, setState] = useState<PaymentState>(() => (readPending() ? { kind: 'verifying' } : { kind: 'idle' }));
   const [attempt, setAttempt] = useState(0);
+  const popupRef = useRef<Window | null>(null);
   const onPaidRef = useRef(onPaid);
   useEffect(() => {
     onPaidRef.current = onPaid;
   }, [onPaid]);
+
+  // When returning focus to the window, check invoice status immediately
+  useEffect(() => {
+    const handleFocus = () => {
+      const pending = readPending();
+      if (pending) {
+        setAttempt((v) => v + 1);
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
 
   // Polls the invoice list while a checkout started from this browser is unresolved.
   useEffect(() => {
@@ -94,11 +107,34 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
           writePending(null);
           setState({ kind: 'paid', invoice });
           onPaidRef.current();
+
+          // After 2 seconds of showing "Approved", automatically close the Paymob window
+          window.setTimeout(() => {
+            try {
+              if (popupRef.current && !popupRef.current.closed) {
+                popupRef.current.close();
+              }
+            } catch {
+              // Ignore any cross-origin restrictions
+            }
+          }, 2000);
+
           return;
         }
         if (invoice?.status === 'Failed' || invoice?.status === 'Cancelled') {
           writePending(null);
           setState({ kind: 'failed', invoice });
+
+          window.setTimeout(() => {
+            try {
+              if (popupRef.current && !popupRef.current.closed) {
+                popupRef.current.close();
+              }
+            } catch {
+              // Ignore
+            }
+          }, 2000);
+
           return;
         }
         if (invoice?.status === 'RequiresReview') {
@@ -128,16 +164,45 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
       return;
     }
     setState({ kind: 'starting' });
+
+    // Open popup immediately on click to prevent browser popup blockers
+    const width = 600;
+    const height = 750;
+    const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - width) / 2));
+    const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - height) / 2));
+    let popup: Window | null = null;
+    try {
+      popup = window.open(
+        'about:blank',
+        'paymob_checkout',
+        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+      );
+      popupRef.current = popup;
+    } catch {
+      popup = null;
+    }
+
     try {
       const { invoiceId, redirectUrl } = await checkoutEnrollment(enrollment.id);
       if (!isSafeRedirect(redirectUrl)) {
+        if (popup && !popup.closed) popup.close();
         setState({ kind: 'error', messageKey: 'onboarding.payment.errors.badRedirect' });
         return;
       }
       writePending({ invoiceId, enrollmentId: enrollment.id });
-      setState({ kind: 'redirecting' });
-      window.location.assign(redirectUrl);
+      setState({ kind: 'verifying' });
+
+      if (popup && !popup.closed) {
+        popup.location.href = redirectUrl;
+        popup.focus();
+      } else {
+        window.location.assign(redirectUrl);
+        return;
+      }
+
+      setAttempt((v) => v + 1);
     } catch (error) {
+      if (popup && !popup.closed) popup.close();
       setState({ kind: 'error', messageKey: apiErrorKey(error) });
     }
   }, [enrollment]);
