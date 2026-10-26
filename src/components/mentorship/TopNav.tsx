@@ -2,15 +2,18 @@ import React from 'react';
 import { Search, Bell, Moon } from 'lucide-react';
 import { NotificationsMenu } from '@/components/layout/NotificationsMenu';
 import { UserMenu } from '@/components/layout/UserMenu';
-
 import { SidebarTrigger } from '@/components/shared/Sidebar/SidebarTrigger';
 
-export const TopNav: React.FC = () => {
+interface TopNavProps {
+  onOpenMobile?: () => void;
+}
+
+export const TopNav: React.FC<TopNavProps> = () => {
   return (
     <header className="h-[80px] px-4 sm:px-6 flex items-center justify-between gap-6 transition-colors">
-      {/* Search Bar / Mobile Menu Toggle (Figma 166:10899) */}
+      {/* Search Bar / Sidebar Toggle */}
       <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-[420px]">
-        <SidebarTrigger className="lg:hidden size-11 rounded-2xl" />
+        <SidebarTrigger />
 
         <div className="relative w-full">
           <Search className="size-[18px] text-slate-400 absolute left-[18px] top-1/2 -translate-y-1/2 pointer-events-none" />

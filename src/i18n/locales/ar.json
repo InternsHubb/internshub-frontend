@@ -193,6 +193,17 @@
     "mentorImageAlt": "موجه محترف يرتدي بليزر لافندر مع جهاز لابتوب"
   },
   "mentorship": {
+    "nav": {
+      "dashboard": "لوحة التحكم",
+      "mentors": "المرشدون",
+      "eligibility": "الأهلية",
+      "talentProfile": "ملف الموهبة",
+      "opportunities": "الفرص",
+      "applications": "طلباتي",
+      "interview": "المقابلة",
+      "agreement": "الاتفاقية",
+      "notifications": "الإشعارات"
+    },
     "booking": {
       "back": "العودة إلى الإرشاد",
       "title": "احجز جلسة",
@@ -1326,7 +1337,7 @@
       "internship": "التدريب العملي",
       "mySquad": "فريقي",
       "courses": "الدورات",
-      "mentorship": "الإرشاد",
+      "mentorship": "التوجيه المهني",
       "recruitment": "التوظيف",
       "sprints": "دورات العمل",
       "progress": "التقدم",

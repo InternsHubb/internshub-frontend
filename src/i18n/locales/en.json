@@ -193,6 +193,17 @@
     "mentorImageAlt": "Professional mentor in lavender jacket with laptop"
   },
   "mentorship": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "mentors": "Mentors",
+      "eligibility": "Eligibility",
+      "talentProfile": "Talent Profile",
+      "opportunities": "Opportunities",
+      "applications": "My Applications",
+      "interview": "Interview",
+      "agreement": "Agreement",
+      "notifications": "Notifications"
+    },
     "booking": {
       "back": "Back to Mentorship",
       "title": "Book a Session",

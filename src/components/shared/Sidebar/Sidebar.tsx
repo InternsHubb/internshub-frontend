@@ -118,12 +118,33 @@ function NavItem({ item, isCollapsed, onNavigate }: { item: SidebarNavItem; isCo
   );
 }
 
-// Row of a nested menu (Figma "Dashboard", "Eligibility", ... under Recruitment): 16px
+// Row of a nested menu (Figma "Dashboard", "Eligibility", ... under Recruitment/Mentorship): 16px
 // outline icon, 14px label and an optional count pill.
 function NavSubItem({ item, onNavigate }: { item: SidebarSubItem; onNavigate?: () => void }) {
   const { t } = useTranslation();
   const location = useLocation();
   const Icon = item.icon;
+  const label = t(item.labelKey);
+
+  if (!item.to) {
+    return (
+      <li>
+        <span
+          aria-disabled="true"
+          className="flex h-8 w-full items-center gap-2.5 rounded-lg ps-3 pe-2 text-sm font-medium text-[#ede6f3]/45 cursor-default select-none"
+        >
+          <Icon className="size-4 shrink-0 opacity-50" aria-hidden={true} />
+          <span className="truncate leading-none">{label}</span>
+          {item.badge && (
+            <span className="ms-auto flex size-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[11px] font-semibold text-white/50">
+              {item.badge}
+            </span>
+          )}
+        </span>
+      </li>
+    );
+  }
+
   const isHashItem = item.to.includes('#');
   const [targetPath, targetHash] = item.to.split('#');
   const isQueryItem = item.to.includes('?');
@@ -174,7 +195,7 @@ function NavSubItem({ item, onNavigate }: { item: SidebarSubItem; onNavigate?: (
         }}
       >
         <Icon className="size-4 shrink-0" aria-hidden={true} />
-        <span className="truncate text-sm leading-none">{t(item.labelKey)}</span>
+        <span className="truncate text-sm leading-none">{label}</span>
         {item.badge && (
           <span className="ms-auto flex size-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-[11px] font-semibold text-white">
             {item.badge}
