@@ -185,6 +185,17 @@
     "mentorImageAlt": "موجه محترف يرتدي بليزر لافندر مع جهاز لابتوب"
   },
   "mentorship": {
+    "nav": {
+      "dashboard": "لوحة التحكم",
+      "mentors": "المرشدون",
+      "eligibility": "الأهلية",
+      "talentProfile": "ملف الموهبة",
+      "opportunities": "الفرص",
+      "applications": "طلباتي",
+      "interview": "المقابلة",
+      "agreement": "الاتفاقية",
+      "notifications": "الإشعارات"
+    },
     "booking": {"back":"العودة إلى الإرشاد","title":"احجز جلسة","checkAvailability":"راجع مواعيد المرشد.","viewProfile":"عرض الملف الشخصي","noSlots":"لا توجد مواعيد متاحة","noSlotsDescription":"يمكنك العودة لاحقًا أو تصفح مرشدين آخرين.","updatedAvailability":"يتم تحديث المواعيد باستمرار.","otherMentors":"تصفح مرشدين آخرين","duration":"جلسة ٤٥ دقيقة","subtitle":"اختر اليوم والوقت المناسبين لك.","available":"متاح","oneToOne":"جلسة فردية","rulesTitle":"قواعد الحجز","rules":"ألغِ قبل الموعد بـ٢٤ ساعة على الأقل لاستعادة الجلسة.","selectDate":"اختر اليوم","previousDates":"الأيام السابقة","nextDates":"الأيام التالية","timeSlots":"المواعيد المتاحة","timeHint":"اختر الوقت المناسب","selected":"محدد","open":"متاح","summary":"ملخص الحجز","mentor":"المرشد","dateTime":"اليوم والوقت","durationLabel":"المدة","balance":"رصيد الجلسات","remaining":"متبقي {{remaining}} من {{total}}","topic":"ما الموضوع الذي تريد مناقشته؟","continue":"متابعة لتأكيد الحجز","cancellation":"ألغِ قبل الموعد بـ٢٤ ساعة على الأقل للاحتفاظ برصيد الجلسة."},
     "live": {
       "loading": "جارٍ تحميل بيانات الإرشاد…",
@@ -1232,6 +1243,7 @@
       "internship": "التدريب العملي",
       "mySquad": "فريقي",
       "courses": "الدورات",
+      "mentorship": "التوجيه المهني",
       "recruitment": "التوظيف",
       "sprints": "دورات العمل",
       "progress": "التقدم",

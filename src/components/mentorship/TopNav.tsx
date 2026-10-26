@@ -1,27 +1,19 @@
 import React from 'react';
-import { Search, Bell, Moon, Menu } from 'lucide-react';
+import { Search, Bell, Moon } from 'lucide-react';
 import { NotificationsMenu } from '@/components/layout/NotificationsMenu';
 import { UserMenu } from '@/components/layout/UserMenu';
+import { SidebarTrigger } from '@/components/shared/Sidebar/SidebarTrigger';
 
 interface TopNavProps {
   onOpenMobile?: () => void;
 }
 
-export const TopNav: React.FC<TopNavProps> = ({ onOpenMobile }) => {
+export const TopNav: React.FC<TopNavProps> = () => {
   return (
     <header className="h-[80px] px-4 sm:px-6 flex items-center justify-between gap-6 transition-colors">
-      {/* Search Bar / Mobile Menu Toggle (Figma 166:10899) */}
+      {/* Search Bar / Sidebar Toggle */}
       <div className="flex items-center gap-2 sm:gap-3 flex-1 max-w-[420px]">
-        {onOpenMobile && (
-          <button
-            type="button"
-            onClick={onOpenMobile}
-            className="md:hidden size-11 rounded-2xl bg-[#f4f4f4] text-slate-700 flex items-center justify-center hover:bg-slate-200 transition-colors shrink-0 shadow-sm"
-            aria-label="Open navigation menu"
-          >
-            <Menu className="size-5" />
-          </button>
-        )}
+        <SidebarTrigger />
 
         <div className="relative w-full">
           <Search className="size-[18px] text-slate-400 absolute left-[18px] top-1/2 -translate-y-1/2 pointer-events-none" />
