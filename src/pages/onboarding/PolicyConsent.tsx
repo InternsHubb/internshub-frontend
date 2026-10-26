@@ -9,7 +9,8 @@ import { getMyConsents, giveConsent } from '@/lib/api/me';
 import { getCurrentPolicies } from '@/lib/api/policies';
 import type { MyConsentDto, PolicyDto, PolicyType } from '@/lib/api/types';
 
-// The Payment step's terms checkbox. Ticking it records a consent (POST /api/me/consents) for every
+// The terms checkbox of the Path step (POST /api/enrollments needs the required consents) and the
+// Payment step. Ticking it records a consent (POST /api/me/consents) for every
 // required policy the backend says still needs acceptance, then reloads GET /api/me so
 // `requiredPoliciesAccepted` and `missingOnboardingSteps` reflect it. Accepted consents can't be
 // withdrawn here, so the box stays ticked once the backend reports them.
