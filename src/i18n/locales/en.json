@@ -476,8 +476,10 @@
       "errors": {
         "notLoaded": "Packages and tracks haven't loaded yet. Please try again.",
         "unavailable": "This package or track isn't available right now. Please choose another.",
-        "alreadyEnrolled": "You already have an active enrollment, so your package and track can't be changed here."
+        "alreadyEnrolled": "You already have an active enrollment, so your package and track can't be changed here.",
+        "acceptPolicies": "Accept the Terms of Service and Privacy Policy above to confirm your path."
       },
+      "acceptFirst": "Accept the terms above to confirm your path.",
       "priceAmount": "{{value}} EGP",
       "tracksHeading": "Choose your technology track",
       "catalogNote": "Catalog managed by InternsHub",
@@ -1494,6 +1496,7 @@
       "badRequest": "The request could not be processed. Please try again.",
       "unauthorized": "Please sign in to continue.",
       "forbidden": "You do not have permission to perform this action.",
+      "onboardingRequired": "Complete the remaining onboarding steps first.",
       "notFound": "The requested item could not be found.",
       "conflict": "This item or action conflicts with existing data. Please refresh and try again.",
       "server": "Something went wrong on our side. Please try again in a moment.",
