@@ -66,7 +66,9 @@ export type SquadState = JourneyExtras & {
   isSquadFull?: boolean;
 };
 
-export type InternshipState = CoursesState | InterviewReviewState | WaitingState | SquadState;
+export type ProjectState = JourneyExtras & { kind: 'project'; stepper: StepperState };
+
+export type InternshipState = CoursesState | InterviewReviewState | WaitingState | SquadState | ProjectState;
 
 const coursesStepper = (currentIndex: number): StepperState => ({ firstNumber: 1, currentIndex, withCourses: true });
 

@@ -9,7 +9,6 @@ import {
 
 import { RequireAuth } from '@/components/auth/RequireAuth';
 import type { DashboardRouteHandle } from '@/components/layout/DashboardLayout';
-import { CoursesSearch } from '@/pages/dashboard/courses/CoursesSearch';
 import { InternshipSidebarFooter, ProjectSidebarFooter } from '@/pages/dashboard/internship/InternshipSidebarFooter';
 import {
   EMPLOYER_ROUTES,
@@ -48,8 +47,6 @@ const PhoneOTP = lazy(() => import('@/pages/auth/PhoneOTP'));
 const MicrosoftCallback = lazy(
   () => import('@/pages/auth/MicrosoftCallback')
 );
-const Courses6mPage = lazy(() => import('@/pages/Courses6mPage'));
-const Courses12mPage = lazy(() => import('@/pages/Courses12mPage'));
 const CourseDetailsPage = lazy(() => import('@/pages/CourseDetailsPage'));
 const CourseVideoPage = lazy(() => import('@/pages/CourseVideoPage'));
 const CourseQuizPage = lazy(() => import('@/pages/CourseQuizPage'));
@@ -219,15 +216,15 @@ export const router = createBrowserRouter(
         },
         {
           path: ROUTES.courses6m,
-          element: <Courses6mPage />,
+          element: <Navigate to={ROUTES.dashboardCourses} replace />,
         },
         {
           path: ROUTES.courses12m,
-          element: <Courses12mPage />,
+          element: <Navigate to={ROUTES.dashboardCourses} replace />,
         },
         {
           path: '/courses',
-          element: <Courses6mPage />,
+          element: <Navigate to={ROUTES.dashboardCourses} replace />,
         },
         {
           path: ROUTES.courseDetails,
@@ -306,7 +303,6 @@ export const router = createBrowserRouter(
             },
             {
               path: 'courses',
-              handle: { topNavSearch: CoursesSearch } satisfies DashboardRouteHandle,
               children: [
                 { index: true, element: <CoursesPage /> },
                 { path: 'plans', element: <PlansPage /> },
