@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -51,7 +51,13 @@ export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { reloadUser } = useAuth();
+  const { status, user, reloadUser } = useAuth();
+
+  useEffect(() => {
+    if (status === 'authenticated' && user) {
+      navigate(postSignInPath(user, redirectFromState(location.state)), { replace: true });
+    }
+  }, [status, user, navigate, location.state]);
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [formErrorKey, setFormErrorKey] = useState<string | null>(
@@ -68,8 +74,8 @@ export default function Login() {
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema), mode: 'onSubmit', reValidateMode: 'onChange' });
 
   const finishSignIn = async () => {
-    const user = await reloadUser();
-    navigate(redirectFromState(location.state) ?? postSignInPath(user), { replace: true });
+    const loggedUser = await reloadUser();
+    navigate(postSignInPath(loggedUser, redirectFromState(location.state)), { replace: true });
   };
 
   const google = useGoogleSignIn({ onError: setFormErrorKey, onSignedIn: finishSignIn });

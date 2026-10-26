@@ -39,7 +39,7 @@ export default function MicrosoftCallback() {
         const { idToken, from } = readMicrosoftCallback(fragment);
         await signInWithMicrosoft(idToken);
         const user = await reloadUser();
-        navigate(safeRedirectPath(from) ?? postSignInPath(user), { replace: true });
+        navigate(postSignInPath(user, safeRedirectPath(from)), { replace: true });
       } catch (error) {
         const state: LoginLocationState = { errorKey: errorKeyFor(error) };
         navigate(ROUTES.login, { replace: true, state });

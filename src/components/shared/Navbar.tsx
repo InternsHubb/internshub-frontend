@@ -4,6 +4,7 @@ import { Menu, X, Globe, ArrowRight, ArrowLeft } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 import { useAuth } from '@/hooks/useAuth'
+import { isUserDataComplete } from '@/lib/auth/redirect'
 
 interface NavbarProps {
   activeSection?: string
@@ -26,11 +27,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
-  const { status, signOut } = useAuth()
+  const { status, user, signOut } = useAuth()
   const isHome = location.pathname === ROUTES.home
   const isRtl = i18n.dir() === 'rtl'
   // 'loading' means a stored session is being checked: it is still a signed-in browser.
   const isSignedIn = status !== 'anonymous'
+  const isDataComplete = isUserDataComplete(user)
+  const accountDestination = isDataComplete ? ROUTES.dashboard : ROUTES.onboarding
+  const accountLabel = isDataComplete ? t('nav.dashboard', 'Dashboard') : t('nav.account')
 
   const handleSignOut = () => {
     setMobileMenuOpen(false)
@@ -136,10 +140,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {t('nav.signOut')}
                 </button>
                 <Link
-                  to={ROUTES.onboarding}
+                  to={accountDestination}
                   className="inline-flex items-center justify-center px-6 py-2.5 text-[14px] sm:text-[15px] font-semibold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow-xs hover:shadow transition-all duration-200"
                 >
-                  <span>{t('nav.account')}</span>
+                  <span>{accountLabel}</span>
                 </Link>
               </>
             ) : (
@@ -235,11 +239,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </Link>
               )}
               <Link
-                to={isSignedIn ? ROUTES.onboarding : ROUTES.register}
+                to={isSignedIn ? accountDestination : ROUTES.register}
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full inline-flex items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-[#5a198f] hover:bg-[#481275] rounded-full shadow"
               >
-                <span>{isSignedIn ? t('nav.account') : t('nav.signUp')}</span>
+                <span>{isSignedIn ? accountLabel : t('nav.signUp')}</span>
                 {isRtl ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
               </Link>
             </div>
