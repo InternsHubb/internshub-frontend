@@ -185,6 +185,17 @@
     "mentorImageAlt": "Professional mentor in lavender jacket with laptop"
   },
   "mentorship": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "mentors": "Mentors",
+      "eligibility": "Eligibility",
+      "talentProfile": "Talent Profile",
+      "opportunities": "Opportunities",
+      "applications": "My Applications",
+      "interview": "Interview",
+      "agreement": "Agreement",
+      "notifications": "Notifications"
+    },
     "booking": {"back":"Back to Mentorship","title":"Book a Session","checkAvailability":"Check your mentor's availability.","viewProfile":"View Profile","noSlots":"No Available Slots","noSlotsDescription":"Check back later or explore other mentors.","updatedAvailability":"Availability is updated regularly.","otherMentors":"Explore Other Mentors","duration":"45 min session","subtitle":"Select a date and time that works for you.","available":"Available","oneToOne":"1:1 session","rulesTitle":"Booking rules","rules":"Cancel at least 24 hours before your session to receive your credit back.","selectDate":"Select Date","previousDates":"Previous dates","nextDates":"Next dates","timeSlots":"Available Time Slots","timeHint":"Select your preferred time","selected":"Selected","open":"Open","summary":"Booking Summary","mentor":"MENTOR","dateTime":"DATE & TIME","durationLabel":"DURATION","balance":"Session Balance","remaining":"{{remaining}} of {{total}} remaining","topic":"What would you like to discuss?","continue":"Continue to Confirmation","cancellation":"Cancel at least 24 hours in advance to keep your session credit."},
     "live": {
       "loading": "Loading your mentorship…",
@@ -664,7 +675,8 @@
       },
       "paid": {
         "title": "Payment confirmed — you're enrolled",
-        "amount": "Paid {{amount}}"
+        "amount": "Paid {{amount}}",
+        "autoContinuing": "Continuing to the remaining steps automatically..."
       },
       "tryAgain": "Try again",
       "startOver": "Start a new payment",
@@ -1224,6 +1236,7 @@
       "internship": "Internship",
       "mySquad": "My Squad",
       "courses": "Courses",
+      "mentorship": "Mentorship",
       "recruitment": "Recruitment",
       "sprints": "Sprints",
       "progress": "Progress",

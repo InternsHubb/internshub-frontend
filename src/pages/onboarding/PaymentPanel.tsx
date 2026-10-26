@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import cardWhiteIcon from '../../assets/onboarding/card-white.svg';
@@ -39,13 +40,33 @@ export function PaymentPanel({ enrollment, isTermsAccepted, state, onPay, onChec
   const canPay = !isPaid && !isBusy && enrollment?.status === 'PendingPayment' && isTermsAccepted
     && (state.kind === 'idle' || state.kind === 'error');
 
+  const onContinueRef = useRef(onContinue);
+  useEffect(() => {
+    onContinueRef.current = onContinue;
+  }, [onContinue]);
+
+  useEffect(() => {
+    if (!isPaid) return undefined;
+    const timer = window.setTimeout(() => {
+      onContinueRef.current();
+    }, 2000);
+    return () => window.clearTimeout(timer);
+  }, [isPaid]);
+
   const status = (() => {
     if (isPaid) {
       const invoice = state.kind === 'paid' ? state.invoice : null;
       return (
-        <div role="status" className={`${NOTICE} bg-[#EAF8F0] text-[#16794A]`}>
-          <p className="font-bold">{t('onboarding.payment.paid.title')}</p>
+        <div role="status" className={`${NOTICE} bg-[#EAF8F0] text-[#16794A] border border-[#16794A]/20`}>
+          <div className="flex items-center gap-2">
+            <span className="w-5 h-5 rounded-full bg-[#16794A] text-white flex items-center justify-center text-xs font-bold shrink-0">✓</span>
+            <p className="font-bold text-sm">{t('onboarding.payment.paid.title')}</p>
+          </div>
           {invoice && <p>{t('onboarding.payment.paid.amount', { amount: formatAmount(invoice.amount, invoice.currency, i18n.language) })}</p>}
+          <div className="pt-2 mt-2 border-t border-[#16794A]/20 flex items-center justify-between text-[11px]">
+            <span className="font-medium text-[#16794A]">{t('onboarding.payment.paid.autoContinuing')}</span>
+            <span className="inline-block size-3.5 animate-spin rounded-full border-2 border-[#16794A] border-t-transparent" />
+          </div>
         </div>
       );
     }
@@ -125,7 +146,14 @@ export function PaymentPanel({ enrollment, isTermsAccepted, state, onPay, onChec
       {status}
 
       {isPaid ? (
-        <button type="button" onClick={onContinue} className={PRIMARY_BUTTON}>{t('onboarding.payment.continue')}</button>
+        <button
+          type="button"
+          onClick={() => onContinueRef.current()}
+          className={`${PRIMARY_BUTTON} flex items-center justify-center gap-2`}
+        >
+          <span>{t('onboarding.payment.continue')}</span>
+          <span aria-hidden="true" className="inline-block rtl:-scale-x-100">→</span>
+        </button>
       ) : (
         <button
           type="button"

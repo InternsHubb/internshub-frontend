@@ -133,7 +133,7 @@ export default function PhoneOTP() {
       return;
     }
     const user = await reloadUser();
-    navigate(redirectFromState(location.state) ?? postSignInPath(user), { replace: true });
+    navigate(postSignInPath(user, redirectFromState(location.state)), { replace: true });
   };
 
   const handleResend = async () => {

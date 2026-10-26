@@ -1,4 +1,4 @@
-import { useCallback, useState, type InputHTMLAttributes, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type InputHTMLAttributes, type ReactNode } from 'react';
 import { useForm, type UseFormRegisterReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -129,7 +129,13 @@ type CompletedRegistration = {
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { reloadUser } = useAuth();
+  const { user, reloadUser } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate(postSignInPath(user), { replace: true });
+    }
+  }, [user, navigate]);
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
@@ -189,8 +195,8 @@ export default function RegisterScreen() {
       return;
     }
 
-    await reloadUser();
-    navigate(ROUTES.onboarding, { replace: true });
+    const loggedUser = await reloadUser();
+    navigate(postSignInPath(loggedUser), { replace: true });
   };
 
   if (completed) {
