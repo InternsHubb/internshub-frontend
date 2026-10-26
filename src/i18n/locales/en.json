@@ -940,7 +940,20 @@
         "screenActive": "Full-screen sharing active",
         "pausedTitle": "Interview paused",
         "pausedBody": "A required device has stopped. Restore it to continue the interview.",
-        "copyDisabled": "Copying, cutting and pasting are turned off in the question area during the interview."
+        "copyDisabled": "Copying, cutting and pasting are turned off in the question area during the interview.",
+        "answerKept": "Your recorded answer is kept. Send it again, or record a new answer.",
+        "sendAgain": "Send again",
+        "recordNewAnswer": "Record a new answer",
+        "recordingProblem": "Your answer isn't being recorded",
+        "recordAgain": "Try recording again",
+        "voice": {
+          "idle": "Not recording",
+          "paused": "Paused",
+          "listening": "Listening…",
+          "speaking": "Speaking",
+          "processing": "Sending your answer…",
+          "error": "Microphone problem"
+        }
       },
       "fullscreen": {
         "noticeTitle": "The interview runs in fullscreen",
@@ -958,7 +971,8 @@
       "live": {
         "errors": {
           "recordingUnsupported": "This browser can't record audio from your microphone. Use a recent version of Chrome, Edge or Firefox.",
-          "emptyRecording": "No sound was recorded. Check your microphone, answer again and select Done."
+          "emptyRecording": "No sound was recorded. Check your microphone, answer again and select Done.",
+          "recordingFailed": "Recording stopped unexpectedly. Check that your microphone is connected, then try recording again."
         }
       },
       "result": {
@@ -1506,6 +1520,7 @@
       "notFound": "The requested item could not be found.",
       "conflict": "This item or action conflicts with existing data. Please refresh and try again.",
       "server": "Something went wrong on our side. Please try again in a moment.",
+      "unavailable": "The service is temporarily unavailable. Please try again in a few minutes.",
       "unknown": "An unexpected error occurred. Please try again."
     }
   }

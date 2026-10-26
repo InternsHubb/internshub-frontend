@@ -14,6 +14,10 @@ import type { OutcomeScreen } from './types';
 // - Each spoken answer is recorded from the microphone stream the device check opened, uploaded as
 //   an Audio file (upload-url → signed PUT → confirm) and sent with POST /api/interviews/{id}/answers.
 //   The response carries the next question, or none when the interview has ended.
+// - A take that couldn't be sent (e.g. 503 from the answers endpoint) is kept, so the candidate can
+//   send it again without re-recording, or discard it and answer again. An upload that was already
+//   confirmed is not repeated. After a failure the attempt is read back once: if the backend did
+//   save the answer (it moved past that question), the flow continues from the backend state.
 
 const RESUMABLE = new Set<InterviewDto['status']>(['InProgress', 'Interrupted']);
 // MediaRecorder formats in order of preference; the first one the browser supports is used.
@@ -53,11 +57,35 @@ export function levelKey(level: InterviewLevel): string {
   return { NotReady: 'notReady', Junior: 'junior', Mid: 'mid', Advanced: 'advanced' }[level];
 }
 
+// A recorded answer on its way to the backend. assetId is set once its upload is confirmed.
+type AnswerTake = { orderIndex: number; audio: Blob; assetId: string | null };
+
+// Reads the attempt back after a failed send. Returns it only when the backend has moved past the
+// question, i.e. the answer was saved even though the response failed.
+async function savedDespiteError(
+  interview: InterviewDto,
+  orderIndex: number,
+  error: unknown
+): Promise<InterviewDto | null> {
+  if (!(error instanceof ApiError) || error.status === 0 || error.status === 401) return null;
+  try {
+    const fresh = await getInterview(interview.id);
+    const moved = fresh.answeredCount > interview.answeredCount && fresh.currentQuestion?.orderIndex !== orderIndex;
+    return moved ? fresh : null;
+  } catch {
+    return null;
+  }
+}
+
 export function useLiveInterview() {
   const [interview, setInterview] = useState<InterviewDto | null>(null);
   const [status, setStatus] = useState<LiveInterviewStatus>('idle');
+  // Failures from the backend (start, upload, send) and from the recorder are kept apart: the
+  // first is shown as a send/start error, the second as a microphone problem.
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [recordingErrorKey, setRecordingErrorKey] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [pendingAnswer, setPendingAnswer] = useState<AnswerTake | null>(null);
   const recorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
 
@@ -71,6 +99,7 @@ export function useLiveInterview() {
     starting.current = true;
     setStatus('starting');
     setErrorKey(null);
+    setPendingAnswer(null);
     try {
       await giveConsent('InterviewRecording');
       const unfinished = (await getMyInterviews()).find((item) => RESUMABLE.has(item.status));
@@ -87,17 +116,29 @@ export function useLiveInterview() {
   const startRecording = useCallback((stream: MediaStream | null) => {
     const type = recordingType();
     if (!stream || !type) {
-      setErrorKey('onboarding.interview.live.errors.recordingUnsupported');
+      setRecordingErrorKey('onboarding.interview.live.errors.recordingUnsupported');
       return;
     }
     chunks.current = [];
-    const next = new MediaRecorder(stream, { mimeType: type });
-    next.ondataavailable = (event) => {
-      if (event.data.size > 0) chunks.current.push(event.data);
-    };
-    next.start();
+    // The constructor and start() throw if the stream's tracks have ended or the format is refused.
+    let next: MediaRecorder;
+    try {
+      next = new MediaRecorder(stream, { mimeType: type });
+      next.ondataavailable = (event) => {
+        if (event.data.size > 0) chunks.current.push(event.data);
+      };
+      next.onerror = () => {
+        if (recorder.current !== next) return;
+        recorder.current = null;
+        setIsRecording(false);
+        setRecordingErrorKey('onboarding.interview.live.errors.recordingFailed');
+      };
+      next.start();
+    } catch {
+      setRecordingErrorKey('onboarding.interview.live.errors.recordingFailed');
+      return;
+    }
     recorder.current = next;
-    // A send error stays on screen while the candidate answers again.
     setIsRecording(true);
   }, []);
 
@@ -123,36 +164,88 @@ export function useLiveInterview() {
     void stopRecording();
   }, [stopRecording]);
 
+  // Uploads the take (unless already confirmed) and sends it. On failure the take is kept as the
+  // pending answer, with the confirmed asset id so a resend skips the upload.
+  const sendTake = useCallback(
+    async (take: AnswerTake): Promise<InterviewDto | null> => {
+      if (!interview) return null;
+      setStatus('submitting');
+      setErrorKey(null);
+      let assetId = take.assetId;
+      try {
+        if (!assetId) {
+          const mimeType = baseMimeType(take.audio.type);
+          const target = await createUploadUrl({ kind: 'Audio', mimeType, sizeBytes: take.audio.size });
+          await uploadToSignedUrl(target, take.audio).catch((error: unknown) => {
+            if (error instanceof ApiError && error.status === 0) throw error;
+            throw new ApiError(500, null, 'Audio upload failed');
+          });
+          await confirmUpload(target.assetId);
+          assetId = target.assetId;
+        }
+        const next = await submitInterviewAnswer(interview.id, { orderIndex: take.orderIndex, audioAssetId: assetId });
+        setPendingAnswer(null);
+        setInterview(next);
+        setStatus('ready');
+        return next;
+      } catch (error) {
+        const saved = await savedDespiteError(interview, take.orderIndex, error);
+        if (saved) {
+          setPendingAnswer(null);
+          setInterview(saved);
+          setStatus('ready');
+          return saved;
+        }
+        setPendingAnswer({ ...take, assetId });
+        setErrorKey(apiErrorKey(error));
+        setStatus('ready');
+        return null;
+      }
+    },
+    [interview]
+  );
+
   const submitAnswer = useCallback(async (): Promise<InterviewDto | null> => {
     const question = interview?.currentQuestion;
     if (!interview || !question) return null;
     const audio = await stopRecording();
     if (!audio || audio.size === 0) {
-      setErrorKey('onboarding.interview.live.errors.emptyRecording');
+      setRecordingErrorKey('onboarding.interview.live.errors.emptyRecording');
       return null;
     }
-    setStatus('submitting');
-    setErrorKey(null);
-    try {
-      const mimeType = baseMimeType(audio.type);
-      const target = await createUploadUrl({ kind: 'Audio', mimeType, sizeBytes: audio.size });
-      await uploadToSignedUrl(target, audio).catch((error: unknown) => {
-        if (error instanceof ApiError && error.status === 0) throw error;
-        throw new ApiError(500, null, 'Audio upload failed');
-      });
-      await confirmUpload(target.assetId);
-      const next = await submitInterviewAnswer(interview.id, { orderIndex: question.orderIndex, audioAssetId: target.assetId });
-      setInterview(next);
-      setStatus('ready');
-      return next;
-    } catch (error) {
-      setErrorKey(apiErrorKey(error));
-      setStatus('ready');
-      return null;
-    }
-  }, [interview, stopRecording]);
+    return sendTake({ orderIndex: question.orderIndex, audio, assetId: null });
+  }, [interview, sendTake, stopRecording]);
 
-  return { interview, status, errorKey, isRecording, start, startRecording, cancelRecording, submitAnswer };
+  // Sends the kept take again, without recording a new one.
+  const resendAnswer = useCallback(
+    async (): Promise<InterviewDto | null> => (pendingAnswer ? sendTake(pendingAnswer) : null),
+    [pendingAnswer, sendTake]
+  );
+
+  // Drops the kept take; the question screen then records a new answer.
+  const discardPendingAnswer = useCallback(() => {
+    setPendingAnswer(null);
+    setErrorKey(null);
+  }, []);
+
+  // A recorder problem holds recording until the candidate chooses to try again.
+  const clearRecordingError = useCallback(() => setRecordingErrorKey(null), []);
+
+  return {
+    interview,
+    status,
+    errorKey,
+    recordingErrorKey,
+    isRecording,
+    hasPendingAnswer: pendingAnswer !== null,
+    start,
+    startRecording,
+    cancelRecording,
+    submitAnswer,
+    resendAnswer,
+    discardPendingAnswer,
+    clearRecordingError,
+  };
 }
 
 export type LiveInterview = ReturnType<typeof useLiveInterview>;
