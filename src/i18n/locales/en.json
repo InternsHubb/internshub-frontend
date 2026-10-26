@@ -1463,7 +1463,13 @@
       "amount": "{{value}} EGP",
       "upgradePriceHint": "Pay only the difference to upgrade from your current package.",
       "upgradeWithPrice": "Upgrade Now - {{value}} EGP",
-      "paymentUnavailable": "Online payment isn't available yet, so your plan hasn't changed."
+      "paymentUnavailable": "Online payment isn't available yet, so your plan hasn't changed.",
+      "quoteLoading": "Calculating upgrade price…",
+      "upgrading": "Processing upgrade…",
+      "upgradeSuccess": "Plan upgraded successfully!",
+      "quoteError": "Unable to calculate upgrade price. Please try again.",
+      "upgradeError": "Failed to apply upgrade. Please try again.",
+      "noActiveEnrollment": "No active enrollment found to upgrade."
     }
   },
   "account": {
