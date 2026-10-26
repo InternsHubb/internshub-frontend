@@ -79,7 +79,16 @@ export function PolicyConsent() {
       setErrorKey(null);
       if (!(await openPolicyDocument(policy.documentAssetId))) setErrorKey('onboarding.policies.documentError');
     };
-    return <button type="button" onClick={open} className="underline font-bold">{label}</button>;
+    // Buttons get Tailwind's default arrow cursor; these read as links, so they show a pointer.
+    return (
+      <button
+        type="button"
+        onClick={open}
+        className="underline font-bold cursor-pointer hover:text-[#3A0353] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5C1D87] rounded-sm"
+      >
+        {label}
+      </button>
+    );
   };
 
   if (isLoading && !data) {
@@ -107,7 +116,7 @@ export function PolicyConsent() {
         <input
           type="checkbox"
           id="terms"
-          className="w-4 h-4 rounded mt-px shrink-0"
+          className="w-4 h-4 rounded mt-px shrink-0 cursor-pointer disabled:cursor-default"
           checked={isAccepted || isSaving}
           disabled={isAccepted || isSaving}
           onChange={(event) => { if (event.target.checked) void accept(); }}
@@ -116,7 +125,8 @@ export function PolicyConsent() {
         <label htmlFor="terms">
           <Trans
             i18nKey="onboarding.policies.label"
-            components={{ terms: termsLink, privacy: privacyLink, refund: <a href="#refund" className="underline font-bold" /> }}
+            // The backend publishes no refund policy document, so its name is plain text, not a dead link.
+            components={{ terms: termsLink, privacy: privacyLink, refund: <span className="font-bold" /> }}
           />
         </label>
       </div>

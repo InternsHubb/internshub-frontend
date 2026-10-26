@@ -149,6 +149,16 @@ export default function OnboardingFlow() {
   const myCv = useMyCv();
   // The CV counts once the backend holds one whose parsing hasn't failed.
   const isCvReady = myCv.cv !== null && myCv.cv.parseStatus !== 'Failed';
+  // GET /api/me/cv is also refused (403, AcceptPolicies) until the terms are accepted, so the CV
+  // loaded when the page opened is fetched again once, right after they are.
+  const { error: cvError, retry: retryCv } = myCv;
+  const retriedCvAfterPolicies = useRef(false);
+  useEffect(() => {
+    if (!arePoliciesAccepted || retriedCvAfterPolicies.current) return;
+    if (!missingOnboardingSteps(cvError).includes('AcceptPolicies')) return;
+    retriedCvAfterPolicies.current = true;
+    retryCv();
+  }, [arePoliciesAccepted, cvError, retryCv]);
 
   // An enrollment chosen earlier preselects its cards, once, unless the learner already picked some.
   const appliedSavedChoice = useRef(false);
