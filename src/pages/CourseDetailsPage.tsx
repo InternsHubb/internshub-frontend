@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
-import { getCourseById } from '@/lib/api/courses';
-import type { CourseDetailDto } from '@/lib/api/types';
 // Slim sidebar glyphs: the same Figma icons the dashboard sidebar uses ("course details" Frame 10).
 import slimCertificate from '@/assets/dashboard/sb-certificate.svg';
 import slimChat from '@/assets/dashboard/sb-chat.svg';
@@ -12,14 +10,6 @@ import slimInternship from '@/assets/dashboard/sb-internship.svg';
 import slimProgress from '@/assets/dashboard/sb-progress.svg';
 import slimSprints from '@/assets/dashboard/sb-sprints.svg';
 import slimSquad from '@/assets/dashboard/sb-squad.svg';
-
-function formatDuration(totalSeconds: number): string {
-  if (!totalSeconds || totalSeconds <= 0) return 'Self-paced';
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}${minutes > 0 ? ` ${minutes}m` : ''}`;
-  return `${minutes} min`;
-}
 
 interface EnrolledLesson {
   id: string;
@@ -164,60 +154,6 @@ export const CourseDetailsPage: React.FC = () => {
   const [activeContentLesson, setActiveContentLesson] = useState<string>('interactive-proto');
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
-  const [courseDetail, setCourseDetail] = useState<CourseDetailDto | null>(null);
-  const [isLoadingDetail, setIsLoadingDetail] = useState<boolean>(true);
-  const [detailError, setDetailError] = useState<string | null>(null);
-
-  const loadCourseDetail = useCallback(async () => {
-    if (!id) {
-      setIsLoadingDetail(false);
-      return;
-    }
-    setIsLoadingDetail(true);
-    setDetailError(null);
-    try {
-      const detail = await getCourseById(id);
-      setCourseDetail(detail);
-      if (detail.isEntitled) {
-        setIsEnrolled(true);
-      }
-    } catch {
-      setDetailError('Unable to load course details. Please verify your course access or try again.');
-    } finally {
-      setIsLoadingDetail(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    void loadCourseDetail();
-  }, [loadCourseDetail]);
-
-  const activeModules = useMemo<EnrolledModule[]>(() => {
-    if (courseDetail?.lessons && courseDetail.lessons.length > 0) {
-      return [
-        {
-          id: 1,
-          title: courseDetail.title,
-          lessonsCount: courseDetail.lessons.length,
-          duration: formatDuration(courseDetail.totalDurationSeconds),
-          lessons: courseDetail.lessons.map((l) => ({
-            id: l.id,
-            title: l.title,
-            type: 'Video Lesson',
-            duration: formatDuration(l.durationSeconds),
-            status: l.isCompleted ? 'completed' : 'unstarted',
-          })),
-        },
-      ];
-    }
-    return ENROLLED_MODULES;
-  }, [courseDetail]);
-
-  const courseTitle = courseDetail?.title || 'Data Analysis Fundamentals';
-  const courseTrack = courseDetail?.trackName || 'Artificial Intelligence';
-  const courseDuration = courseDetail ? formatDuration(courseDetail.totalDurationSeconds) : '18 hours';
-  const totalLessonsCount = courseDetail ? courseDetail.lessons.length : (isCompleted ? 19 : 32);
-
   // Advance progress on user interaction until completed (and cycles back on click when at 100%)
   const advanceProgress = () => {
     setCompletedCount((prev) => {
@@ -312,12 +248,12 @@ export const CourseDetailsPage: React.FC = () => {
                 <path d="M1.5 1.5L6 6L1.5 10.5" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
 
-              <span className="text-[#94A3B8]">{courseTrack}</span>
+              <span className="text-[#94A3B8]">Artificial Intelligence</span>
               <svg width="8" height="12" viewBox="0 0 8 12" fill="none" className="shrink-0">
                 <path d="M1.5 1.5L6 6L1.5 10.5" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
 
-              <span className="text-[#4C0585] font-semibold">{courseTitle}</span>
+              <span className="text-[#4C0585] font-semibold">Data Analysis Fundamentals</span>
             </nav>
           </div>
         </div>
@@ -394,25 +330,6 @@ export const CourseDetailsPage: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* Loading & Error Status for Course Details */}
-      {isLoadingDetail && (
-        <div className="w-full max-w-[1560px] mx-auto px-6 py-6 flex items-center justify-center">
-          <div className="size-8 animate-spin rounded-full border-3 border-[#5A198F] border-t-transparent" />
-        </div>
-      )}
-      {detailError && (
-        <div className="w-full max-w-[1560px] mx-auto px-6 py-3 my-2 bg-[#FFF1F0] border border-[#FFA39E] rounded-xl flex items-center justify-between text-[#CF1322] text-sm">
-          <span>{detailError}</span>
-          <button
-            type="button"
-            onClick={() => void loadCourseDetail()}
-            className="px-3 py-1 bg-[#5A198F] text-white rounded-md text-xs font-semibold hover:bg-[#471273]"
-          >
-            Retry
-          </button>
-        </div>
-      )}
 
       {/* Main Container: Slim Sidebar + Content Layout */}
       <div className="w-full max-w-[1560px] mx-auto pl-1.5 sm:pl-2 lg:pl-6 pr-4 sm:pr-6 lg:pr-6 pt-3 flex gap-[24px] items-start">
@@ -575,14 +492,14 @@ export const CourseDetailsPage: React.FC = () => {
                     Course Curriculum
                   </h2>
                   <p className="font-normal text-[16px] leading-[24px] text-[#536278]">
-                    {activeModules.length} module{activeModules.length > 1 ? 's' : ''} • {totalLessonsCount} lessons • {courseDuration} total length
+                    6 modules • {isCompleted ? '19' : '32'} lessons • 18 hours total length
                   </p>
                 </div>
               </div>
 
               {/* Videos / Modules Accordion List */}
               <div className="flex flex-col gap-[20px] sm:gap-[30px] w-full">
-                {activeModules.map((mod) => {
+                {ENROLLED_MODULES.map((mod) => {
                   const isOpen = !!openModules[mod.id];
                   const isAttachmentsOpen = !!openAttachments[mod.id];
 
@@ -667,7 +584,7 @@ export const CourseDetailsPage: React.FC = () => {
                                 key={lesson.id}
                                 onClick={() => {
                                   advanceProgress();
-                                  navigate(`/courses/${courseDetail ? courseDetail.id : (id || 'data_analysis')}/video?lesson=${lesson.id}`);
+                                  navigate(`/courses/${id || 'data_analysis'}/video`);
                                 }}
                                 className="py-[16px] flex items-center justify-between gap-4 hover:bg-slate-50/60 px-2 rounded-lg transition-colors cursor-pointer group"
                                 title="Click to watch video lesson"
@@ -1533,7 +1450,7 @@ export const CourseDetailsPage: React.FC = () => {
                 <div className="absolute -bottom-[32px] -left-[32px] size-[160px] bg-[#D2C1E1] rounded-full opacity-60 blur-3xl pointer-events-none" />
 
                 <div
-                  onClick={() => navigate(`/courses/${courseDetail ? courseDetail.id : (id || 'data_analysis')}/video`)}
+                  onClick={() => navigate(`/courses/${id || 'data_analysis'}/video`)}
                   className="w-full h-[320px] sm:h-[420px] rounded-[24px] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)] overflow-hidden relative border border-slate-100 bg-[#0E1626] cursor-pointer group"
                   title="Watch course video"
                 >
@@ -1552,7 +1469,7 @@ export const CourseDetailsPage: React.FC = () => {
 
                     <div className="flex flex-col">
                       <span className="font-bold text-[14px] leading-[20px] text-[#1E293B] whitespace-nowrap">
-                        {totalLessonsCount} Video Lessons
+                        32 Video Lessons
                       </span>
                       <span className="font-normal text-[12px] leading-[16px] text-[#6B6D6F] whitespace-nowrap">
                         Lifetime access
@@ -1570,13 +1487,13 @@ export const CourseDetailsPage: React.FC = () => {
                   Course Curriculum
                 </h2>
                 <p className="font-normal text-[16px] leading-[24px] text-[#536278]">
-                  {activeModules.length} module{activeModules.length > 1 ? 's' : ''} • {totalLessonsCount} lessons • {courseDuration} total length
+                  6 modules • 32 lessons • 18 hours total length
                 </p>
               </div>
 
               {/* Modules Accordion List */}
               <div className="flex flex-col gap-[16px] w-full">
-                {activeModules.map((mod) => {
+                {ENROLLED_MODULES.map((mod) => {
                   const isOpen = !!openModules[mod.id];
 
                   return (

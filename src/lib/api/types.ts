@@ -120,19 +120,6 @@ export type InvoiceDto = {
   createdAt: string;
   paidAt: string | null;
 };
-export type PlanChangeQuoteDto = {
-  fromEnrollmentId: string;
-  packageId: string;
-  packageCode: string;
-  price: number;
-  alreadyPaid: number;
-  discount: number;
-  amountDue: number;
-  currency: string;
-};
-export type RequestUpgradeRequest = {
-  packageId: string;
-};
 
 // Courses
 export type LessonDto = {

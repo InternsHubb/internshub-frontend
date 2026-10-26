@@ -27,9 +27,9 @@ type NavItem = {
 };
 
 const mainNav: NavItem[] = [
-  { id: 'dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard, to: EMPLOYER_ROUTES.dashboard },
-  { id: 'talent', labelKey: 'nav.talentDirectory', icon: Users, to: EMPLOYER_ROUTES.talent },
-  { id: 'shortlist', labelKey: 'nav.shortlist', icon: Bookmark, to: EMPLOYER_ROUTES.shortlist, badge: '3' },
+  { id: 'dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard, disabled: true },
+  { id: 'talent', labelKey: 'nav.talentDirectory', icon: Users, disabled: true },
+  { id: 'shortlist', labelKey: 'nav.shortlist', icon: Bookmark, disabled: true, badge: '3' },
   { id: 'pipeline', labelKey: 'nav.pipeline', icon: GitBranch, to: EMPLOYER_ROUTES.pipeline, badge: '4' },
   { id: 'interviews', labelKey: 'nav.interviews', icon: CalendarDays, to: EMPLOYER_ROUTES.pipeline, badge: '1' },
   { id: 'completion', labelKey: 'nav.completion', icon: CircleCheck, to: EMPLOYER_ROUTES.completion },
@@ -48,9 +48,6 @@ export function EmployerSidebar({ mobileOpen = false, onClose }: EmployerSidebar
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
-  const dashboardActive = pathname === EMPLOYER_ROUTES.dashboard;
-  const talentActive = pathname.startsWith(EMPLOYER_ROUTES.talent);
-  const shortlistActive = pathname.startsWith(EMPLOYER_ROUTES.shortlist);
   const pipelineActive = pathname.startsWith(EMPLOYER_ROUTES.pipeline);
   const interviewsActive =
     pathname.startsWith('/employer/interviews') ||
@@ -134,13 +131,10 @@ export function EmployerSidebar({ mobileOpen = false, onClose }: EmployerSidebar
         <nav aria-label={t('brand.recruitment', 'Recruitment')} className="relative z-10 mt-2 space-y-1">
           {mainNav.map((item) => {
             const Icon = item.icon;
-            const isDashboard = item.id === 'dashboard' && dashboardActive;
-            const isTalent = item.id === 'talent' && talentActive;
-            const isShortlist = item.id === 'shortlist' && shortlistActive;
             const isPipeline = item.id === 'pipeline' && pipelineActive;
             const isInterviews = item.id === 'interviews' && interviewsActive;
             const isCompletion = item.id === 'completion' && completionActive;
-            const active = isDashboard || isTalent || isShortlist || isPipeline || isInterviews || isCompletion;
+            const active = isPipeline || isInterviews || isCompletion;
 
             const content = (
               <>
