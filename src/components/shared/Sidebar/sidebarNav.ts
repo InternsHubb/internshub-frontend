@@ -1,7 +1,6 @@
 import type { ComponentType } from 'react';
 import {
   Bell,
-  BookOpen,
   BriefcaseBusiness,
   CalendarDays,
   CheckCircle2,
@@ -37,6 +36,7 @@ export type SidebarSubItem = {
   labelKey: string;
   icon: ComponentType<{ className?: string; 'aria-hidden'?: boolean }>;
   to?: string;
+  disabled?: boolean;
   end?: boolean;
   // Count pill shown at the end of the row (Figma "Opportunities 4", "Interview 1", ...).
   badge?: string;
@@ -57,12 +57,6 @@ export type SidebarNavItem = {
 
 // Sub-items of the Internship dropdown group (journey stages)
 export const INTERNSHIP_ITEMS: ReadonlyArray<SidebarSubItem> = [
-  {
-    id: 'internship-courses',
-    labelKey: 'dashboard.journey.courses',
-    icon: BookOpen,
-    to: `${ROUTES.dashboardInternship}?step=courses`,
-  },
   {
     id: 'internship-technical-interview',
     labelKey: 'dashboard.journey.technicalInterview',
@@ -116,26 +110,27 @@ export const RECRUITMENT_ITEMS: ReadonlyArray<SidebarSubItem> = [
 
 // Preserves all navigation items and behaviors from the Figma mentorship sidebar (160:9593),
 // with full route support for the Mentorship Dashboard (/mentorship) and Mentors directory (/mentorship/mentors).
+// Remaining items (Eligibility through Notifications) are disabled and non-interactive.
 export const MENTORSHIP_ITEMS: ReadonlyArray<SidebarSubItem> = [
   { id: 'mentorship-dashboard', labelKey: 'mentorship.nav.dashboard', icon: House, to: ROUTES.mentorship, end: true },
   { id: 'mentorship-mentors', labelKey: 'mentorship.nav.mentors', icon: Users, to: ROUTES.mentorshipMentors },
-  { id: 'mentorship-eligibility', labelKey: 'mentorship.nav.eligibility', icon: Star, to: ROUTES.recruitmentEligibility },
-  { id: 'mentorship-profile', labelKey: 'mentorship.nav.talentProfile', icon: UserRound, to: `${ROUTES.recruitment}/profile` },
+  { id: 'mentorship-eligibility', labelKey: 'mentorship.nav.eligibility', icon: Star, disabled: true },
+  { id: 'mentorship-profile', labelKey: 'mentorship.nav.talentProfile', icon: UserRound, disabled: true },
   {
     id: 'mentorship-opportunities',
     labelKey: 'mentorship.nav.opportunities',
     icon: BriefcaseBusiness,
-    to: `${ROUTES.recruitment}/opportunities`,
+    disabled: true,
     badge: '4',
   },
-  { id: 'mentorship-applications', labelKey: 'mentorship.nav.applications', icon: FileText, to: ROUTES.recruitmentApplications },
-  { id: 'mentorship-interview', labelKey: 'mentorship.nav.interview', icon: CalendarDays, to: `${ROUTES.recruitment}/interview`, badge: '1' },
-  { id: 'mentorship-agreement', labelKey: 'mentorship.nav.agreement', icon: ClipboardList, to: ROUTES.recruitmentAgreements },
+  { id: 'mentorship-applications', labelKey: 'mentorship.nav.applications', icon: FileText, disabled: true },
+  { id: 'mentorship-interview', labelKey: 'mentorship.nav.interview', icon: CalendarDays, disabled: true, badge: '1' },
+  { id: 'mentorship-agreement', labelKey: 'mentorship.nav.agreement', icon: ClipboardList, disabled: true },
   {
     id: 'mentorship-notifications',
     labelKey: 'mentorship.nav.notifications',
     icon: Bell,
-    to: `${ROUTES.recruitment}/notifications`,
+    disabled: true,
     badge: '2',
   },
 ];
