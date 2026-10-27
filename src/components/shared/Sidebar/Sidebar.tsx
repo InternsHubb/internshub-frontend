@@ -126,7 +126,7 @@ function NavSubItem({ item, onNavigate }: { item: SidebarSubItem; onNavigate?: (
   const Icon = item.icon;
   const label = t(item.labelKey);
 
-  if (!item.to) {
+  if (item.disabled || !item.to) {
     return (
       <li>
         <span
