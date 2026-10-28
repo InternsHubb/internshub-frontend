@@ -137,7 +137,7 @@ export const SeniorJourneyView: React.FC<SeniorJourneyViewProps> = ({
             </button>
           ) : (
             <Link
-              to={`${ROUTES.home}#experience`}
+              to={`${ROUTES.home}#internship`}
               className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#5a198f] hover:text-[#3a0353] px-3.5 py-1.5 rounded-lg hover:bg-purple-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600"
             >
               {isRtl ? <ArrowRight className="size-4" /> : <ArrowLeft className="size-4" />}
