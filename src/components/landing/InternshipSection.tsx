@@ -1,103 +1,117 @@
-import React, { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { Sparkles, Compass, ArrowRight, ArrowLeft } from 'lucide-react';
+import type { SeniorCategory, SeniorProfile } from '@/types/senior';
+import { getAllSeniors } from '@/data/seniorsData';
+import { SeniorCard } from '@/components/experience/SeniorCard';
+import { SeniorJourneyModal } from '@/components/experience/SeniorJourneyModal';
+import { ROUTES, seniorProfilePath } from '@/constants/routes';
 
 export const InternshipSection: React.FC = () => {
-  const { t, i18n } = useTranslation()
-  const isRtl = i18n.language === 'ar'
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === 'ar';
 
-  const tracks = useMemo(
+  const [activeCategory, setActiveCategory] = useState<SeniorCategory>('all');
+  const [selectedSenior, setSelectedSenior] = useState<SeniorProfile | null>(null);
+
+  const allSeniors = useMemo(() => getAllSeniors(), []);
+
+  const filteredSeniors = useMemo(() => {
+    if (activeCategory === 'all') return allSeniors;
+    return allSeniors.filter((s) => s.category === activeCategory);
+  }, [allSeniors, activeCategory]);
+
+  const categories = useMemo<{ id: SeniorCategory; label: string }[]>(
     () => [
-      {
-        id: 'track-1',
-        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-        instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
-        instructorAvatar: '/images/course-avatar-elena.webp',
-        rating: '4.7',
-        reviews: '(1,802)',
-        duration: isRtl ? '22 ساعة' : '22 hours',
-        level: isRtl ? 'متقدم' : 'Advanced',
-        lessons: isRtl ? '40 درساً' : '40 lessons',
-        thumbnail: '/images/course-thumb-1.webp',
-        applicantBadge: '+6',
-      },
-      {
-        id: 'track-2',
-        title: isRtl ? 'رياكت وريدكس: من الأساسيات إلى الاحتراف' : 'React & Redux: From Basics to Advanced',
-        category: isRtl ? 'تطوير واجهات المستخدم' : 'Frontend Development',
-        instructor: isRtl ? 'المدربة ميا تشن' : 'Instructor Mia Chen',
-        instructorAvatar: '/images/course-avatar-elena.webp',
-        rating: '4.8',
-        reviews: '(3,012)',
-        duration: isRtl ? '25 ساعة' : '25 hours',
-        level: isRtl ? 'متقدم' : 'Advanced',
-        lessons: isRtl ? '50 درساً' : '50 lessons',
-        thumbnail: '/images/course-thumb-2.webp',
-        applicantBadge: '+7',
-      },
-      {
-        id: 'track-3',
-        title: isRtl ? 'أنظمة التصميم المتقدمة ومكتبات المكونات' : 'Advanced Design Systems & Component Libraries',
-        category: isRtl ? 'تصميم واجهات المستخدم' : 'UI/UX Design',
-        instructor: isRtl ? 'سينيور علاء خميس' : 'Senior Alaa Khamis',
-        instructorAvatar: '/images/course-avatar-elena.webp',
-        rating: '4.7',
-        reviews: '(1,802)',
-        duration: isRtl ? '22 ساعة' : '22 hours',
-        level: isRtl ? 'متقدم' : 'Advanced',
-        lessons: isRtl ? '40 درساً' : '40 lessons',
-        thumbnail: '/images/course-thumb-3.webp',
-        applicantBadge: '+6',
-      },
-      {
-        id: 'track-4',
-        title: isRtl ? 'إتقان منهجيات أجايل ولين في فرق العمل' : 'Mastering Agile & Lean Methodologies',
-        category: isRtl ? 'إدارة المنتجات' : 'Product Management',
-        instructor: isRtl ? 'القائد جوردان سميث' : 'Lead Jordan Smith',
-        instructorAvatar: '/images/course-avatar-elena.webp',
-        rating: '4.9',
-        reviews: '(2,134)',
-        duration: isRtl ? '18 ساعة' : '18 hours',
-        level: isRtl ? 'متوسط' : 'Intermediate',
-        lessons: isRtl ? '35 درساً' : '35 lessons',
-        thumbnail: '/images/course-thumb-4.webp',
-        applicantBadge: '+4',
-      },
+      { id: 'all', label: t('experience.allFilter', 'All Specializations') },
+      { id: 'frontend', label: t('experience.frontendFilter', 'Frontend') },
+      { id: 'fullstack', label: t('experience.fullstackFilter', 'Full-Stack & Systems') },
+      { id: 'design', label: t('experience.designFilter', 'UI/UX & Product Design') },
+      { id: 'devops', label: t('experience.devopsFilter', 'Platform & Cloud') },
     ],
-    [isRtl],
-  )
+    [t]
+  );
 
   return (
-    <section id="internship" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
-      {/* Section Header with CTA on right (Figma node 1002:1460) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 sm:mb-16 reveal-on-scroll">
-        <div className="text-start max-w-[884px]">
-          <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
-            {t('internship.title')}
+    <section
+      id="internship"
+      className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-14 lg:py-20 select-none scroll-mt-28"
+    >
+      {/* Section Header with CTA on right */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-12 reveal-on-scroll">
+        <div className="text-start max-w-3xl">
+          {/* Eyebrow Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12px] sm:text-[13px] font-semibold bg-[#faf2ff] text-[#5a198f] border border-[#e8d5f5] mb-4">
+            <Sparkles className="size-3.5 text-[#dc6e0d]" />
+            <span>{t('experience.headingBadge', 'REAL CAREER EXPERIENCES & MENTORSHIP')}</span>
+          </div>
+
+          {/* Section Heading */}
+          <h2 className="text-[32px] sm:text-[40px] lg:text-[44px] font-extrabold text-[#111827] leading-[1.18] tracking-tight mb-4">
+            {isRtl ? (
+              <>
+                {t('experience.mainHeadingPart1', 'تعلّم ممن')}{' '}
+                <span className="text-[#3a0453]">{t('experience.mainHeadingHighlight', 'سبقوك')}</span>{' '}
+                <span className="text-[#5a198f]">{t('experience.mainHeadingPart2', 'في هذا الطريق')}</span>
+              </>
+            ) : (
+              <>
+                {t('experience.mainHeadingPart1', 'Learn From')}{' '}
+                <span className="text-[#3a0453]">{t('experience.mainHeadingHighlight', "Those Who've")}</span>{' '}
+                <span className="text-[#5a198f]">{t('experience.mainHeadingPart2', 'Been There')}</span>
+              </>
+            )}
           </h2>
-          <p className="text-[18px] sm:text-[22px] lg:text-[24px] text-[#5c5c5c] font-medium leading-[1.5]">
-            {t('internship.subtitle')}
+
+          {/* Section Subtitle */}
+          <p className="text-[17px] sm:text-[20px] lg:text-[22px] text-[#4b5563] font-medium leading-[1.5]">
+            {t(
+              'experience.mainSubtitle',
+              'Discover the journeys behind successful careers, connect with experienced professionals, and learn from the lessons that helped them grow.'
+            )}
           </p>
         </div>
 
+        {/* Top-Right CTA to Explore Internship Program */}
         <div className="shrink-0 text-start md:text-end">
-          <a
-            href="#all-internships"
-            className="group relative inline-flex items-center gap-[12px] px-[40px] py-[16px] rounded-[9999px] bg-[#3a0353] hover:bg-[#4d076d] text-white text-[16px] font-semibold tracking-[0.0156px] shadow-[0px_10px_15px_-3px_rgba(224,191,254,0.75),0px_4px_6px_-4px_#ddbffe] transition-all duration-200 active:scale-98"
+          <Link
+            to={ROUTES.internship}
+            className="group relative inline-flex items-center gap-[12px] px-[36px] py-[15px] rounded-[9999px] bg-[#3a0353] hover:bg-[#4d076d] text-white text-[15px] sm:text-[16px] font-semibold tracking-[0.0156px] shadow-[0px_10px_15px_-3px_rgba(224,191,254,0.75),0px_4px_6px_-4px_#ddbffe] transition-all duration-200 active:scale-98"
           >
-            <span>{t('internship.cta')}</span>
-            <img
-              src="/images/mentorship-arrow.svg"
-              alt=""
-              className="w-[14px] h-[16px] shrink-0 rtl:rotate-180 transition-transform duration-200 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
-            />
-          </a>
+            <span>{t('internship.cta', 'Explore Internship')}</span>
+            {isRtl ? (
+              <ArrowLeft className="size-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
+            ) : (
+              <ArrowRight className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+            )}
+          </Link>
         </div>
       </div>
 
-      {/* 4 Internship Track Cards Grid (Figma node 1002:1470) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {tracks.map((track, idx) => {
+      {/* Filter Tabs by Specialization */}
+      <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-10 pb-2 overflow-x-auto scrollbar-none reveal-on-scroll reveal-delay-100">
+        {categories.map((cat) => {
+          const isActive = activeCategory === cat.id;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[13px] sm:text-[14px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5a198f] ${
+                isActive
+                  ? 'bg-[#5a198f] text-white shadow-md shadow-[#5a198f]/20 scale-102'
+                  : 'bg-white hover:bg-purple-50 text-slate-700 hover:text-[#5a198f] border border-purple-100'
+              }`}
+            >
+              {cat.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 4 Senior Profile Cards Grid with 3D Hover & Interactive Experience */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 items-stretch">
+        {filteredSeniors.map((senior, idx) => {
           const delayClass =
             idx === 0
               ? 'reveal-delay-100'
@@ -105,131 +119,56 @@ export const InternshipSection: React.FC = () => {
               ? 'reveal-delay-200'
               : idx === 2
               ? 'reveal-delay-300'
-              : 'reveal-delay-400'
+              : 'reveal-delay-400';
+
           return (
-            <div key={track.id} className={`reveal-on-scroll ${delayClass} h-full`}>
-              <div
-                className="group bg-white rounded-[11.6px] border border-[#e5e7eb] shadow-[0px_2.9px_11.6px_0px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col justify-between h-full"
-              >
-            {/* Thumbnail Header with Magenta/Pink Category Tag (Figma node 1002:1472) */}
-            <div className="relative h-[155px] w-full overflow-hidden bg-slate-900 shrink-0">
-              <img
-                src={track.thumbnail}
-                alt={track.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-                decoding="async"
-                width={297}
-                height={155}
+            <div key={senior.id} className={`reveal-on-scroll ${delayClass} flex`}>
+              <SeniorCard
+                senior={senior}
+                journeyHref={seniorProfilePath(senior.id)}
+                onExploreJourney={(s) => setSelectedSenior(s)}
+                className="w-full"
               />
-              <div className="absolute bottom-[11px] start-[13px] z-10">
-                <span className="bg-[#ff25e9]/75 backdrop-blur-xs px-[8.7px] py-[2.9px] rounded-full text-[#5a198f] font-bold text-[8.7px] tracking-[0.0595px] leading-[11.6px] shadow-xs inline-block">
-                  {track.category}
-                </span>
-              </div>
             </div>
+          );
+        })}
+      </div>
 
-            {/* Content Area (Figma node 1002:1476) */}
-            <div className="pt-[14.5px] px-[14.5px] pb-[11px] flex flex-col gap-[10.15px] text-start flex-1 justify-between">
-              <div className="flex flex-col gap-[10.15px]">
-                {/* Title (Figma node 1002:1477) */}
-                <h3 className="text-[13.05px] font-medium text-[#111827] leading-[17.4px] line-clamp-2 min-h-[35px] group-hover:text-[#5a198f] transition-colors">
-                  {track.title}
-                </h3>
-
-                {/* Author Avatar & Name (Figma node 1002:1479) */}
-                <div className="flex items-center gap-[7.25px]">
-                  <img
-                    src={track.instructorAvatar}
-                    alt={track.instructor}
-                    className="size-[23px] rounded-full object-cover shrink-0"
-                    loading="lazy"
-                    decoding="async"
-                    width={23}
-                    height={23}
-                  />
-                  <span className="text-[10.15px] font-medium text-[#475569] leading-[14.5px]">
-                    {track.instructor}
-                  </span>
-                </div>
-
-                {/* Rating & Reviews (Figma node 1002:1483) */}
-                <div className="flex items-center gap-[4.35px]">
-                  <div className="flex items-center gap-[1.45px]">
-                    <img src="/images/course-star-filled.svg" alt="" className="w-[11px] h-[9px]" />
-                    <img src="/images/course-star-filled.svg" alt="" className="w-[11px] h-[9px]" />
-                    <img src="/images/course-star-filled.svg" alt="" className="w-[11px] h-[9px]" />
-                    <img src="/images/course-star-filled.svg" alt="" className="w-[11px] h-[9px]" />
-                    <img src="/images/course-star-empty.svg" alt="" className="w-[11px] h-[9px]" />
-                  </div>
-                  <span className="text-[10.15px] font-semibold text-[#334155] leading-[14.5px]">
-                    {track.rating}
-                  </span>
-                  <span className="text-[9.4px] font-normal text-[#94a3b8] leading-[11.6px]">
-                    {track.reviews}
-                  </span>
-                </div>
-
-                {/* Metadata Row with Divider (Figma node 1002:1504) */}
-                <div className="border-b border-[#f1f5f9] pb-[11.6px] pt-[2.9px] flex items-center justify-between text-[#64748b] text-[9.4px] font-medium">
-                  <div className="flex items-center gap-[4.35px]">
-                    <img src="/images/course-clock.svg" alt="" className="size-[9px] shrink-0" />
-                    <span>{track.duration}</span>
-                  </div>
-                  <div className="flex items-center gap-[4.35px]">
-                    <img src="/images/course-level.svg" alt="" className="w-[12px] h-[9px] shrink-0" />
-                    <span>{track.level}</span>
-                  </div>
-                  <div className="flex items-center gap-[4.35px]">
-                    <img src="/images/course-lessons.svg" alt="" className="w-[11px] h-[9px] shrink-0" />
-                    <span>{track.lessons}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Row: Overlapping Avatars + Select Track Button (Figma node 1002:1523) */}
-              <div className="flex items-center justify-between gap-[12px] pt-[1.45px] h-[44px]">
-                {/* Overlapping User Avatars Stack */}
-                <div className="flex items-center -space-x-[7px] rtl:space-x-reverse shrink-0">
-                  <img
-                    src="/images/internship-avatar-stack.png"
-                    alt="Applicant"
-                    className="size-[28px] rounded-full object-cover border-2 border-white"
-                  />
-                  <img
-                    src="/images/internship-avatar-stack.png"
-                    alt="Applicant"
-                    className="size-[28px] rounded-full object-cover border-2 border-white"
-                  />
-                  <img
-                    src="/images/internship-avatar-stack.png"
-                    alt="Applicant"
-                    className="size-[28px] rounded-full object-cover border-2 border-white"
-                  />
-                  <img
-                    src="/images/internship-avatar-stack.png"
-                    alt="Applicant"
-                    className="size-[28px] rounded-full object-cover border-2 border-white"
-                  />
-                  <div className="size-[28px] rounded-full bg-[#d8adfb] border-2 border-white flex items-center justify-center text-[10px] font-medium text-[#3a0353] shrink-0">
-                    {track.applicantBadge}
-                  </div>
-                </div>
-
-                {/* Select Track Button */}
-                <a
-                  href={`#track-${track.id}`}
-                  className="w-[137px] inline-flex items-center justify-center py-[10px] px-[14.5px] rounded-full bg-[#5a198f] hover:bg-[#471273] text-white text-[10.15px] font-bold tracking-[0.0496px] leading-[14.5px] whitespace-nowrap shadow-xs hover:shadow-md transition-all duration-200 active:scale-98 text-center"
-                >
-                  {t('internship.applyBtn')}
-                </a>
-              </div>
-            </div>
+      {/* Informative Guidance Card: Purpose of LinkedIn vs Career Journey */}
+      <div className="mt-12 sm:mt-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#fbf8fe] via-[#f7eeff] to-[#f4e8ff] border border-[#e8d5f5] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 reveal-on-scroll reveal-delay-200">
+        <div className="flex items-start gap-4 max-w-2xl">
+          <div className="p-3 rounded-2xl bg-[#5a198f] text-white shrink-0 shadow-sm mt-0.5">
+            <Compass className="size-6" />
+          </div>
+          <div>
+            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#111827] mb-1">
+              {isRtl ? 'كيف تستفيد من هذه التجربة؟' : 'How to Make the Most of These Profiles'}
+            </h3>
+            <p className="text-[13.5px] sm:text-[14px] text-slate-600 leading-relaxed">
+              {isRtl
+                ? 'زر "تواصل عبر LinkedIn" يفتح الحساب المهني للتواصل وبناء شبكة علاقاتك. وزر "استكشف رحلته" يكشف لك كامل القصة المهنية، وتفاصيل البدايات، والتحديات، والدروس التي ساعدتهم على التميز.'
+                : 'Click "Connect on LinkedIn" to visit their professional profile and expand your network. Click "Explore Their Journey" to read their full story, challenges, turning points, and beginner advice.'}
+            </p>
           </div>
         </div>
-      )
-    })}
+
+        {/* Demo Tag Notice */}
+        <div className="shrink-0 text-start md:text-end">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-medium bg-white/90 border border-purple-200/60 text-slate-500 shadow-sm">
+            <Sparkles className="size-3 text-[#dc6e0d]" />
+            <span>{t('experience.fictionalDisclaimer')}</span>
+          </span>
+        </div>
       </div>
+
+      {/* Accessible Interactive Modal for Instant Story Preview */}
+      <SeniorJourneyModal
+        senior={selectedSenior}
+        isOpen={selectedSenior !== null}
+        onClose={() => setSelectedSenior(null)}
+      />
     </section>
-  )
-}
+  );
+};
+
+export default InternshipSection;

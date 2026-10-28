@@ -23,6 +23,7 @@ export const ROUTES = {
   courses3m: '/courses-3m',
   courses6m: '/courses-6m',
   courses12m: '/courses-12m',
+  courses: '/courses',
   courseDetails: '/courses/:id',
   courseDetailsDefault: '/course-details',
   courseVideo: '/courses/:id/video',
@@ -39,6 +40,9 @@ export const ROUTES = {
   mentorshipSessionDetails: '/mentorship/sessions/:id',
   mentorshipSessionCancelled: '/mentorship/sessions/:id/cancelled',
   mentorshipFeedback: '/mentorship/sessions/:id/feedback',
+  // Seniors Experience & Journeys
+  seniors: '/seniors',
+  seniorProfile: '/seniors/:id',
   // Student dashboard (shared sidebar layout).
   dashboard: '/dashboard',
   dashboardInternship: '/dashboard/internship',
@@ -47,6 +51,9 @@ export const ROUTES = {
   dashboardPlans: '/dashboard/courses/plans',
   employer: '/employer',
 } as const;
+
+export const seniorProfilePath = (id: string) =>
+  `/seniors/${encodeURIComponent(id)}`;
 
 export const recruitmentApplicationPath = (applicationId: string) =>
   `${ROUTES.recruitmentApplications}/${applicationId}`;
