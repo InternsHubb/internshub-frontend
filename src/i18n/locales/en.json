@@ -312,13 +312,23 @@
     "title": "Learn by Doing",
     "subtitle": "Put your skills into practice through hands-on projects and real-world challenges.",
     "cta": "Explore Courses",
-    "enrollBtn": "Enroll Now"
+    "enrollBtn": "Enroll Now",
+    "badge": "SPECIALIZED LEARNING TRACKS & CURRICULUM"
   },
   "internship": {
     "title": "Get Real Experience",
     "subtitle": "Build your experience through internships, projects, and career opportunities.",
     "cta": "Explore Internship",
     "applyBtn": "Select Track"
+  },
+  "landingInternships": {
+    "badge": "REAL-WORLD INTERNSHIP OPPORTUNITIES",
+    "title": "Hands-On Internships in Real Teams",
+    "subtitle": "Join realistic product squads, work with industry mentors, and build verified experience that stands out to tech employers.",
+    "cta": "Explore Internship Portal",
+    "applyBtn": "Apply via InternsHub",
+    "viewDetails": "View Full Details",
+    "collapse": "Collapse"
   },
   "pricing": {
     "title": "Choose Your Growth Plan",
