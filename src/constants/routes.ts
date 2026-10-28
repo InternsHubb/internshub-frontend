@@ -6,6 +6,7 @@
 export const ROUTES = {
   home: '/',
   internship: '/internship',
+  internshipDetails: '/internships/:id',
   onboarding: '/onboarding',
   recruitment: '/recruitment',
   recruitmentEligibility: '/recruitment/eligibility',
@@ -54,6 +55,9 @@ export const ROUTES = {
 
 export const seniorProfilePath = (id: string) =>
   `/seniors/${encodeURIComponent(id)}`;
+
+export const internshipDetailsPath = (id: string) =>
+  `/internships/${encodeURIComponent(id)}`;
 
 export const recruitmentApplicationPath = (applicationId: string) =>
   `${ROUTES.recruitmentApplications}/${applicationId}`;

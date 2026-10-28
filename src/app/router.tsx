@@ -51,6 +51,7 @@ const CourseDetailsPage = lazy(() => import('@/pages/CourseDetailsPage'));
 const CourseVideoPage = lazy(() => import('@/pages/CourseVideoPage'));
 const CourseQuizPage = lazy(() => import('@/pages/CourseQuizPage'));
 const SeniorJourneyPage = lazy(() => import('@/pages/SeniorJourneyPage'));
+const InternshipDetailsPage = lazy(() => import('@/pages/InternshipDetailsPage'));
 
 // Student dashboard pages
 const DashboardLayout = lazy(() => import('@/components/layout/DashboardLayout'));
@@ -282,6 +283,10 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.seniorProfile,
           element: <SeniorJourneyPage />,
+        },
+        {
+          path: ROUTES.internshipDetails,
+          element: <InternshipDetailsPage />,
         },
         {
           path: ROUTES.seniors,

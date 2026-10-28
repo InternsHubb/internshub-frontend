@@ -7,7 +7,8 @@ import { LearningJourney } from '../components/landing/LearningJourney'
 import { ExperienceSection } from '../components/landing/ExperienceSection'
 import { MentorshipSection } from '../components/landing/MentorshipSection'
 import { CourseSection } from '../components/landing/CourseSection'
-import { InternshipSection } from '../components/landing/InternshipSection'
+import { SeniorProfilesSection } from '../components/landing/InternshipSection'
+import { LandingInternshipsSection } from '../components/landing/LandingInternshipsSection'
 import { PricingSection } from '../components/landing/PricingSection'
 import { TestimonialsSection } from '../components/landing/TestimonialsSection'
 import { VideoShowcase } from '../components/landing/VideoShowcase'
@@ -46,7 +47,8 @@ export const LandingPage: React.FC = () => {
           <ExperienceSection />
           <MentorshipSection />
           <CourseSection />
-          <InternshipSection />
+          <SeniorProfilesSection />
+          <LandingInternshipsSection />
           <PricingSection />
           <TestimonialsSection />
           <VideoShowcase />

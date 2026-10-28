@@ -7,7 +7,7 @@ import { getAllSeniors } from '@/data/seniorsData';
 import { SeniorCard } from '@/components/experience/SeniorCard';
 import { ROUTES, seniorProfilePath } from '@/constants/routes';
 
-export const InternshipSection: React.FC = () => {
+export const SeniorProfilesSection: React.FC = () => {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
 
@@ -33,9 +33,12 @@ export const InternshipSection: React.FC = () => {
 
   return (
     <section
-      id="internship"
+      id="seniors"
       className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-14 lg:py-20 select-none scroll-mt-28"
     >
+      {/* Anchor for legacy #experience references */}
+      <span id="experience-seniors" className="sr-only" />
+
       {/* Section Header with CTA on right */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-12 reveal-on-scroll">
         <div className="text-start max-w-3xl">
@@ -107,8 +110,8 @@ export const InternshipSection: React.FC = () => {
         })}
       </div>
 
-      {/* 4 Senior Profile Cards Grid with 3D Hover & Direct Navigation */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 items-stretch">
+      {/* 4 Senior Profile Cards Grid with In-Card Hover Expansion */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 items-start">
         {filteredSeniors.map((senior, idx) => {
           const delayClass =
             idx === 0
@@ -125,33 +128,34 @@ export const InternshipSection: React.FC = () => {
                 senior={senior}
                 journeyHref={seniorProfilePath(senior.id)}
                 className="w-full"
+                expandOnHover={true}
               />
             </div>
           );
         })}
       </div>
 
-      {/* Informative Guidance Card: Purpose of LinkedIn vs Career Journey */}
+      {/* Informative Guidance Card */}
       <div className="mt-12 sm:mt-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#fbf8fe] via-[#f7eeff] to-[#f4e8ff] border border-[#e8d5f5] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 reveal-on-scroll reveal-delay-200">
         <div className="flex items-start gap-4 max-w-2xl">
-          <div className="p-3 rounded-2xl bg-[#5a198f] text-white shrink-0 shadow-sm mt-0.5">
+          <div className="p-3 rounded-2xl bg-[#5a198f] text-white shrink-0 shadow-xs mt-0.5">
             <Compass className="size-6" />
           </div>
           <div>
             <h3 className="text-[17px] sm:text-[18px] font-bold text-[#111827] mb-1">
-              {isRtl ? 'كيف تستفيد من هذه التجربة؟' : 'How to Make the Most of These Profiles'}
+              {isRtl ? 'تفاعل فوري وسلس مع الملفات' : 'Interactive In-Card Experience'}
             </h3>
             <p className="text-[13.5px] sm:text-[14px] text-slate-600 leading-relaxed">
               {isRtl
-                ? 'زر "تواصل عبر LinkedIn" يفتح الحساب المهني للتواصل وبناء شبكة علاقاتك. وزر "استكشف رحلته" يكشف لك كامل القصة المهنية، وتفاصيل البدايات، والتحديات، والدروس التي ساعدتهم على التميز.'
-                : 'Click "Connect on LinkedIn" to visit their professional profile and expand your network. Click "Explore Their Journey" to read their full story, challenges, turning points, and beginner advice.'}
+                ? 'مرر مؤشر الفأرة على البطاقة (أو اضغط عليها على الهواتف) لمعاينة المشاريع البارزة، والمهارات، والإحصائيات المهنية دون الحاجة لفتح نوافذ منبثقة.'
+                : 'Hover over any card on desktop (or tap on mobile) to smoothly expand career achievements, featured projects, and key advice without disruptive popups.'}
             </p>
           </div>
         </div>
 
         {/* Demo Tag Notice */}
         <div className="shrink-0 text-start md:text-end">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-medium bg-white/90 border border-purple-200/60 text-slate-500 shadow-sm">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-medium bg-white/90 border border-purple-200/60 text-slate-500 shadow-xs">
             <Sparkles className="size-3 text-[#dc6e0d]" />
             <span>{t('experience.fictionalDisclaimer')}</span>
           </span>
@@ -161,4 +165,6 @@ export const InternshipSection: React.FC = () => {
   );
 };
 
-export default InternshipSection;
+// Also export as InternshipSection for backward compatibility with existing imports
+export const InternshipSection = SeniorProfilesSection;
+export default SeniorProfilesSection;
