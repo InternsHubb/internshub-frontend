@@ -50,6 +50,7 @@ const MicrosoftCallback = lazy(
 const CourseDetailsPage = lazy(() => import('@/pages/CourseDetailsPage'));
 const CourseVideoPage = lazy(() => import('@/pages/CourseVideoPage'));
 const CourseQuizPage = lazy(() => import('@/pages/CourseQuizPage'));
+const SeniorJourneyPage = lazy(() => import('@/pages/SeniorJourneyPage'));
 
 // Student dashboard pages
 const DashboardLayout = lazy(() => import('@/components/layout/DashboardLayout'));
@@ -277,6 +278,14 @@ export const router = createBrowserRouter(
         {
           path: `${ROUTES.internship}/*`,
           element: <InternshipPage />,
+        },
+        {
+          path: ROUTES.seniorProfile,
+          element: <SeniorJourneyPage />,
+        },
+        {
+          path: ROUTES.seniors,
+          element: <Navigate to={`${ROUTES.home}#experience`} replace />,
         },
 
         // Student dashboard: home, internship journey, project, courses and
