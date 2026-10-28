@@ -1,19 +1,19 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Globe, Sparkles, CheckCircle2 } from 'lucide-react';
 import type { SeniorProfile } from '@/types/senior';
 import { LinkedInIcon } from './LinkedInIcon';
+import { seniorProfilePath } from '@/constants/routes';
 
 interface SeniorCardProps {
   senior: SeniorProfile;
-  onExploreJourney?: (senior: SeniorProfile) => void;
   journeyHref?: string;
   className?: string;
 }
 
 export const SeniorCard: React.FC<SeniorCardProps> = ({
   senior,
-  onExploreJourney,
   journeyHref,
   className = '',
 }) => {
@@ -64,15 +64,6 @@ export const SeniorCard: React.FC<SeniorCardProps> = ({
   const handleMouseLeave = () => {
     setIsHovered(false);
     setTilt({ x: 0, y: 0 });
-  };
-
-  const handleJourneyClick = (e: React.MouseEvent) => {
-    if (onExploreJourney) {
-      if (!journeyHref) {
-        e.preventDefault();
-      }
-      onExploreJourney(senior);
-    }
   };
 
   return (
@@ -184,11 +175,10 @@ export const SeniorCard: React.FC<SeniorCardProps> = ({
           <span>{t('experience.connectLinkedIn')}</span>
         </a>
 
-        {/* Secondary "Explore Their Journey" Button */}
+        {/* Secondary "Explore Their Journey" Direct Navigation Button (no popup) */}
         <div className="flex items-center gap-2">
-          <a
-            href={journeyHref || `#journey-${senior.id}`}
-            onClick={handleJourneyClick}
+          <Link
+            to={journeyHref || seniorProfilePath(senior.id)}
             aria-label={`Explore career journey of ${displayName}`}
             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-purple-50/90 hover:bg-[#5a198f] text-[#5a198f] hover:text-white border border-[#cb8cfe]/60 hover:border-[#5a198f] text-[13.5px] sm:text-[14px] font-semibold transition-all duration-200 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5a198f] active:scale-[0.98]"
           >
@@ -198,7 +188,7 @@ export const SeniorCard: React.FC<SeniorCardProps> = ({
             ) : (
               <ArrowRight className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover/btn:translate-x-1" />
             )}
-          </a>
+          </Link>
 
           {/* Optional Portfolio Link */}
           {senior.portfolioUrl && (
@@ -218,4 +208,3 @@ export const SeniorCard: React.FC<SeniorCardProps> = ({
     </div>
   );
 };
-

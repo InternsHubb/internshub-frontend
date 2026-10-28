@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from '@/components/shared/Navbar';
@@ -13,6 +13,10 @@ export const SeniorJourneyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [id]);
 
   const senior = useMemo(() => {
     return id ? getSeniorById(id) : undefined;
@@ -41,7 +45,7 @@ export const SeniorJourneyPage: React.FC = () => {
                 : 'The senior profile you are looking for does not exist or has been moved.'}
             </p>
             <Link
-              to={`${ROUTES.home}#experience`}
+              to={`${ROUTES.home}#internship`}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#5a198f] text-white font-semibold hover:bg-[#3a0353] transition-colors"
             >
               {isRtl ? <ArrowRight className="size-4" /> : <ArrowLeft className="size-4" />}
@@ -76,7 +80,7 @@ export const SeniorJourneyPage: React.FC = () => {
                 </h3>
               </div>
               <Link
-                to={`${ROUTES.home}#experience`}
+                to={`${ROUTES.home}#internship`}
                 className="hidden sm:inline-flex items-center gap-2 text-[14px] font-semibold text-[#5a198f] hover:underline"
               >
                 <span>{t('experience.backToSeniors')}</span>
@@ -103,4 +107,3 @@ export const SeniorJourneyPage: React.FC = () => {
 };
 
 export default SeniorJourneyPage;
-

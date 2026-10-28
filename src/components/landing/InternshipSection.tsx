@@ -2,10 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Sparkles, Compass, ArrowRight, ArrowLeft } from 'lucide-react';
-import type { SeniorCategory, SeniorProfile } from '@/types/senior';
+import type { SeniorCategory } from '@/types/senior';
 import { getAllSeniors } from '@/data/seniorsData';
 import { SeniorCard } from '@/components/experience/SeniorCard';
-import { SeniorJourneyModal } from '@/components/experience/SeniorJourneyModal';
 import { ROUTES, seniorProfilePath } from '@/constants/routes';
 
 export const InternshipSection: React.FC = () => {
@@ -13,7 +12,6 @@ export const InternshipSection: React.FC = () => {
   const isRtl = i18n.language === 'ar';
 
   const [activeCategory, setActiveCategory] = useState<SeniorCategory>('all');
-  const [selectedSenior, setSelectedSenior] = useState<SeniorProfile | null>(null);
 
   const allSeniors = useMemo(() => getAllSeniors(), []);
 
@@ -109,7 +107,7 @@ export const InternshipSection: React.FC = () => {
         })}
       </div>
 
-      {/* 4 Senior Profile Cards Grid with 3D Hover & Interactive Experience */}
+      {/* 4 Senior Profile Cards Grid with 3D Hover & Direct Navigation */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 items-stretch">
         {filteredSeniors.map((senior, idx) => {
           const delayClass =
@@ -126,7 +124,6 @@ export const InternshipSection: React.FC = () => {
               <SeniorCard
                 senior={senior}
                 journeyHref={seniorProfilePath(senior.id)}
-                onExploreJourney={(s) => setSelectedSenior(s)}
                 className="w-full"
               />
             </div>
@@ -160,13 +157,6 @@ export const InternshipSection: React.FC = () => {
           </span>
         </div>
       </div>
-
-      {/* Accessible Interactive Modal for Instant Story Preview */}
-      <SeniorJourneyModal
-        senior={selectedSenior}
-        isOpen={selectedSenior !== null}
-        onClose={() => setSelectedSenior(null)}
-      />
     </section>
   );
 };
