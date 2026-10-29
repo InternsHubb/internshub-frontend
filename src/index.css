@@ -797,3 +797,170 @@ html[dir="rtl"] {
     display: none;
   }
 }
+
+/* ==========================================================================
+   Landing Recruitment Section — Scoped Orbital, Float & Entrance Animations
+   ========================================================================== */
+@keyframes ihRecruitOrbitCw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ihRecruitOrbitCcw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes ihRecruitFloatA {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -5px, 0);
+  }
+}
+
+@keyframes ihRecruitFloatB {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 5px, 0);
+  }
+}
+
+@keyframes ihRecruitFloatC {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@keyframes ihRecruitGlowPulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.98;
+    transform: scale(1.045);
+  }
+}
+
+@keyframes ihRecruitParticlePulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.96;
+    transform: scale(1.16);
+  }
+}
+
+.ih-recruit-orbit-outer {
+  animation: ihRecruitOrbitCw 32s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.ih-recruit-orbit-inner {
+  animation: ihRecruitOrbitCcw 24s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.ih-recruit-orbit-dots {
+  animation: ihRecruitOrbitCw 15s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.ih-recruit-orbit-dots-reverse {
+  animation: ihRecruitOrbitCcw 18s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.ih-recruit-glow {
+  animation: ihRecruitGlowPulse 8s ease-in-out infinite;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.ih-recruit-particle {
+  animation: ihRecruitParticlePulse var(--ih-particle-dur, 4.5s) ease-in-out var(--ih-particle-delay, 0s) infinite;
+  will-change: transform, opacity;
+}
+
+.ih-recruit-float-1 {
+  animation: ihRecruitFloatA 5.2s ease-in-out 0s infinite;
+  will-change: transform;
+}
+
+.ih-recruit-float-2 {
+  animation: ihRecruitFloatB 6.2s ease-in-out 0.8s infinite;
+  will-change: transform;
+}
+
+.ih-recruit-float-3 {
+  animation: ihRecruitFloatA 4.8s ease-in-out 1.5s infinite;
+  will-change: transform;
+}
+
+.ih-recruit-float-4 {
+  animation: ihRecruitFloatC 5.8s ease-in-out 0.4s infinite;
+  will-change: transform;
+}
+
+.ih-recruit-card-reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0) scale(0.96);
+  transition:
+    opacity 680ms cubic-bezier(0.16, 1, 0.3, 1) var(--ih-card-delay, 0ms),
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1) var(--ih-card-delay, 0ms);
+}
+
+.is-revealed .ih-recruit-card-reveal {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ih-recruit-orbit-outer,
+  .ih-recruit-orbit-inner,
+  .ih-recruit-orbit-dots,
+  .ih-recruit-orbit-dots-reverse,
+  .ih-recruit-glow,
+  .ih-recruit-particle,
+  .ih-recruit-float-1,
+  .ih-recruit-float-2,
+  .ih-recruit-float-3,
+  .ih-recruit-float-4 {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    will-change: auto !important;
+  }
+
+  .ih-recruit-card-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
