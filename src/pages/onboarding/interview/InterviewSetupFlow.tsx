@@ -65,13 +65,6 @@ export function InterviewSetupFlow({
     fullscreenTarget.current?.scrollTo({ top: 0 });
   }, [screen, fullscreenTarget]);
 
-  // Reaching the questions starts (or resumes) the backend attempt, unless one is already open.
-  useEffect(() => {
-    if (screen === 'session' && !hasLiveQuestion) void startLive();
-    // Only on entering the questions; later answers move the attempt on by themselves.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen, startLive]);
-
   // Warm up the 3D interviewer while the candidate checks their devices.
   useEffect(() => {
     if (screen === 'device-check') preloadInterviewerAvatar();
@@ -99,15 +92,25 @@ export function InterviewSetupFlow({
 
   // Called directly from a click handler: the fullscreen request is the first thing it does, so the
   // browser still sees the user gesture. Moves on only once the container really is fullscreen
-  // (or the browser has no Fullscreen API, which falls back to a normal window).
-  const continueInFullscreen = async (from: SetupScreen, next: InterviewProgressPatch) => {
+  // (or the browser has no Fullscreen API, which falls back to a normal window). Resolves to
+  // whether it moved on.
+  const continueInFullscreen = async (from: SetupScreen, next: InterviewProgressPatch): Promise<boolean> => {
     const result = await monitor.enterFullscreen(fullscreenTarget.current);
     if (result === 'failed' && FULLSCREEN_MODE === 'required') {
       setFullscreenFailedOn(from);
-      return;
+      return false;
     }
     setFullscreenFailedOn(null);
     onChange(next);
+    return true;
+  };
+
+  // Device Check's Continue opens the questions and starts (or resumes) the backend attempt: one
+  // click, one start. Coming back from the questions to an attempt that is still open doesn't
+  // start another. A failed start is retried only by the Try again button.
+  const continueToQuestions = async () => {
+    const movedOn = await continueInFullscreen('device-check', { screen: 'session' });
+    if (movedOn && !hasLiveQuestion) void startLive();
   };
 
   const fullscreenInfo = (on: SetupScreen) => ({
@@ -158,7 +161,7 @@ export function InterviewSetupFlow({
             devices={devices}
             fullscreen={fullscreenInfo('device-check')}
             onBack={() => onChange({ screen: 'overview' })}
-            onContinue={() => void continueInFullscreen('device-check', { screen: 'session' })}
+            onContinue={() => void continueToQuestions()}
           />
         );
       case 'session': {
