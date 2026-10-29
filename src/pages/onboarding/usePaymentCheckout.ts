@@ -6,10 +6,10 @@ import type { EnrollmentDto, InvoiceDto } from '@/lib/api/types';
 
 // Paymob checkout for the onboarding Payment step, using only what the backend exposes:
 // 1. POST /api/enrollments/{id}/checkout returns { invoiceId, redirectUrl }.
-// 2. The browser goes to Paymob's hosted page (card or wallet details are entered there, never here).
-// 3. Paymob reports the result to the backend's webhook; the frontend has no status endpoint for a
-//    single invoice, so on return it polls GET /api/me/invoices until that invoice settles.
-// A redirect back is never treated as success: only an invoice the backend marks Paid is.
+// 2. The browser goes to Paymob's hosted page in a separate popup window or new tab.
+// 3. Paymob reports the result to the backend's webhook; the frontend polls GET /api/me/invoices
+//    until that invoice settles.
+// 4. When the invoice is Paid, the popup window is closed automatically and onboarding continues.
 
 const PENDING_KEY = 'internshub_pending_checkout';
 const POLL_MS = 3000;
@@ -21,11 +21,11 @@ export type PaymentState =
   | { kind: 'idle' }
   | { kind: 'starting' }
   | { kind: 'redirecting' }
-  | { kind: 'verifying' }
+  | { kind: 'verifying'; redirectUrl?: string }
   | { kind: 'paid'; invoice: InvoiceDto | null }
   | { kind: 'failed'; invoice: InvoiceDto }
   | { kind: 'review'; invoice: InvoiceDto }
-  | { kind: 'pending' }
+  | { kind: 'pending'; redirectUrl?: string }
   | { kind: 'error'; messageKey: string };
 
 // sessionStorage can be unavailable (private mode, blocked storage); the flow then simply can't
@@ -65,6 +65,58 @@ function isSafeRedirect(url: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Opens a checkout window immediately during the user's click gesture.
+ * Tries a centered popup first; if the browser's popup blocker suppresses it,
+ * falls back to a standard new tab (target="_blank"), which modern browsers allow.
+ */
+export function openCheckoutWindow(): Window | null {
+  const width = 600;
+  const height = 750;
+  const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - width) / 2));
+  const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - height) / 2));
+
+  let win: Window | null = null;
+  // 1. Try popup window with dimensions using '_blank'
+  try {
+    win = window.open(
+      'about:blank',
+      '_blank',
+      `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+    );
+  } catch {
+    win = null;
+  }
+
+  // 2. If popup with features was blocked, fall back to standard new tab
+  if (!win || win.closed) {
+    try {
+      win = window.open('about:blank', '_blank');
+    } catch {
+      win = null;
+    }
+  }
+
+  // 3. Inject splash screen while waiting for the checkout URL
+  if (win && !win.closed) {
+    try {
+      win.document.title = 'Paymob Payment';
+      win.document.body.innerHTML = `
+        <div style="font-family:system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;background:#FAF8FC;color:#3A0353;text-align:center;padding:24px;box-sizing:border-box;">
+          <div style="width:44px;height:44px;border:3px solid #E8E2EC;border-top-color:#4C0585;border-radius:50%;animation:s 0.8s linear infinite;margin-bottom:18px;"></div>
+          <h2 style="margin:0 0 8px;font-size:18px;font-weight:700;color:#111827;">Connecting to Secure Payment</h2>
+          <p style="margin:0;font-size:13px;color:#6B7280;line-height:1.4;">Opening Paymob gateway. Please wait a moment…</p>
+          <style>@keyframes s{to{transform:rotate(360deg)}}</style>
+        </div>
+      `;
+    } catch {
+      // document access may be restricted
+    }
+  }
+
+  return win;
 }
 
 type Options = { enrollment: EnrollmentDto | null; onPaid: () => void };
@@ -108,7 +160,7 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
           setState({ kind: 'paid', invoice });
           onPaidRef.current();
 
-          // After 2 seconds of showing "Approved", automatically close the Paymob window
+          // After showing "Approved", automatically close the Paymob window
           window.setTimeout(() => {
             try {
               if (popupRef.current && !popupRef.current.closed) {
@@ -117,7 +169,7 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
             } catch {
               // Ignore any cross-origin restrictions
             }
-          }, 2000);
+          }, 1500);
 
           return;
         }
@@ -146,11 +198,11 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
         // A failed poll is retried like a pending result.
       }
       if (!active) return;
-      if (polls >= MAX_POLLS) setState({ kind: 'pending' });
+      if (polls >= MAX_POLLS) setState((prev) => (prev.kind === 'verifying' ? { kind: 'pending', redirectUrl: prev.redirectUrl } : { kind: 'pending' }));
       else timer = window.setTimeout(check, POLL_MS);
     };
 
-    setState({ kind: 'verifying' });
+    setState((prev) => (prev.kind === 'verifying' ? prev : { kind: 'verifying' }));
     void check();
     return () => {
       active = false;
@@ -166,21 +218,8 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
     setState({ kind: 'starting' });
 
     // Open popup immediately on click to prevent browser popup blockers
-    const width = 600;
-    const height = 750;
-    const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - width) / 2));
-    const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - height) / 2));
-    let popup: Window | null = null;
-    try {
-      popup = window.open(
-        'about:blank',
-        'paymob_checkout',
-        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
-      );
-      popupRef.current = popup;
-    } catch {
-      popup = null;
-    }
+    const popup = openCheckoutWindow();
+    popupRef.current = popup;
 
     try {
       const { invoiceId, redirectUrl } = await checkoutEnrollment(enrollment.id);
@@ -190,15 +229,40 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
         return;
       }
       writePending({ invoiceId, enrollmentId: enrollment.id });
-      setState({ kind: 'verifying' });
+      setState({ kind: 'verifying', redirectUrl });
 
+      let navigated = false;
       if (popup && !popup.closed) {
-        popup.location.href = redirectUrl;
-        popup.focus();
-      } else {
-        window.location.assign(redirectUrl);
-        return;
+        try {
+          popup.location.replace(redirectUrl);
+          popup.focus();
+          navigated = true;
+        } catch {
+          try {
+            popup.location.href = redirectUrl;
+            popup.focus();
+            navigated = true;
+          } catch {
+            navigated = false;
+          }
+        }
       }
+
+      // If initial window was closed or failed to navigate, attempt opening in a fresh new tab
+      if (!navigated) {
+        try {
+          const fallbackWin = window.open(redirectUrl, '_blank');
+          if (fallbackWin) {
+            popupRef.current = fallbackWin;
+            navigated = true;
+          }
+        } catch {
+          navigated = false;
+        }
+      }
+
+      // DO NOT navigate the main window (window.location.assign is deliberately NOT used).
+      // The main window stays on InternsHub with active polling and provides a manual fallback link if needed.
 
       setAttempt((v) => v + 1);
     } catch (error) {
@@ -212,6 +276,13 @@ export function usePaymentCheckout({ enrollment, onPaid }: Options) {
 
   // Leaves a failed or abandoned checkout so the learner can start a new one.
   const reset = useCallback(() => {
+    try {
+      if (popupRef.current && !popupRef.current.closed) {
+        popupRef.current.close();
+      }
+    } catch {
+      // ignore
+    }
     writePending(null);
     setState({ kind: 'idle' });
   }, []);

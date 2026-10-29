@@ -833,6 +833,8 @@
       "acceptFirst": "Accept the terms above to continue to payment.",
       "redirecting": "Taking you to Paymob's secure payment page…",
       "verifying": "Checking your payment with InternsHub… This can take a few seconds.",
+      "windowNotice": "Paymob opened in a separate window. Complete your payment there.",
+      "openAgain": "Payment window didn't open? Click here to open Paymob",
       "pending": {
         "title": "Your payment is still being processed",
         "body": "We haven't received a final result yet. If you completed the payment, check again in a moment.",
