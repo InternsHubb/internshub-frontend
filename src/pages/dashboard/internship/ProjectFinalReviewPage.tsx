@@ -1,23 +1,29 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
+  ArrowRight,
   Check,
   CheckCircle2,
   ChevronDown,
   Clock,
   Copy,
   Info,
+  Repeat,
   Sparkles,
   X,
+  XCircle,
 } from 'lucide-react';
 
 import avatarBandana from '@/assets/dashboard/avatar-bandana.svg';
 import avatarBeanie from '@/assets/dashboard/avatar-beanie.svg';
 import avatarCurly from '@/assets/dashboard/avatar-curly.svg';
 import avatarGirl from '@/assets/dashboard/avatar-girl.svg';
+import approvedIllustration from '@/assets/dashboard/approved-illustration.png';
+import changesRequestedIllustration from '@/assets/dashboard/changes-requested-illustration.png';
 import hourglassIllustration from '@/assets/dashboard/final-review-hourglass.png';
+import rejectedIllustration from '@/assets/dashboard/rejected-illustration.png';
 import exportIcon from '@/assets/dashboard/ic-export.svg';
 import githubIcon from '@/assets/dashboard/ic-github.svg';
 import googleIcon from '@/assets/dashboard/ic-google.svg';
@@ -143,10 +149,25 @@ const INITIAL_PROJECT_LINKS: LinkItem[] = [
   },
 ];
 
+export type FinalReviewState = 'waiting' | 'changes_requested' | 'approved' | 'rejected';
+
 export default function ProjectFinalReviewPage() {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: internship } = useInternship();
   const squad = internship?.squad;
+
+  // Active review state: synced with ?state= in URL or defaults to 'waiting'
+  const stateParam = searchParams.get('state') as FinalReviewState | null;
+  const validStates: FinalReviewState[] = ['waiting', 'changes_requested', 'approved', 'rejected'];
+  const [reviewState, setReviewStateInternal] = useState<FinalReviewState>(
+    stateParam && validStates.includes(stateParam) ? stateParam : 'waiting'
+  );
+
+  const setReviewState = (state: FinalReviewState) => {
+    setReviewStateInternal(state);
+    setSearchParams({ state });
+  };
 
   // Active tab on Task Board: 'myTasks' | 'squadBoard'
   const [activeBoardTab, setActiveBoardTab] = useState<'myTasks' | 'squadBoard'>('myTasks');
@@ -198,13 +219,19 @@ export default function ProjectFinalReviewPage() {
           </div>
         </Link>
 
-        {/* Quick link back to Stage 4 Completed Read-Only */}
+        {/* Quick action buttons */}
         <div className="flex items-center gap-2">
           <Link
             to={ROUTES.dashboardProjectCompleted}
             className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs hover:bg-gray-50 transition-colors"
           >
             <span>{t('dashboard.taskDetails.viewCompletedStep', 'View Read-Only Task Details →')}</span>
+          </Link>
+          <Link
+            to={ROUTES.dashboardProjectResults}
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#f6ebff] px-3.5 py-1.5 text-xs font-bold text-[#430A5D] shadow-2xs hover:bg-[#eedbfd] transition-colors"
+          >
+            <span>{t('dashboard.finalReview.viewResultsPage', 'View My Results →')}</span>
           </Link>
         </div>
       </header>
@@ -547,49 +574,350 @@ export default function ProjectFinalReviewPage() {
         </div>
       </section>
 
-      {/* 6. In Final Review Card (Matching Figma Node 921:21881) */}
+      {/* 6. In Final Review Section with Interactive State Switcher */}
       <section
         aria-labelledby="final-review-title"
         className={cn(CARD, 'p-6 sm:p-8 space-y-6')}
       >
-        {/* Header: Clock + In Final Review + Waiting Badge */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex size-[55px] shrink-0 items-center justify-center rounded-2xl bg-[#f6ebff]">
-              <Clock className="size-7 text-[#430A5D]" />
-            </div>
-            <h2 id="final-review-title" className="text-xl sm:text-2xl font-bold text-gray-950">
-              {t('dashboard.finalReview.title', 'In Final Review')}
-            </h2>
+        {/* State Toggle Switcher Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-5">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              {t('dashboard.finalReview.switchState', 'Switch Review State')}:
+            </span>
           </div>
 
-          <span className="rounded-full bg-[#f6ebff] px-4 py-1 text-xs font-bold text-[#8037be] border border-[#e9d5ff]">
-            {t('dashboard.finalReview.waiting', 'Waiting')}
-          </span>
-        </div>
-
-        {/* Center Illustration & Message */}
-        <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-          <div className="relative max-w-[280px] sm:max-w-[320px] mx-auto transition-transform hover:scale-102">
-            <img
-              src={hourglassIllustration}
-              alt="Hourglass Final Review Illustration"
-              className="w-full h-auto object-contain drop-shadow-sm"
-            />
-          </div>
-
-          <div className="space-y-2 max-w-xl mx-auto pt-2">
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-950">
-              {t('dashboard.finalReview.underFinalReview', 'Your project is under final review')}
-            </h3>
-            <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
-              {t(
-                'dashboard.finalReview.underFinalReviewDesc',
-                "Your Senior is reviewing your final project. You'll see the result here once the review is complete."
+          <div className="flex flex-wrap items-center gap-1.5 rounded-2xl bg-gray-100/90 p-1.5 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setReviewState('waiting')}
+              className={cn(
+                'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
+                reviewState === 'waiting'
+                  ? 'bg-white text-[#430A5D] shadow-xs'
+                  : 'text-[#737373] hover:text-gray-900'
               )}
-            </p>
+            >
+              {t('dashboard.finalReview.stateWaiting', '1. Waiting')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setReviewState('changes_requested')}
+              className={cn(
+                'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
+                reviewState === 'changes_requested'
+                  ? 'bg-[#FF7A00] text-white shadow-xs'
+                  : 'text-[#737373] hover:text-gray-900'
+              )}
+            >
+              {t('dashboard.finalReview.stateChanges', '2. Changes Requested')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setReviewState('approved')}
+              className={cn(
+                'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
+                reviewState === 'approved'
+                  ? 'bg-[#00BA88] text-white shadow-xs'
+                  : 'text-[#737373] hover:text-gray-900'
+              )}
+            >
+              {t('dashboard.finalReview.stateApproved', '3. Approved (Success)')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setReviewState('rejected')}
+              className={cn(
+                'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
+                reviewState === 'rejected'
+                  ? 'bg-[#F21620] text-white shadow-xs'
+                  : 'text-[#737373] hover:text-gray-900'
+              )}
+            >
+              {t('dashboard.finalReview.stateRejected', '4. Rejected')}
+            </button>
           </div>
         </div>
+
+        {/* STATE 1: Waiting (Figma 921:21336) */}
+        {reviewState === 'waiting' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header: Clock + In Final Review + Waiting Badge */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-[55px] shrink-0 items-center justify-center rounded-2xl bg-[#f6ebff]">
+                  <Clock className="size-7 text-[#430A5D]" />
+                </div>
+                <h2 id="final-review-title" className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.title', 'In Final Review')}
+                </h2>
+              </div>
+
+              <span className="rounded-full bg-[#f6ebff] px-4 py-1 text-xs font-bold text-[#8037be] border border-[#e9d5ff]">
+                {t('dashboard.finalReview.waiting', 'Waiting')}
+              </span>
+            </div>
+
+            {/* Center Hourglass & Content */}
+            <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
+              <div className="relative max-w-[280px] sm:max-w-[320px] mx-auto transition-transform hover:scale-102">
+                <img
+                  src={hourglassIllustration}
+                  alt="Hourglass Final Review Illustration"
+                  className="w-full h-auto object-contain drop-shadow-sm"
+                />
+              </div>
+
+              <div className="space-y-2 max-w-xl mx-auto pt-2">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.underFinalReview', 'Your project is under final review')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
+                  {t(
+                    'dashboard.finalReview.underFinalReviewDesc',
+                    "Your Senior is reviewing your final project. You'll see the result here once the review is complete."
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STATE 2: Changes Requested (Figma Node 921:22405) */}
+        {reviewState === 'changes_requested' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header: Repeat Icon + In Final Review + Changes Requested Badge */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-[55px] shrink-0 items-center justify-center rounded-2xl bg-[#fff4ed]">
+                  <Repeat className="size-7 text-[#FF7A00]" />
+                </div>
+                <h2 id="final-review-title" className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.title', 'In Final Review')}
+                </h2>
+              </div>
+
+              <span className="rounded-full bg-[#fff0e6] px-4 py-1 text-xs font-bold text-[#FF7A00] border border-[#FED7AA]">
+                {t('dashboard.finalReview.changesRequested', 'Changes Requested')}
+              </span>
+            </div>
+
+            {/* Illustration */}
+            <div className="flex flex-col items-center justify-center py-4 text-center space-y-4">
+              <div className="relative max-w-[280px] sm:max-w-[320px] mx-auto transition-transform hover:scale-102">
+                <img
+                  src={changesRequestedIllustration}
+                  alt="Changes Requested Illustration"
+                  className="w-full h-auto object-contain drop-shadow-sm"
+                />
+              </div>
+
+              {/* Heading & Subtitle */}
+              <div className="space-y-2 max-w-xl mx-auto">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.needsChanges', 'Your project needs some changes')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
+                  {t(
+                    'dashboard.finalReview.needsChangesDesc',
+                    'Your Senior reviewed your project and requested changes. Fix the issues below and resubmit your project within your additional one-week sprint.'
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Rejection Reasons Box */}
+            <div className="space-y-3 rounded-2xl bg-gray-50/70 p-5 sm:p-6 border border-gray-100">
+              <h4 className="text-sm sm:text-base font-bold text-gray-950">
+                {t('dashboard.finalReview.rejectionReasons', 'Rejection reasons')}
+              </h4>
+              <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-gray-950">1.</span>
+                  <span>
+                    {t(
+                      'dashboard.finalReview.reason1',
+                      'Some required features are missing or incomplete'
+                    )}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-gray-950">2.</span>
+                  <span>
+                    {t(
+                      'dashboard.finalReview.reason2',
+                      'The project does not fully meet the specified requirements and needs further improvements.'
+                    )}
+                  </span>
+                </li>
+              </ul>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-200/60 pt-3 text-xs">
+                <span className="font-semibold text-gray-800">
+                  {t('dashboard.finalReview.sprintEndsOn', 'Additional sprint ends on')}
+                </span>
+                <span className="font-bold text-[#430A5D]" dir="ltr">
+                  1/11/2026
+                </span>
+              </div>
+            </div>
+
+            {/* Action: Go To Board Button */}
+            <Link
+              to={ROUTES.dashboardProject}
+              className={cn(
+                PURPLE_GRADIENT,
+                'w-full inline-flex items-center justify-center gap-2 rounded-[13px] py-3.5 px-6 text-center text-xs sm:text-sm font-bold text-white shadow-[0_10px_22px_rgba(67,10,93,0.2)] transition-all hover:brightness-110 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#430A5D] focus-visible:ring-offset-2'
+              )}
+            >
+              <span>{t('dashboard.finalReview.goToBoard', 'Go To Board')}</span>
+              <ArrowRight className="size-4 shrink-0 rtl:rotate-180" />
+            </Link>
+          </div>
+        )}
+
+        {/* STATE 3: Approved / Success (Figma Node 921:24200) */}
+        {reviewState === 'approved' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header: Green Check Icon + In Final Review + Approved Badge */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-[55px] shrink-0 items-center justify-center rounded-2xl bg-[#e3fbe5]">
+                  <CheckCircle2 className="size-7 text-[#068f2f]" />
+                </div>
+                <h2 id="final-review-title" className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.title', 'In Final Review')}
+                </h2>
+              </div>
+
+              <span className="rounded-full bg-[#e3fbe5] px-4 py-1 text-xs font-bold text-[#068f2f] border border-[#d0f2dd]">
+                {t('dashboard.finalReview.approvedBadge', 'Approved')}
+              </span>
+            </div>
+
+            {/* Illustration */}
+            <div className="flex flex-col items-center justify-center py-4 text-center space-y-4">
+              <div className="relative max-w-[280px] sm:max-w-[320px] mx-auto transition-transform hover:scale-102">
+                <img
+                  src={approvedIllustration}
+                  alt="Project Approved Illustration"
+                  className="w-full h-auto object-contain drop-shadow-sm"
+                />
+              </div>
+
+              {/* Heading & Subtitle */}
+              <div className="space-y-2 max-w-xl mx-auto">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.congratsApproved', 'Congratulations! Your project is approved.')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
+                  {t(
+                    'dashboard.finalReview.congratsApprovedDesc',
+                    'You’ve successfully completed your internship project. Your final results are ready to view.'
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Action: View my results button -> Takes user to Node 925:26313 */}
+            <Link
+              to={ROUTES.dashboardProjectResults}
+              className={cn(
+                PURPLE_GRADIENT,
+                'w-full inline-flex items-center justify-center gap-2 rounded-[13px] py-3.5 px-6 text-center text-xs sm:text-sm font-bold text-white shadow-[0_10px_22px_rgba(67,10,93,0.2)] transition-all hover:brightness-110 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#430A5D] focus-visible:ring-offset-2'
+              )}
+            >
+              <span>{t('dashboard.finalReview.viewMyResults', 'View my results')}</span>
+              <ArrowRight className="size-4 shrink-0 rtl:rotate-180" />
+            </Link>
+          </div>
+        )}
+
+        {/* STATE 4: Rejected / Not Approved (Figma Node 921:25216) */}
+        {reviewState === 'rejected' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header: Red X Icon + In Final Review + Not Approved Badge */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-[55px] shrink-0 items-center justify-center rounded-2xl bg-[#ffe3e3]">
+                  <XCircle className="size-7 text-[#f21620]" />
+                </div>
+                <h2 id="final-review-title" className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.title', 'In Final Review')}
+                </h2>
+              </div>
+
+              <span className="rounded-full bg-[#ffe3e3] px-4 py-1 text-xs font-bold text-[#f21620] border border-[#fecaca]">
+                {t('dashboard.finalReview.notApprovedBadge', 'Not Approved')}
+              </span>
+            </div>
+
+            {/* Illustration */}
+            <div className="flex flex-col items-center justify-center py-4 text-center space-y-4">
+              <div className="relative max-w-[200px] sm:max-w-[240px] mx-auto transition-transform hover:scale-102">
+                <img
+                  src={rejectedIllustration}
+                  alt="Project Not Approved Illustration"
+                  className="w-full h-auto object-contain drop-shadow-sm"
+                />
+              </div>
+
+              {/* Heading & Subtitle */}
+              <div className="space-y-2 max-w-xl mx-auto">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.finalReview.wasNotApproved', 'Your project was not approved')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
+                  {t(
+                    'dashboard.finalReview.wasNotApprovedDesc',
+                    'Your project has been rejected after the second review. No internship certificate will be issued for this project.'
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Rejection Reasons Box */}
+            <div className="space-y-3 rounded-2xl bg-gray-50/70 p-5 sm:p-6 border border-gray-100">
+              <h4 className="text-sm sm:text-base font-bold text-gray-950">
+                {t('dashboard.finalReview.rejectionReasons', 'Rejection reasons')}
+              </h4>
+              <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-gray-950">1.</span>
+                  <span>
+                    {t(
+                      'dashboard.finalReview.reason1Detailed',
+                      'Some required features are missing or incomplete.'
+                    )}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold text-gray-950">2.</span>
+                  <span>
+                    {t(
+                      'dashboard.finalReview.reason2',
+                      'The project does not fully meet the specified requirements and needs further improvements.'
+                    )}
+                  </span>
+                </li>
+              </ul>
+              <p className="text-xs text-[#737373] pt-1">
+                {t(
+                  'dashboard.finalReview.contactSupportNotice',
+                  'If you have questions or need assistance, please contact support.'
+                )}
+              </p>
+            </div>
+
+            {/* Action: Contact support Button (Red outline) */}
+            <button
+              type="button"
+              onClick={() => alert('Support contact modal / chat opened.')}
+              className="w-full inline-flex items-center justify-center rounded-[13px] border-2 border-[#ef4444] bg-white py-3.5 px-6 text-center text-xs sm:text-sm font-bold text-[#ef4444] shadow-xs transition-all hover:bg-red-50/60 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            >
+              {t('dashboard.finalReview.contactSupport', 'Contact support')}
+            </button>
+          </div>
+        )}
       </section>
 
       {/* Edit Link Modal */}

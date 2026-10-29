@@ -63,6 +63,7 @@ const ProjectReviewPage = lazy(() => import('@/pages/dashboard/internship/Projec
 const ProjectDonePage = lazy(() => import('@/pages/dashboard/internship/ProjectDonePage'));
 const ProjectCompletedPage = lazy(() => import('@/pages/dashboard/internship/ProjectCompletedPage'));
 const ProjectFinalReviewPage = lazy(() => import('@/pages/dashboard/internship/ProjectFinalReviewPage'));
+const ProjectResultsPage = lazy(() => import('@/pages/dashboard/internship/ProjectResultsPage'));
 const CoursesPage = lazy(() => import('@/pages/dashboard/courses/CoursesPage'));
 const PlansPage = lazy(() => import('@/pages/dashboard/courses/PlansPage'));
 
@@ -343,6 +344,11 @@ export const router = createBrowserRouter(
             {
               path: 'internship/project/final-review',
               element: <ProjectFinalReviewPage />,
+              handle: { sidebarFooter: ProjectSidebarFooter } satisfies DashboardRouteHandle,
+            },
+            {
+              path: 'internship/project/results',
+              element: <ProjectResultsPage />,
               handle: { sidebarFooter: ProjectSidebarFooter } satisfies DashboardRouteHandle,
             },
             {
