@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 import { useTranslation } from 'react-i18next';
 
 import layerIcon from '@/assets/dashboard/ic-layer.svg';
@@ -8,7 +10,9 @@ import timerIcon from '@/assets/dashboard/ic-timer.svg';
 import leaderDivider from '@/assets/dashboard/leader-divider.svg';
 import { JourneyStepper } from '@/components/dashboard/JourneyStepper';
 import { YourProjectPill } from '@/components/dashboard/ProjectSummaryCard';
-import { CARD, IconTile, ProgressBar } from '@/components/dashboard/primitives';
+import { CARD, IconTile, ProgressBar, PURPLE_GRADIENT } from '@/components/dashboard/primitives';
+import { ProjectDetailsModal } from '@/components/dashboard/ProjectDetailsModal';
+import { Info } from 'lucide-react';
 import { MemberAvatar, SquadMemberCard, TrackBadge } from '@/components/dashboard/SquadMemberCard';
 import { EMPTY_SEAT_AVATAR, type StepperState } from '@/data/internshipDashboard';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,9 +33,18 @@ import { useSquadBoard } from './useSquadBoard';
 
 function ProjectHeader({ squad }: { squad: SquadDetailsDto }) {
   const { t } = useTranslation();
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const isCompleted = squad.status === 'Completed';
   return (
-    <section aria-labelledby="project-title" className={cn(CARD, 'flex flex-col gap-3 p-4 sm:px-[18px] sm:py-4')}>
+    <>
+      <section
+        aria-labelledby="project-title"
+        className={cn(
+          CARD,
+          'flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 sm:px-[22px] sm:py-5'
+        )}
+      >
+        <div className="flex flex-col gap-3 min-w-0 flex-1">
       <YourProjectPill />
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <h1 id="project-title" className="text-2xl font-medium leading-tight text-black sm:text-[32px]">
@@ -42,7 +55,30 @@ function ProjectHeader({ squad }: { squad: SquadDetailsDto }) {
         </span>
       </div>
       <p className="max-w-[540px] text-xs leading-[15px] text-[#4d4d4d]">{t('dashboard.project.summary')}</p>
-    </section>
+        </div>
+
+        {/* Project Details Button */}
+        <div className="shrink-0 self-start md:self-center">
+          <Link
+            to={ROUTES.dashboardProjectDetails}
+            aria-label={t('dashboard.project.details', 'Project Details')}
+            className={cn(
+              PURPLE_GRADIENT,
+              'inline-flex items-center justify-center gap-2 rounded-[13px] px-5 py-3 text-center text-[13px] font-bold tracking-[0.13px] text-white shadow-[0_10px_22px_rgba(58,3,83,0.2)] transition-all hover:brightness-110 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5a198f] focus-visible:ring-offset-2'
+            )}
+          >
+            <Info className="size-4 shrink-0" />
+            <span>{t('dashboard.project.details', 'Project Details')}</span>
+          </Link>
+        </div>
+      </section>
+
+      <ProjectDetailsModal
+        isOpen={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+        squad={squad}
+      />
+    </>
   );
 }
 

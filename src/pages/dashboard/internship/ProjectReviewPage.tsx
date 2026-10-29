@@ -1,0 +1,607 @@
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
+
+import avatarGirl from '@/assets/dashboard/avatar-girl.svg';
+import codeIcon from '@/assets/dashboard/ic-code.svg';
+import exportIcon from '@/assets/dashboard/ic-export.svg';
+import githubIcon from '@/assets/dashboard/ic-github.svg';
+import scrollIcon from '@/assets/dashboard/ic-scroll.svg';
+import simcardIcon from '@/assets/dashboard/ic-simcard.svg';
+import { CARD } from '@/components/dashboard/primitives';
+import { ROUTES } from '@/constants/routes';
+import { useInternship } from '@/hooks/useInternship';
+import { cn } from '@/lib/cn';
+
+type LinkItem = {
+  id: number;
+  labelPrefix: string;
+  provider: 'Figma' | 'github';
+  url: string;
+  author: string;
+};
+
+const INITIAL_PROJECT_LINKS: LinkItem[] = [
+  {
+    id: 1,
+    labelPrefix: 'UI/UX Link -',
+    provider: 'Figma',
+    url: 'https://figma.com',
+    author: 'Merna adel',
+  },
+  {
+    id: 2,
+    labelPrefix: 'frontend Link -',
+    provider: 'github',
+    url: 'https://github.com',
+    author: 'Ahmed ali',
+  },
+  {
+    id: 3,
+    labelPrefix: 'Frontend Link -',
+    provider: 'github',
+    url: 'https://github.com',
+    author: 'Ahmed ali',
+  },
+  {
+    id: 4,
+    labelPrefix: 'Backend Link -',
+    provider: 'github',
+    url: 'https://github.com',
+    author: 'Ali ahmed',
+  },
+  {
+    id: 5,
+    labelPrefix: 'AI Link -',
+    provider: 'github',
+    url: 'https://github.com',
+    author: 'Ahmed ali',
+  },
+  {
+    id: 6,
+    labelPrefix: 'Project Link',
+    provider: 'github',
+    url: 'https://github.com',
+    author: 'Ali ahmed',
+  },
+];
+
+export default function ProjectReviewPage() {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { data: internship } = useInternship();
+  const squad = internship?.squad;
+
+  // PR Link and submission time from navigation state or Figma defaults
+  const state = location.state as { submittedLink?: string; submittedTime?: string } | null;
+  const [currentPrLink, setCurrentPrLink] = useState<string>(
+    state?.submittedLink || 'https://www.github/'
+  );
+  const [submittedTime, setSubmittedTime] = useState<string>(
+    state?.submittedTime || '08:23 pm'
+  );
+
+  // Replace Link modal state
+  const [isReplaceModalOpen, setIsReplaceModalOpen] = useState(false);
+  const [newPrUrl, setNewPrUrl] = useState(currentPrLink);
+  const [replaceError, setReplaceError] = useState<string | null>(null);
+  const [replaceSuccess, setReplaceSuccess] = useState(false);
+
+  // Project links state
+  const [projectLinks, setProjectLinks] = useState<LinkItem[]>(INITIAL_PROJECT_LINKS);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editUrl, setEditUrl] = useState('https://github.com/my-squad/taskflow-pr');
+  const [linkSavedSuccess, setLinkSavedSuccess] = useState(false);
+
+  const handleReplacePr = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPrUrl.trim()) {
+      setReplaceError('Please enter a valid URL.');
+      return;
+    }
+    setReplaceError(null);
+    setCurrentPrLink(newPrUrl.trim());
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase();
+    setSubmittedTime(nowTime);
+    setReplaceSuccess(true);
+    setTimeout(() => {
+      setReplaceSuccess(false);
+      setIsReplaceModalOpen(false);
+    }, 600);
+  };
+
+  const handleSaveEditedLink = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editUrl.trim()) {
+      setProjectLinks((prev) =>
+        prev.map((item) => (item.id === 2 ? { ...item, url: editUrl.trim() } : item))
+      );
+      setLinkSavedSuccess(true);
+      setTimeout(() => {
+        setLinkSavedSuccess(false);
+        setIsEditModalOpen(false);
+      }, 700);
+    }
+  };
+
+  return (
+    <div className="mx-auto w-full max-w-[1084px] space-y-6 pb-12 pt-2">
+      {/* Top Back Navigation Bar */}
+      <header className="flex items-center gap-3">
+        <Link
+          to={ROUTES.dashboardProject}
+          className="group inline-flex items-center gap-3 text-gray-900 transition-colors hover:text-[#430A5D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#430A5D] rounded-lg p-1 -ml-1"
+          aria-label={t('dashboard.taskDetails.backToProject', 'Back to Project Workspace')}
+        >
+          <ArrowLeft className="size-7 shrink-0 text-gray-900 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1" />
+          <h1 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-[32px]">
+            {t('dashboard.taskDetails.viewTaskDetails', 'View Task Details')}
+          </h1>
+        </Link>
+      </header>
+
+      {/* 1. Status Stepper Workflow Card (03 In Review is Active) */}
+      <section
+        aria-label="Task Status Progress"
+        className={cn(CARD, 'flex items-center justify-center p-6 sm:p-7')}
+      >
+        <div className="flex w-full max-w-[650px] items-center justify-between">
+          {/* Step 1: 01 To Do (Completed) */}
+          <Link
+            to={ROUTES.dashboardProjectDetails}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View In Progress Stage"
+          >
+            <div className="flex size-9 items-center justify-center rounded-full bg-[#00BA88] text-xs font-bold text-white shadow-xs">
+              01
+            </div>
+            <span className="mt-2 text-center text-xs font-semibold text-gray-900 group-hover:text-[#430A5D]">
+              {t('dashboard.taskDetails.steps.todo', 'To Do')}
+            </span>
+          </Link>
+
+          {/* Line 1 -> 2 (Green) */}
+          <div className="h-[2px] flex-1 mx-2 sm:mx-4 -mt-5 bg-[#00BA88]" />
+
+          {/* Step 2: 02 In Progress (Completed) */}
+          <Link
+            to={ROUTES.dashboardProjectDetails}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View In Progress Stage"
+          >
+            <div className="flex size-9 items-center justify-center rounded-full bg-[#00BA88] text-xs font-bold text-white shadow-xs">
+              02
+            </div>
+            <span className="mt-2 text-center text-xs font-semibold text-gray-900 group-hover:text-[#430A5D]">
+              {t('dashboard.taskDetails.steps.inProgress', 'In Progress')}
+            </span>
+          </Link>
+
+          {/* Line 2 -> 3 (Green) */}
+          <div className="h-[2px] flex-1 mx-2 sm:mx-4 -mt-5 bg-[#00BA88]" />
+
+          {/* Step 3: 03 In Review (Active Deep Purple) */}
+          <div className="flex flex-col items-center">
+            <div className="flex size-9 items-center justify-center rounded-full bg-[#430A5D] text-xs font-bold text-white ring-4 ring-purple-100 shadow-sm">
+              03
+            </div>
+            <span className="mt-2 text-center text-xs font-bold text-[#430A5D]">
+              {t('dashboard.taskDetails.steps.inReview', 'In Review')}
+            </span>
+          </div>
+
+          {/* Line 3 -> 4 (Gray) */}
+          <div className="h-[2px] flex-1 mx-2 sm:mx-4 -mt-5 bg-gray-200" />
+
+          {/* Step 4: 04 Done (Pending Gray) */}
+          <Link
+            to={ROUTES.dashboardProjectDone}
+            state={{ submittedLink: currentPrLink, submittedTime }}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View Done Stage"
+          >
+            <div className="flex size-9 items-center justify-center rounded-full bg-[#828282] text-xs font-bold text-white">
+              04
+            </div>
+            <span className="mt-2 text-center text-xs font-medium text-gray-500 group-hover:text-[#430A5D]">
+              {t('dashboard.taskDetails.steps.done', 'Done')}
+            </span>
+          </Link>
+        </div>
+      </section>
+
+      {/* 2. Project Banner Card */}
+      <section
+        aria-labelledby="project-banner-title"
+        className={cn(CARD, 'flex flex-col gap-3 p-5 sm:p-6')}
+      >
+        {/* Your project pill */}
+        <div className="inline-flex w-fit items-center gap-2 rounded-2xl bg-[#f3e9fa] px-3 py-1.5">
+          <img src={scrollIcon} alt="" aria-hidden="true" className="size-5" />
+          <span className="text-xs font-semibold text-[#8037be]">
+            {t('dashboard.taskDetails.yourProject', 'Your project')}
+          </span>
+        </div>
+
+        {/* Project title and active badge */}
+        <div className="flex flex-wrap items-center gap-3">
+          <h2
+            id="project-banner-title"
+            className="text-xl font-bold tracking-tight text-gray-950 sm:text-2xl"
+          >
+            {squad?.trackName
+              ? `${squad.trackName} — TaskFlow App`
+              : t('dashboard.taskDetails.projectTitle', 'TaskFlow — Task Management App')}
+          </h2>
+          <span className="rounded-full bg-[#e3fbe5] px-3 py-0.5 text-xs font-bold text-[#068f2f]">
+            {t('dashboard.taskDetails.active', 'Active')}
+          </span>
+        </div>
+
+        {/* Project description */}
+        <p className="max-w-4xl text-xs sm:text-sm text-[#4d4d4d] leading-relaxed">
+          {t(
+            'dashboard.taskDetails.projectDesc',
+            'Build a task management application where users can organize tasks, track progress, and collaborate with their team.'
+          )}
+        </p>
+      </section>
+
+      {/* 3. Task Details & In Review / Waiting for Senior Review Card */}
+      <section aria-labelledby="task-card-title" className={cn(CARD, 'p-6 sm:p-8 space-y-6')}>
+        {/* Task Header: Icon, Title, Badges & Sprint */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex size-[55px] shrink-0 items-center justify-center rounded-2xl bg-[#f6ebff] p-2">
+              <img src={simcardIcon} alt="" aria-hidden="true" className="size-7" />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h3 id="task-card-title" className="text-xl sm:text-2xl font-bold text-gray-950">
+                  {t('dashboard.taskDetails.taskTitle', 'Create Task List UI')}
+                </h3>
+                <span className="rounded-full bg-[#e3fbe5] px-3 py-0.5 text-xs font-semibold text-[#068f2f]">
+                  {t('dashboard.taskDetails.steps.inReview', 'In Review')}
+                </span>
+                <span className="rounded-full bg-[#f6ebff] px-3 py-0.5 text-xs font-semibold text-[#430A5D]">
+                  {t('dashboard.taskDetails.uiUx', 'UI/UX')}
+                </span>
+                <span className="rounded-full bg-[#fff4de] px-3 py-0.5 text-xs font-semibold text-[#d06f15]">
+                  {t('dashboard.taskDetails.storyPoints', '2 Story Points')}
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm font-medium text-[#737373]">
+                {t('dashboard.taskDetails.taskMeta', 'Task #17 · Sprint 2')}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Task Details Content */}
+        <div className="space-y-1.5 border-t border-gray-100 pt-5">
+          <h4 className="text-base font-bold text-gray-950">
+            {t('dashboard.taskDetails.taskDetailsHeading', 'Task Details')}
+          </h4>
+          <p className="text-xs sm:text-sm text-[#4d4d4d] leading-relaxed">
+            {t(
+              'dashboard.taskDetails.taskDetailsDesc',
+              'Build the task list interface according to the project requirements.'
+            )}
+          </p>
+        </div>
+
+        {/* Assignee */}
+        <div className="space-y-2.5">
+          <h4 className="text-base font-bold text-gray-950">
+            {t('dashboard.taskDetails.assignee', 'Assignee')}
+          </h4>
+          <div className="flex items-center gap-3">
+            <div className="size-11 overflow-hidden rounded-full border border-purple-200 bg-purple-50 flex items-center justify-center shrink-0">
+              <img src={avatarGirl} alt="Merna Adel" className="size-full object-cover" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-gray-950">
+                {t('dashboard.taskDetails.assigneeName', 'Merna Adel')}
+              </span>
+              <span className="text-xs font-medium text-[#737373]">
+                {t('dashboard.taskDetails.uiUx', 'UI/UX')}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit for Review: IN REVIEW STATE (Figma Node 917:17057) */}
+        <div className="space-y-4 rounded-2xl bg-gray-50/60 p-5 sm:p-6 border border-gray-100">
+          {/* Header Row: GitHub Icon + Submit for Review Title + Open in GitHub Link */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <img src={githubIcon} alt="GitHub" className="size-6 shrink-0" />
+              <h4 className="text-base font-bold text-gray-950">
+                {t('dashboard.taskDetails.submitForReview', 'Submit for Review')}
+              </h4>
+            </div>
+
+            <a
+              href={currentPrLink.startsWith('http') ? currentPrLink : `https://${currentPrLink}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-black hover:text-[#430A5D] transition-colors"
+            >
+              <span>{t('dashboard.taskDetails.openInGithub', 'Open in github')}</span>
+              <img
+                src={exportIcon}
+                alt=""
+                aria-hidden="true"
+                className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:-scale-x-100"
+              />
+            </a>
+          </div>
+
+          {/* Subtitle: waiting for Senior review */}
+          <div className="flex flex-wrap items-center justify-between gap-2 -mt-1 pl-9">
+            <p className="text-xs text-[#737373]">
+              {t('dashboard.taskDetails.waitingForReview', 'waiting for Senior review')}
+            </p>
+            <Link
+              to={ROUTES.dashboardProjectDone}
+              state={{ submittedLink: currentPrLink, submittedTime }}
+              className="text-xs font-semibold text-[#0FAF50] hover:underline"
+            >
+              {t('dashboard.taskDetails.viewDoneStep', 'View Approved State (Next Step) →')}
+            </Link>
+          </div>
+
+          {/* Current Link Row */}
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white px-4 py-3 border border-gray-200/80 shadow-xs">
+            <span className="text-xs sm:text-sm font-bold text-gray-900">
+              {t('dashboard.taskDetails.currentLink', 'Current Link')}
+            </span>
+            <a
+              href={currentPrLink.startsWith('http') ? currentPrLink : `https://${currentPrLink}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs sm:text-sm font-medium text-gray-700 hover:text-[#430A5D] hover:underline truncate max-w-[280px] sm:max-w-md"
+              dir="ltr"
+            >
+              {currentPrLink}
+            </a>
+          </div>
+
+          {/* Replace Link Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setNewPrUrl(currentPrLink);
+              setIsReplaceModalOpen(true);
+            }}
+            className="w-full rounded-[13px] border border-[#430A5D] bg-white py-3.5 px-6 text-center text-xs sm:text-sm font-bold text-[#430A5D] shadow-xs transition-all hover:bg-purple-50/60 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#430A5D] focus-visible:ring-offset-2"
+          >
+            {t('dashboard.taskDetails.replaceLink', 'Replace Link')}
+          </button>
+
+          {/* Submitted Time */}
+          <p className="text-center text-[11px] sm:text-xs text-[#737373]">
+            {t('dashboard.taskDetails.submittedTime', { time: submittedTime, defaultValue: `Submitted time ${submittedTime}` })}
+          </p>
+        </div>
+      </section>
+
+      {/* 4. Projects Links Card */}
+      <section aria-labelledby="projects-links-title" className={cn(CARD, 'p-6 sm:p-8 space-y-6')}>
+        <div className="flex items-center justify-between border-b border-gray-100 pb-5">
+          <div className="flex items-center gap-3">
+            <img src={codeIcon} alt="" aria-hidden="true" className="size-[55px] shrink-0" />
+            <h3 id="projects-links-title" className="text-xl sm:text-2xl font-bold text-gray-950">
+              {t('dashboard.taskDetails.projectsLinks', 'Projects Links')}
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsEditModalOpen(true)}
+            className="rounded-full border border-[#d9d9d9] bg-white px-4 py-1.5 text-xs font-semibold text-[#666] shadow-sm transition-all hover:border-[#430A5D] hover:text-[#430A5D] hover:bg-purple-50/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#430A5D]"
+          >
+            {t('dashboard.taskDetails.editMyLink', 'Edit my link')}
+          </button>
+        </div>
+
+        {/* Links Grid: 3 columns matching Figma */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projectLinks.map((item) => (
+            <div key={item.id} className="flex items-center gap-3.5">
+              <span className="flex size-[55px] shrink-0 items-center justify-center rounded-2xl bg-[#f6ebff] text-xl font-medium text-black">
+                {item.id}
+              </span>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-1 text-sm sm:text-base font-normal text-black transition-colors hover:text-[#430A5D]"
+                >
+                  <span className="truncate">{item.labelPrefix}</span>
+                  <span className="font-bold underline underline-offset-2">
+                    {item.provider}
+                  </span>
+                  <img
+                    src={exportIcon}
+                    alt=""
+                    aria-hidden="true"
+                    className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:-scale-x-100"
+                  />
+                </a>
+                <span className="text-xs text-[#737373] mt-0.5">{item.author}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Replace PR Link Modal */}
+      {isReplaceModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="replace-pr-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 id="replace-pr-title" className="text-lg font-bold text-gray-950">
+                {t('dashboard.taskDetails.replaceModalTitle', 'Replace PR Link')}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsReplaceModalOpen(false)}
+                className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#737373]">
+              {t(
+                'dashboard.taskDetails.replaceModalDesc',
+                'Submit a new Pull Request link for your Senior to review.'
+              )}
+            </p>
+
+            <form onSubmit={handleReplacePr} className="space-y-4 pt-2">
+              <div>
+                <label
+                  htmlFor="replace-pr-url"
+                  className="block text-xs font-semibold text-gray-700 mb-1"
+                >
+                  {t('dashboard.taskDetails.linkLabel', 'PR Link URL')}
+                </label>
+                <input
+                  id="replace-pr-url"
+                  type="url"
+                  required
+                  value={newPrUrl}
+                  onChange={(e) => {
+                    setNewPrUrl(e.target.value);
+                    if (replaceError) setReplaceError(null);
+                  }}
+                  placeholder={t('dashboard.taskDetails.newPrPlaceholder', 'Enter new GitHub PR link')}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-950 outline-none focus:border-[#430A5D] focus:ring-2 focus:ring-purple-100"
+                />
+                {replaceError && (
+                  <p className="mt-1 text-xs font-medium text-rose-600">{replaceError}</p>
+                )}
+              </div>
+
+              {replaceSuccess && (
+                <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
+                  <CheckCircle2 className="size-4" />
+                  {t('dashboard.taskDetails.linkSaved', 'Link updated successfully!')}
+                </p>
+              )}
+
+              <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => navigate(ROUTES.dashboardProjectDetails)}
+                  className="rounded-xl px-3 py-2 text-xs font-semibold text-purple-700 hover:bg-purple-50 transition"
+                >
+                  {t('dashboard.taskDetails.backToForm', 'Back to Form')}
+                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsReplaceModalOpen(false)}
+                    className="rounded-xl px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
+                  >
+                    {t('dashboard.taskDetails.cancel', 'Cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-xl bg-[#430A5D] px-5 py-2 text-xs font-bold text-white shadow-md hover:bg-[#340748] transition"
+                  >
+                    {t('dashboard.taskDetails.updatePrBtn', 'Update PR Link')}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit My Project Link Modal */}
+      {isEditModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-link-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 id="edit-link-title" className="text-lg font-bold text-gray-950">
+                {t('dashboard.taskDetails.editModalTitle', 'Edit Your Project Link')}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#737373]">
+              {t(
+                'dashboard.taskDetails.editModalDesc',
+                'Update the repository or design deliverable link shared with your squad.'
+              )}
+            </p>
+
+            <form onSubmit={handleSaveEditedLink} className="space-y-4 pt-2">
+              <div>
+                <label
+                  htmlFor="edit-url"
+                  className="block text-xs font-semibold text-gray-700 mb-1"
+                >
+                  {t('dashboard.taskDetails.linkLabel', 'Link URL')}
+                </label>
+                <input
+                  id="edit-url"
+                  type="url"
+                  required
+                  value={editUrl}
+                  onChange={(e) => setEditUrl(e.target.value)}
+                  placeholder="https://github.com/..."
+                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-950 outline-none focus:border-[#430A5D] focus:ring-2 focus:ring-purple-100"
+                />
+              </div>
+
+              {linkSavedSuccess && (
+                <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
+                  <CheckCircle2 className="size-4" />
+                  {t('dashboard.taskDetails.linkSaved', 'Link updated successfully!')}
+                </p>
+              )}
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
+                >
+                  {t('dashboard.taskDetails.cancel', 'Cancel')}
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-xl bg-[#430A5D] px-5 py-2 text-xs font-bold text-white shadow-md hover:bg-[#340748] transition"
+                >
+                  {t('dashboard.taskDetails.saveLink', 'Save Changes')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
