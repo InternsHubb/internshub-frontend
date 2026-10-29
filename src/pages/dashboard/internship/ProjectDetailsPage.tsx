@@ -215,7 +215,12 @@ export default function ProjectDetailsPage() {
           />
 
           {/* Step 3: 03 In Review */}
-          <div className="flex flex-col items-center">
+          <Link
+            to={ROUTES.dashboardProjectReview}
+            state={{ submittedLink: prLink || 'https://www.github/' }}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View In Review Stage"
+          >
             <div
               className={cn(
                 'flex size-9 items-center justify-center rounded-full text-xs font-bold text-white transition-all',
@@ -235,12 +240,12 @@ export default function ProjectDetailsPage() {
                   ? 'text-[#430A5D] font-bold'
                   : currentStep > 3
                     ? 'text-gray-900 font-semibold'
-                    : 'text-gray-500'
+                    : 'text-gray-500 group-hover:text-[#430A5D]'
               )}
             >
               {t('dashboard.taskDetails.steps.inReview', 'In Review')}
             </span>
-          </div>
+          </Link>
 
           {/* Line 3 -> 4 */}
           <div
@@ -251,7 +256,12 @@ export default function ProjectDetailsPage() {
           />
 
           {/* Step 4: 04 Done */}
-          <div className="flex flex-col items-center">
+          <Link
+            to={ROUTES.dashboardProjectDone}
+            state={{ submittedLink: prLink || 'https://www.github/' }}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View Done Stage"
+          >
             <div
               className={cn(
                 'flex size-9 items-center justify-center rounded-full text-xs font-bold text-white transition-all',
@@ -263,12 +273,12 @@ export default function ProjectDetailsPage() {
             <span
               className={cn(
                 'mt-2 text-center text-xs font-medium',
-                currentStep === 4 ? 'text-gray-900 font-bold' : 'text-gray-500'
+                currentStep === 4 ? 'text-gray-900 font-bold' : 'text-gray-500 group-hover:text-[#430A5D]'
               )}
             >
               {t('dashboard.taskDetails.steps.done', 'Done')}
             </span>
-          </div>
+          </Link>
         </div>
       </section>
 

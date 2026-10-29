@@ -1716,7 +1716,12 @@
       "updatePrBtn": "تحديث رابط الـ PR",
       "backToForm": "العودة لنموذج الإرسال",
       "viewDoneStep": "عرض حالة الاعتماد (الخطوة التالية) ←",
-      "viewReviewStep": "العودة إلى حالة قيد المراجعة ←"
+      "viewReviewStep": "العودة إلى حالة قيد المراجعة ←",
+      "readOnly": "للقراءة فقط",
+      "viewCompletedStep": "عرض الحالة النهائية (للقراءة فقط) ←",
+      "viewApprovedStep": "عرض حالة الاعتماد ←",
+      "viewProgressStep": "العودة إلى حالة قيد التنفيذ ←",
+      "readOnlyNotice": "تم إنهاء هذه المهمة وإغلاقها، وهي الآن للقراءة فقط."
     }
   },
   "account": {

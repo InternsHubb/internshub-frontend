@@ -148,53 +148,71 @@ export default function ProjectDonePage() {
       >
         <div className="flex w-full max-w-[650px] items-center justify-between">
           {/* Step 1: 01 To Do (Completed) */}
-          <div className="flex flex-col items-center">
+          <Link
+            to={ROUTES.dashboardProjectDetails}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View In Progress Stage"
+          >
             <div className="flex size-9 items-center justify-center rounded-full bg-[#00BA88] text-xs font-bold text-white shadow-xs">
               01
             </div>
-            <span className="mt-2 text-center text-xs font-semibold text-gray-900">
+            <span className="mt-2 text-center text-xs font-semibold text-gray-900 group-hover:text-[#430A5D]">
               {t('dashboard.taskDetails.steps.todo', 'To Do')}
             </span>
-          </div>
+          </Link>
 
           {/* Line 1 -> 2 (Green) */}
           <div className="h-[2px] flex-1 mx-2 sm:mx-4 -mt-5 bg-[#00BA88]" />
 
           {/* Step 2: 02 In Progress (Completed) */}
-          <div className="flex flex-col items-center">
+          <Link
+            to={ROUTES.dashboardProjectDetails}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View In Progress Stage"
+          >
             <div className="flex size-9 items-center justify-center rounded-full bg-[#00BA88] text-xs font-bold text-white shadow-xs">
               02
             </div>
-            <span className="mt-2 text-center text-xs font-semibold text-gray-900">
+            <span className="mt-2 text-center text-xs font-semibold text-gray-900 group-hover:text-[#430A5D]">
               {t('dashboard.taskDetails.steps.inProgress', 'In Progress')}
             </span>
-          </div>
+          </Link>
 
           {/* Line 2 -> 3 (Green) */}
           <div className="h-[2px] flex-1 mx-2 sm:mx-4 -mt-5 bg-[#00BA88]" />
 
           {/* Step 3: 03 In Review (Completed) */}
-          <div className="flex flex-col items-center">
+          <Link
+            to={ROUTES.dashboardProjectReview}
+            state={{ submittedLink: currentPrLink, submittedTime }}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View In Review Stage"
+          >
             <div className="flex size-9 items-center justify-center rounded-full bg-[#00BA88] text-xs font-bold text-white shadow-xs">
               03
             </div>
-            <span className="mt-2 text-center text-xs font-semibold text-gray-900">
+            <span className="mt-2 text-center text-xs font-semibold text-gray-900 group-hover:text-[#430A5D]">
               {t('dashboard.taskDetails.steps.inReview', 'In Review')}
             </span>
-          </div>
+          </Link>
 
           {/* Line 3 -> 4 (Green) */}
           <div className="h-[2px] flex-1 mx-2 sm:mx-4 -mt-5 bg-[#00BA88]" />
 
           {/* Step 4: 04 Done (Green & Active in Figma 921:16662) */}
-          <div className="flex flex-col items-center">
+          <Link
+            to={ROUTES.dashboardProjectCompleted}
+            state={{ submittedLink: currentPrLink, submittedTime }}
+            className="flex flex-col items-center group transition-transform hover:scale-105"
+            title="View Read Only Final Stage"
+          >
             <div className="flex size-9 items-center justify-center rounded-full bg-[#00BA88] text-xs font-bold text-white ring-4 ring-emerald-100 shadow-sm">
               04
             </div>
-            <span className="mt-2 text-center text-xs font-bold text-gray-950">
+            <span className="mt-2 text-center text-xs font-bold text-gray-950 group-hover:text-[#430A5D]">
               {t('dashboard.taskDetails.steps.done', 'Done')}
             </span>
-          </div>
+          </Link>
         </div>
       </section>
 
@@ -331,13 +349,23 @@ export default function ProjectDonePage() {
             <p className="text-xs text-[#737373]">
               {t('dashboard.taskDetails.waitingForReview', 'waiting for Senior review')}
             </p>
-            <Link
-              to={ROUTES.dashboardProjectReview}
-              state={{ submittedLink: currentPrLink, submittedTime }}
-              className="text-xs font-semibold text-[#8037BE] hover:underline"
-            >
-              {t('dashboard.taskDetails.viewReviewStep', '← Back to In Review State')}
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                to={ROUTES.dashboardProjectReview}
+                state={{ submittedLink: currentPrLink, submittedTime }}
+                className="text-xs font-semibold text-[#8037BE] hover:underline"
+              >
+                {t('dashboard.taskDetails.viewReviewStep', '← Back to In Review State')}
+              </Link>
+              <span className="text-gray-300">·</span>
+              <Link
+                to={ROUTES.dashboardProjectCompleted}
+                state={{ submittedLink: currentPrLink, submittedTime }}
+                className="text-xs font-semibold text-[#0FAF50] hover:underline"
+              >
+                {t('dashboard.taskDetails.viewCompletedStep', 'View Final Read-Only State →')}
+              </Link>
+            </div>
           </div>
 
           {/* Current Link Row */}

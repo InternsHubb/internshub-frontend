@@ -1700,7 +1700,12 @@
       "updatePrBtn": "Update PR Link",
       "backToForm": "Back to Form",
       "viewDoneStep": "View Approved State (Next Step) →",
-      "viewReviewStep": "← Back to In Review State"
+      "viewReviewStep": "← Back to In Review State",
+      "readOnly": "Read Only",
+      "viewCompletedStep": "View Final Read-Only State →",
+      "viewApprovedStep": "View Approved State →",
+      "viewProgressStep": "← Back to In Progress State",
+      "readOnlyNotice": "This task has been finalized and closed. It is now read-only."
     }
   },
   "account": {
