@@ -44,7 +44,7 @@ const FOOTER_COLUMNS: ReadonlyArray<FooterColumn> = [
     titleKey: 'footer.colCompany',
     icon: iconCompany,
     links: [
-      { labelKey: 'footer.linkAbout', href: '#about' },
+      { labelKey: 'footer.linkAbout', href: '/#about' },
       { labelKey: 'footer.linkBlog', href: '#blog' },
       { labelKey: 'footer.linkCareers', href: '#careers' },
       { labelKey: 'footer.linkPartners', href: '#partners' },
@@ -174,7 +174,7 @@ export const Footer: React.FC<FooterProps> = ({ onSubscribe }) => {
   }
 
   return (
-    <footer id="contact" className="relative mt-16 w-full overflow-clip bg-[#22023c] text-white sm:mt-24">
+    <footer id="contact" className="relative mt-16 w-full overflow-clip bg-[#22023c] text-white sm:mt-24 scroll-mt-24">
       {/* Background glows (Figma "Glow Left" / "Glow Right"), anchored to the bottom corners as in the
           459px desktop frame. The SVGs include their own 140px blur margin. */}
       <img
