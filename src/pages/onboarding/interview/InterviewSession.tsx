@@ -99,27 +99,49 @@ function PausedBanner({ devices, withAppPrompt }: { devices: DeviceCheckApi; wit
 const VOICE_PILL: Record<VoiceState, { pill: string; dot: string }> = {
   idle: { pill: 'bg-white/10 text-white/80', dot: 'bg-[#c9bfd0]' },
   paused: { pill: 'bg-white/10 text-white/80', dot: 'bg-[#9a939e]' },
-  listening: { pill: 'bg-[#f43f5e]/20 text-[#fecdd3]', dot: 'bg-[#f43f5e]' },
-  speaking: { pill: 'bg-[#f43f5e]/25 text-[#ffe4e6]', dot: 'bg-[#f43f5e] motion-safe:animate-pulse' },
+  listening: { pill: 'bg-white/10 text-white', dot: 'bg-[#c084fc]' },
+  speaking: { pill: 'bg-[#22c55e]/20 text-[#bbf7d0]', dot: 'bg-[#22c55e] motion-safe:animate-pulse' },
   processing: { pill: 'bg-[#f59e0b]/20 text-[#fde68a]', dot: 'bg-[#f59e0b]' },
   error: { pill: 'bg-[#be123c]/30 text-[#fecdd3]', dot: 'bg-[#fb7185]' },
 };
 
+// Bar heights relative to the microphone level, so the bars read as a voice shape.
+const LEVEL_BARS = [0.55, 0.85, 1, 0.85, 0.55];
+const LEVEL_BAR_MIN = 0.15;
+
 const PANEL_BOX = 'rounded-[16px] border border-white/10 bg-white/[0.07] px-5 py-4 backdrop-blur-sm';
 
-// The recording panel under the question: what the candidate should do right now.
-function AnswerPanel({ voice }: { voice: VoiceState }) {
+// The recording panel under the question: what the candidate should do right now. While the take
+// records, "listening" (waiting for the candidate) and "you're speaking" come from the real
+// microphone level (useSpeaking), and the bars follow that level.
+function AnswerPanel({ voice, level }: { voice: VoiceState; level: number }) {
   const { t } = useTranslation();
   const isTaking = voice === 'listening' || voice === 'speaking';
   const style = VOICE_PILL[voice];
+  const label = isTaking
+    ? t(`onboarding.interview.session.call.voice.${voice === 'speaking' ? 'userSpeaking' : 'listening'}`)
+    : t(`onboarding.interview.session.voice.${voice}`);
   // Screen readers hear the state changes that matter, not every start and stop of speech.
   const announced = voice === 'speaking' ? 'listening' : voice;
   return (
-    <div className={`${PANEL_BOX} flex flex-col items-center gap-2`}>
+    <div data-voice-state={voice} className={`${PANEL_BOX} flex flex-col items-center gap-2`}>
       <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${style.pill}`}>
         <span aria-hidden="true" className={`h-2 w-2 rounded-full ${style.dot}`} />
-        {isTaking ? t('onboarding.interview.session.call.recordingAnswer') : t(`onboarding.interview.session.voice.${voice}`)}
+        {label}
       </span>
+      {isTaking && (
+        <div aria-hidden="true" className="flex h-6 items-center gap-1">
+          {LEVEL_BARS.map((weight, index) => (
+            <span
+              key={index}
+              className={`h-6 w-1.5 origin-center rounded-full transition-[transform,background-color] duration-100 ease-out motion-reduce:transition-none ${
+                voice === 'speaking' ? 'bg-[#4ade80]' : 'bg-white/35'
+              }`}
+              style={{ transform: `scaleY(${Math.max(LEVEL_BAR_MIN, Math.min(1, level * weight * 1.6))})` }}
+            />
+          ))}
+        </div>
+      )}
       <p className="text-sm leading-6 text-white/75">
         <Trans i18nKey="onboarding.interview.session.call.speakNaturally" components={{ b: <strong className="font-semibold text-white" /> }} />
       </p>
@@ -178,6 +200,8 @@ export function InterviewSession({
   const question = interview?.currentQuestion ?? null;
   const ended = status === 'ready' && interview !== null && question === null;
   const questionNumber = (interview?.answeredCount ?? 0) + 1;
+  // The backend's interview type wins over the one inferred from the package.
+  const shownType: InterviewType = interview ? (interview.type === 'Orientation' ? 'orientation' : 'technical') : type;
 
   // The interviewer reads the question, or the closing text once the interview has ended.
   const speech = useQuestionSpeech({
@@ -248,7 +272,7 @@ export function InterviewSession({
     if (ended) return <PanelMessage icon={Check} tone="success">{k('endedTitle')}</PanelMessage>;
     if (isSavedShown) return <PanelMessage icon={Check} tone="success">{k('answerSaved')}</PanelMessage>;
     if (!questionSpoken) return <PanelMessage icon={Volume2} tone="info">{k('call.listenFirst')}</PanelMessage>;
-    return <AnswerPanel voice={voice} />;
+    return <AnswerPanel voice={voice} level={isMicLive ? devices.micLevel : 0} />;
   };
 
   const renderQuestion = () => {
@@ -354,7 +378,7 @@ export function InterviewSession({
   return (
     <div className="space-y-6">
       <div className="border-b border-[#e7dbe9] pb-5">
-        <h1 className={`text-2xl font-semibold tracking-[-0.02em] ${TITLE_TEXT}`}>{t(`onboarding.interview.types.${type}`)}</h1>
+        <h1 className={`text-2xl font-semibold tracking-[-0.02em] ${TITLE_TEXT}`}>{t(`onboarding.interview.types.${shownType}`)}</h1>
         <p className={`text-sm ${BODY_TEXT}`}>{track}</p>
       </div>
 

@@ -1112,7 +1112,10 @@
             "paused": "Paused",
             "finished": "Finished"
           },
-          "recordingAnswer": "Recording your answer…",
+          "voice": {
+            "listening": "Listening for your answer…",
+            "userSpeaking": "You're speaking"
+          },
           "speakNaturally": "Speak naturally into your microphone. Click <b>Done</b> when finished to submit your spoken answer.",
           "listenFirst": "Listen to the question…",
           "you": "You",
