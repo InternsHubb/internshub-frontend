@@ -53,9 +53,10 @@ export const VideoShowcase: React.FC<VideoShowcaseProps> = ({
 
   return (
     <section
-      id="about-video"
+      id="about"
       className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-16 sm:py-20 select-none scroll-mt-28"
     >
+      <span id="about-video" className="sr-only" />
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 reveal-on-scroll">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-100 text-[#5a198f] text-xs sm:text-sm font-bold tracking-wide mb-4 shadow-xs">

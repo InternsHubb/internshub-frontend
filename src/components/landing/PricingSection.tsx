@@ -70,7 +70,7 @@ export const PricingSection: React.FC = () => {
   )
 
   return (
-    <section id="pricing" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none">
+    <section id="pricing" className="w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 py-12 lg:py-16 select-none scroll-mt-28">
       {/* Section Header (Figma node 1002:1728) - second line stays on one line */}
       <div className="text-start mb-12 sm:mb-16 reveal-on-scroll">
         <h2 className="text-[32px] sm:text-[38px] lg:text-[40px] font-bold text-[#111827] leading-tight mb-4">
