@@ -1714,7 +1714,9 @@
       "replaceModalDesc": "أرسل رابط طلب سحب (PR) جديد ليقوم المهندس المشرف بمراجعته.",
       "newPrPlaceholder": "أدخل رابط GitHub PR الجديد",
       "updatePrBtn": "تحديث رابط الـ PR",
-      "backToForm": "العودة لنموذج الإرسال"
+      "backToForm": "العودة لنموذج الإرسال",
+      "viewDoneStep": "عرض حالة الاعتماد (الخطوة التالية) ←",
+      "viewReviewStep": "العودة إلى حالة قيد المراجعة ←"
     }
   },
   "account": {

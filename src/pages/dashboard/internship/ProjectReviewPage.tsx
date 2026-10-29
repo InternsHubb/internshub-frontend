@@ -327,9 +327,18 @@ export default function ProjectReviewPage() {
           </div>
 
           {/* Subtitle: waiting for Senior review */}
-          <p className="text-xs text-[#737373] -mt-1 pl-9">
-            {t('dashboard.taskDetails.waitingForReview', 'waiting for Senior review')}
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2 -mt-1 pl-9">
+            <p className="text-xs text-[#737373]">
+              {t('dashboard.taskDetails.waitingForReview', 'waiting for Senior review')}
+            </p>
+            <Link
+              to={ROUTES.dashboardProjectDone}
+              state={{ submittedLink: currentPrLink, submittedTime }}
+              className="text-xs font-semibold text-[#0FAF50] hover:underline"
+            >
+              {t('dashboard.taskDetails.viewDoneStep', 'View Approved State (Next Step) →')}
+            </Link>
+          </div>
 
           {/* Current Link Row */}
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white px-4 py-3 border border-gray-200/80 shadow-xs">

@@ -1698,7 +1698,9 @@
       "replaceModalDesc": "Submit a new Pull Request link for your Senior to review.",
       "newPrPlaceholder": "Enter new GitHub PR link",
       "updatePrBtn": "Update PR Link",
-      "backToForm": "Back to Form"
+      "backToForm": "Back to Form",
+      "viewDoneStep": "View Approved State (Next Step) →",
+      "viewReviewStep": "← Back to In Review State"
     }
   },
   "account": {
