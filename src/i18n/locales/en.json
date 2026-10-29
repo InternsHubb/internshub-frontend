@@ -133,7 +133,8 @@
     }
   },
   "nav": {
-    "brand": "EdTech",
+    "brand": "InternsHub",
+    "homeLabel": "InternsHub — Home",
     "home": "Home",
     "courses": "Courses",
     "internship": "Internship",

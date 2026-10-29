@@ -133,7 +133,8 @@
     }
   },
   "nav": {
-    "brand": "إدتك",
+    "brand": "InternsHub",
+    "homeLabel": "InternsHub — الرئيسية",
     "home": "الرئيسية",
     "courses": "الدورات",
     "internship": "التدريب العملي",

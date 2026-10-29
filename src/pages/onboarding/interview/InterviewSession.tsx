@@ -181,6 +181,7 @@ export function InterviewSession({
     interview,
     status,
     errorKey,
+    errorDetail,
     recordingErrorKey,
     isRecording,
     hasPendingAnswer,
@@ -282,7 +283,7 @@ export function InterviewSession({
     if (!interview) {
       return (
         <Notice tone="warning" icon={AlertCircle} title={k('startFailed')}>
-          {errorKey && <p>{t(errorKey)}</p>}
+          {errorDetail ? <p dir="auto">{errorDetail}</p> : errorKey && <p>{t(errorKey)}</p>}
           <div className="mt-3">
             <SecondaryButton onClick={() => void live.start()}>{k('retry')}</SecondaryButton>
           </div>
@@ -318,7 +319,7 @@ export function InterviewSession({
 
         {!ended && errorKey && (
           <Notice tone="warning" icon={AlertCircle} title={k('answerFailed')}>
-            <p>{t(errorKey)}</p>
+            {errorDetail ? <p dir="auto">{errorDetail}</p> : <p>{t(errorKey)}</p>}
             {hasPendingAnswer && (
               <>
                 <p className="mt-1">{k('answerKept')}</p>
