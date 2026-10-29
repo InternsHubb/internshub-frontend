@@ -16,6 +16,7 @@ import {
   requestUpgrade,
 } from '@/lib/api/packages';
 import type { EnrollmentDto, PackageDto, PlanChangeQuoteDto } from '@/lib/api/types';
+import { openCheckoutWindow } from '@/pages/onboarding/usePaymentCheckout';
 
 import { CoursesEmptyState } from './CoursesEmptyState';
 import { PlanCard } from './PlanCard';
@@ -192,16 +193,7 @@ export default function PlansPage() {
     setIsUpgrading(true);
     setUpgradeError(null);
 
-    const width = 600;
-    const height = 750;
-    const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - width) / 2));
-    const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - height) / 2));
-    let popup: Window | null = null;
-    try {
-      popup = window.open('about:blank', 'paymob_upgrade', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
-    } catch {
-      popup = null;
-    }
+    const popup = openCheckoutWindow();
 
     try {
       const upgraded = await requestUpgrade(activeEnrollment.id, targetPackage.id);
@@ -222,16 +214,37 @@ export default function PlansPage() {
           // sessionStorage may be restricted
         }
 
+        let navigated = false;
         if (popup && !popup.closed) {
-          popup.location.href = redirectUrl;
-          popup.focus();
-        } else {
-          window.location.assign(redirectUrl);
-          return;
+          try {
+            popup.location.replace(redirectUrl);
+            popup.focus();
+            navigated = true;
+          } catch {
+            try {
+              popup.location.href = redirectUrl;
+              popup.focus();
+              navigated = true;
+            } catch {
+              navigated = false;
+            }
+          }
+        }
+
+        if (!navigated) {
+          try {
+            const fallbackWin = window.open(redirectUrl, '_blank');
+            if (fallbackWin) navigated = true;
+          } catch {
+            navigated = false;
+          }
         }
 
         let active = true;
+        let pollCount = 0;
+        const maxPolls = 40;
         const poll = async () => {
+          pollCount += 1;
           try {
             const invoices = await getMyInvoices();
             const inv = invoices.find((item) => item.id === invoiceId);
@@ -249,10 +262,16 @@ export default function PlansPage() {
               reloadInternship();
               return;
             }
+            if (inv?.status === 'Failed' || inv?.status === 'Cancelled') {
+              if (popup && !popup.closed) popup.close();
+              setUpgradeError(t('dashboard.plans.upgradeError'));
+              setIsUpgrading(false);
+              return;
+            }
           } catch {
             // retry next poll
           }
-          if (active && (!popup || !popup.closed)) {
+          if (active && pollCount < maxPolls) {
             window.setTimeout(poll, 3000);
           } else {
             setIsUpgrading(false);

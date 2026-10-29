@@ -72,7 +72,28 @@ export function PaymentPanel({ enrollment, isTermsAccepted, state, onPay, onChec
     }
     switch (state.kind) {
       case 'verifying':
-        return <p role="status" className={`${NOTICE} bg-[#FBF7FE] text-[#5C1D87]`}>{t('onboarding.payment.verifying')}</p>;
+        return (
+          <div role="status" className={`${NOTICE} bg-[#FBF7FE] text-[#5C1D87] border border-[#5C1D87]/20`}>
+            <div className="flex items-center gap-2">
+              <span className="inline-block size-3.5 animate-spin rounded-full border-2 border-[#5C1D87] border-t-transparent shrink-0" />
+              <p className="font-bold text-xs">{t('onboarding.payment.verifying')}</p>
+            </div>
+            <p className="text-[11px] text-[#6B7280]">{t('onboarding.payment.windowNotice')}</p>
+            {state.redirectUrl && (
+              <div className="pt-1">
+                <a
+                  href={state.redirectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5C1D87] underline hover:text-[#3A0353]"
+                >
+                  <span>{t('onboarding.payment.openAgain')}</span>
+                  <span aria-hidden="true" className="rtl:-scale-x-100">↗</span>
+                </a>
+              </div>
+            )}
+          </div>
+        );
       case 'redirecting':
         return <p role="status" className={`${NOTICE} bg-[#FBF7FE] text-[#5C1D87]`}>{t('onboarding.payment.redirecting')}</p>;
       case 'pending':
@@ -80,7 +101,20 @@ export function PaymentPanel({ enrollment, isTermsAccepted, state, onPay, onChec
           <div role="status" className={`${NOTICE} bg-[#FFF7E6] text-[#9A5700]`}>
             <p className="font-bold">{t('onboarding.payment.pending.title')}</p>
             <p>{t('onboarding.payment.pending.body')}</p>
-            <div className="flex flex-wrap gap-4">
+            {state.redirectUrl && (
+              <div className="pt-1">
+                <a
+                  href={state.redirectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#9A5700] underline hover:text-[#783e00]"
+                >
+                  <span>{t('onboarding.payment.openAgain')}</span>
+                  <span aria-hidden="true" className="rtl:-scale-x-100">↗</span>
+                </a>
+              </div>
+            )}
+            <div className="flex flex-wrap gap-4 pt-1">
               <button type="button" onClick={onCheckAgain} className={TEXT_BUTTON}>{t('onboarding.payment.pending.checkAgain')}</button>
               <button type="button" onClick={onReset} className={TEXT_BUTTON}>{t('onboarding.payment.startOver')}</button>
             </div>
