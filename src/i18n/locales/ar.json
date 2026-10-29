@@ -1108,6 +1108,25 @@
           "speaking": "تتحدث الآن",
           "processing": "جارٍ إرسال إجابتك…",
           "error": "مشكلة في الميكروفون"
+        },
+        "call": {
+          "interviewer": "المحاور الذكي",
+          "initials": "AI",
+          "state": {
+            "idle": "في الانتظار",
+            "speaking": "يتحدث",
+            "listening": "يستمع",
+            "thinking": "يفكر",
+            "paused": "متوقفة مؤقتًا",
+            "finished": "انتهت"
+          },
+          "recordingAnswer": "جارٍ تسجيل إجابتك…",
+          "speakNaturally": "تحدّث بشكل طبيعي في الميكروفون. اضغط <b>تم</b> عند الانتهاء لإرسال إجابتك الصوتية.",
+          "listenFirst": "استمع إلى السؤال…",
+          "you": "أنت",
+          "micActive": "الميكروفون يعمل",
+          "micProblem": "الميكروفون غير متاح",
+          "recordingTimer": "تسجيل • {{time}}"
         }
       },
       "fullscreen": {
