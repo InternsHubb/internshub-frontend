@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, X } from 'lucide-react';
 
 import avatarGirl from '@/assets/dashboard/avatar-girl.svg';
 import codeIcon from '@/assets/dashboard/ic-code.svg';
@@ -395,6 +395,15 @@ export default function ProjectDonePage() {
           >
             {t('dashboard.taskDetails.replaceLink', 'Replace Link')}
           </button>
+
+          {/* Go to Project Final Review Button (Figma 921:21336) */}
+          <Link
+            to={ROUTES.dashboardProjectFinalReview}
+            className="w-full flex items-center justify-center gap-2 rounded-[13px] bg-gradient-to-r from-[#430A5D] to-[#5F0F82] py-3.5 px-6 text-center text-xs sm:text-sm font-bold text-white shadow-[0_10px_22px_rgba(67,10,93,0.25)] transition-all hover:brightness-110 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#430A5D] focus-visible:ring-offset-2"
+          >
+            <span>{t('dashboard.taskDetails.viewFinalReview', 'View Final Project Review')}</span>
+            <ArrowRight className="size-4 shrink-0 rtl:rotate-180" />
+          </Link>
 
           {/* Submitted Time */}
           <p className="text-center text-[11px] sm:text-xs text-[#737373]">

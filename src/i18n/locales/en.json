@@ -1705,7 +1705,33 @@
       "viewCompletedStep": "View Final Read-Only State →",
       "viewApprovedStep": "View Approved State →",
       "viewProgressStep": "← Back to In Progress State",
-      "readOnlyNotice": "This task has been finalized and closed. It is now read-only."
+      "readOnlyNotice": "This task has been finalized and closed. It is now read-only.",
+      "viewFinalReview": "View Final Project Review",
+      "backToTaskDetails": "Back to Task Details (Done)"
+    },
+    "finalReview": {
+      "projectEndState": "Project Workspace — End State",
+      "allTasksCompletedBanner": "Final Sprint Completed · In Final Review",
+      "title": "In Final Review",
+      "waiting": "Waiting",
+      "underFinalReview": "Your project is under final review",
+      "underFinalReviewDesc": "Your Senior is reviewing your final project. You'll see the result here once the review is complete.",
+      "sprintNumber": "Sprints 04",
+      "sprintDates": "oct 10 - oct 17, 2026",
+      "sprintSelect": "Sprint 4 — Current",
+      "sprintGoal": "SPRINT GOAL",
+      "sprintGoalDesc": "Build the core task management features.",
+      "tasksDone": "4 of 11 tasks done",
+      "totalTasks": "total tasks",
+      "completedTasks": "Completed tasks",
+      "remainingTasks": "Remaining tasks",
+      "storyPoint": "story point",
+      "taskBoard": "Task Board",
+      "myTasks": "My tasks",
+      "squadBoard": "Squad board",
+      "allTasksCompleted": "All tasks completed · Final Sprint",
+      "allTasksCompletedDesc": "Amazing work! You've completed all your tasks for this sprint, and this is the final sprint of your internship project.",
+      "readyForFinalReview": "Your project is now ready for final review by your Senior."
     }
   },
   "account": {

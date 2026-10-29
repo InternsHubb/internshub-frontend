@@ -52,6 +52,7 @@ export const ROUTES = {
   dashboardProjectReview: '/dashboard/internship/project/review',
   dashboardProjectDone: '/dashboard/internship/project/done',
   dashboardProjectCompleted: '/dashboard/internship/project/completed',
+  dashboardProjectFinalReview: '/dashboard/internship/project/final-review',
   dashboardCourses: '/dashboard/courses',
   dashboardPlans: '/dashboard/courses/plans',
   employer: '/employer',
