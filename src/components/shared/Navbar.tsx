@@ -580,18 +580,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       <div className={`relative ${containerClassName}`}>
         <div className="flex h-[74px] lg:h-[86px] items-center justify-between gap-3 xl:gap-6">
-          {/* Far Left: EdTech Hexagonal Logo & Wordmark */}
+          {/* Far Left: InternsHub Hexagonal Logo & Wordmark */}
           <div className="flex shrink-0 items-center">
             <Link
               to={ROUTES.home}
               onClick={handleHomeOrLogoClick}
-              aria-label="EdTech — Home"
+              aria-label={t('nav.homeLabel')}
               dir="ltr"
               className="group inline-flex items-center gap-2.5 rounded-xl py-1 pe-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6D28D9] focus-visible:ring-offset-2"
             >
               <EdTechLogoMark className="h-[36px] w-[33px] sm:h-[38px] sm:w-[35px] shrink-0 transition-transform duration-200 group-hover:scale-[1.03]" />
-              <span className="font-sans text-[22px] sm:text-[24px] font-extrabold tracking-[-0.025em] text-[#4B1196]">
-                EdTech
+              <span className="font-sans text-[20px] min-[360px]:text-[22px] sm:text-[24px] font-extrabold tracking-[-0.025em] text-[#4B1196]">
+                {t('nav.brand')}
               </span>
             </Link>
           </div>
