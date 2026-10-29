@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowRight,
@@ -153,20 +153,26 @@ export type FinalReviewState = 'waiting' | 'changes_requested' | 'approved' | 'r
 
 export default function ProjectFinalReviewPage() {
   const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
   const { data: internship } = useInternship();
   const squad = internship?.squad;
 
-  // Active review state: synced with ?state= in URL or defaults to 'waiting'
-  const stateParam = searchParams.get('state') as FinalReviewState | null;
   const validStates: FinalReviewState[] = ['waiting', 'changes_requested', 'approved', 'rejected'];
-  const [reviewState, setReviewStateInternal] = useState<FinalReviewState>(
-    stateParam && validStates.includes(stateParam) ? stateParam : 'waiting'
-  );
+  const [reviewState, setReviewState] = useState<FinalReviewState>(() => {
+    if (typeof window !== 'undefined') {
+      const param = new URLSearchParams(window.location.search).get('state') as FinalReviewState | null;
+      if (param && validStates.includes(param)) return param;
+    }
+    return 'waiting';
+  });
 
-  const setReviewState = (state: FinalReviewState) => {
-    setReviewStateInternal(state);
-    setSearchParams({ state });
+  // Switch state smoothly without triggering page scroll or navigation reset
+  const handleStateChange = (state: FinalReviewState) => {
+    setReviewState(state);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('state', state);
+      window.history.replaceState(null, '', url.toString());
+    }
   };
 
   // Active tab on Task Board: 'myTasks' | 'squadBoard'
@@ -590,7 +596,7 @@ export default function ProjectFinalReviewPage() {
           <div className="flex flex-wrap items-center gap-1.5 rounded-2xl bg-gray-100/90 p-1.5 shadow-2xs">
             <button
               type="button"
-              onClick={() => setReviewState('waiting')}
+              onClick={() => handleStateChange('waiting')}
               className={cn(
                 'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
                 reviewState === 'waiting'
@@ -602,7 +608,7 @@ export default function ProjectFinalReviewPage() {
             </button>
             <button
               type="button"
-              onClick={() => setReviewState('changes_requested')}
+              onClick={() => handleStateChange('changes_requested')}
               className={cn(
                 'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
                 reviewState === 'changes_requested'
@@ -614,7 +620,7 @@ export default function ProjectFinalReviewPage() {
             </button>
             <button
               type="button"
-              onClick={() => setReviewState('approved')}
+              onClick={() => handleStateChange('approved')}
               className={cn(
                 'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
                 reviewState === 'approved'
@@ -626,7 +632,7 @@ export default function ProjectFinalReviewPage() {
             </button>
             <button
               type="button"
-              onClick={() => setReviewState('rejected')}
+              onClick={() => handleStateChange('rejected')}
               className={cn(
                 'rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
                 reviewState === 'rejected'
