@@ -48,6 +48,8 @@ export const ROUTES = {
   dashboard: '/dashboard',
   dashboardInternship: '/dashboard/internship',
   dashboardProject: '/dashboard/internship/project',
+  dashboardProjectDetails: '/dashboard/internship/project/details',
+  dashboardProjectReview: '/dashboard/internship/project/review',
   dashboardCourses: '/dashboard/courses',
   dashboardPlans: '/dashboard/courses/plans',
   employer: '/employer',
