@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
+import { preloadInterviewerAvatar } from '@/features/ai-interviewer';
 import { DeviceCheck } from './DeviceCheck';
 import { InterviewOverview } from './InterviewOverview';
 import { InterviewSession } from './InterviewSession';
@@ -11,6 +12,7 @@ import { FULLSCREEN_MODE } from './integrity/policy';
 import { useIntegrityMonitor } from './integrity/useIntegrityMonitor';
 import { useDeviceCheck } from './useDeviceCheck';
 import { outcomeFor } from './useLiveInterview';
+import { unlockInterviewAudio } from './useQuestionSpeech';
 import type { LiveInterview } from './useLiveInterview';
 import type { InterviewProgress, InterviewProgressPatch, InterviewType, OutcomeScreen, SetupScreen } from './types';
 
@@ -70,6 +72,11 @@ export function InterviewSetupFlow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, startLive]);
 
+  // Warm up the 3D interviewer while the candidate checks their devices.
+  useEffect(() => {
+    if (screen === 'device-check') preloadInterviewerAvatar();
+  }, [screen]);
+
   // Device outages during the questions become integrity intervals.
   useEffect(() => {
     const cause = mediaOutage(camera);
@@ -119,7 +126,11 @@ export function InterviewSetupFlow({
             fullscreen={fullscreenInfo('setup')}
             onConsentChange={setConsent}
             onBack={onExit}
-            onStart={() => void continueInFullscreen('setup', { screen: 'overview' })}
+            onStart={() => {
+              void continueInFullscreen('setup', { screen: 'overview' });
+              // Same click: lets the questions be read aloud later without a play button.
+              unlockInterviewAudio();
+            }}
           />
         );
       case 'overview':
@@ -169,9 +180,7 @@ export function InterviewSetupFlow({
             type={type}
             track={track}
             live={live}
-            phase={phase}
             canGoBack={phase === 'answering' && (interview?.answeredCount ?? 0) === 0}
-            onAnswered={() => onChange({ phase: 'answered' })}
             onBack={() => onChange({ screen: 'device-check' })}
             onNext={handleNext}
           />

@@ -23,7 +23,7 @@ type VoiceIndicatorProps = {
   level: number;
 };
 
-function voiceState({ isRecording, isProcessing, isPaused, hasError }: Omit<VoiceIndicatorProps, 'level'>, speaking: boolean): VoiceState {
+export function voiceState({ isRecording, isProcessing, isPaused, hasError }: Omit<VoiceIndicatorProps, 'level'>, speaking: boolean): VoiceState {
   if (isProcessing) return 'processing';
   if (hasError) return 'error';
   if (isPaused) return 'paused';
