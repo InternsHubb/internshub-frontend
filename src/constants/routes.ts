@@ -56,6 +56,7 @@ export const ROUTES = {
   dashboardProjectResults: '/dashboard/internship/project/results',
   dashboardCourses: '/dashboard/courses',
   dashboardPlans: '/dashboard/courses/plans',
+  chat: '/dashboard/chat',
   employer: '/employer',
 } as const;
 

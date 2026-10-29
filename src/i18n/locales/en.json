@@ -1100,6 +1100,28 @@
           "speaking": "Speaking",
           "processing": "Sending your answer…",
           "error": "Microphone problem"
+        },
+        "call": {
+          "interviewer": "AI Interviewer",
+          "initials": "AI",
+          "state": {
+            "idle": "Waiting",
+            "speaking": "Speaking",
+            "listening": "Listening",
+            "thinking": "Thinking",
+            "paused": "Paused",
+            "finished": "Finished"
+          },
+          "voice": {
+            "listening": "Listening for your answer…",
+            "userSpeaking": "You're speaking"
+          },
+          "speakNaturally": "Speak naturally into your microphone. Click <b>Done</b> when finished to submit your spoken answer.",
+          "listenFirst": "Listen to the question…",
+          "you": "You",
+          "micActive": "Mic active",
+          "micProblem": "Mic unavailable",
+          "recordingTimer": "Recording • {{time}}"
         }
       },
       "fullscreen": {

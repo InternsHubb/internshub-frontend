@@ -10,6 +10,7 @@ import {
 import { RequireAuth } from '@/components/auth/RequireAuth';
 import type { DashboardRouteHandle } from '@/components/layout/DashboardLayout';
 import { InternshipSidebarFooter, ProjectSidebarFooter } from '@/pages/dashboard/internship/InternshipSidebarFooter';
+import { CompositeScoreCard } from '@/components/recruitment/CompositeScoreCard';
 import {
   EMPLOYER_ROUTES,
   REGISTER_HASHES,
@@ -66,6 +67,7 @@ const ProjectFinalReviewPage = lazy(() => import('@/pages/dashboard/internship/P
 const ProjectResultsPage = lazy(() => import('@/pages/dashboard/internship/ProjectResultsPage'));
 const CoursesPage = lazy(() => import('@/pages/dashboard/courses/CoursesPage'));
 const PlansPage = lazy(() => import('@/pages/dashboard/courses/PlansPage'));
+const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
 
 // Student recruitment flow pages (PR #31)
 const RecruitmentLayout = lazy(() => import('@/components/recruitment/RecruitmentLayout'));
@@ -357,6 +359,11 @@ export const router = createBrowserRouter(
                 { index: true, element: <CoursesPage /> },
                 { path: 'plans', element: <PlansPage /> },
               ],
+            },
+            {
+              path: 'chat',
+              element: <ChatPage />,
+              handle: { sidebarFooter: CompositeScoreCard } satisfies DashboardRouteHandle,
             },
           ],
         },
