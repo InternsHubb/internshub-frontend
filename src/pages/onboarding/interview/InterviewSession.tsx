@@ -1,44 +1,47 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { AlertCircle, Check, Loader2, MicOff, PauseCircle, X } from 'lucide-react';
-import type { InterviewQuestionDto } from '@/lib/api/types';
+import { useEffect, useRef, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { AlertCircle, Check, Loader2, MicOff, PauseCircle, Volume2 } from 'lucide-react';
+import type { AvatarState } from '@/features/ai-interviewer';
 import {
   BackArrow,
   BODY_TEXT,
-  CARD,
   ForwardArrow,
-  GRADIENT_BG,
-  GRADIENT_TEXT,
   MUTED_TEXT,
   Notice,
   PrimaryButton,
   SecondaryButton,
-  StatusPill,
   TextButton,
   TITLE_TEXT,
 } from './parts';
 import { mediaActionKey, requiredChecksReady, screenActionKey } from './deviceStatus';
-import { CameraPreview } from './devicePreview';
+import { CallControlBar } from './CallControlBar';
 import { CopyGuard } from './CopyGuard';
 import { FullscreenWarning } from './FullscreenWarning';
+import { InterviewerCallStage } from './InterviewerCallStage';
+import type { StageStatus } from './InterviewerCallStage';
 import { isScreenAccepted } from './useDeviceCheck';
 import type { DeviceCheckApi } from './useDeviceCheck';
 import type { IntegritySnapshot } from './integrity/integrityMonitor';
 import type { LiveInterview } from './useLiveInterview';
-import type { AnswerPhase, InterviewType } from './types';
-import { VoiceIndicator } from './VoiceIndicator';
+import type { InterviewType } from './types';
+import { useQuestionSpeech } from './useQuestionSpeech';
+import { useSpeaking } from './useSpeaking';
+import { voiceState } from './VoiceIndicator';
+import type { VoiceState } from './VoiceIndicator';
 
-// Question screen (Figma 24:284 answering, 24:447 answered). The question comes from the backend
-// interview (useLiveInterview), with its audio when the backend sends it. The answer is recorded
-// from the microphone while the question is shown; Done uploads it and sends it, and the answered
-// frame confirms it was saved (the backend returns no transcript). While recording, the voice
-// indicator follows the microphone level and shows when the candidate is actually speaking. An
-// answer that couldn't be sent is kept: the candidate sends it again or records a new one, and no
-// recording runs meanwhile. If the camera, microphone or
-// screen share stops, the interview pauses and the recording is discarded until it is restored
-// (research §18.6). If the candidate leaves fullscreen, the question is replaced by the fullscreen
-// warning until they return (§17.4). Page-hidden and focus-loss intervals are kept by the integrity
-// monitor without any message to the candidate (§18.6).
+// Question screen, call style: the 3D interviewer reads each question from the backend interview
+// (useLiveInterview) aloud, with its audio when the backend sends it and speech synthesis
+// otherwise (useQuestionSpeech). Recording starts once he has finished speaking. Done uploads and
+// sends the take; the next question follows straight away, with "Answer saved" shown briefly in
+// the recording panel (the backend returns no transcript). After the last answer the closing text
+// is read and Finish leads to the result. An answer that couldn't be sent is kept: the candidate
+// sends it again or records a new one, and no recording runs meanwhile. If the camera, microphone
+// or screen share stops, the interview pauses: speech stops and the recording is discarded until
+// it is restored (research §18.6). If the candidate leaves fullscreen, the question is replaced by
+// the fullscreen warning until they return (§17.4). Page-hidden and focus-loss intervals are kept
+// by the integrity monitor without any message to the candidate (§18.6).
+
+const SAVED_NOTICE_MS = 1500;
 
 type AppPrompt = <T>(prompt: () => Promise<T>) => Promise<T>;
 
@@ -51,10 +54,8 @@ type InterviewSessionProps = {
   type: InterviewType;
   track: string;
   live: LiveInterview;
-  phase: AnswerPhase;
   // Back leaves the questions only before the first answer is sent.
   canGoBack: boolean;
-  onAnswered: () => void;
   onBack: () => void;
   onNext: () => void;
 };
@@ -95,58 +96,70 @@ function PausedBanner({ devices, withAppPrompt }: { devices: DeviceCheckApi; wit
   );
 }
 
-function DeviceStatusList({ devices, integrity }: { devices: DeviceCheckApi; integrity: IntegritySnapshot }) {
+const VOICE_PILL: Record<VoiceState, { pill: string; dot: string }> = {
+  idle: { pill: 'bg-white/10 text-white/80', dot: 'bg-[#c9bfd0]' },
+  paused: { pill: 'bg-white/10 text-white/80', dot: 'bg-[#9a939e]' },
+  listening: { pill: 'bg-white/10 text-white', dot: 'bg-[#c084fc]' },
+  speaking: { pill: 'bg-[#22c55e]/20 text-[#bbf7d0]', dot: 'bg-[#22c55e] motion-safe:animate-pulse' },
+  processing: { pill: 'bg-[#f59e0b]/20 text-[#fde68a]', dot: 'bg-[#f59e0b]' },
+  error: { pill: 'bg-[#be123c]/30 text-[#fecdd3]', dot: 'bg-[#fb7185]' },
+};
+
+// Bar heights relative to the microphone level, so the bars read as a voice shape.
+const LEVEL_BARS = [0.55, 0.85, 1, 0.85, 0.55];
+const LEVEL_BAR_MIN = 0.15;
+
+const PANEL_BOX = 'rounded-[16px] border border-white/10 bg-white/[0.07] px-5 py-4 backdrop-blur-sm';
+
+// The recording panel under the question: what the candidate should do right now. While the take
+// records, "listening" (waiting for the candidate) and "you're speaking" come from the real
+// microphone level (useSpeaking), and the bars follow that level.
+function AnswerPanel({ voice, level }: { voice: VoiceState; level: number }) {
   const { t } = useTranslation();
-  const screenOk = isScreenAccepted(devices.screen);
-  const rows = [
-    { label: t('onboarding.interview.deviceCheck.camera'), ok: devices.camera.status === 'ready' },
-    { label: t('onboarding.interview.deviceCheck.microphone'), ok: devices.microphone.status === 'ready' },
-    { label: t('onboarding.interview.deviceCheck.screen'), ok: screenOk },
-    // Shown only when fullscreen is in use for this attempt.
-    ...(integrity.fullscreen === 'off'
-      ? []
-      : [{ label: t('onboarding.interview.fullscreen.statusLabel'), ok: integrity.fullscreen === 'active' }]),
-  ];
+  const isTaking = voice === 'listening' || voice === 'speaking';
+  const style = VOICE_PILL[voice];
+  const label = isTaking
+    ? t(`onboarding.interview.session.call.voice.${voice === 'speaking' ? 'userSpeaking' : 'listening'}`)
+    : t(`onboarding.interview.session.voice.${voice}`);
+  // Screen readers hear the state changes that matter, not every start and stop of speech.
+  const announced = voice === 'speaking' ? 'listening' : voice;
   return (
-    <section className={`${CARD} p-5`}>
-      <h2 className={`border-b border-[#e7dbe9] pb-2 text-xs font-bold uppercase tracking-[0.06em] ${BODY_TEXT}`}>
-        {t('onboarding.interview.session.deviceStatus')}
-      </h2>
-      <ul>
-        {rows.map((row) => (
-          <li key={row.label} className={`flex items-center justify-between border-b border-[#f1eaf4] py-2.5 text-sm ${TITLE_TEXT}`}>
-            {row.label}
-            {row.ok ? (
-              <Check aria-hidden="true" size={18} className="text-[#16a34a]" />
-            ) : (
-              <X aria-hidden="true" size={18} className="text-[#be123c]" />
-            )}
-            <span className="sr-only">{t(`onboarding.interview.status.${row.ok ? 'ready' : 'stopped'}`)}</span>
-          </li>
-        ))}
-      </ul>
-      {screenOk && (
-        <p className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-xs font-semibold text-[#15803d]">
-          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
-          {t('onboarding.interview.session.screenActive')}
-        </p>
+    <div data-voice-state={voice} className={`${PANEL_BOX} flex flex-col items-center gap-2`}>
+      <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${style.pill}`}>
+        <span aria-hidden="true" className={`h-2 w-2 rounded-full ${style.dot}`} />
+        {label}
+      </span>
+      {isTaking && (
+        <div aria-hidden="true" className="flex h-6 items-center gap-1">
+          {LEVEL_BARS.map((weight, index) => (
+            <span
+              key={index}
+              className={`h-6 w-1.5 origin-center rounded-full transition-[transform,background-color] duration-100 ease-out motion-reduce:transition-none ${
+                voice === 'speaking' ? 'bg-[#4ade80]' : 'bg-white/35'
+              }`}
+              style={{ transform: `scaleY(${Math.max(LEVEL_BAR_MIN, Math.min(1, level * weight * 1.6))})` }}
+            />
+          ))}
+        </div>
       )}
-    </section>
+      <p className="text-sm leading-6 text-white/75">
+        <Trans i18nKey="onboarding.interview.session.call.speakNaturally" components={{ b: <strong className="font-semibold text-white" /> }} />
+      </p>
+      <span className="sr-only" role="status" aria-live="polite">
+        {t(`onboarding.interview.session.voice.${announced}`)}
+      </span>
+    </div>
   );
 }
 
-// Plays the question audio the backend sent, if any. Only an audio data URL is built.
-function QuestionAudio({ question }: { question: InterviewQuestionDto }) {
-  const { t } = useTranslation();
-  const mimeType = question.audioMimeType ?? '';
-  if (!question.audioBase64 || !mimeType.startsWith('audio/')) return null;
+function PanelMessage({ icon: Icon, tone, children }: { icon: typeof Check; tone: 'success' | 'info'; children: string }) {
   return (
-    <audio
-      controls
-      className="mt-4 w-full"
-      aria-label={t('onboarding.interview.session.questionAudio')}
-      src={`data:${mimeType};base64,${question.audioBase64}`}
-    />
+    <div className={`${PANEL_BOX} flex items-center justify-center gap-2`}>
+      <Icon aria-hidden="true" size={16} className={tone === 'success' ? 'text-[#86efac]' : 'text-[#d8b4fe]'} />
+      <p role="status" aria-live="polite" className="text-sm font-semibold text-white">
+        {children}
+      </p>
+    </div>
   );
 }
 
@@ -158,9 +171,7 @@ export function InterviewSession({
   type,
   track,
   live,
-  phase,
   canGoBack,
-  onAnswered,
   onBack,
   onNext,
 }: InterviewSessionProps) {
@@ -183,42 +194,85 @@ export function InterviewSession({
   const { getMicrophoneStream } = devices;
   const devicesPaused = !requiredChecksReady(devices);
   const paused = devicesPaused || integrity.fullscreenWarning;
-  const answered = phase === 'answered';
-  // The answer response already carries the next question, so the answered frame keeps the one
-  // that was just answered.
-  const [answeredQuestion, setAnsweredQuestion] = useState<InterviewQuestionDto | null>(null);
   const [isSending, setIsSending] = useState(false);
-  const question = answered ? answeredQuestion : (interview?.currentQuestion ?? null);
-  const hasNextQuestion = Boolean(interview?.currentQuestion);
-  const ended = status === 'ready' && !answered && !hasNextQuestion;
-  const questionNumber = (interview?.answeredCount ?? 0) + (answered ? 0 : 1);
+  const [isSavedShown, setIsSavedShown] = useState(false);
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const question = interview?.currentQuestion ?? null;
+  const ended = status === 'ready' && interview !== null && question === null;
+  const questionNumber = (interview?.answeredCount ?? 0) + 1;
+  // The backend's interview type wins over the one inferred from the package.
+  const shownType: InterviewType = interview ? (interview.type === 'Orientation' ? 'orientation' : 'technical') : type;
+
+  // The interviewer reads the question, or the closing text once the interview has ended.
+  const speech = useQuestionSpeech({
+    id: ended ? 'closing' : question ? `question-${question.orderIndex}` : null,
+    text: ended ? (interview?.closingText ?? '') : (question?.text ?? ''),
+    audioBase64: ended ? (interview?.closingAudioBase64 ?? null) : (question?.audioBase64 ?? null),
+    audioMimeType: ended ? (interview?.closingAudioMimeType ?? null) : (question?.audioMimeType ?? null),
+    enabled: !paused && status === 'ready' && !isSending,
+  });
+  const questionSpoken = speech.spoken;
+
   const canRecord =
-    !answered &&
     !isSending &&
     status === 'ready' &&
     question !== null &&
+    questionSpoken &&
     !paused &&
     !hasPendingAnswer &&
     recordingErrorKey === null;
 
-  // Records while the question is shown and the interview isn't paused. A pause, or leaving the
-  // questions, discards the take; the candidate answers again once it resumes.
+  // Records once the question has been read and while the interview isn't paused. A pause, or
+  // leaving the questions, discards the take; the candidate answers again once it resumes.
   useEffect(() => {
     if (!canRecord) return;
     startRecording(getMicrophoneStream());
     return cancelRecording;
   }, [canRecord, question?.orderIndex, startRecording, cancelRecording, getMicrophoneStream]);
 
-  // Done sends the take being recorded; Send again sends the kept one.
+  useEffect(
+    () => () => {
+      if (savedTimer.current) clearTimeout(savedTimer.current);
+    },
+    []
+  );
+
+  const isMicLive = isRecording && !isSending && !paused && recordingErrorKey === null;
+  const isVoiceHeard = useSpeaking(devices.micLevel, isMicLive);
+  const voice = voiceState(
+    { isRecording, isProcessing: isSending, isPaused: paused, hasError: recordingErrorKey !== null },
+    isVoiceHeard
+  );
+
+  const showSaved = () => {
+    if (savedTimer.current) clearTimeout(savedTimer.current);
+    setIsSavedShown(true);
+    savedTimer.current = setTimeout(() => setIsSavedShown(false), SAVED_NOTICE_MS);
+  };
+
+  // Done sends the take being recorded; Send again sends the kept one. On success the next
+  // question (or the closing screen) comes with the response.
   const sendAnswer = async (send: typeof submitAnswer) => {
-    const current = interview?.currentQuestion ?? null;
     setIsSending(true);
     const next = await send();
-    if (next) {
-      setAnsweredQuestion(current);
-      onAnswered();
-    }
     setIsSending(false);
+    if (next) showSaved();
+  };
+
+  const stage = (): { avatar: AvatarState; status: StageStatus } => {
+    if (paused) return { avatar: 'IDLE', status: 'paused' };
+    if (isSending || status === 'submitting') return { avatar: 'THINKING', status: 'thinking' };
+    if (!questionSpoken) return { avatar: 'SPEAKING', status: 'speaking' };
+    if (ended) return { avatar: 'SUCCESS', status: 'finished' };
+    if (isRecording) return { avatar: 'LISTENING', status: 'listening' };
+    return { avatar: 'IDLE', status: 'idle' };
+  };
+
+  const renderPanel = () => {
+    if (ended) return <PanelMessage icon={Check} tone="success">{k('endedTitle')}</PanelMessage>;
+    if (isSavedShown) return <PanelMessage icon={Check} tone="success">{k('answerSaved')}</PanelMessage>;
+    if (!questionSpoken) return <PanelMessage icon={Volume2} tone="info">{k('call.listenFirst')}</PanelMessage>;
+    return <AnswerPanel voice={voice} level={isMicLive ? devices.micLevel : 0} />;
   };
 
   const renderQuestion = () => {
@@ -235,38 +289,34 @@ export function InterviewSession({
         </Notice>
       );
     }
-    if (ended) {
-      return (
-        <section className={`${CARD} space-y-4 p-6 sm:p-8`}>
-          <p className={`text-lg font-semibold ${TITLE_TEXT}`}>{k('endedTitle')}</p>
-          <p dir={interview.closingText ? 'auto' : undefined} className={`whitespace-pre-line text-sm ${BODY_TEXT}`}>{interview.closingText ?? k('endedBody')}</p>
-          <div className="flex justify-end">
-            <PrimaryButton size="lg" disabled={paused} onClick={onNext}>
-              {k('finish')}
-              <ForwardArrow />
-            </PrimaryButton>
-          </div>
-        </section>
-      );
-    }
+    const { avatar, status: stageStatus } = stage();
+    const chip = question && (
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-white">
+          {k('question', { number: questionNumber })}
+        </span>
+        {question.topic && (
+          <span dir="auto" className="text-xs font-semibold text-white/70">
+            {question.topic}
+          </span>
+        )}
+      </div>
+    );
     return (
       <>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ${GRADIENT_BG}`}>
-            {k('question', { number: questionNumber })}
-          </span>
-          {question?.topic && <span className={`text-xs font-semibold ${MUTED_TEXT}`}>{question.topic}</span>}
-        </div>
+        <InterviewerCallStage
+          avatarState={avatar}
+          audioElement={speech.audioElement}
+          speakingWithoutAudio={speech.speakingWithoutAudio}
+          status={stageStatus}
+          chip={chip || undefined}
+          text={ended ? (interview.closingText ?? k('endedBody')) : (question?.text ?? '')}
+          isQuote={!ended}
+          panel={renderPanel()}
+          cameraStream={devices.cameraStream}
+        />
 
-        <section className={`${CARD} p-6 sm:p-8`}>
-          <p className="text-xs font-bold uppercase tracking-[0.06em] text-[#5a127a]">{k('currentQuestion')}</p>
-          {/* The question's language comes from the backend, not the UI language: dir="auto" keeps
-              an English question's punctuation in place on the Arabic (RTL) page. */}
-          <p dir="auto" className={`mt-3 whitespace-pre-line text-xl font-semibold leading-[1.45] sm:text-2xl ${TITLE_TEXT}`}>{question?.text}</p>
-          {question && !answered && <QuestionAudio question={question} />}
-        </section>
-
-        {errorKey && (
+        {!ended && errorKey && (
           <Notice tone="warning" icon={AlertCircle} title={k('answerFailed')}>
             <p>{t(errorKey)}</p>
             {hasPendingAnswer && (
@@ -285,7 +335,7 @@ export function InterviewSession({
           </Notice>
         )}
 
-        {recordingErrorKey && (
+        {!ended && recordingErrorKey && (
           <Notice tone="warning" icon={MicOff} title={k('recordingProblem')}>
             <p>{t(recordingErrorKey)}</p>
             <div className="mt-3">
@@ -294,57 +344,32 @@ export function InterviewSession({
           </Notice>
         )}
 
-        <section className="rounded-[16px] border border-[#e7dbe9] bg-[#fbf0fe] p-6 sm:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e7dbe9] pb-4">
-            <h2 className={`text-lg font-semibold ${TITLE_TEXT}`}>{k(answered ? 'yourAnswer' : 'voiceResponse')}</h2>
-            {answered ? (
-              <StatusPill tone="success">{k('answerSaved')}</StatusPill>
-            ) : (
-              <StatusPill tone={isRecording ? 'danger' : 'neutral'}>{k(isRecording ? 'recording' : 'notRecording')}</StatusPill>
-            )}
-          </div>
-
-          {answered ? (
-            <div className="flex flex-col items-center py-8 text-center">
-              <span aria-hidden="true" className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#16a34a] shadow-[0_4px_14px_rgba(59,4,84,0.12)]">
-                <Check size={26} />
-              </span>
-              <p className={`mt-4 max-w-[440px] text-sm ${BODY_TEXT}`}>{k('answerSavedBody')}</p>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center py-6 text-center">
-              <VoiceIndicator
-                isRecording={isRecording}
-                isProcessing={isSending}
-                isPaused={paused}
-                hasError={recordingErrorKey !== null}
-                level={devices.micLevel}
-              />
-              <p className={`mt-4 text-lg font-semibold ${TITLE_TEXT}`}>{k('answeringTitle')}</p>
-              <p className={`mt-1 max-w-[440px] text-sm ${BODY_TEXT}`}>{k(isSending ? 'sending' : 'answeringBody')}</p>
-            </div>
-          )}
-
-          <div className="flex flex-col-reverse gap-3 border-t border-[#e7dbe9] pt-5 sm:flex-row sm:items-center sm:justify-end">
-            {canGoBack && (
-              <TextButton onClick={onBack}>
-                <BackArrow />
-                {t('onboarding.interview.common.back')}
-              </TextButton>
-            )}
-            {answered ? (
+        <CallControlBar
+          isMicActive={devices.microphone.status === 'ready'}
+          micLevel={devices.micLevel}
+          isRecording={isRecording}
+          actions={
+            ended ? (
               <PrimaryButton size="lg" disabled={paused} onClick={onNext}>
-                {k(hasNextQuestion ? 'continue' : 'finish')}
+                {k('finish')}
                 <ForwardArrow />
               </PrimaryButton>
             ) : (
-              <PrimaryButton size="lg" disabled={paused || isSending || !isRecording} onClick={() => void sendAnswer(submitAnswer)}>
-                {k('done')}
-                <ForwardArrow />
-              </PrimaryButton>
-            )}
-          </div>
-        </section>
+              <>
+                {canGoBack && (
+                  <TextButton onClick={onBack}>
+                    <BackArrow />
+                    {t('onboarding.interview.common.back')}
+                  </TextButton>
+                )}
+                <PrimaryButton size="lg" disabled={paused || isSending || !isRecording} onClick={() => void sendAnswer(submitAnswer)}>
+                  {k('done')}
+                  <ForwardArrow />
+                </PrimaryButton>
+              </>
+            )
+          }
+        />
         <p className={`text-xs ${MUTED_TEXT}`}>{k('copyDisabled')}</p>
       </>
     );
@@ -352,34 +377,16 @@ export function InterviewSession({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e7dbe9] pb-5">
-        <div>
-          <h1 className={`text-2xl font-semibold tracking-[-0.02em] ${TITLE_TEXT}`}>{t(`onboarding.interview.types.${type}`)}</h1>
-          <p className={`text-sm ${BODY_TEXT}`}>{track}</p>
-        </div>
-        {/* Interview stage, not question progress. Figma shows it on the answered frame only. */}
-        {answered && (
-          <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#f5e5f9] bg-[#fbf0fe] px-[15px] py-[7px]">
-            <span aria-hidden="true" className={`h-2 w-2 rounded-full ${GRADIENT_BG}`} />
-            <span className={`text-xs font-semibold uppercase leading-4 tracking-[0.6px] ${GRADIENT_TEXT}`}>{k('stageBadge')}</span>
-          </span>
-        )}
+      <div className="border-b border-[#e7dbe9] pb-5">
+        <h1 className={`text-2xl font-semibold tracking-[-0.02em] ${TITLE_TEXT}`}>{t(`onboarding.interview.types.${shownType}`)}</h1>
+        <p className={`text-sm ${BODY_TEXT}`}>{track}</p>
       </div>
 
       {devicesPaused && <PausedBanner devices={devices} withAppPrompt={withAppPrompt} />}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
-        <CopyGuard className="min-w-0 space-y-5">
-          {integrity.fullscreenWarning ? <FullscreenWarning onReturn={onReturnToFullscreen} /> : renderQuestion()}
-        </CopyGuard>
-
-        <aside className="space-y-5">
-          <div className={`${CARD} p-2`}>
-            <CameraPreview stream={devices.cameraStream} label={k(devices.cameraStream ? 'cameraOn' : 'cameraOff')} />
-          </div>
-          <DeviceStatusList devices={devices} integrity={integrity} />
-        </aside>
-      </div>
+      <CopyGuard className="min-w-0 space-y-5">
+        {integrity.fullscreenWarning ? <FullscreenWarning onReturn={onReturnToFullscreen} /> : renderQuestion()}
+      </CopyGuard>
     </div>
   );
 }
