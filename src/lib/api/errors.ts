@@ -54,6 +54,16 @@ export function apiErrorKey(error: unknown): string {
   return 'api.errors.server';
 }
 
+// The backend's own explanation of a failed request (ProblemDetails `detail`, else its validation
+// messages), shown in place of the generic translated text. Null when it sent none.
+export function apiErrorDetail(error: unknown): string | null {
+  if (!(error instanceof ApiError)) return null;
+  const detail = error.problem?.detail?.trim();
+  if (detail) return detail;
+  const messages = Object.values(error.problem?.errors ?? {}).flat().filter((message) => message.trim() !== '');
+  return messages.length > 0 ? messages.join(' ') : null;
+}
+
 export function getValidationErrors(error: unknown): Record<string, string[]> | null {
   if (error instanceof ApiError && error.problem?.errors) {
     return error.problem.errors;

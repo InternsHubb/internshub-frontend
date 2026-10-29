@@ -48,7 +48,10 @@ async function readBody(response: Response): Promise<unknown> {
   }
 }
 
+// Some endpoints answer an error with a plain-text message instead of ProblemDetails; it is kept
+// as the detail so callers can still show it.
 function toProblem(body: unknown): ProblemDetails | null {
+  if (typeof body === 'string') return body.trim() ? { detail: body.trim() } : null;
   return typeof body === 'object' && body !== null ? (body as ProblemDetails) : null;
 }
 

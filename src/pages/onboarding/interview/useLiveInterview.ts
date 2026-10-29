@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 
 import { ApiError } from '@/lib/api/client';
-import { apiErrorKey } from '@/lib/api/errors';
+import { apiErrorDetail, apiErrorKey } from '@/lib/api/errors';
 import { confirmUpload, createUploadUrl, uploadToSignedUrl } from '@/lib/api/files';
 import { getInterview, getMyInterviews, startInterview, submitInterviewAnswer } from '@/lib/api/interviews';
 import { giveConsent } from '@/lib/api/me';
@@ -83,6 +83,8 @@ export function useLiveInterview() {
   // Failures from the backend (start, upload, send) and from the recorder are kept apart: the
   // first is shown as a send/start error, the second as a microphone problem.
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  // The backend's own message for that failure, shown instead of the generic text when present.
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [recordingErrorKey, setRecordingErrorKey] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [pendingAnswer, setPendingAnswer] = useState<AnswerTake | null>(null);
@@ -92,13 +94,14 @@ export function useLiveInterview() {
   const starting = useRef(false);
 
   // The candidate ticked the recording consent before reaching the questions; it is recorded
-  // (idempotent on the backend) before the attempt starts. One start at a time, so a repeated
-  // effect can't create two attempts.
+  // (idempotent on the backend) before the attempt starts. Called once per click (Device Check's
+  // Continue, Try again); a second call while one is running is ignored.
   const start = useCallback(async () => {
     if (starting.current) return;
     starting.current = true;
     setStatus('starting');
     setErrorKey(null);
+    setErrorDetail(null);
     setPendingAnswer(null);
     try {
       await giveConsent('InterviewRecording');
@@ -106,7 +109,11 @@ export function useLiveInterview() {
       setInterview(unfinished ? await getInterview(unfinished.id) : await startInterview());
       setStatus('ready');
     } catch (error) {
+      if (import.meta.env.DEV && error instanceof ApiError) {
+        console.warn('[interview] start failed', error.status, error.problem);
+      }
       setErrorKey(apiErrorKey(error));
+      setErrorDetail(apiErrorDetail(error));
       setStatus('error');
     } finally {
       starting.current = false;
@@ -171,6 +178,7 @@ export function useLiveInterview() {
       if (!interview) return null;
       setStatus('submitting');
       setErrorKey(null);
+      setErrorDetail(null);
       let assetId = take.assetId;
       try {
         if (!assetId) {
@@ -198,6 +206,7 @@ export function useLiveInterview() {
         }
         setPendingAnswer({ ...take, assetId });
         setErrorKey(apiErrorKey(error));
+        setErrorDetail(apiErrorDetail(error));
         setStatus('ready');
         return null;
       }
@@ -226,6 +235,7 @@ export function useLiveInterview() {
   const discardPendingAnswer = useCallback(() => {
     setPendingAnswer(null);
     setErrorKey(null);
+    setErrorDetail(null);
   }, []);
 
   // A recorder problem holds recording until the candidate chooses to try again.
@@ -235,6 +245,7 @@ export function useLiveInterview() {
     interview,
     status,
     errorKey,
+    errorDetail,
     recordingErrorKey,
     isRecording,
     hasPendingAnswer: pendingAnswer !== null,
