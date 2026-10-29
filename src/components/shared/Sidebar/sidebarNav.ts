@@ -162,6 +162,6 @@ export const SIDEBAR_NAV_ITEMS: ReadonlyArray<SidebarNavItem> = [
   },
   { id: 'sprints', labelKey: 'dashboard.sidebar.sprints', icon: sprintsIcon },
   { id: 'progress', labelKey: 'dashboard.sidebar.progress', icon: progressIcon },
-  { id: 'chat', labelKey: 'dashboard.sidebar.chat', icon: chatIcon },
+  { id: 'chat', labelKey: 'dashboard.sidebar.chat', icon: chatIcon, to: ROUTES.chat },
   { id: 'certificate', labelKey: 'dashboard.sidebar.certificate', icon: certificateIcon },
 ];
