@@ -1268,7 +1268,7 @@ export const Courses12mPage: React.FC = () => {
                     >
                       <div className="relative w-full h-[140px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Data Cleaning and Exploratory Data Analysis"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -1328,7 +1328,7 @@ export const Courses12mPage: React.FC = () => {
                     >
                       <div className="relative w-full h-[140px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Data Cleaning and Exploratory Data Analysis"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -1385,7 +1385,7 @@ export const Courses12mPage: React.FC = () => {
                     >
                       <div className="relative w-full h-[140px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Python Programming"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -1435,7 +1435,7 @@ export const Courses12mPage: React.FC = () => {
                     <div className="w-full sm:w-[343px] h-[326px] bg-white rounded-[32px] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] border border-gray-100 overflow-hidden shrink-0 flex flex-col justify-between">
                       <div className="relative w-full h-[140px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Python Programming"
                           className="w-full h-full object-cover"
                         />

@@ -1435,7 +1435,7 @@ export const Courses6mPage: React.FC<Courses6mPageProps> = ({ embedded = false }
                       {/* Top Thumbnail Image (139px) */}
                       <div className="relative w-full h-[139px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Data Cleaning and Exploratory Data Analysis"
                           className="w-full h-full object-cover"
                         />
@@ -1533,7 +1533,7 @@ export const Courses6mPage: React.FC<Courses6mPageProps> = ({ embedded = false }
                       {/* Top Thumbnail Image */}
                       <div className="relative w-full h-[139px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Data Cleaning and Exploratory Data Analysis"
                           className="w-full h-full object-cover"
                         />
@@ -1598,7 +1598,7 @@ export const Courses6mPage: React.FC<Courses6mPageProps> = ({ embedded = false }
                       {/* Top Thumbnail Image */}
                       <div className="relative w-full h-[139px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Python Programming"
                           className="w-full h-full object-cover"
                         />
@@ -1657,7 +1657,7 @@ export const Courses6mPage: React.FC<Courses6mPageProps> = ({ embedded = false }
                       {/* Top Thumbnail Image */}
                       <div className="relative w-full h-[139px] overflow-hidden bg-slate-900 shrink-0">
                         <img
-                          src="/images/course-thumb-figma-1.jpg"
+                          src="/images/course-data-ai.jpg"
                           alt="Python Programming"
                           className="w-full h-full object-cover"
                         />
