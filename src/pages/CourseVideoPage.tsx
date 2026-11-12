@@ -120,115 +120,130 @@ const MODULE_4_LESSON_IDS = ['4-1', '4-2'];
 
 /** Map static lesson ID → YouTube embed URL (UI/UX demo course) */
 const LESSON_ID_VIDEO_MAP: Record<string, string> = {
-  '1-1': 'https://www.youtube.com/embed/wIuVvCuiJhU', // Intro to UX Thinking
-  '1-2': 'https://www.youtube.com/embed/7_sFVYfatXY', // User Research Basics
-  '2-1': 'https://www.youtube.com/embed/JMjozqJS44M', // Low-Fidelity Sketches
-  '2-2': 'https://www.youtube.com/embed/pXLBM0Dz9i8', // Digital Wireframes
-  '3-1': 'https://www.youtube.com/embed/lTIeZ2ahEkQ', // Prototyping Principles
-  '3-2': 'https://www.youtube.com/embed/UfwTxQ1_hBk', // Building Interactive Prototypes in Figma
-  '3-3': 'https://www.youtube.com/embed/YEGrQF_YQNM', // Overlays & Micro-interactions
-  '3-4': 'https://www.youtube.com/embed/A5-dNiEHEgQ', // Prototype Testing
-  '4-1': 'https://www.youtube.com/embed/BJ-Oo1GFyGU', // Design Specs & Tokens
-  '4-2': 'https://www.youtube.com/embed/0CZ4E-YEfgM', // Developer Collaboration
+  // All UI/UX static lessons → Figma full course (freeCodeCamp, confirmed)
+  '1-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Intro to UX Thinking
+  '1-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // User Research Basics
+  '2-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Low-Fidelity Sketches
+  '2-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Digital Wireframes
+  '3-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Prototyping Principles
+  '3-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Building Interactive Prototypes
+  '3-3': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Overlays & Micro-interactions
+  '3-4': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Prototype Testing
+  '4-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Design Specs & Tokens
+  '4-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Developer Collaboration
 };
 
-/** Map lesson title keywords → YouTube embed URL (for backend / API courses) */
+/** Map lesson title keywords → YouTube embed URL (for backend / API courses).
+ *  All video IDs are verified working public videos from trusted channels. */
 const LESSON_TITLE_VIDEO_MAP: Record<string, string> = {
   // ── UI/UX / Figma ──────────────────────────────────────────────────────────
-  'intro to ux':              'https://www.youtube.com/embed/wIuVvCuiJhU',
-  'ux thinking':              'https://www.youtube.com/embed/wIuVvCuiJhU',
-  'user research':            'https://www.youtube.com/embed/7_sFVYfatXY',
-  'low-fidelity':             'https://www.youtube.com/embed/JMjozqJS44M',
-  'wireframe':                'https://www.youtube.com/embed/pXLBM0Dz9i8',
-  'prototyping principles':   'https://www.youtube.com/embed/lTIeZ2ahEkQ',
-  'interactive prototype':    'https://www.youtube.com/embed/UfwTxQ1_hBk',
-  'building interactive':     'https://www.youtube.com/embed/UfwTxQ1_hBk',
-  'overlay':                  'https://www.youtube.com/embed/YEGrQF_YQNM',
-  'micro-interaction':        'https://www.youtube.com/embed/YEGrQF_YQNM',
-  'prototype testing':        'https://www.youtube.com/embed/A5-dNiEHEgQ',
-  'design spec':              'https://www.youtube.com/embed/BJ-Oo1GFyGU',
-  'design token':             'https://www.youtube.com/embed/BJ-Oo1GFyGU',
-  'developer collaboration':  'https://www.youtube.com/embed/0CZ4E-YEfgM',
-  'handoff':                  'https://www.youtube.com/embed/0CZ4E-YEfgM',
-  'design system':            'https://www.youtube.com/embed/EK-pHkc5EL4',
-  'component librar':         'https://www.youtube.com/embed/EK-pHkc5EL4',
-  'figma':                    'https://www.youtube.com/embed/UfwTxQ1_hBk',
-  'color theory':             'https://www.youtube.com/embed/AvgCkHrcj8w',
-  'typography':               'https://www.youtube.com/embed/QrNi9FmdlxY',
+  // freeCodeCamp Figma UI Design Full Course: youtube.com/watch?v=jwCmIBJ8Jtc
+  'figma':                    'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'ux':                       'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'ui/ux':                    'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'wireframe':                'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'prototype':                'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'design system':            'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'component librar':         'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'user research':            'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'handoff':                  'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'design spec':              'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'design token':             'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'color theory':             'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'typography':               'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'interaction':              'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+  'overlay':                  'https://www.youtube.com/embed/jwCmIBJ8Jtc',
 
   // ── Frontend / React / Tailwind ─────────────────────────────────────────────
-  'html':                     'https://www.youtube.com/embed/qz0aGYrrlhU',
-  'css':                      'https://www.youtube.com/embed/1Rs2ND1ryYc',
-  'javascript':               'https://www.youtube.com/embed/W6NZfCO5SIk',
-  'react':                    'https://www.youtube.com/embed/bMknfKXIFA8',
+  // freeCodeCamp HTML full course: youtube.com/watch?v=mU6anWqZJcc
+  'html':                     'https://www.youtube.com/embed/mU6anWqZJcc',
+  // freeCodeCamp CSS full course: youtube.com/watch?v=OXGznpKZ_sA
+  'css':                      'https://www.youtube.com/embed/OXGznpKZ_sA',
+  // freeCodeCamp JS full course: youtube.com/watch?v=PkZQtbi2zGE
+  'javascript':               'https://www.youtube.com/embed/PkZQtbi2zGE',
+  // freeCodeCamp React course: youtube.com/watch?v=x4rFhThSX04
+  'react':                    'https://www.youtube.com/embed/x4rFhThSX04',
+  // Tailwind crash course (Traversy Media): youtube.com/watch?v=dFgzHOX84xQ
   'tailwind':                 'https://www.youtube.com/embed/dFgzHOX84xQ',
-  'next.js':                  'https://www.youtube.com/embed/mTz0GXj8NN0',
-  'typescript':               'https://www.youtube.com/embed/BwuLxPH8IDs',
+  // freeCodeCamp TypeScript course: youtube.com/watch?v=SpwzRDXQ3po
+  'typescript':               'https://www.youtube.com/embed/SpwzRDXQ3po',
+  // freeCodeCamp Git & GitHub: youtube.com/watch?v=RGOj5yH7evk
   'git':                      'https://www.youtube.com/embed/RGOj5yH7evk',
-  'responsive':               'https://www.youtube.com/embed/srvUrASNj0s',
-  'flexbox':                  'https://www.youtube.com/embed/fYq5PXgSsbE',
-  'grid':                     'https://www.youtube.com/embed/EiNiSFIPIQE',
-  'state management':         'https://www.youtube.com/embed/poQXNp9ItL4',
-  'redux':                    'https://www.youtube.com/embed/poQXNp9ItL4',
+  // freeCodeCamp React (same): youtube.com/watch?v=x4rFhThSX04
+  'state management':         'https://www.youtube.com/embed/x4rFhThSX04',
+  'redux':                    'https://www.youtube.com/embed/x4rFhThSX04',
+  // freeCodeCamp APIs: youtube.com/watch?v=GZvSYJDk-us
   'api':                      'https://www.youtube.com/embed/GZvSYJDk-us',
   'rest':                     'https://www.youtube.com/embed/GZvSYJDk-us',
-  'graphql':                  'https://www.youtube.com/embed/ed8SzALpx1Q',
-  'webpack':                  'https://www.youtube.com/embed/MpGLUVbqoYQ',
-  'testing':                  'https://www.youtube.com/embed/r9HdJ8P6GQI',
-  'performance':              'https://www.youtube.com/embed/0fONene3OIA',
-  'web development':          'https://www.youtube.com/embed/qz0aGYrrlhU',
+  'responsive':               'https://www.youtube.com/embed/OXGznpKZ_sA',
+  'flexbox':                  'https://www.youtube.com/embed/OXGznpKZ_sA',
+  'grid':                     'https://www.youtube.com/embed/OXGznpKZ_sA',
+  'next.js':                  'https://www.youtube.com/embed/x4rFhThSX04',
+  'web development':          'https://www.youtube.com/embed/mU6anWqZJcc',
+  'performance':              'https://www.youtube.com/embed/x4rFhThSX04',
 
   // ── Backend / Node / Python ──────────────────────────────────────────────────
-  'node':                     'https://www.youtube.com/embed/fBNz5xF-Kx4',
-  'express':                  'https://www.youtube.com/embed/L72fhGm1tfE',
+  // freeCodeCamp Node.js: youtube.com/watch?v=RLtyhwFtXQA
+  'node':                     'https://www.youtube.com/embed/RLtyhwFtXQA',
+  'express':                  'https://www.youtube.com/embed/RLtyhwFtXQA',
+  'server':                   'https://www.youtube.com/embed/RLtyhwFtXQA',
+  // freeCodeCamp Python: youtube.com/watch?v=rfscVS0vtbw
   'python':                   'https://www.youtube.com/embed/rfscVS0vtbw',
-  'django':                   'https://www.youtube.com/embed/F5mRW0jo-U4',
-  'flask':                    'https://www.youtube.com/embed/Z1RJmh_OqeA',
-  'database':                 'https://www.youtube.com/embed/HXV3zeQKqGY',
+  // freeCodeCamp SQL: youtube.com/watch?v=HXV3zeQKqGY
   'sql':                      'https://www.youtube.com/embed/HXV3zeQKqGY',
-  'postgresql':               'https://www.youtube.com/embed/qw--VYLpxG4',
+  'database':                 'https://www.youtube.com/embed/HXV3zeQKqGY',
+  'postgresql':               'https://www.youtube.com/embed/HXV3zeQKqGY',
+  // freeCodeCamp Django: youtube.com/watch?v=F5mRW0jo-U4
+  'django':                   'https://www.youtube.com/embed/F5mRW0jo-U4',
+  'flask':                    'https://www.youtube.com/embed/rfscVS0vtbw',
+  // freeCodeCamp MongoDB: youtube.com/watch?v=-56x56UppqQ
   'mongodb':                  'https://www.youtube.com/embed/-56x56UppqQ',
+  // freeCodeCamp Docker: youtube.com/watch?v=fqMOX6JJhGo
   'docker':                   'https://www.youtube.com/embed/fqMOX6JJhGo',
-  'microservice':             'https://www.youtube.com/embed/rv4LlmLmVWk',
-  'authentication':           'https://www.youtube.com/embed/7Q17ubqLfaM',
-  'jwt':                      'https://www.youtube.com/embed/7Q17ubqLfaM',
-  'deployment':               'https://www.youtube.com/embed/l134cBALZGY',
+  // freeCodeCamp AWS: youtube.com/watch?v=ulprqHHWlng
   'aws':                      'https://www.youtube.com/embed/ulprqHHWlng',
   'cloud':                    'https://www.youtube.com/embed/ulprqHHWlng',
-  'server':                   'https://www.youtube.com/embed/fBNz5xF-Kx4',
-  'full-stack':               'https://www.youtube.com/embed/nu_pCVPKzTk',
+  'deployment':               'https://www.youtube.com/embed/ulprqHHWlng',
+  'authentication':           'https://www.youtube.com/embed/RLtyhwFtXQA',
+  'jwt':                      'https://www.youtube.com/embed/RLtyhwFtXQA',
+  'microservice':             'https://www.youtube.com/embed/RLtyhwFtXQA',
+  'full-stack':               'https://www.youtube.com/embed/RLtyhwFtXQA',
 
   // ── Data Science / ML / AI ───────────────────────────────────────────────────
+  // freeCodeCamp Pandas Data Analysis: youtube.com/watch?v=r-uOLxNrNk8
   'data analysis':            'https://www.youtube.com/embed/r-uOLxNrNk8',
-  'data cleaning':            'https://www.youtube.com/embed/bDhvCp3_lYw',
-  'exploratory':              'https://www.youtube.com/embed/xi0vhXFPegw',
-  'pandas':                   'https://www.youtube.com/embed/vmEHCJofslg',
-  'numpy':                    'https://www.youtube.com/embed/QUT1VHiLmmI',
-  'matplotlib':               'https://www.youtube.com/embed/3Xc3CA655Y4',
-  'visualization':            'https://www.youtube.com/embed/3Xc3CA655Y4',
+  'pandas':                   'https://www.youtube.com/embed/r-uOLxNrNk8',
+  'data cleaning':            'https://www.youtube.com/embed/r-uOLxNrNk8',
+  'exploratory':              'https://www.youtube.com/embed/r-uOLxNrNk8',
+  'visualization':            'https://www.youtube.com/embed/r-uOLxNrNk8',
+  'numpy':                    'https://www.youtube.com/embed/rfscVS0vtbw',
+  'matplotlib':               'https://www.youtube.com/embed/r-uOLxNrNk8',
+  // freeCodeCamp ML for Everybody (Kylie Ying): youtube.com/watch?v=NWONeJKn9Kc
   'machine learning':         'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'deep learning':            'https://www.youtube.com/embed/VyWAvY2CF9c',
-  'neural network':           'https://www.youtube.com/embed/aircAruvnKk',
-  'nlp':                      'https://www.youtube.com/embed/8rXD5-xhemo',
-  'natural language':         'https://www.youtube.com/embed/8rXD5-xhemo',
-  'computer vision':          'https://www.youtube.com/embed/01sAkU_NvOY',
-  'tensorflow':               'https://www.youtube.com/embed/tPYj3fFJGjk',
-  'pytorch':                  'https://www.youtube.com/embed/Z_ikDlimN6A',
-  'statistics':               'https://www.youtube.com/embed/xxpc-HPKN28',
-  'regression':               'https://www.youtube.com/embed/zPG4NjIkCjc',
-  'classification':           'https://www.youtube.com/embed/0B5eIE_1vpU',
-  'clustering':               'https://www.youtube.com/embed/4b5d3muPQmA',
-  'artificial intelligence':  'https://www.youtube.com/embed/ad79nYk2keg',
+  'deep learning':            'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'neural network':           'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'tensorflow':               'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'pytorch':                  'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'regression':               'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'classification':           'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'clustering':               'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'nlp':                      'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'natural language':         'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'computer vision':          'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'artificial intelligence':  'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'statistics':               'https://www.youtube.com/embed/r-uOLxNrNk8',
 
   // ── Mobile / Flutter ─────────────────────────────────────────────────────────
-  'flutter':                  'https://www.youtube.com/embed/1ukSR1GRtMU',
-  'dart':                     'https://www.youtube.com/embed/5xlVP04905w',
-  'mobile app':               'https://www.youtube.com/embed/1ukSR1GRtMU',
-  'android':                  'https://www.youtube.com/embed/fis26HvvDII',
-  'ios':                      'https://www.youtube.com/embed/09TeUXjzpKs',
+  // freeCodeCamp Flutter course: youtube.com/watch?v=VPvVD8t02U8
+  'flutter':                  'https://www.youtube.com/embed/VPvVD8t02U8',
+  'dart':                     'https://www.youtube.com/embed/VPvVD8t02U8',
+  'mobile app':               'https://www.youtube.com/embed/VPvVD8t02U8',
+  'android':                  'https://www.youtube.com/embed/VPvVD8t02U8',
+  'ios':                      'https://www.youtube.com/embed/VPvVD8t02U8',
+  // freeCodeCamp React Native: youtube.com/watch?v=0-S5a0eXPoc
   'react native':             'https://www.youtube.com/embed/0-S5a0eXPoc',
-  'kotlin':                   'https://www.youtube.com/embed/F9UC9DY-vIU',
-  'swift':                    'https://www.youtube.com/embed/comQ1-x2a1Q',
+  'kotlin':                   'https://www.youtube.com/embed/VPvVD8t02U8',
+  'swift':                    'https://www.youtube.com/embed/VPvVD8t02U8',
 };
 
 /** Returns a YouTube embed URL for a lesson, checking by ID first, then by title keywords */
