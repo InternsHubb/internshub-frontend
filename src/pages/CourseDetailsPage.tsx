@@ -563,7 +563,7 @@ export const CourseDetailsPage: React.FC = () => {
                     <span>
                       {isCompleted
                         ? '🎉 Course Completed (100%) - Click to Re-test'
-                        : `Progress: ${progressPercent}% (${completedCount}/19 lessons) • Click to advance`}
+                        : `Progress: ${progressPercent}% (${isCompleted ? totalLessonsCount : Math.min(completedCount, totalLessonsCount)}/${totalLessonsCount} lessons) • Click to advance`}
                     </span>
                     <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 16 16" fill="currentColor">
                       <path fillRule="evenodd" d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06z" clipRule="evenodd" />
@@ -571,22 +571,22 @@ export const CourseDetailsPage: React.FC = () => {
                   </div>
 
                   <h1 className="font-extrabold text-[36px] sm:text-[44px] lg:text-[48px] leading-[44px] sm:leading-[52px] lg:leading-[60px] text-[#0F172A] tracking-[-1.2px]">
-                    Master Data Analysis from Scratch to Insights
+                    {courseTitle}
                   </h1>
 
                   <p className="font-normal text-[16px] sm:text-[18px] leading-[26px] sm:leading-[29.25px] text-[#64748B]">
-                    Learn how to analyze data, create interactive dashboards, and turn raw data into meaningful insights using Excel, SQL, Python, and Power BI.
+                    {courseDetail?.description || catalogItem.description}
                   </p>
 
                   {/* Instructor Row */}
                   <div className="flex items-center gap-[7.25px] h-[23px]">
                     <img
-                      src="/images/enrolled/elena-avatar.png"
-                      alt="Elena Vasquez"
+                      src={catalogItem.instructorAvatar || '/images/enrolled/elena-avatar.png'}
+                      alt={catalogItem.instructor}
                       className="size-[23px] rounded-full object-cover shrink-0 border border-slate-200"
                     />
                     <span className="font-medium text-[10.15px] sm:text-[11px] leading-[14.5px] text-[#475569] tracking-[0.02px]">
-                      Elena Vasquez - Head of Open Source Applications of aaa Company
+                      {catalogItem.instructor} - Lead Instructor
                     </span>
                   </div>
                 </div>
@@ -1047,14 +1047,14 @@ export const CourseDetailsPage: React.FC = () => {
                       <div className="flex items-center justify-between pt-[4px] w-full text-[12px] font-['Inter']">
                         <span className="text-[#672B97] font-normal">Module Progress</span>
                         <span className="text-[#8B5DB0] font-semibold">
-                          {isCompleted ? '19/19 lessons' : `${completedCount}/19 lessons`}
+                          {isCompleted ? `${totalLessonsCount}/${totalLessonsCount} lessons` : `${Math.min(completedCount, totalLessonsCount)}/${totalLessonsCount} lessons`}
                         </span>
                       </div>
 
                       <div className="bg-[#F4F0F8] border border-[#AE8FC8] h-[8px] rounded-full overflow-hidden w-full relative">
                         <div
                           className="h-full rounded-full bg-gradient-to-r from-[#3B0454] to-[#804A8A] transition-all duration-500"
-                          style={{ width: `${isCompleted ? 100 : Math.round((completedCount / 19) * 100)}%` }}
+                          style={{ width: `${isCompleted ? 100 : Math.round((Math.min(completedCount, totalLessonsCount) / (totalLessonsCount || 1)) * 100)}%` }}
                         />
                       </div>
                     </>
@@ -1064,375 +1064,85 @@ export const CourseDetailsPage: React.FC = () => {
                 {/* Modules Checklist */}
                 {isCourseContentOpen && (
                   <div className="flex flex-col gap-[20px] w-full font-['Inter']">
-                    {/* Module 1: Foundations (Completed) */}
-                    <div className="flex flex-col gap-[10px] w-full">
-                      <div className="flex items-center gap-[8px]">
-                        <div className="size-[20px] bg-[#D2C1E1] border border-[rgba(174,143,200,0.67)] rounded-full flex items-center justify-center shrink-0">
-                          <img src="/images/enrolled/module-check-circle.svg" alt="" className="w-[8px] h-[9px]" />
-                        </div>
-                        <h4 className="font-semibold text-[14px] leading-[20px] text-[#8B5DB0]">
-                          Module 1: Foundations
-                        </h4>
-                      </div>
-
-                      <div className="flex flex-col gap-[4px] pl-[4px]">
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=1-1`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Intro to UX Thinking"
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              advanceProgress();
-                            }}
-                            className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            title="Completed - click to toggle"
-                          >
-                            <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                          </button>
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Intro to UX Thinking
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">8 min · Completed</span>
-                          </div>
-                        </div>
-
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=1-2`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch User Research Basics"
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              advanceProgress();
-                            }}
-                            className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            title="Completed - click to toggle"
-                          >
-                            <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                          </button>
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              User Research Basics
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">15 min · Completed</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Module 2: Wireframing (Completed) */}
-                    <div className="flex flex-col gap-[10px] w-full">
-                      <div className="flex items-center gap-[8px]">
-                        <div className="size-[20px] bg-[#D2C1E1] border border-[rgba(174,143,200,0.67)] rounded-full flex items-center justify-center shrink-0">
-                          <img src="/images/enrolled/module-check-circle.svg" alt="" className="w-[8px] h-[9px]" />
-                        </div>
-                        <h4 className="font-semibold text-[14px] leading-[20px] text-[#22023C]">
-                          Module 2: Wireframing
-                        </h4>
-                      </div>
-
-                      <div className="flex flex-col gap-[4px] pl-[4px]">
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=2-1`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Low-Fidelity Sketches"
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              advanceProgress();
-                            }}
-                            className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            title="Completed - click to toggle"
-                          >
-                            <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                          </button>
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Low-Fidelity Sketches
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">12 min · Completed</span>
-                          </div>
-                        </div>
-
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=2-2`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Digital Wireframes"
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              advanceProgress();
-                            }}
-                            className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            title="Completed - click to toggle"
-                          >
-                            <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                          </button>
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Digital Wireframes
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">20 min · Completed</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Module 3: Prototyping */}
-                    <div className="flex flex-col gap-[10px] w-full">
-                      <div className="flex items-center gap-[8px]">
-                        <div className="size-[20px] bg-[rgba(124,92,255,0.15)] border border-[rgba(124,92,255,0.4)] rounded-full flex items-center justify-center shrink-0">
-                          <div className="size-[6px] bg-[#22023C] rounded-full" />
-                        </div>
-                        <h4 className="font-semibold text-[14px] leading-[20px] text-[#22023C]">
-                          Module 3: Prototyping
-                        </h4>
-                      </div>
-
-                      <div className="flex flex-col gap-[4px] pl-[4px]">
-                        {/* Lesson 1 */}
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=3-1`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Prototyping Principles"
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              advanceProgress();
-                            }}
-                            className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            title="Completed - click to toggle"
-                          >
-                            <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                          </button>
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Prototyping Principles
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">10 min · Completed</span>
-                          </div>
-                        </div>
-
-                        {/* Lesson 2 (Active Playing Lesson or Completed) */}
-                        {isCompleted ? (
-                          <div
-                            onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=3-2`)}
-                            className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                            title="Watch Building Interactive Prototypes"
-                          >
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                advanceProgress();
-                              }}
-                              className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                              title="Completed - click to toggle"
-                            >
-                              <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                            </button>
-                            <div className="flex flex-col flex-1 min-w-0">
-                              <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                                Building Interactive Prototypes
-                              </span>
-                              <span className="text-[12px] text-[#4B5563] leading-[16px]">10 min · Completed</span>
+                    {activeModules.map((module, mIdx) => {
+                      const isModDone = isCompleted || mIdx === 0;
+                      return (
+                        <div key={module.id} className="flex flex-col gap-[10px] w-full">
+                          <div className="flex items-center gap-[8px]">
+                            <div className={`size-[20px] rounded-full flex items-center justify-center shrink-0 ${isModDone ? 'bg-[#D2C1E1] border border-[rgba(174,143,200,0.67)]' : 'bg-[#F4F0F8] border border-[#8B5DB0]'}`}>
+                              {isModDone ? (
+                                <img src="/images/enrolled/module-check-circle.svg" alt="" className="w-[8px] h-[9px]" />
+                              ) : (
+                                <div className="size-1.5 bg-[#8B5DB0] rounded-full" />
+                              )}
                             </div>
+                            <h4 className="font-semibold text-[14px] leading-[20px] text-[#8B5DB0]">
+                              {module.title}
+                            </h4>
                           </div>
-                        ) : (
-                          <div
-                            onClick={() => {
-                              setActiveContentLesson('interactive-proto');
-                              navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=3-2`);
-                            }}
-                            className={`p-[10px] rounded-[8px] flex items-center gap-[12px] transition-all cursor-pointer ${
-                              activeContentLesson === 'interactive-proto'
-                                ? 'bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] shadow-xs'
-                                : 'hover:bg-purple-50/50'
-                            }`}
-                            title="Click to watch this active lesson"
-                          >
-                            <div className="size-[32px] bg-[#5A198F] rounded-[6px] flex items-center justify-center shrink-0 shadow-xs">
-                              <img src="/images/enrolled/module-play-square.svg" alt="Playing" className="w-[9px] h-[12px]" />
-                            </div>
 
-                            <div className="flex flex-col flex-1 min-w-0">
-                              <span className="text-[14px] text-[#22023C] font-semibold leading-[20px] truncate">
-                                Building Interactive Prototypes
-                              </span>
-                              <span className="text-[12px] text-[#22023C] font-normal leading-[16px]">
-                                10 min · Remaining
-                              </span>
-                            </div>
+                          <div className="flex flex-col gap-[4px] pl-[4px]">
+                            {module.lessons.map((lesson, lIdx) => {
+                              const isDone = isCompleted || (mIdx === 0) || (mIdx === 1 && lIdx === 0);
+                              const isCurrent = !isCompleted && (activeContentLesson === lesson.id || (!activeContentLesson && mIdx === 1 && lIdx === 1));
 
-                            <div className="flex items-end gap-[2px] h-[16px] shrink-0">
-                              <div className="w-[2px] h-[8px] bg-[#22023C] rounded-full animate-pulse" />
-                              <div className="w-[2px] h-[16px] bg-[#22023C] rounded-full animate-pulse [animation-delay:150ms]" />
-                              <div className="w-[2px] h-[12px] bg-[#22023C] rounded-full animate-pulse [animation-delay:300ms]" />
-                            </div>
-                          </div>
-                        )}
+                              return (
+                                <div
+                                  key={lesson.id}
+                                  onClick={() => {
+                                    setActiveContentLesson(lesson.id);
+                                    navigate(`/courses/${courseDetail ? courseDetail.id : (id || 'data-analysis-fundamentals')}/video?lesson=${lesson.id}`);
+                                  }}
+                                  className={`p-[10px] rounded-[8px] flex items-center gap-[12px] transition-colors cursor-pointer group ${
+                                    isCurrent ? 'bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] shadow-2xs' : 'hover:bg-black/5'
+                                  }`}
+                                  title={`Watch ${lesson.title}`}
+                                >
+                                  {isDone ? (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        advanceProgress();
+                                      }}
+                                      className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
+                                      title="Completed - click to toggle"
+                                    >
+                                      <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
+                                    </button>
+                                  ) : isCurrent ? (
+                                    <div className="size-[32px] bg-[#5A198F] rounded-[6px] flex items-center justify-center shrink-0 shadow-xs">
+                                      <img src="/images/enrolled/module-play-square.svg" alt="" className="w-[11px] h-[12px]" />
+                                    </div>
+                                  ) : (
+                                    <div className="size-[32px] bg-[#F4F0F8] border border-[#8B5DB0] rounded-[6px] flex items-center justify-center shrink-0">
+                                      <img src="/images/enrolled/module-lock-square.svg" alt="" className="w-[11px] h-[12px]" />
+                                    </div>
+                                  )}
 
-                        {/* Lesson 3 */}
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=3-3`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Overlays & Micro-interactions"
-                        >
-                          {isCompleted ? (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                advanceProgress();
-                              }}
-                              className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            >
-                              <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                            </button>
-                          ) : (
-                            <div className="size-[32px] bg-[#F4F0F8] border border-[#AE8FC8] rounded-[6px] flex items-center justify-center shrink-0 font-semibold text-[12px] text-[#6B7280]">
-                              04
-                            </div>
-                          )}
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Overlays & Micro-interactions
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">
-                              18 min
-                            </span>
+                                  <div className="flex flex-col flex-1 min-w-0">
+                                    <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
+                                      {lesson.title}
+                                    </span>
+                                    <span className="text-[12px] text-[#4B5563] leading-[16px]">
+                                      {lesson.duration} {isDone ? '· Completed' : isCurrent ? '· Remaining' : ''}
+                                    </span>
+                                  </div>
+
+                                  {isCurrent && (
+                                    <div className="flex items-end gap-[2px] h-[16px] shrink-0">
+                                      <div className="w-[2px] h-[8px] bg-[#22023C] rounded-full animate-pulse" />
+                                      <div className="w-[2px] h-[16px] bg-[#22023C] rounded-full animate-pulse [animation-delay:150ms]" />
+                                      <div className="w-[2px] h-[12px] bg-[#22023C] rounded-full animate-pulse [animation-delay:300ms]" />
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
-
-                        {/* Lesson 4 */}
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=3-4`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Prototype Testing"
-                        >
-                          {isCompleted ? (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                advanceProgress();
-                              }}
-                              className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            >
-                              <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                            </button>
-                          ) : (
-                            <div className="size-[32px] bg-[#F4F0F8] border border-[#AE8FC8] rounded-[6px] flex items-center justify-center shrink-0 font-semibold text-[12px] text-[#6B7280]">
-                              05
-                            </div>
-                          )}
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Prototype Testing
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">
-                              14 min
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Module 4: Handoff & Dev */}
-                    <div className="flex flex-col gap-[10px] w-full">
-                      <div className="flex items-center gap-[8px]">
-                        {isCompleted ? (
-                          <div className="size-[20px] bg-[rgba(124,92,255,0.15)] border border-[rgba(124,92,255,0.4)] rounded-full flex items-center justify-center shrink-0">
-                            <div className="size-[6px] bg-[#22023C] rounded-full" />
-                          </div>
-                        ) : (
-                          <div className="size-[20px] bg-[#F4F0F8] border border-[#8B5DB0] rounded-full flex items-center justify-center shrink-0">
-                            <img src="/images/enrolled/module-lock-circle.svg" alt="" className="w-[8px] h-[9px]" />
-                          </div>
-                        )}
-                        <h4 className="font-semibold text-[14px] leading-[20px] text-[#22023C]">
-                          Module 4: Handoff & Dev
-                        </h4>
-                      </div>
-
-                      <div className={`flex flex-col gap-[4px] pl-[4px] ${isCompleted ? '' : 'opacity-80'}`}>
-                        {/* Lesson 1 */}
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=4-1`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Design Specs & Tokens"
-                        >
-                          {isCompleted ? (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                advanceProgress();
-                              }}
-                              className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            >
-                              <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                            </button>
-                          ) : (
-                            <div className="size-[32px] bg-[#F4F0F8] border border-[#8B5DB0] rounded-[6px] flex items-center justify-center shrink-0">
-                              <img src="/images/enrolled/module-lock-square.svg" alt="" className="w-[11px] h-[12px]" />
-                            </div>
-                          )}
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Design Specs & Tokens
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">
-                              16 min
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Lesson 2 */}
-                        <div
-                          onClick={() => navigate(`/courses/${id || 'data-analysis-fundamentals'}/video?lesson=4-2`)}
-                          className="p-[10px] rounded-[8px] flex items-center gap-[12px] hover:bg-black/5 transition-colors cursor-pointer group"
-                          title="Watch Developer Collaboration"
-                        >
-                          {isCompleted ? (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                advanceProgress();
-                              }}
-                              className="size-[32px] bg-[#D2C1E1] hover:bg-[#c3aed4] border border-[rgba(174,143,200,0.67)] rounded-[6px] flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all"
-                            >
-                              <img src="/images/enrolled/module-check-square.svg" alt="" className="w-[11px] h-[12px]" />
-                            </button>
-                          ) : (
-                            <div className="size-[32px] bg-[#F4F0F8] border border-[#8B5DB0] rounded-[6px] flex items-center justify-center shrink-0">
-                              <img src="/images/enrolled/module-lock-square.svg" alt="" className="w-[11px] h-[12px]" />
-                            </div>
-                          )}
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[14px] text-[#22023C] group-hover:text-[#5A198F] font-normal leading-[20px] truncate transition-colors">
-                              Developer Collaboration
-                            </span>
-                            <span className="text-[12px] text-[#4B5563] leading-[16px]">
-                              22 min
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -1449,23 +1159,23 @@ export const CourseDetailsPage: React.FC = () => {
               <div className="flex-1 max-w-[576px] flex flex-col gap-[24px]">
                 {/* Heading 1 */}
                 <h1 className="font-extrabold text-[36px] sm:text-[44px] lg:text-[48px] leading-[44px] sm:leading-[52px] lg:leading-[60px] text-[#0F172A] tracking-[-1.2px]">
-                  Master Data Analysis from Scratch to Insights
+                  {courseTitle}
                 </h1>
 
                 {/* Description & Instructor */}
                 <div className="flex flex-col gap-[16px]">
                   <p className="font-normal text-[16px] sm:text-[18px] leading-[26px] sm:leading-[29.25px] text-[#64748B]">
-                    Learn how to analyze data, create interactive dashboards, and turn raw data into meaningful insights using Excel, SQL, Python, and Power BI.
+                    {courseDetail?.description || catalogItem.description}
                   </p>
 
                   <div className="flex items-center gap-[7.25px]">
                     <img
-                      src="/images/enrolled/elena-avatar.png"
-                      alt="Elena Vasquez"
+                      src={catalogItem.instructorAvatar || '/images/enrolled/elena-avatar.png'}
+                      alt={catalogItem.instructor}
                       className="size-[23px] rounded-full object-cover shrink-0 border border-slate-200"
                     />
                     <span className="font-medium text-[11px] sm:text-[12px] leading-[14.5px] text-[#475569]">
-                      Elena Vasquez - Head of Open Source Applications of aaa Company
+                      {catalogItem.instructor} - Lead Track Specialist
                     </span>
                   </div>
                 </div>
@@ -1475,7 +1185,7 @@ export const CourseDetailsPage: React.FC = () => {
                   <div className="bg-[#EFF6FF] rounded-full px-[16px] py-[8px] flex items-center gap-[8px] shrink-0">
                     <img src="/images/enrolled/clock-icon.svg" alt="" className="size-[14px]" />
                     <span className="font-semibold text-[14px] leading-[20px] text-[#8B5DB0]">
-                      8 Weeks
+                      {courseDuration}
                     </span>
                   </div>
 
@@ -1489,7 +1199,7 @@ export const CourseDetailsPage: React.FC = () => {
                   <div className="bg-[#EFF6FF] rounded-full px-[16px] py-[8px] flex items-center gap-[8px] shrink-0">
                     <img src="/images/enrolled/tag-layer-icon.svg" alt="" className="size-[14px]" />
                     <span className="font-semibold text-[14px] leading-[20px] text-[#8B5DB0]">
-                      Data Analytics
+                      {courseTrack}
                     </span>
                   </div>
                 </div>
@@ -1560,8 +1270,8 @@ export const CourseDetailsPage: React.FC = () => {
                   title="Watch course video"
                 >
                   <img
-                    src="/images/course-detail-hero.png"
-                    alt="Modern UI/UX Design System Course Preview"
+                    src={catalogItem.heroImage || '/images/course-data-ai.jpg'}
+                    alt={`${courseTitle} Preview`}
                     className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
                   />
 
@@ -1699,7 +1409,7 @@ export const CourseDetailsPage: React.FC = () => {
             <div className="w-full bg-[#3C0555] rounded-[24px] sm:rounded-[999px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] px-6 sm:px-12 lg:px-16 py-6 sm:py-0 sm:h-[130px] flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex flex-col gap-[4px] text-center sm:text-start">
                 <h3 className="font-extrabold text-[18px] sm:text-[20px] leading-[28px] sm:leading-[32px] text-white">
-                  Ready to start your design journey?
+                  Ready to start your {courseTrack.toLowerCase()} journey?
                 </h3>
                 <p className="font-normal text-[14px] sm:text-[16px] leading-[22px] sm:leading-[24px] text-[#DBEAFE]">
                   Enroll Now To Be Able To See The Videos

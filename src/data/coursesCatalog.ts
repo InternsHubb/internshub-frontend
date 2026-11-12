@@ -1,3 +1,10 @@
+export interface CourseAttachment {
+  id: string;
+  title: string;
+  fileType: string;
+  iconSrc: string;
+}
+
 export interface CourseCatalogLesson {
   id: string;
   title: string;
@@ -11,6 +18,7 @@ export interface CourseCatalogModule {
   id: number;
   title: string;
   lessons: CourseCatalogLesson[];
+  attachments?: CourseAttachment[];
 }
 
 export interface CourseCatalogItem {
@@ -24,6 +32,8 @@ export interface CourseCatalogItem {
   lessonsCount: number;
   rating: number;
   primaryVideoUrl: string;
+  heroImage: string;
+  attachments: CourseAttachment[];
   modules: CourseCatalogModule[];
 }
 
@@ -41,6 +51,27 @@ export const COURSES_CATALOG: Record<string, CourseCatalogItem> = {
     lessonsCount: 11,
     rating: 4.8,
     primaryVideoUrl: 'https://www.youtube.com/embed/jwCmIBJ8Jtc',
+    heroImage: '/images/course-detail-hero.png',
+    attachments: [
+      {
+        id: 'att-1',
+        title: 'What is UI/UX Design?',
+        fileType: 'pdf file',
+        iconSrc: '/images/video/simple-red.svg',
+      },
+      {
+        id: 'att-2',
+        title: 'Understanding User-Centered Design',
+        fileType: 'html file',
+        iconSrc: '/images/video/code-icon.svg',
+      },
+      {
+        id: 'att-3',
+        title: 'Tools of the Trade: Figma Basics',
+        fileType: 'power point slides',
+        iconSrc: '/images/video/powerpoint-icon.svg',
+      },
+    ],
     modules: [
       {
         id: 1,
@@ -176,6 +207,27 @@ export const COURSES_CATALOG: Record<string, CourseCatalogItem> = {
     lessonsCount: 11,
     rating: 4.9,
     primaryVideoUrl: 'https://www.youtube.com/embed/x4rFhThSX04',
+    heroImage: '/images/course-thumb-2.webp',
+    attachments: [
+      {
+        id: 'att-1',
+        title: 'React 19 & Component Architecture Guide',
+        fileType: 'pdf file',
+        iconSrc: '/images/video/simple-red.svg',
+      },
+      {
+        id: 'att-2',
+        title: 'Tailwind CSS Utility Cheatsheet',
+        fileType: 'html file',
+        iconSrc: '/images/video/code-icon.svg',
+      },
+      {
+        id: 'att-3',
+        title: 'Modern JavaScript ES6+ Workbook',
+        fileType: 'power point slides',
+        iconSrc: '/images/video/powerpoint-icon.svg',
+      },
+    ],
     modules: [
       {
         id: 1,
@@ -311,6 +363,27 @@ export const COURSES_CATALOG: Record<string, CourseCatalogItem> = {
     lessonsCount: 11,
     rating: 4.8,
     primaryVideoUrl: 'https://www.youtube.com/embed/RLtyhwFtXQA',
+    heroImage: '/images/course-thumb-3.webp',
+    attachments: [
+      {
+        id: 'att-1',
+        title: 'Node.js & Express REST API Architecture',
+        fileType: 'pdf file',
+        iconSrc: '/images/video/simple-red.svg',
+      },
+      {
+        id: 'att-2',
+        title: 'SQL Relational Schema & Queries Cheatsheet',
+        fileType: 'html file',
+        iconSrc: '/images/video/code-icon.svg',
+      },
+      {
+        id: 'att-3',
+        title: 'Docker & Microservices Deployment Deck',
+        fileType: 'power point slides',
+        iconSrc: '/images/video/powerpoint-icon.svg',
+      },
+    ],
     modules: [
       {
         id: 1,
@@ -446,6 +519,27 @@ export const COURSES_CATALOG: Record<string, CourseCatalogItem> = {
     lessonsCount: 11,
     rating: 4.7,
     primaryVideoUrl: 'https://www.youtube.com/embed/VPvVD8t02U8',
+    heroImage: '/images/course-thumb-4.webp',
+    attachments: [
+      {
+        id: 'att-1',
+        title: 'Flutter Widget Tree & Lifecycle Guide',
+        fileType: 'pdf file',
+        iconSrc: '/images/video/simple-red.svg',
+      },
+      {
+        id: 'att-2',
+        title: 'Dart 3 Syntax & Null-Safety Cheatsheet',
+        fileType: 'html file',
+        iconSrc: '/images/video/code-icon.svg',
+      },
+      {
+        id: 'att-3',
+        title: 'Cross-Platform Mobile Architecture Slides',
+        fileType: 'power point slides',
+        iconSrc: '/images/video/powerpoint-icon.svg',
+      },
+    ],
     modules: [
       {
         id: 1,
@@ -581,6 +675,27 @@ export const COURSES_CATALOG: Record<string, CourseCatalogItem> = {
     lessonsCount: 11,
     rating: 4.7,
     primaryVideoUrl: 'https://www.youtube.com/embed/r-uOLxNrNk8',
+    heroImage: '/images/course-data-ai.jpg',
+    attachments: [
+      {
+        id: 'att-1',
+        title: 'Python Data Analysis & Pandas Cheatsheet',
+        fileType: 'pdf file',
+        iconSrc: '/images/video/simple-red.svg',
+      },
+      {
+        id: 'att-2',
+        title: 'SQL Data Extraction & Joins Reference',
+        fileType: 'html file',
+        iconSrc: '/images/video/code-icon.svg',
+      },
+      {
+        id: 'att-3',
+        title: 'Data Cleaning & Statistical Analysis Guide',
+        fileType: 'power point slides',
+        iconSrc: '/images/video/powerpoint-icon.svg',
+      },
+    ],
     modules: [
       {
         id: 1,
@@ -797,3 +912,4 @@ export function resolveLessonVideo(courseItem: CourseCatalogItem, lessonId: stri
   // Fallback to the course's own primary video
   return courseItem.primaryVideoUrl;
 }
+

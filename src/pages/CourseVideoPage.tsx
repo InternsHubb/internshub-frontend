@@ -251,6 +251,10 @@ export const CourseVideoPage: React.FC = () => {
     allLessons.find((l) => l.id === activeLessonId) ||
     allLessons[0];
 
+  const activeLessonModule = useMemo(() => {
+    return dynamicModules.find((m) => m.lessons.some((l) => l.id === (activeLesson?.id ?? activeLessonId)));
+  }, [dynamicModules, activeLesson, activeLessonId]);
+
   const currentIdx = allLessons.findIndex((l) => l.id === activeLessonId);
 
   // Check sequential completion status
@@ -940,12 +944,12 @@ export const CourseVideoPage: React.FC = () => {
 
                     <div className="bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[#5A198F] text-[12px] font-medium">
                       <img src="/images/video/module-icon.svg" alt="" className="w-[13.5px] h-[12px]" />
-                      <span>Module 3</span>
+                      <span>{activeLessonModule ? activeLessonModule.title.split(':')[0] : 'Module 1'}</span>
                     </div>
 
                     <div className="bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[#5A198F] text-[12px] font-medium">
                       <img src="/images/video/resources-icon.svg" alt="" className="w-[9px] h-[12px]" />
-                      <span>Resources (3)</span>
+                      <span>Resources ({(catalogItem.attachments || ATTACHMENTS_DATA).length})</span>
                     </div>
                   </div>
                 </div>
@@ -964,7 +968,7 @@ export const CourseVideoPage: React.FC = () => {
                         className="size-6"
                       />
                       <h3 className="font-bold text-[16px] text-[#0F172A] leading-[24px]">
-                        Lesson 2: More Attachments
+                        Course Resources & Attachments
                       </h3>
                     </div>
 
@@ -981,7 +985,7 @@ export const CourseVideoPage: React.FC = () => {
 
                   {isAttachmentsOpen && (
                     <div className="border-t border-[#F1F5F9] px-6 sm:px-7 py-2 bg-white flex flex-col divide-y divide-[#F8FAFC]">
-                      {ATTACHMENTS_DATA.map((item) => (
+                      {(catalogItem.attachments || ATTACHMENTS_DATA).map((item) => (
                         <div
                           key={item.id}
                           className="py-4 flex items-center justify-between gap-4 hover:bg-slate-50/70 px-2 rounded-lg transition-colors"
