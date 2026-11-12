@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes';
 import { getCourseById } from '@/lib/api/courses';
 import type { CourseDetailDto } from '@/lib/api/types';
+import { getCourseCatalogItem } from '@/data/coursesCatalog';
 // Slim sidebar glyphs: the same Figma icons the dashboard sidebar uses ("course details" Frame 10).
 import slimCertificate from '@/assets/dashboard/sb-certificate.svg';
 import slimChat from '@/assets/dashboard/sb-chat.svg';
@@ -168,6 +169,9 @@ export const CourseDetailsPage: React.FC = () => {
   const [isLoadingDetail, setIsLoadingDetail] = useState<boolean>(true);
   const [detailError, setDetailError] = useState<string | null>(null);
 
+  // Catalog item fallback for all course tracks
+  const catalogItem = useMemo(() => getCourseCatalogItem(id), [id]);
+
   const loadCourseDetail = useCallback(async () => {
     if (!id) {
       setIsLoadingDetail(false);
@@ -181,12 +185,15 @@ export const CourseDetailsPage: React.FC = () => {
       if (detail.isEntitled) {
         setIsEnrolled(true);
       }
-    } catch {
-      setDetailError('Unable to load course details. Please verify your course access or try again.');
+    } catch (err) {
+      console.warn('Backend course detail unavailable, using catalog fallback:', err);
+      if (!catalogItem) {
+        setDetailError('Unable to load course details. Please verify your course access or try again.');
+      }
     } finally {
       setIsLoadingDetail(false);
     }
-  }, [id]);
+  }, [id, catalogItem]);
 
   useEffect(() => {
     void loadCourseDetail();
@@ -210,13 +217,28 @@ export const CourseDetailsPage: React.FC = () => {
         },
       ];
     }
+    if (catalogItem?.modules && catalogItem.modules.length > 0) {
+      return catalogItem.modules.map((m) => ({
+        id: m.id,
+        title: m.title,
+        lessonsCount: m.lessons.length,
+        duration: `${m.lessons.length * 20}m`,
+        lessons: m.lessons.map((l, idx) => ({
+          id: l.id,
+          title: l.title,
+          type: 'Video Lesson',
+          duration: l.duration,
+          status: idx === 0 ? 'completed' : idx === 1 ? 'in-progress' : 'unstarted',
+        })),
+      }));
+    }
     return ENROLLED_MODULES;
-  }, [courseDetail]);
+  }, [courseDetail, catalogItem]);
 
-  const courseTitle = courseDetail?.title || 'Data Analysis Fundamentals';
-  const courseTrack = courseDetail?.trackName || 'Artificial Intelligence';
-  const courseDuration = courseDetail ? formatDuration(courseDetail.totalDurationSeconds) : '18 hours';
-  const totalLessonsCount = courseDetail ? courseDetail.lessons.length : (isCompleted ? 19 : 32);
+  const courseTitle = courseDetail?.title || catalogItem.title;
+  const courseTrack = courseDetail?.trackName || catalogItem.trackName;
+  const courseDuration = courseDetail ? formatDuration(courseDetail.totalDurationSeconds) : catalogItem.duration;
+  const totalLessonsCount = courseDetail ? courseDetail.lessons.length : catalogItem.lessonsCount;
 
   // Advance progress on user interaction until completed (and cycles back on click when at 100%)
   const advanceProgress = () => {

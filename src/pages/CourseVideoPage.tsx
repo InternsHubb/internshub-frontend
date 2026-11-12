@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes';
 import { completeLesson, getCourseById } from '@/lib/api/courses';
 import type { CourseDetailDto } from '@/lib/api/types';
+import { getCourseCatalogItem, resolveLessonVideo } from '@/data/coursesCatalog';
 
 function formatDuration(totalSeconds: number): string {
   if (!totalSeconds || totalSeconds <= 0) return 'Self-paced';
@@ -37,226 +38,12 @@ interface ModuleSection {
   lessons: VideoLesson[];
 }
 
-const MODULES_DATA: ModuleSection[] = [
-  {
-    id: 1,
-    title: 'Module 1: Foundations',
-    status: 'completed',
-    lessons: [
-      { id: '1-1', title: 'Intro to UX Thinking', duration: '8 min', status: 'completed', lessonNumber: '01' },
-      { id: '1-2', title: 'User Research Basics', duration: '15 min', status: 'completed', lessonNumber: '02' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Module 2: Wireframing',
-    status: 'completed',
-    lessons: [
-      { id: '2-1', title: 'Low-Fidelity Sketches', duration: '12 min', status: 'completed', lessonNumber: '03' },
-      { id: '2-2', title: 'Digital Wireframes', duration: '20 min', status: 'completed', lessonNumber: '04' },
-    ],
-  },
-  {
-    id: 3,
-    title: 'Module 3: Prototyping',
-    status: 'active',
-    lessons: [
-      { id: '3-1', title: 'Prototyping Principles', duration: '10 min', status: 'completed', lessonNumber: '03' },
-      {
-        id: '3-2',
-        title: 'Building Interactive Prototypes',
-        duration: '10 min',
-        status: 'active',
-        remainingText: '10 min · Remaining',
-        lessonNumber: '04',
-      },
-      {
-        id: '3-3',
-        title: 'Overlays & Micro-interactions',
-        duration: '18 min',
-        status: 'unstarted',
-        lessonNumber: '04',
-      },
-      {
-        id: '3-4',
-        title: 'Prototype Testing',
-        duration: '14 min',
-        status: 'unstarted',
-        lessonNumber: '05',
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: 'Module 4: Handoff & Dev',
-    status: 'locked',
-    lessons: [
-      { id: '4-1', title: 'Design Specs & Tokens', duration: '16 min', status: 'locked', lessonNumber: '06' },
-      { id: '4-2', title: 'Developer Collaboration', duration: '22 min', status: 'locked', lessonNumber: '07' },
-    ],
-  },
-  {
-    id: 5,
-    title: 'Final Quiz',
-    status: 'locked',
-    subtitle: 'unlimited attempts - must score 70 % or above',
-    lessons: [
-      {
-        id: '5-1',
-        title: 'Final Quiz',
-        duration: 'unlimited attempts - must score 70 % or above',
-        status: 'locked',
-      },
-    ],
-  },
-];
-
 const MODULE_3_LESSON_IDS = ['3-1', '3-2', '3-3', '3-4'];
 const MODULE_4_LESSON_IDS = ['4-1', '4-2'];
 
 // ---------------------------------------------------------------------------
-// YouTube embed helpers
+// Video Resolution: each course uses its own dedicated videos matching its subject!
 // ---------------------------------------------------------------------------
-
-/** Map static lesson ID → YouTube embed URL (UI/UX demo course) */
-const LESSON_ID_VIDEO_MAP: Record<string, string> = {
-  // All UI/UX static lessons → Figma full course (freeCodeCamp, confirmed)
-  '1-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Intro to UX Thinking
-  '1-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // User Research Basics
-  '2-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Low-Fidelity Sketches
-  '2-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Digital Wireframes
-  '3-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Prototyping Principles
-  '3-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Building Interactive Prototypes
-  '3-3': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Overlays & Micro-interactions
-  '3-4': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Prototype Testing
-  '4-1': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Design Specs & Tokens
-  '4-2': 'https://www.youtube.com/embed/jwCmIBJ8Jtc', // Developer Collaboration
-};
-
-/** Map lesson title keywords → YouTube embed URL (for backend / API courses).
- *  All video IDs are verified working public videos from trusted channels. */
-const LESSON_TITLE_VIDEO_MAP: Record<string, string> = {
-  // ── UI/UX / Figma ──────────────────────────────────────────────────────────
-  // freeCodeCamp Figma UI Design Full Course: youtube.com/watch?v=jwCmIBJ8Jtc
-  'figma':                    'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'ux':                       'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'ui/ux':                    'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'wireframe':                'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'prototype':                'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'design system':            'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'component librar':         'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'user research':            'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'handoff':                  'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'design spec':              'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'design token':             'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'color theory':             'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'typography':               'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'interaction':              'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-  'overlay':                  'https://www.youtube.com/embed/jwCmIBJ8Jtc',
-
-  // ── Frontend / React / Tailwind ─────────────────────────────────────────────
-  // freeCodeCamp HTML full course: youtube.com/watch?v=mU6anWqZJcc
-  'html':                     'https://www.youtube.com/embed/mU6anWqZJcc',
-  // freeCodeCamp CSS full course: youtube.com/watch?v=OXGznpKZ_sA
-  'css':                      'https://www.youtube.com/embed/OXGznpKZ_sA',
-  // freeCodeCamp JS full course: youtube.com/watch?v=PkZQtbi2zGE
-  'javascript':               'https://www.youtube.com/embed/PkZQtbi2zGE',
-  // freeCodeCamp React course: youtube.com/watch?v=x4rFhThSX04
-  'react':                    'https://www.youtube.com/embed/x4rFhThSX04',
-  // Tailwind crash course (Traversy Media): youtube.com/watch?v=dFgzHOX84xQ
-  'tailwind':                 'https://www.youtube.com/embed/dFgzHOX84xQ',
-  // freeCodeCamp TypeScript course: youtube.com/watch?v=SpwzRDXQ3po
-  'typescript':               'https://www.youtube.com/embed/SpwzRDXQ3po',
-  // freeCodeCamp Git & GitHub: youtube.com/watch?v=RGOj5yH7evk
-  'git':                      'https://www.youtube.com/embed/RGOj5yH7evk',
-  // freeCodeCamp React (same): youtube.com/watch?v=x4rFhThSX04
-  'state management':         'https://www.youtube.com/embed/x4rFhThSX04',
-  'redux':                    'https://www.youtube.com/embed/x4rFhThSX04',
-  // freeCodeCamp APIs: youtube.com/watch?v=GZvSYJDk-us
-  'api':                      'https://www.youtube.com/embed/GZvSYJDk-us',
-  'rest':                     'https://www.youtube.com/embed/GZvSYJDk-us',
-  'responsive':               'https://www.youtube.com/embed/OXGznpKZ_sA',
-  'flexbox':                  'https://www.youtube.com/embed/OXGznpKZ_sA',
-  'grid':                     'https://www.youtube.com/embed/OXGznpKZ_sA',
-  'next.js':                  'https://www.youtube.com/embed/x4rFhThSX04',
-  'web development':          'https://www.youtube.com/embed/mU6anWqZJcc',
-  'performance':              'https://www.youtube.com/embed/x4rFhThSX04',
-
-  // ── Backend / Node / Python ──────────────────────────────────────────────────
-  // freeCodeCamp Node.js: youtube.com/watch?v=RLtyhwFtXQA
-  'node':                     'https://www.youtube.com/embed/RLtyhwFtXQA',
-  'express':                  'https://www.youtube.com/embed/RLtyhwFtXQA',
-  'server':                   'https://www.youtube.com/embed/RLtyhwFtXQA',
-  // freeCodeCamp Python: youtube.com/watch?v=rfscVS0vtbw
-  'python':                   'https://www.youtube.com/embed/rfscVS0vtbw',
-  // freeCodeCamp SQL: youtube.com/watch?v=HXV3zeQKqGY
-  'sql':                      'https://www.youtube.com/embed/HXV3zeQKqGY',
-  'database':                 'https://www.youtube.com/embed/HXV3zeQKqGY',
-  'postgresql':               'https://www.youtube.com/embed/HXV3zeQKqGY',
-  // freeCodeCamp Django: youtube.com/watch?v=F5mRW0jo-U4
-  'django':                   'https://www.youtube.com/embed/F5mRW0jo-U4',
-  'flask':                    'https://www.youtube.com/embed/rfscVS0vtbw',
-  // freeCodeCamp MongoDB: youtube.com/watch?v=-56x56UppqQ
-  'mongodb':                  'https://www.youtube.com/embed/-56x56UppqQ',
-  // freeCodeCamp Docker: youtube.com/watch?v=fqMOX6JJhGo
-  'docker':                   'https://www.youtube.com/embed/fqMOX6JJhGo',
-  // freeCodeCamp AWS: youtube.com/watch?v=ulprqHHWlng
-  'aws':                      'https://www.youtube.com/embed/ulprqHHWlng',
-  'cloud':                    'https://www.youtube.com/embed/ulprqHHWlng',
-  'deployment':               'https://www.youtube.com/embed/ulprqHHWlng',
-  'authentication':           'https://www.youtube.com/embed/RLtyhwFtXQA',
-  'jwt':                      'https://www.youtube.com/embed/RLtyhwFtXQA',
-  'microservice':             'https://www.youtube.com/embed/RLtyhwFtXQA',
-  'full-stack':               'https://www.youtube.com/embed/RLtyhwFtXQA',
-
-  // ── Data Science / ML / AI ───────────────────────────────────────────────────
-  // freeCodeCamp Pandas Data Analysis: youtube.com/watch?v=r-uOLxNrNk8
-  'data analysis':            'https://www.youtube.com/embed/r-uOLxNrNk8',
-  'pandas':                   'https://www.youtube.com/embed/r-uOLxNrNk8',
-  'data cleaning':            'https://www.youtube.com/embed/r-uOLxNrNk8',
-  'exploratory':              'https://www.youtube.com/embed/r-uOLxNrNk8',
-  'visualization':            'https://www.youtube.com/embed/r-uOLxNrNk8',
-  'numpy':                    'https://www.youtube.com/embed/rfscVS0vtbw',
-  'matplotlib':               'https://www.youtube.com/embed/r-uOLxNrNk8',
-  // freeCodeCamp ML for Everybody (Kylie Ying): youtube.com/watch?v=NWONeJKn9Kc
-  'machine learning':         'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'deep learning':            'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'neural network':           'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'tensorflow':               'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'pytorch':                  'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'regression':               'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'classification':           'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'clustering':               'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'nlp':                      'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'natural language':         'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'computer vision':          'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'artificial intelligence':  'https://www.youtube.com/embed/NWONeJKn9Kc',
-  'statistics':               'https://www.youtube.com/embed/r-uOLxNrNk8',
-
-  // ── Mobile / Flutter ─────────────────────────────────────────────────────────
-  // freeCodeCamp Flutter course: youtube.com/watch?v=VPvVD8t02U8
-  'flutter':                  'https://www.youtube.com/embed/VPvVD8t02U8',
-  'dart':                     'https://www.youtube.com/embed/VPvVD8t02U8',
-  'mobile app':               'https://www.youtube.com/embed/VPvVD8t02U8',
-  'android':                  'https://www.youtube.com/embed/VPvVD8t02U8',
-  'ios':                      'https://www.youtube.com/embed/VPvVD8t02U8',
-  // freeCodeCamp React Native: youtube.com/watch?v=0-S5a0eXPoc
-  'react native':             'https://www.youtube.com/embed/0-S5a0eXPoc',
-  'kotlin':                   'https://www.youtube.com/embed/VPvVD8t02U8',
-  'swift':                    'https://www.youtube.com/embed/VPvVD8t02U8',
-};
-
-/** Returns a YouTube embed URL for a lesson, checking by ID first, then by title keywords */
-function getYouTubeUrl(lessonId: string, lessonTitle: string): string | null {
-  // 1. Exact static ID match
-  if (LESSON_ID_VIDEO_MAP[lessonId]) return LESSON_ID_VIDEO_MAP[lessonId];
-  // 2. Keyword match on title (case-insensitive)
-  const lower = lessonTitle.toLowerCase();
-  for (const [keyword, url] of Object.entries(LESSON_TITLE_VIDEO_MAP)) {
-    if (lower.includes(keyword)) return url;
-  }
-  return null;
-}
 
 const ATTACHMENTS_DATA: AttachmentItem[] = [
   {
@@ -285,6 +72,9 @@ export const CourseVideoPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const [searchParams] = useSearchParams();
   const initialLessonFromUrl = searchParams.get('lesson');
+
+  // Course catalog lookup for the current course (supports all tracks: UI/UX, Frontend, Backend, Mobile, Data)
+  const catalogItem = useMemo(() => getCourseCatalogItem(id), [id]);
 
   const [courseDetail, setCourseDetail] = useState<CourseDetailDto | null>(null);
   const [isLoadingCourse, setIsLoadingCourse] = useState<boolean>(Boolean(id && id !== 'data_analysis'));
@@ -386,18 +176,21 @@ export const CourseVideoPage: React.FC = () => {
         }
       }
     } catch (err) {
-      console.error('Failed to load course details:', err);
-      setCourseError(err instanceof Error ? err.message : 'Failed to load course details.');
+      console.warn('Backend course details unavailable, using catalog:', err);
+      // Do not block UI if we have a valid catalog course
+      if (!catalogItem) {
+        setCourseError(err instanceof Error ? err.message : 'Failed to load course details.');
+      }
     } finally {
       setIsLoadingCourse(false);
     }
-  }, [id, initialLessonFromUrl]);
+  }, [id, initialLessonFromUrl, catalogItem]);
 
   useEffect(() => {
     void loadCourse();
   }, [loadCourse]);
 
-  // Dynamic modules from real backend lessons if available, else static MODULES_DATA
+  // Dynamic modules from real backend lessons if available, else catalogItem modules
   const dynamicModules = useMemo<ModuleSection[]>(() => {
     if (courseDetail?.lessons && courseDetail.lessons.length > 0) {
       const chunkSize = 4;
@@ -422,8 +215,23 @@ export const CourseVideoPage: React.FC = () => {
       }
       return chunks;
     }
-    return MODULES_DATA;
-  }, [courseDetail, completedLessonIds]);
+    return catalogItem.modules.map((m) => {
+      const allDone = m.lessons.length > 0 && m.lessons.every((l) => completedLessonIds.has(l.id));
+      return {
+        id: m.id,
+        title: m.title,
+        status: (allDone ? 'completed' : 'active') as 'completed' | 'active' | 'locked',
+        lessons: m.lessons.map((l) => ({
+          id: l.id,
+          title: l.title,
+          duration: l.duration,
+          status: completedLessonIds.has(l.id) ? 'completed' : 'unstarted',
+          lessonNumber: l.lessonNumber,
+          remainingText: `${l.duration} · Remaining`,
+        })),
+      };
+    });
+  }, [courseDetail, completedLessonIds, catalogItem]);
 
   // Flat list of all lessons
   const allLessons = useMemo(() => dynamicModules.flatMap((m) => m.lessons), [dynamicModules]);
@@ -441,8 +249,7 @@ export const CourseVideoPage: React.FC = () => {
 
   const activeLesson =
     allLessons.find((l) => l.id === activeLessonId) ||
-    allLessons[0] ||
-    MODULES_DATA[2].lessons[1];
+    allLessons[0];
 
   const currentIdx = allLessons.findIndex((l) => l.id === activeLessonId);
 
@@ -453,7 +260,7 @@ export const CourseVideoPage: React.FC = () => {
   const isQuizUnlocked = isModule4Complete;
   const isAllVideosFinished = courseDetail?.lessons
     ? courseDetail.lessons.every((l) => completedLessonIds.has(l.id))
-    : (isModule3Complete && isModule4Complete);
+    : (allLessons.length > 0 && allLessons.filter((l) => l.id !== '5-1').every((l) => completedLessonIds.has(l.id)));
 
   const completedLessonCount = allLessons.filter((l) => completedLessonIds.has(l.id)).length;
   const totalLessonCount = allLessons.length || 19;
@@ -607,8 +414,8 @@ export const CourseVideoPage: React.FC = () => {
 
   const currentPlayUrl = courseDetail?.lessons?.find((l) => l.id === activeLessonId)?.playUrl || null;
 
-  // Resolve a YouTube embed URL for the active lesson (fallback when backend has no playUrl)
-  const youtubeUrl = getYouTubeUrl(activeLessonId, activeLesson?.title ?? '');
+  // Resolve video URL for the active lesson based on course track and topic
+  const youtubeUrl = resolveLessonVideo(catalogItem, activeLessonId, activeLesson?.title);
   const effectiveVideoUrl = currentPlayUrl ?? youtubeUrl;
   const isYouTubeEmbed = !!effectiveVideoUrl && effectiveVideoUrl.includes('youtube.com/embed');
 
@@ -675,7 +482,7 @@ export const CourseVideoPage: React.FC = () => {
                 />
 
                 <span className="text-[#94A3B8] whitespace-nowrap">
-                  {courseDetail?.trackName || 'Artificial Intelligence'}
+                  {courseDetail?.trackName || catalogItem.trackName}
                 </span>
 
                 <img
@@ -685,7 +492,7 @@ export const CourseVideoPage: React.FC = () => {
                 />
 
                 <span className="text-[#4C0585] font-semibold whitespace-nowrap">
-                  {courseDetail?.title || 'Data Analysis Fundamentals'}
+                  {courseDetail?.title || catalogItem.title}
                 </span>
               </div>
             </div>
@@ -718,7 +525,7 @@ export const CourseVideoPage: React.FC = () => {
                   Maya Johnson
                 </span>
                 <span className="font-normal text-[12px] leading-[16px] text-[#6B7280] truncate">
-                  AI track - 6 Month Plan
+                  {courseDetail?.trackName || catalogItem.trackName} - 6 Month Plan
                 </span>
               </div>
             </div>
@@ -1071,16 +878,10 @@ export const CourseVideoPage: React.FC = () => {
                   <div className="flex flex-col sm:flex-row items-start justify-between gap-4 w-full">
                     <div className="flex flex-col gap-2 max-w-[696px]">
                       <h1 className="font-bold text-[28px] sm:text-[34px] lg:text-[36px] leading-tight text-[#3B0454] tracking-tight">
-                        {activeLesson.title === 'Building Interactive Prototypes'
-                          ? 'Building Interactive Prototypes in Figma'
-                          : activeLesson.title}
+                        {activeLesson.title}
                       </h1>
                       <p className="font-medium text-[15px] sm:text-[16px] leading-[1.3] text-[rgba(34,2,60,0.65)]">
-                        {courseDetail?.description || (
-                          activeLesson.title === 'Building Interactive Prototypes'
-                            ? `Learn how to transform static designs into interactive, clickable prototypes using Figma's prototyping tools. We'll cover transitions, overlays, and smart animate.`
-                            : `Comprehensive video tutorial and practical walkthrough for ${activeLesson.title}.`
-                        )}
+                        {courseDetail?.description || (activeLesson as any).description || catalogItem.description}
                       </p>
                     </div>
 
