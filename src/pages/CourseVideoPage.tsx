@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes';
 import { completeLesson, getCourseById } from '@/lib/api/courses';
 import type { CourseDetailDto } from '@/lib/api/types';
+import { getCourseCatalogItem, resolveLessonVideo } from '@/data/coursesCatalog';
 
 function formatDuration(totalSeconds: number): string {
   if (!totalSeconds || totalSeconds <= 0) return 'Self-paced';
@@ -37,82 +38,12 @@ interface ModuleSection {
   lessons: VideoLesson[];
 }
 
-const MODULES_DATA: ModuleSection[] = [
-  {
-    id: 1,
-    title: 'Module 1: Foundations',
-    status: 'completed',
-    lessons: [
-      { id: '1-1', title: 'Intro to UX Thinking', duration: '8 min', status: 'completed', lessonNumber: '01' },
-      { id: '1-2', title: 'User Research Basics', duration: '15 min', status: 'completed', lessonNumber: '02' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Module 2: Wireframing',
-    status: 'completed',
-    lessons: [
-      { id: '2-1', title: 'Low-Fidelity Sketches', duration: '12 min', status: 'completed', lessonNumber: '03' },
-      { id: '2-2', title: 'Digital Wireframes', duration: '20 min', status: 'completed', lessonNumber: '04' },
-    ],
-  },
-  {
-    id: 3,
-    title: 'Module 3: Prototyping',
-    status: 'active',
-    lessons: [
-      { id: '3-1', title: 'Prototyping Principles', duration: '10 min', status: 'completed', lessonNumber: '03' },
-      {
-        id: '3-2',
-        title: 'Building Interactive Prototypes',
-        duration: '10 min',
-        status: 'active',
-        remainingText: '10 min · Remaining',
-        lessonNumber: '04',
-      },
-      {
-        id: '3-3',
-        title: 'Overlays & Micro-interactions',
-        duration: '18 min',
-        status: 'unstarted',
-        lessonNumber: '04',
-      },
-      {
-        id: '3-4',
-        title: 'Prototype Testing',
-        duration: '14 min',
-        status: 'unstarted',
-        lessonNumber: '05',
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: 'Module 4: Handoff & Dev',
-    status: 'locked',
-    lessons: [
-      { id: '4-1', title: 'Design Specs & Tokens', duration: '16 min', status: 'locked', lessonNumber: '06' },
-      { id: '4-2', title: 'Developer Collaboration', duration: '22 min', status: 'locked', lessonNumber: '07' },
-    ],
-  },
-  {
-    id: 5,
-    title: 'Final Quiz',
-    status: 'locked',
-    subtitle: 'unlimited attempts - must score 70 % or above',
-    lessons: [
-      {
-        id: '5-1',
-        title: 'Final Quiz',
-        duration: 'unlimited attempts - must score 70 % or above',
-        status: 'locked',
-      },
-    ],
-  },
-];
-
 const MODULE_3_LESSON_IDS = ['3-1', '3-2', '3-3', '3-4'];
 const MODULE_4_LESSON_IDS = ['4-1', '4-2'];
+
+// ---------------------------------------------------------------------------
+// Video Resolution: each course uses its own dedicated videos matching its subject!
+// ---------------------------------------------------------------------------
 
 const ATTACHMENTS_DATA: AttachmentItem[] = [
   {
@@ -141,6 +72,9 @@ export const CourseVideoPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const [searchParams] = useSearchParams();
   const initialLessonFromUrl = searchParams.get('lesson');
+
+  // Course catalog lookup for the current course (supports all tracks: UI/UX, Frontend, Backend, Mobile, Data)
+  const catalogItem = useMemo(() => getCourseCatalogItem(id), [id]);
 
   const [courseDetail, setCourseDetail] = useState<CourseDetailDto | null>(null);
   const [isLoadingCourse, setIsLoadingCourse] = useState<boolean>(Boolean(id && id !== 'data_analysis'));
@@ -242,18 +176,21 @@ export const CourseVideoPage: React.FC = () => {
         }
       }
     } catch (err) {
-      console.error('Failed to load course details:', err);
-      setCourseError(err instanceof Error ? err.message : 'Failed to load course details.');
+      console.warn('Backend course details unavailable, using catalog:', err);
+      // Do not block UI if we have a valid catalog course
+      if (!catalogItem) {
+        setCourseError(err instanceof Error ? err.message : 'Failed to load course details.');
+      }
     } finally {
       setIsLoadingCourse(false);
     }
-  }, [id, initialLessonFromUrl]);
+  }, [id, initialLessonFromUrl, catalogItem]);
 
   useEffect(() => {
     void loadCourse();
   }, [loadCourse]);
 
-  // Dynamic modules from real backend lessons if available, else static MODULES_DATA
+  // Dynamic modules from real backend lessons if available, else catalogItem modules
   const dynamicModules = useMemo<ModuleSection[]>(() => {
     if (courseDetail?.lessons && courseDetail.lessons.length > 0) {
       const chunkSize = 4;
@@ -278,8 +215,23 @@ export const CourseVideoPage: React.FC = () => {
       }
       return chunks;
     }
-    return MODULES_DATA;
-  }, [courseDetail, completedLessonIds]);
+    return catalogItem.modules.map((m) => {
+      const allDone = m.lessons.length > 0 && m.lessons.every((l) => completedLessonIds.has(l.id));
+      return {
+        id: m.id,
+        title: m.title,
+        status: (allDone ? 'completed' : 'active') as 'completed' | 'active' | 'locked',
+        lessons: m.lessons.map((l) => ({
+          id: l.id,
+          title: l.title,
+          duration: l.duration,
+          status: completedLessonIds.has(l.id) ? 'completed' : 'unstarted',
+          lessonNumber: l.lessonNumber,
+          remainingText: `${l.duration} · Remaining`,
+        })),
+      };
+    });
+  }, [courseDetail, completedLessonIds, catalogItem]);
 
   // Flat list of all lessons
   const allLessons = useMemo(() => dynamicModules.flatMap((m) => m.lessons), [dynamicModules]);
@@ -297,8 +249,11 @@ export const CourseVideoPage: React.FC = () => {
 
   const activeLesson =
     allLessons.find((l) => l.id === activeLessonId) ||
-    allLessons[0] ||
-    MODULES_DATA[2].lessons[1];
+    allLessons[0];
+
+  const activeLessonModule = useMemo(() => {
+    return dynamicModules.find((m) => m.lessons.some((l) => l.id === (activeLesson?.id ?? activeLessonId)));
+  }, [dynamicModules, activeLesson, activeLessonId]);
 
   const currentIdx = allLessons.findIndex((l) => l.id === activeLessonId);
 
@@ -309,7 +264,7 @@ export const CourseVideoPage: React.FC = () => {
   const isQuizUnlocked = isModule4Complete;
   const isAllVideosFinished = courseDetail?.lessons
     ? courseDetail.lessons.every((l) => completedLessonIds.has(l.id))
-    : (isModule3Complete && isModule4Complete);
+    : (allLessons.length > 0 && allLessons.filter((l) => l.id !== '5-1').every((l) => completedLessonIds.has(l.id)));
 
   const completedLessonCount = allLessons.filter((l) => completedLessonIds.has(l.id)).length;
   const totalLessonCount = allLessons.length || 19;
@@ -463,6 +418,11 @@ export const CourseVideoPage: React.FC = () => {
 
   const currentPlayUrl = courseDetail?.lessons?.find((l) => l.id === activeLessonId)?.playUrl || null;
 
+  // Resolve video URL for the active lesson based on course track and topic
+  const youtubeUrl = resolveLessonVideo(catalogItem, activeLessonId, activeLesson?.title);
+  const effectiveVideoUrl = currentPlayUrl ?? youtubeUrl;
+  const isYouTubeEmbed = !!effectiveVideoUrl && effectiveVideoUrl.includes('youtube.com/embed');
+
 
   return (
     <div className="bg-[#FEFEFE] min-h-screen relative w-full overflow-x-hidden text-[#1E293B] font-['Plus_Jakarta_Sans'] pb-20 flow-page-enter">
@@ -526,7 +486,7 @@ export const CourseVideoPage: React.FC = () => {
                 />
 
                 <span className="text-[#94A3B8] whitespace-nowrap">
-                  {courseDetail?.trackName || 'Artificial Intelligence'}
+                  {courseDetail?.trackName || catalogItem.trackName}
                 </span>
 
                 <img
@@ -536,7 +496,7 @@ export const CourseVideoPage: React.FC = () => {
                 />
 
                 <span className="text-[#4C0585] font-semibold whitespace-nowrap">
-                  {courseDetail?.title || 'Data Analysis Fundamentals'}
+                  {courseDetail?.title || catalogItem.title}
                 </span>
               </div>
             </div>
@@ -569,7 +529,7 @@ export const CourseVideoPage: React.FC = () => {
                   Maya Johnson
                 </span>
                 <span className="font-normal text-[12px] leading-[16px] text-[#6B7280] truncate">
-                  AI track - 6 Month Plan
+                  {courseDetail?.trackName || catalogItem.trackName} - 6 Month Plan
                 </span>
               </div>
             </div>
@@ -681,7 +641,16 @@ export const CourseVideoPage: React.FC = () => {
                       'linear-gradient(150.77deg, rgb(26, 26, 36) 0%, rgb(13, 13, 18) 50%, rgb(0, 0, 0) 100%)',
                   }}
                 >
-                  {currentPlayUrl ? (
+                  {isYouTubeEmbed ? (
+                    <iframe
+                      key={effectiveVideoUrl}
+                      src={`${effectiveVideoUrl}?autoplay=1&rel=0&modestbranding=1`}
+                      className="absolute inset-0 w-full h-full border-0 z-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      title={activeLesson?.title ?? 'Course video'}
+                    />
+                  ) : currentPlayUrl ? (
                     <video
                       ref={videoRef}
                       src={currentPlayUrl}
@@ -705,7 +674,8 @@ export const CourseVideoPage: React.FC = () => {
                     />
                   )}
 
-                  {/* TOP OVERLAY: HD 1080p Badge */}
+                  {/* TOP OVERLAY: HD 1080p Badge — hidden in YouTube mode */}
+                  {!isYouTubeEmbed && (
                   <div className="relative z-10 flex items-center justify-end p-5">
                     <div className="backdrop-blur-[2px] bg-[rgba(0,0,0,0.5)] border border-[rgba(255,255,255,0.16)] rounded-full px-3 py-1.5 flex items-center gap-2 shadow-xs">
                       <div className="size-2 rounded-full bg-[#EF4444] animate-pulse" />
@@ -714,8 +684,10 @@ export const CourseVideoPage: React.FC = () => {
                       </span>
                     </div>
                   </div>
+                  )}
 
-                  {/* CENTER PLAY BUTTON */}
+                  {/* CENTER PLAY BUTTON — hidden in YouTube mode (YouTube has own controls) */}
+                  {!isYouTubeEmbed && (
                   <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                     <button
                       type="button"
@@ -744,8 +716,10 @@ export const CourseVideoPage: React.FC = () => {
                       </div>
                     </button>
                   </div>
+                  )}
 
-                  {/* BOTTOM CONTROLS OVERLAY BAR */}
+                  {/* BOTTOM CONTROLS OVERLAY BAR — hidden in YouTube mode */}
+                  {!isYouTubeEmbed && (
                   <div className="relative z-10 backdrop-blur-[6px] bg-black/40 border-t border-[rgba(255,255,255,0.1)] px-5 py-4 flex flex-col gap-2.5">
                     {/* Scrubbing Timeline Progress Bar */}
                     <div className="w-full flex items-center justify-between gap-3 text-[12px] text-[#F4F0F8] font-['Inter'] font-normal select-none">
@@ -900,6 +874,7 @@ export const CourseVideoPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                  )}
                 </div>
 
                 {/* VIDEO TITLE, DESCRIPTION & TAGS */}
@@ -907,16 +882,10 @@ export const CourseVideoPage: React.FC = () => {
                   <div className="flex flex-col sm:flex-row items-start justify-between gap-4 w-full">
                     <div className="flex flex-col gap-2 max-w-[696px]">
                       <h1 className="font-bold text-[28px] sm:text-[34px] lg:text-[36px] leading-tight text-[#3B0454] tracking-tight">
-                        {activeLesson.title === 'Building Interactive Prototypes'
-                          ? 'Building Interactive Prototypes in Figma'
-                          : activeLesson.title}
+                        {activeLesson.title}
                       </h1>
                       <p className="font-medium text-[15px] sm:text-[16px] leading-[1.3] text-[rgba(34,2,60,0.65)]">
-                        {courseDetail?.description || (
-                          activeLesson.title === 'Building Interactive Prototypes'
-                            ? `Learn how to transform static designs into interactive, clickable prototypes using Figma's prototyping tools. We'll cover transitions, overlays, and smart animate.`
-                            : `Comprehensive video tutorial and practical walkthrough for ${activeLesson.title}.`
-                        )}
+                        {courseDetail?.description || (activeLesson as any).description || catalogItem.description}
                       </p>
                     </div>
 
@@ -975,12 +944,12 @@ export const CourseVideoPage: React.FC = () => {
 
                     <div className="bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[#5A198F] text-[12px] font-medium">
                       <img src="/images/video/module-icon.svg" alt="" className="w-[13.5px] h-[12px]" />
-                      <span>Module 3</span>
+                      <span>{activeLessonModule ? activeLessonModule.title.split(':')[0] : 'Module 1'}</span>
                     </div>
 
                     <div className="bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] rounded-full px-3 py-1.5 flex items-center gap-1.5 text-[#5A198F] text-[12px] font-medium">
                       <img src="/images/video/resources-icon.svg" alt="" className="w-[9px] h-[12px]" />
-                      <span>Resources (3)</span>
+                      <span>Resources ({(catalogItem.attachments || ATTACHMENTS_DATA).length})</span>
                     </div>
                   </div>
                 </div>
@@ -999,7 +968,7 @@ export const CourseVideoPage: React.FC = () => {
                         className="size-6"
                       />
                       <h3 className="font-bold text-[16px] text-[#0F172A] leading-[24px]">
-                        Lesson 2: More Attachments
+                        Course Resources & Attachments
                       </h3>
                     </div>
 
@@ -1016,7 +985,7 @@ export const CourseVideoPage: React.FC = () => {
 
                   {isAttachmentsOpen && (
                     <div className="border-t border-[#F1F5F9] px-6 sm:px-7 py-2 bg-white flex flex-col divide-y divide-[#F8FAFC]">
-                      {ATTACHMENTS_DATA.map((item) => (
+                      {(catalogItem.attachments || ATTACHMENTS_DATA).map((item) => (
                         <div
                           key={item.id}
                           className="py-4 flex items-center justify-between gap-4 hover:bg-slate-50/70 px-2 rounded-lg transition-colors"
