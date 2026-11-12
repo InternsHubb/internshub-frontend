@@ -114,6 +114,135 @@ const MODULES_DATA: ModuleSection[] = [
 const MODULE_3_LESSON_IDS = ['3-1', '3-2', '3-3', '3-4'];
 const MODULE_4_LESSON_IDS = ['4-1', '4-2'];
 
+// ---------------------------------------------------------------------------
+// YouTube embed helpers
+// ---------------------------------------------------------------------------
+
+/** Map static lesson ID → YouTube embed URL (UI/UX demo course) */
+const LESSON_ID_VIDEO_MAP: Record<string, string> = {
+  '1-1': 'https://www.youtube.com/embed/wIuVvCuiJhU', // Intro to UX Thinking
+  '1-2': 'https://www.youtube.com/embed/7_sFVYfatXY', // User Research Basics
+  '2-1': 'https://www.youtube.com/embed/JMjozqJS44M', // Low-Fidelity Sketches
+  '2-2': 'https://www.youtube.com/embed/pXLBM0Dz9i8', // Digital Wireframes
+  '3-1': 'https://www.youtube.com/embed/lTIeZ2ahEkQ', // Prototyping Principles
+  '3-2': 'https://www.youtube.com/embed/UfwTxQ1_hBk', // Building Interactive Prototypes in Figma
+  '3-3': 'https://www.youtube.com/embed/YEGrQF_YQNM', // Overlays & Micro-interactions
+  '3-4': 'https://www.youtube.com/embed/A5-dNiEHEgQ', // Prototype Testing
+  '4-1': 'https://www.youtube.com/embed/BJ-Oo1GFyGU', // Design Specs & Tokens
+  '4-2': 'https://www.youtube.com/embed/0CZ4E-YEfgM', // Developer Collaboration
+};
+
+/** Map lesson title keywords → YouTube embed URL (for backend / API courses) */
+const LESSON_TITLE_VIDEO_MAP: Record<string, string> = {
+  // ── UI/UX / Figma ──────────────────────────────────────────────────────────
+  'intro to ux':              'https://www.youtube.com/embed/wIuVvCuiJhU',
+  'ux thinking':              'https://www.youtube.com/embed/wIuVvCuiJhU',
+  'user research':            'https://www.youtube.com/embed/7_sFVYfatXY',
+  'low-fidelity':             'https://www.youtube.com/embed/JMjozqJS44M',
+  'wireframe':                'https://www.youtube.com/embed/pXLBM0Dz9i8',
+  'prototyping principles':   'https://www.youtube.com/embed/lTIeZ2ahEkQ',
+  'interactive prototype':    'https://www.youtube.com/embed/UfwTxQ1_hBk',
+  'building interactive':     'https://www.youtube.com/embed/UfwTxQ1_hBk',
+  'overlay':                  'https://www.youtube.com/embed/YEGrQF_YQNM',
+  'micro-interaction':        'https://www.youtube.com/embed/YEGrQF_YQNM',
+  'prototype testing':        'https://www.youtube.com/embed/A5-dNiEHEgQ',
+  'design spec':              'https://www.youtube.com/embed/BJ-Oo1GFyGU',
+  'design token':             'https://www.youtube.com/embed/BJ-Oo1GFyGU',
+  'developer collaboration':  'https://www.youtube.com/embed/0CZ4E-YEfgM',
+  'handoff':                  'https://www.youtube.com/embed/0CZ4E-YEfgM',
+  'design system':            'https://www.youtube.com/embed/EK-pHkc5EL4',
+  'component librar':         'https://www.youtube.com/embed/EK-pHkc5EL4',
+  'figma':                    'https://www.youtube.com/embed/UfwTxQ1_hBk',
+  'color theory':             'https://www.youtube.com/embed/AvgCkHrcj8w',
+  'typography':               'https://www.youtube.com/embed/QrNi9FmdlxY',
+
+  // ── Frontend / React / Tailwind ─────────────────────────────────────────────
+  'html':                     'https://www.youtube.com/embed/qz0aGYrrlhU',
+  'css':                      'https://www.youtube.com/embed/1Rs2ND1ryYc',
+  'javascript':               'https://www.youtube.com/embed/W6NZfCO5SIk',
+  'react':                    'https://www.youtube.com/embed/bMknfKXIFA8',
+  'tailwind':                 'https://www.youtube.com/embed/dFgzHOX84xQ',
+  'next.js':                  'https://www.youtube.com/embed/mTz0GXj8NN0',
+  'typescript':               'https://www.youtube.com/embed/BwuLxPH8IDs',
+  'git':                      'https://www.youtube.com/embed/RGOj5yH7evk',
+  'responsive':               'https://www.youtube.com/embed/srvUrASNj0s',
+  'flexbox':                  'https://www.youtube.com/embed/fYq5PXgSsbE',
+  'grid':                     'https://www.youtube.com/embed/EiNiSFIPIQE',
+  'state management':         'https://www.youtube.com/embed/poQXNp9ItL4',
+  'redux':                    'https://www.youtube.com/embed/poQXNp9ItL4',
+  'api':                      'https://www.youtube.com/embed/GZvSYJDk-us',
+  'rest':                     'https://www.youtube.com/embed/GZvSYJDk-us',
+  'graphql':                  'https://www.youtube.com/embed/ed8SzALpx1Q',
+  'webpack':                  'https://www.youtube.com/embed/MpGLUVbqoYQ',
+  'testing':                  'https://www.youtube.com/embed/r9HdJ8P6GQI',
+  'performance':              'https://www.youtube.com/embed/0fONene3OIA',
+  'web development':          'https://www.youtube.com/embed/qz0aGYrrlhU',
+
+  // ── Backend / Node / Python ──────────────────────────────────────────────────
+  'node':                     'https://www.youtube.com/embed/fBNz5xF-Kx4',
+  'express':                  'https://www.youtube.com/embed/L72fhGm1tfE',
+  'python':                   'https://www.youtube.com/embed/rfscVS0vtbw',
+  'django':                   'https://www.youtube.com/embed/F5mRW0jo-U4',
+  'flask':                    'https://www.youtube.com/embed/Z1RJmh_OqeA',
+  'database':                 'https://www.youtube.com/embed/HXV3zeQKqGY',
+  'sql':                      'https://www.youtube.com/embed/HXV3zeQKqGY',
+  'postgresql':               'https://www.youtube.com/embed/qw--VYLpxG4',
+  'mongodb':                  'https://www.youtube.com/embed/-56x56UppqQ',
+  'docker':                   'https://www.youtube.com/embed/fqMOX6JJhGo',
+  'microservice':             'https://www.youtube.com/embed/rv4LlmLmVWk',
+  'authentication':           'https://www.youtube.com/embed/7Q17ubqLfaM',
+  'jwt':                      'https://www.youtube.com/embed/7Q17ubqLfaM',
+  'deployment':               'https://www.youtube.com/embed/l134cBALZGY',
+  'aws':                      'https://www.youtube.com/embed/ulprqHHWlng',
+  'cloud':                    'https://www.youtube.com/embed/ulprqHHWlng',
+  'server':                   'https://www.youtube.com/embed/fBNz5xF-Kx4',
+  'full-stack':               'https://www.youtube.com/embed/nu_pCVPKzTk',
+
+  // ── Data Science / ML / AI ───────────────────────────────────────────────────
+  'data analysis':            'https://www.youtube.com/embed/r-uOLxNrNk8',
+  'data cleaning':            'https://www.youtube.com/embed/bDhvCp3_lYw',
+  'exploratory':              'https://www.youtube.com/embed/xi0vhXFPegw',
+  'pandas':                   'https://www.youtube.com/embed/vmEHCJofslg',
+  'numpy':                    'https://www.youtube.com/embed/QUT1VHiLmmI',
+  'matplotlib':               'https://www.youtube.com/embed/3Xc3CA655Y4',
+  'visualization':            'https://www.youtube.com/embed/3Xc3CA655Y4',
+  'machine learning':         'https://www.youtube.com/embed/NWONeJKn9Kc',
+  'deep learning':            'https://www.youtube.com/embed/VyWAvY2CF9c',
+  'neural network':           'https://www.youtube.com/embed/aircAruvnKk',
+  'nlp':                      'https://www.youtube.com/embed/8rXD5-xhemo',
+  'natural language':         'https://www.youtube.com/embed/8rXD5-xhemo',
+  'computer vision':          'https://www.youtube.com/embed/01sAkU_NvOY',
+  'tensorflow':               'https://www.youtube.com/embed/tPYj3fFJGjk',
+  'pytorch':                  'https://www.youtube.com/embed/Z_ikDlimN6A',
+  'statistics':               'https://www.youtube.com/embed/xxpc-HPKN28',
+  'regression':               'https://www.youtube.com/embed/zPG4NjIkCjc',
+  'classification':           'https://www.youtube.com/embed/0B5eIE_1vpU',
+  'clustering':               'https://www.youtube.com/embed/4b5d3muPQmA',
+  'artificial intelligence':  'https://www.youtube.com/embed/ad79nYk2keg',
+
+  // ── Mobile / Flutter ─────────────────────────────────────────────────────────
+  'flutter':                  'https://www.youtube.com/embed/1ukSR1GRtMU',
+  'dart':                     'https://www.youtube.com/embed/5xlVP04905w',
+  'mobile app':               'https://www.youtube.com/embed/1ukSR1GRtMU',
+  'android':                  'https://www.youtube.com/embed/fis26HvvDII',
+  'ios':                      'https://www.youtube.com/embed/09TeUXjzpKs',
+  'react native':             'https://www.youtube.com/embed/0-S5a0eXPoc',
+  'kotlin':                   'https://www.youtube.com/embed/F9UC9DY-vIU',
+  'swift':                    'https://www.youtube.com/embed/comQ1-x2a1Q',
+};
+
+/** Returns a YouTube embed URL for a lesson, checking by ID first, then by title keywords */
+function getYouTubeUrl(lessonId: string, lessonTitle: string): string | null {
+  // 1. Exact static ID match
+  if (LESSON_ID_VIDEO_MAP[lessonId]) return LESSON_ID_VIDEO_MAP[lessonId];
+  // 2. Keyword match on title (case-insensitive)
+  const lower = lessonTitle.toLowerCase();
+  for (const [keyword, url] of Object.entries(LESSON_TITLE_VIDEO_MAP)) {
+    if (lower.includes(keyword)) return url;
+  }
+  return null;
+}
+
 const ATTACHMENTS_DATA: AttachmentItem[] = [
   {
     id: 'att-1',
@@ -463,6 +592,11 @@ export const CourseVideoPage: React.FC = () => {
 
   const currentPlayUrl = courseDetail?.lessons?.find((l) => l.id === activeLessonId)?.playUrl || null;
 
+  // Resolve a YouTube embed URL for the active lesson (fallback when backend has no playUrl)
+  const youtubeUrl = getYouTubeUrl(activeLessonId, activeLesson?.title ?? '');
+  const effectiveVideoUrl = currentPlayUrl ?? youtubeUrl;
+  const isYouTubeEmbed = !!effectiveVideoUrl && effectiveVideoUrl.includes('youtube.com/embed');
+
 
   return (
     <div className="bg-[#FEFEFE] min-h-screen relative w-full overflow-x-hidden text-[#1E293B] font-['Plus_Jakarta_Sans'] pb-20 flow-page-enter">
@@ -681,7 +815,16 @@ export const CourseVideoPage: React.FC = () => {
                       'linear-gradient(150.77deg, rgb(26, 26, 36) 0%, rgb(13, 13, 18) 50%, rgb(0, 0, 0) 100%)',
                   }}
                 >
-                  {currentPlayUrl ? (
+                  {isYouTubeEmbed ? (
+                    <iframe
+                      key={effectiveVideoUrl}
+                      src={`${effectiveVideoUrl}?autoplay=1&rel=0&modestbranding=1`}
+                      className="absolute inset-0 w-full h-full border-0 z-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      title={activeLesson?.title ?? 'Course video'}
+                    />
+                  ) : currentPlayUrl ? (
                     <video
                       ref={videoRef}
                       src={currentPlayUrl}
@@ -705,7 +848,8 @@ export const CourseVideoPage: React.FC = () => {
                     />
                   )}
 
-                  {/* TOP OVERLAY: HD 1080p Badge */}
+                  {/* TOP OVERLAY: HD 1080p Badge — hidden in YouTube mode */}
+                  {!isYouTubeEmbed && (
                   <div className="relative z-10 flex items-center justify-end p-5">
                     <div className="backdrop-blur-[2px] bg-[rgba(0,0,0,0.5)] border border-[rgba(255,255,255,0.16)] rounded-full px-3 py-1.5 flex items-center gap-2 shadow-xs">
                       <div className="size-2 rounded-full bg-[#EF4444] animate-pulse" />
@@ -714,8 +858,10 @@ export const CourseVideoPage: React.FC = () => {
                       </span>
                     </div>
                   </div>
+                  )}
 
-                  {/* CENTER PLAY BUTTON */}
+                  {/* CENTER PLAY BUTTON — hidden in YouTube mode (YouTube has own controls) */}
+                  {!isYouTubeEmbed && (
                   <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                     <button
                       type="button"
@@ -744,8 +890,10 @@ export const CourseVideoPage: React.FC = () => {
                       </div>
                     </button>
                   </div>
+                  )}
 
-                  {/* BOTTOM CONTROLS OVERLAY BAR */}
+                  {/* BOTTOM CONTROLS OVERLAY BAR — hidden in YouTube mode */}
+                  {!isYouTubeEmbed && (
                   <div className="relative z-10 backdrop-blur-[6px] bg-black/40 border-t border-[rgba(255,255,255,0.1)] px-5 py-4 flex flex-col gap-2.5">
                     {/* Scrubbing Timeline Progress Bar */}
                     <div className="w-full flex items-center justify-between gap-3 text-[12px] text-[#F4F0F8] font-['Inter'] font-normal select-none">
@@ -900,6 +1048,7 @@ export const CourseVideoPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                  )}
                 </div>
 
                 {/* VIDEO TITLE, DESCRIPTION & TAGS */}
