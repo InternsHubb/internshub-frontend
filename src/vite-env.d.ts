@@ -1,15 +1,21 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  // Backend origin, e.g. https://internshub.runasp.net. Optional: see src/lib/api/client.ts.
+  /** Base origin for the future backend API (leave unset until backend is ready). */
   readonly VITE_API_BASE_URL?: string;
-  // Public OAuth client ID for Google Identity Services. Not a secret.
-  readonly VITE_GOOGLE_CLIENT_ID?: string;
-  // Public Azure app (client) ID and tenant for Microsoft sign-in. Not secrets.
-  readonly VITE_MICROSOFT_CLIENT_ID?: string;
-  readonly VITE_MICROSOFT_TENANT_ID?: string;
+  /** Optional environment label (development, staging, production). */
+  readonly VITE_APP_ENV?: string;
+  /**
+   * Local development only: set to "true" to explicitly opt in to UI-preview auth bypass
+   * when neither VITE_API_BASE_URL nor API_PROXY_TARGET is configured.
+   * Disabled by default and completely stripped from production builds.
+   */
+  readonly VITE_DEV_BYPASS_AUTH?: string;
 }
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/** Injected at dev/build time by vite.config.ts when API_PROXY_TARGET is configured. */
+declare const __API_PROXY_ACTIVE__: boolean;

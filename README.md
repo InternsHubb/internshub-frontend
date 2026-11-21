@@ -1,116 +1,58 @@
-# InternsHub Frontend UI Architecture & Task Assignments
+# InternsHub Frontend
 
-The platform focuses purely on standalone Frontend UI screens, built using React, TypeScript (strict), Vite, and Tailwind CSS (no backend integration, relying on local state and mock data).
+Team-ready frontend base foundation for **InternsHub**, built with React 19, TypeScript (strict mode), Vite 8, Tailwind CSS v4, React Router v6, and i18next (English LTR & Arabic RTL).
 
-## General Rules for All Developers:
-1. No direct pushes to main: Every developer must work inside an independent feature branch.
-2. Styling & RTL: Use Tailwind CSS exclusively with logical properties (ms-, me-, ps-, pe-, start-, end-) to support Arabic and English layouts without rewrites.
-3. Form Validation & UI Components: Use React Hook Form with Zod for local validation schemas, and shadcn/ui or Radix UI for accessible components.
-4. UI Focus: Build clean, responsive, and pixel-perfect UI screens as assigned below.
+## Quick Start
 
-## Detailed UI Screen Assignments:
+### Prerequisites
 
-### 1. Amr Elawadly
-* Assigned UI Module: Landing Page UI
-* Target Files:
-  * `src/pages/LandingPage.tsx`
-  * `src/components/landing/` (Navbar, Hero, Footer, Features)
-* Detailed Tasks:
-  * Build the complete landing page UI layout (Navbar, Hero section, and footer).
-  * Apply Tailwind CSS logical RTL utilities for bilingual Arabic/English layout support.
+- Node.js 20+
+- npm 10+
 
-### 2. Abdallah Ashraf
-* Assigned UI Module: Internship Page UI
-* Target Files:
-  * `src/pages/InternshipPage.tsx`
-  * `src/components/internship/` (TrackCard, FilterBar, FAQ)
-* Detailed Tasks:
-  * Build the complete internship overview interface and features section UI.
-  * Develop the interactive "Choose Your Track" filtering UI component using local state.
+### Installation & Local Development
 
-### 3. Ali Hatem
-* Assigned UI Module: Authentication - General Layout UI
-* Target Files:
-  * `src/pages/auth/AuthMain.tsx`
-  * `src/components/auth/AuthLayout.tsx`
-* Detailed Tasks:
-  * Build the main authentication wrapper views, shared form layouts, and navigation UI containers.
-  * Ensure accessible components and proper focus behavior using Radix UI primitives.
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
 
-### 4. Youssef Ahmed
-* Assigned UI Module: Auth - Login UI
-* Target Files:
-  * `src/pages/auth/Login.tsx`
-  * `src/components/auth/LoginForm.tsx`
-* Detailed Tasks:
-  * Build the complete email and password login interface UI alongside Google button mockup.
-  * Implement local error handling UI states (e.g., empty fields, invalid credentials view).
+The app starts at `http://localhost:5173`.
 
-### 5. Renad Mansour
-* Assigned UI Module: Auth - Forgot Password UI
-* Target Files:
-  * `src/pages/auth/ForgotPassword.tsx`
-* Detailed Tasks:
-  * Build the password recovery flow UI, including email input and validation error states.
-  * Design the success state screen UI (Check your email confirmation view).
+> **Local UI Preview Mode (Explicit Opt-In):** Auth and role guards are **enforced by default**. While the new backend is not yet connected (both `VITE_API_BASE_URL` and `API_PROXY_TARGET` unset), you may explicitly opt in to local UI preview by adding `VITE_DEV_BYPASS_AUTH=true` to `.env.local`. Any other value (missing or `false`), any configured backend/proxy, or any production build always enforces authentication and role guards strictly.
 
-### 6. Nora Abdelnabi
-* Assigned UI Module: Auth - Phone OTP Login UI
-* Target Files:
-  * `src/pages/auth/PhoneOTP.tsx`
-* Detailed Tasks:
-  * Build the phone number entry screen UI with country code selector components.
-  * Implement the 6-digit OTP verification input layout UI with a simulated countdown timer.
+## Available Scripts
 
-### 7. Gamal Wessam
-* Assigned UI Module: All Onboarding Steps UI (01 to 10)
-* Target Files:
-  * `src/pages/onboarding/OnboardingFlow.tsx`
-  * `src/components/onboarding/steps/`
-* Detailed Tasks:
-  * Steps 01-04: Registration form UI, Terms & Privacy modals, dual verification views, and track selection UI.
-  * Steps 05-06: CV upload dropzone UI mockup, Smart Review snapshot UI, and desktop-only interview media readiness UI check.
-  * Steps 07-10: Assessment results screen UI, payment gateway checkout UI mockup (EGP currency format), and journey status timeline UI.
-  
-## How to Work & Create Your Branch:
+| Command | Description |
+|---|---|
+| `npm run dev` | Start Vite development server with HMR |
+| `npm run typecheck` | Run strict TypeScript checking (`tsc --noEmit`) |
+| `npm run lint` | Run static analysis with Oxlint (`oxlint src`) |
+| `npm run build` | Type-check and build production bundle (`dist/`) |
+| `npm run preview` | Preview the production build locally |
 
-To prevent code conflicts and keep our work organized, never push directly to the main branch. Follow these steps on your local machine:
+## The Seven Official Features
 
-1. Pull the latest changes from main:
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
+Every developer owns a dedicated top-level feature directory under `src/features/`:
 
-2. Create and switch to your assigned feature branch (choose the command matching your name below):
+| # | Feature Folder | Primary Routes | Guide |
+|---|---|---|---|
+| 1 | `src/features/landing/` | `/`, `/internship/*`, `/internships/:id`, `/seniors/:id` | [Landing README](src/features/landing/README.md) |
+| 2 | `src/features/authentication/` | `/auth/*`, `/register`, `/auth/forgot-password`, `/auth/phone-otp` | [Authentication README](src/features/authentication/README.md) |
+| 3 | `src/features/onboarding/` | `/onboarding` (including `ai-interviewer/`) | [Onboarding README](src/features/onboarding/README.md) |
+| 4 | `src/features/recruitment/` | `/recruitment/*` (student) and `/employer/*` (employer) | [Recruitment README](src/features/recruitment/README.md) |
+| 5 | `src/features/courses/` | `/dashboard/courses`, `/dashboard/courses/plans`, `/courses/:id/*` | [Courses README](src/features/courses/README.md) |
+| 6 | `src/features/internships/` | `/dashboard`, `/dashboard/internship`, `/dashboard/internship/project/*` | [Internships README](src/features/internships/README.md) |
+| 7 | `src/features/mentorship/` | `/mentorship/*`, `/dashboard/chat` | [Mentorship README](src/features/mentorship/README.md) |
 
-   - Amr (Landing Page):
-     `git checkout -b feature/landing-page`
+## Project Documentation
 
-   - Abdallah (Internship Page):
-     `git checkout -b feature/internship-page`
+Read these guides before opening your first PR:
 
-   - Ali (Auth General Flow):
-     `git checkout -b feature/auth-main`
-
-   - Youssef (Auth Login):
-     `git checkout -b feature/auth-login`
-
-   - Renad (Forgot Password):
-     `git checkout -b feature/auth-forgot-password`
-
-   - Nora (Phone OTP):
-     `git checkout -b feature/auth-phone-otp`
-
-   - Gamal (Onboarding Flow):
-     `git checkout -b feature/onboarding-flow`
-
-3. Commit and push your work when done:
-   ```bash
-   git add .
-   git commit -m "feat: complete UI for my assigned module"
-   git push origin feature/your-branch-name
-   ```
-
-4. Open a Pull Request (PR):
-   Go to GitHub, open a Pull Request from your feature branch into dev, and wait for review and merge.
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Folder layout, module boundaries, and dependency rules
+- [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) — TypeScript, naming, testing, linting, and code quality rules
+- [STYLING_GUIDELINES.md](STYLING_GUIDELINES.md) — Tailwind CSS v4 tokens, animations, and RTL/LTR rules
+- [ROUTING_GUIDELINES.md](ROUTING_GUIDELINES.md) — Centralized paths, feature routes, layouts, and route guards
+- [SHARED_COMPONENTS_GUIDE.md](SHARED_COMPONENTS_GUIDE.md) — Reusable UI primitives, navigation chrome, and layouts
+- [BACKEND_INTEGRATION_GUIDE.md](BACKEND_INTEGRATION_GUIDE.md) — Clean `src/backend/` boundary and feature service contracts
+- [TEAM_WORKFLOW.md](TEAM_WORKFLOW.md) — Git branching (`dev` workflow), ownership, PR checklists, and conflict prevention

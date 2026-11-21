@@ -1,0 +1,695 @@
+{
+  "onboarding": {
+    "cvReview": {
+      "title": "Review your information",
+      "description": "Review the information saved to your career profile and correct anything that needs attention.",
+      "back": "Back to CV upload",
+      "done": "Done reviewing",
+      "personal": "Personal information",
+      "personalHint": "These details come from your account. You can correct them in the Profile onboarding step.",
+      "notProvided": "Not provided",
+      "skills": "Skills",
+      "education": "Education",
+      "experience": "Experience",
+      "loading": "Loading your career profile…",
+      "saved": "Your changes have been saved.",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "present": "Present",
+      "level": "Proficiency level",
+      "unspecified": "Not specified",
+      "searchSkills": "Search skills by name",
+      "noSkills": "No matching skills available to add. Try another name.",
+      "manualFallback": "Your CV could not be parsed. You can add your career information manually below.",
+      "invalidRecord": "Complete the required fields and make sure the end date is not before the start date.",
+      "open": "Review your information",
+      "add": {
+        "skills": "Add a skill",
+        "education": "Add education",
+        "experience": "Add experience"
+      },
+      "empty": {
+        "skills": "No skills in your career profile yet.",
+        "education": "No education in your career profile yet.",
+        "experience": "No experience in your career profile yet."
+      },
+      "levels": {
+        "Beginner": "Beginner",
+        "Intermediate": "Intermediate",
+        "Advanced": "Advanced",
+        "Expert": "Expert"
+      },
+      "fields": {
+        "name": "Full name",
+        "email": "Email",
+        "phone": "Phone",
+        "institution": "Institution",
+        "degree": "Degree",
+        "fieldOfStudy": "Field of study (optional)",
+        "companyName": "Company",
+        "jobTitle": "Job title",
+        "description": "Description (optional)",
+        "startDate": "Start date",
+        "endDate": "End date (leave empty if current)"
+      }
+    },
+    "path": {
+      "loading": "Loading packages and tracks…",
+      "saving": "Saving your choice…",
+      "retry": "Try again",
+      "errors": {
+        "notLoaded": "Packages and tracks haven't loaded yet. Please try again.",
+        "unavailable": "This package or track isn't available right now. Please choose another.",
+        "alreadyEnrolled": "You already have an active enrollment, so your package and track can't be changed here.",
+        "acceptPolicies": "Accept the Terms of Service and Privacy Policy above to confirm your path."
+      },
+      "acceptFirst": "Accept the terms above to confirm your path.",
+      "priceAmount": "{{value}} EGP",
+      "tracksHeading": "Choose your technology track",
+      "catalogNote": "Catalog managed by InternsHub",
+      "trackRequired": "Select a technology track to continue.",
+      "tracks": {
+        "frontend": {
+          "name": "Frontend Development",
+          "tech": "React",
+          "description": "Build polished, accessible web products."
+        },
+        "backend": {
+          "name": "Backend Development",
+          "tech": "ASP.NET / Node.js",
+          "description": "Design reliable APIs and services."
+        },
+        "mobile": {
+          "name": "Mobile Development",
+          "tech": "Flutter",
+          "description": "Create cross-platform mobile experiences."
+        },
+        "data": {
+          "name": "Data Engineering",
+          "tech": "Data Engineering",
+          "description": "Shape dependable data pipelines."
+        }
+      },
+      "title": "Choose Your Path to a Tech Career",
+      "subtitle": "Choose the program duration and technology track that match your goals.",
+      "packagesHeading": "Select your package",
+      "popular": "POPULAR PATH",
+      "currency": "EGP",
+      "perPackage": "/ package",
+      "choose": "Choose {{name}}",
+      "selected": "Selected",
+      "packageRequired": "Select a package to continue.",
+      "back": "Back",
+      "confirm": "Confirm Path",
+      "packages": {
+        "threeMonths": {
+          "name": "3 Months",
+          "tag": "Internship focus",
+          "features": {
+            "one": "Practical internship",
+            "two": "3 mentorship sessions · proposed",
+            "three": "Internship certificate",
+            "four": "Courses not included"
+          }
+        },
+        "sixMonths": {
+          "name": "6 Months",
+          "tag": "Balanced pathway",
+          "features": {
+            "one": "Published courses after payment",
+            "two": "Practical internship",
+            "three": "6 mentorship sessions · proposed",
+            "four": "Course + internship certificate types"
+          }
+        },
+        "twelveMonths": {
+          "name": "12 Months",
+          "tag": "Complete learning path",
+          "features": {
+            "one": "6-month unified Learning Path",
+            "two": "Mentorship from payment",
+            "three": "Advisory Orientation interview",
+            "four": "Squad stage follows learning stage"
+          }
+        }
+      }
+    },
+    "profile": {
+      "title": "Let’s Get to Know You",
+      "subtitle": "Add the essential details needed to set up your InternsHub account.",
+      "asideTitleLine1": "Two essentials.",
+      "asideTitleLine2": "One clear start.",
+      "eyebrow": "Account essentials",
+      "cardTitle": "Your basic information",
+      "requiredBadge": "2 required",
+      "ageTitle": "Age requirement",
+      "ageText": "You must be 18 or older to join InternsHub.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Enter your full name",
+      "dateOfBirth": "Date of birth",
+      "dateOfBirthPlaceholder": "Enter your birthday",
+      "dateOfBirthNote": "Your date of birth is saved once and cannot be changed later.",
+      "dateOfBirthSaved": "Your date of birth is already saved and can't be changed.",
+      "back": "Back",
+      "save": "Save & Continue →",
+      "saving": "Saving…",
+      "errors": {
+        "fullNameRequired": "Enter your full name.",
+        "dateOfBirthRequired": "Enter your date of birth.",
+        "dateOfBirthInvalid": "Enter a valid date of birth.",
+        "dateOfBirthFuture": "Your date of birth can't be in the future.",
+        "underAge": "You must be at least 18 years old to join InternsHub.",
+        "notSaved": "Your profile wasn't saved. Please try again."
+      }
+    },
+    "policies": {
+      "label": "I accept the <terms/> and <privacy/> and acknowledge the <refund>Refund Policy</refund>.",
+      "names": {
+        "TermsOfService": "Terms of Service",
+        "PrivacyPolicy": "Privacy Policy",
+        "InterviewRecording": "Interview Recording Policy",
+        "PartnerDataSharing": "Partner Data Sharing Policy",
+        "CodeOwnership": "Code Ownership Policy"
+      },
+      "loading": "Loading the current terms…",
+      "retry": "Try again",
+      "empty": "There are no terms to accept right now.",
+      "saving": "Saving your acceptance…",
+      "accepted": "You've accepted the current terms.",
+      "documentError": "We couldn't open this document. Please try again."
+    },
+    "cv": {
+      "loading": "Checking your CV…",
+      "retry": "Try again",
+      "parsing": "We’re reading your CV. This usually takes a moment.",
+      "parseFailed": "We couldn’t read this CV. Please upload it again as a PDF or DOCX.",
+      "zone": {
+        "empty": "Drop your CV here",
+        "browse": "Drag and drop, or click to browse",
+        "added": "CV added successfully",
+        "replace": "Click anywhere to replace this file",
+        "wait": "Please keep this page open."
+      },
+      "stage": {
+        "uploading": "Uploading your CV…",
+        "confirming": "Checking the upload…",
+        "submitting": "Saving your CV…"
+      },
+      "badge": {
+        "waiting": "Waiting",
+        "parsing": "Parsing",
+        "parsed": "Parsed",
+        "failed": "Parse failed"
+      },
+      "file": {
+        "saved": "Your CV",
+        "size": "{{value}} MB",
+        "uploadedOn": "Uploaded {{date}}",
+        "view": "View"
+      },
+      "errors": {
+        "type": "Choose a PDF or DOCX file.",
+        "empty": "This file is empty. Choose another file.",
+        "size": "This file is larger than 5 MB. Choose a smaller file.",
+        "upload": "Your file couldn't be uploaded. Please try again."
+      }
+    },
+    "payment": {
+      "eyebrow": "Secure checkout · Paymob",
+      "title": "Choose how you’ll pay",
+      "subtitle": "You choose the payment method on Paymob's secure payment page.",
+      "gatewayTitle": "You'll pay on Paymob",
+      "gatewayBody": "Pay & Enroll opens Paymob's secure page. Card and wallet details are entered there, never on InternsHub.",
+      "methods": {
+        "card": "Debit or credit card",
+        "wallet": "Mobile wallet",
+        "fawry": "Fawry",
+        "onPaymob": "Available on the Paymob page",
+        "fawryNote": "Shown on the Paymob page if enabled"
+      },
+      "pay": "Pay & Enroll →",
+      "opening": "Opening Paymob…",
+      "acceptFirst": "Accept the terms above to continue to payment.",
+      "redirecting": "Taking you to Paymob's secure payment page…",
+      "verifying": "Checking your payment with InternsHub… This can take a few seconds.",
+      "windowNotice": "Paymob opened in a separate window. Complete your payment there.",
+      "openAgain": "Payment window didn't open? Click here to open Paymob",
+      "pending": {
+        "title": "Your payment is still being processed",
+        "body": "We haven't received a final result yet. If you completed the payment, check again in a moment.",
+        "checkAgain": "Check again"
+      },
+      "failed": {
+        "failed": "Your payment didn't go through",
+        "cancelled": "Your payment was cancelled",
+        "body": "You haven't been enrolled. You can try again."
+      },
+      "review": {
+        "title": "Your payment is being reviewed",
+        "body": "We'll update your enrollment once the review is complete."
+      },
+      "paid": {
+        "title": "Payment confirmed — you're enrolled",
+        "amount": "Paid {{amount}}",
+        "autoContinuing": "Continuing to the remaining steps automatically..."
+      },
+      "tryAgain": "Try again",
+      "startOver": "Start a new payment",
+      "continue": "Continue to the AI interview →",
+      "secureTitle": "Secure payment",
+      "secureBody": "Card and wallet details are handled by Paymob",
+      "errors": {
+        "noEnrollment": "Choose your package and track before paying.",
+        "badRedirect": "We couldn't open the payment page. Please try again later."
+      }
+    },
+    "verify": {
+      "title": "Verify Your Account",
+      "subtitle": "Confirm your email and phone number to secure your account.",
+      "noticeTitle": "Email and phone verification are required",
+      "noticeBody": "You can continue to your profile now, but both must be verified before the AI interview or payment. Google and Microsoft sign-in don't skip this step.",
+      "badge": {
+        "pending": "Pending",
+        "verified": "Verified",
+        "unavailable": "Not available yet"
+      },
+      "codeDigit": "Digit {{index}} of {{total}}",
+      "sendCode": "Send code",
+      "resend": "Resend code",
+      "resendIn": "Resend code · {{seconds}}s",
+      "requestedFor": "Code requested for {{address}}",
+      "notConfirmedYet": "The code was accepted, but your account doesn't show as verified yet. Refresh the page in a moment.",
+      "retry": "Try again",
+      "back": "Back to Home",
+      "continue": "Continue to Profile →",
+      "email": {
+        "title": "Email verification",
+        "noEmail": "No email address on your account",
+        "instructions": "Open the confirmation email we sent you and click the link in it. Then come back to this page: your status updates when you return, or tap Check status.",
+        "noEmailHelp": "Your account has no email address yet, so there is no confirmation link to use.",
+        "checkStatus": "Check status",
+        "checking": "Checking…",
+        "verified": "Your email address is verified.",
+        "stillPending": "Your email still shows as not confirmed. Use the link in the confirmation email, then check again."
+      },
+      "phone": {
+        "title": "Phone verification",
+        "subtitle": "We'll text a 6-digit code to your phone.",
+        "addressLabel": "Mobile number",
+        "addressPlaceholder": "01001234567 or +201001234567",
+        "instructions": "Enter the 6-digit code from the SMS, then tap Verify Phone.",
+        "verify": "Verify Phone",
+        "verified": "Your phone number is verified.",
+        "requested": "Request accepted. SMS delivery is currently being fixed on our side, so the code may not arrive. If nothing arrives, try again later."
+      },
+      "nationalId": {
+        "title": "National ID verification",
+        "subtitle": "Egyptian National ID · 14 digits",
+        "instructions": "National ID verification will be added in a later update.",
+        "placeholder": "Enter 14-digit National ID",
+        "verify": "Verify National ID",
+        "unavailable": "Not available yet. Nothing is sent or verified here."
+      },
+      "errors": {
+        "network": "We couldn't reach the server. Check your connection and try again.",
+        "server": "Something went wrong on our side. Please try again in a moment.",
+        "tooMany": "Too many attempts. Please wait a minute and try again.",
+        "phoneInvalid": "Enter a valid mobile number, e.g. 01001234567 or +201001234567.",
+        "codeInvalid": "That code is not valid or has expired. Check it or request a new code.",
+        "rejected": "We couldn't complete that request. Please try again.",
+        "statusUnavailable": "We couldn't load your verification status."
+      }
+    },
+    "interview": {
+      "common": {
+        "sample": "Sample",
+        "back": "Back",
+        "backToHome": "Back to Home",
+        "continueToSquad": "Continue to Squad",
+        "assessmentTrack": "Assessment track"
+      },
+      "types": {
+        "technical": "Technical Interview",
+        "orientation": "Track Orientation"
+      },
+      "levels": {
+        "notReady": "Not ready yet",
+        "junior": "Junior",
+        "mid": "Mid",
+        "advanced": "Advanced"
+      },
+      "status": {
+        "notChecked": "Not checked",
+        "checking": "Checking…",
+        "ready": "Ready",
+        "cameraReady": "Camera ready",
+        "microphoneReady": "Microphone ready",
+        "screenShared": "Full screen shared",
+        "screenSharedUnknown": "Screen shared",
+        "screenWrongSurface": "Not the entire screen",
+        "interrupted": "Interrupted",
+        "stopped": "Stopped",
+        "blocked": "Blocked",
+        "notFound": "Not found",
+        "inUse": "In use",
+        "unsupported": "Not supported",
+        "error": "Check failed",
+        "online": "Online",
+        "offline": "Offline"
+      },
+      "failures": {
+        "camera": {
+          "permission_denied": "Camera access is blocked. Allow it in your browser's site settings, then select Try again.",
+          "not_found": "No camera was found. Connect a camera, then select Try again.",
+          "not_readable": "Your camera is being used by another app. Close that app, then select Try again.",
+          "unsupported": "This browser can't use a camera here. Open InternsHub in a recent desktop browser.",
+          "insecure_context": "Camera access needs a secure (https) connection.",
+          "error": "We couldn't start your camera. Select Try again."
+        },
+        "microphone": {
+          "permission_denied": "Microphone access is blocked. Allow it in your browser's site settings, then select Try again.",
+          "not_found": "No microphone was found. Connect a microphone, then select Try again.",
+          "not_readable": "Your microphone is being used by another app. Close that app, then select Try again.",
+          "unsupported": "This browser can't use a microphone here. Open InternsHub in a recent desktop browser.",
+          "insecure_context": "Microphone access needs a secure (https) connection.",
+          "error": "We couldn't start your microphone. Select Try again."
+        },
+        "screen": {
+          "permission_denied": "Screen sharing was not started. Select Share screen and choose your entire screen.",
+          "not_found": "No screen is available to share.",
+          "not_readable": "Your screen couldn't be shared. Close other screen-sharing apps, then try again.",
+          "unsupported": "This browser can't share your screen. Open InternsHub in a recent desktop browser.",
+          "insecure_context": "Screen sharing needs a secure (https) connection.",
+          "error": "We couldn't start screen sharing. Try again."
+        },
+        "stopped": {
+          "camera": "Your camera has stopped. Check that it is connected, then select Reconnect camera.",
+          "microphone": "Your microphone has stopped. Check that it is connected, then select Reconnect microphone.",
+          "screen": "Screen sharing has stopped. Please share your entire screen so the interview can continue."
+        },
+        "muted": {
+          "camera": "Your camera has paused. Check that it isn't paused in your browser or turned off in your system settings, then select Reconnect camera.",
+          "microphone": "Your microphone has paused. Check that it isn't paused in your browser or muted in your system settings, then select Reconnect microphone.",
+          "screen": "Screen sharing has paused. Resume it from your browser, or select Share screen again and choose your entire screen."
+        },
+        "wrongSurface": "A window or tab was shared. Please share your entire screen so the interview can continue."
+      },
+      "actions": {
+        "runCheck": "Run check",
+        "retry": "Try again",
+        "checkAgain": "Check again",
+        "reconnect_camera": "Reconnect camera",
+        "reconnect_microphone": "Reconnect microphone",
+        "shareScreen": "Share screen",
+        "shareAgain": "Share entire screen",
+        "changeScreen": "Change screen",
+        "resumeSharing": "Share screen again"
+      },
+      "setup": {
+        "title": "Get Ready for Your Interview",
+        "subtitle": "Check your setup and review the recording requirements before starting.",
+        "desktopTitle": "Please open InternsHub on your laptop to continue.",
+        "desktopBody": "The recorded interview is available on desktop or laptop only.",
+        "cameraTitle": "Camera",
+        "cameraDesc": "Permission is required to continue",
+        "microphoneTitle": "Microphone",
+        "microphoneDesc": "Permission is required to continue",
+        "screenTitle": "Screen sharing",
+        "screenDesc": "Required during the recorded interview",
+        "connectionTitle": "Connection",
+        "connectionDesc": "A stable connection helps prevent interruption",
+        "connectionOnline": "Your device reports a network connection. This doesn't test the interview service.",
+        "connectionOffline": "Your device reports no network connection. Reconnect before you start.",
+        "consentTitle": "Recording & privacy consent",
+        "consentBody": "InternsHub records camera, microphone, and shared screen during the interview. Recordings are deleted 90 days after the final decision; scores and transcripts are retained.",
+        "resumeWindow": "Resume window",
+        "resumeWindowValue": "Within one hour",
+        "resumeAttempts": "Resume attempts",
+        "resumeAttemptsValue": "Up to three",
+        "incomplete": "Incomplete attempt",
+        "incompleteValue": "Retake after 48 hours, subject to attempt rules",
+        "attemptLimit": "Attempt limit",
+        "attemptLimitValue": "Three per track and interview type, then admin review",
+        "durationNote": "Interview duration and question count are intentionally not shown because they remain open business decisions.",
+        "start": "Start Interview",
+        "startHint": "To start, get your camera, microphone and entire-screen sharing ready and give your consent."
+      },
+      "overview": {
+        "title": "AI Interview",
+        "subtitle": "Review the requirements below and begin your session when you are ready.",
+        "assessment": "AI Interview Assessment",
+        "notStarted": "Interview: Not started",
+        "cvUploaded": "CV: Uploaded",
+        "cvMissing": "CV: Not uploaded",
+        "sessionStatus": "Session status",
+        "readyToBegin": "Ready to Begin",
+        "readyTechnical": "This AI assessment will evaluate your level in the selected track.",
+        "readyOrientation": "This AI assessment will review how well the selected track fits you.",
+        "environmentTitle": "Ensure a quiet environment and stable connection.",
+        "environmentBody": "Your camera, microphone and full-screen sharing must stay active for the whole interview.",
+        "readyTitle": "Ready to start?",
+        "readyBody": "Continue when you are ready to review the recording consent.",
+        "start": "Start Interview",
+        "beforeTitle": "Before You Start",
+        "beforeSubtitle": "Requirements for the recorded interview:",
+        "desktopTitle": "Desktop browser required",
+        "desktopDesc": "A recent Chrome, Edge, Firefox or Safari on a laptop or desktop",
+        "cameraTitle": "Camera required",
+        "cameraDesc": "Your camera is recorded during the interview",
+        "microphoneTitle": "Microphone required",
+        "microphoneDesc": "Your spoken answers are transcribed",
+        "screenTitle": "Full-screen sharing required",
+        "screenDesc": "Share your entire screen, not a window or tab"
+      },
+      "consent": {
+        "title": "Recording Consent",
+        "subtitle": "Review how your interview will be recorded before continuing.",
+        "noticeTitle": "During your AI interview, your camera and shared screen will be recorded.",
+        "noticeBody": "Your spoken answers will also be transcribed and assessed as part of the interview.",
+        "recordingTitle": "Camera & Screen Recording",
+        "recordingDesc": "Your camera and shared screen are recorded during the interview.",
+        "transcriptionTitle": "Voice Transcription",
+        "transcriptionDesc": "Your spoken answers are transcribed and scored as part of the assessment.",
+        "retentionTitle": "Recording Retention",
+        "retentionDesc": "Interview recordings are deleted 90 days after the final decision. Scores and transcripts are retained.",
+        "checkbox": "I consent to the recording of my camera, screen, and interview audio for assessment and review.",
+        "required": "Consent is required before starting the interview.",
+        "continue": "Continue to Interview"
+      },
+      "deviceCheck": {
+        "title": "Device Check",
+        "subtitle": "Make sure your camera, microphone, and full-screen sharing are ready before starting your interview.",
+        "camera": "Camera",
+        "microphone": "Microphone",
+        "screen": "Full-Screen Sharing",
+        "selectCamera": "Camera device",
+        "selectMicrophone": "Microphone device",
+        "deviceFallback": "Device {{number}}",
+        "noDevices": "No device detected yet",
+        "previewOff": "Your camera preview appears here after the check.",
+        "inputVolume": "Input volume",
+        "speakHint": "Speak briefly to test your microphone.",
+        "screenHint": "Share your entire screen to continue.",
+        "sharedEntire": "Entire screen",
+        "sharedUnknown": "Shared screen",
+        "surfaceUnknown": "Your browser doesn't report what was shared. Make sure you chose your entire screen.",
+        "requirements": "Interview Requirements",
+        "requirementsNote": "These must remain active throughout the interview. If one stops, the interview will pause until it is restored.",
+        "backToOverview": "Back to Interview Overview",
+        "continue": "Continue"
+      },
+      "session": {
+        "stageBadge": "Step 3 of 3 • Interview",
+        "question": "Question {{number}}",
+        "currentQuestion": "Current question",
+        "voiceResponse": "Voice Response",
+        "yourAnswer": "Your Answer",
+        "recording": "Recording",
+        "notRecording": "Not recording",
+        "answeringTitle": "Answer out loud",
+        "answeringBody": "Your answer is recorded from your microphone while the question is shown. Select Done when you have finished.",
+        "sending": "Sending your answer…",
+        "answerSaved": "Answer saved",
+        "answerSavedBody": "Your answer was sent to the interview. Continue when you are ready.",
+        "answerFailed": "Your answer wasn't sent",
+        "questionAudio": "Question audio",
+        "preparing": "Preparing your interview…",
+        "startFailed": "The interview couldn't start",
+        "retry": "Try again",
+        "endedTitle": "The interview has ended",
+        "endedBody": "Thank you. Your answers have been sent.",
+        "done": "Done",
+        "continue": "Continue",
+        "finish": "Finish Interview",
+        "cameraOn": "Camera on",
+        "cameraOff": "Camera off",
+        "deviceStatus": "Device status",
+        "screenActive": "Full-screen sharing active",
+        "pausedTitle": "Interview paused",
+        "pausedBody": "A required device has stopped. Restore it to continue the interview.",
+        "copyDisabled": "Copying, cutting and pasting are turned off in the question area during the interview.",
+        "answerKept": "Your recorded answer is kept. Send it again, or record a new answer.",
+        "sendAgain": "Send again",
+        "recordNewAnswer": "Record a new answer",
+        "recordingProblem": "Your answer isn't being recorded",
+        "recordAgain": "Try recording again",
+        "voice": {
+          "idle": "Not recording",
+          "paused": "Paused",
+          "listening": "Listening…",
+          "speaking": "Speaking",
+          "processing": "Sending your answer…",
+          "error": "Microphone problem"
+        },
+        "call": {
+          "interviewer": "AI Interviewer",
+          "initials": "AI",
+          "state": {
+            "idle": "Waiting",
+            "speaking": "Speaking",
+            "listening": "Listening",
+            "thinking": "Thinking",
+            "paused": "Paused",
+            "finished": "Finished"
+          },
+          "voice": {
+            "listening": "Listening for your answer…",
+            "userSpeaking": "You're speaking"
+          },
+          "speakNaturally": "Speak naturally into your microphone. Click <b>Done</b> when finished to submit your spoken answer.",
+          "listenFirst": "Listen to the question…",
+          "you": "You",
+          "micActive": "Mic active",
+          "micProblem": "Mic unavailable",
+          "recordingTimer": "Recording • {{time}}"
+        }
+      },
+      "fullscreen": {
+        "noticeTitle": "The interview runs in fullscreen",
+        "noticeBody": "When you select {{action}}, the interview fills your screen and the browser hides its tabs and toolbars. If you leave fullscreen during the questions, for example with Esc, the question is hidden and the interview pauses until you return.",
+        "unsupportedTitle": "Fullscreen isn't available in this browser",
+        "unsupportedBody": "The interview will continue in a normal browser window.",
+        "requestFailedTitle": "Fullscreen didn't start",
+        "requestFailedBody": "Your browser didn't switch to fullscreen, so the interview hasn't started. Select {{action}} to try again. If it keeps happening, allow fullscreen for this site in your browser settings, or use another desktop browser.",
+        "warningTitle": "Please return to fullscreen",
+        "warningBody": "Please return to fullscreen to continue the interview. The question is hidden and the interview is paused until you do.",
+        "return": "Return to fullscreen",
+        "restoreFailed": "Fullscreen didn't start. Please select Return to fullscreen again.",
+        "statusLabel": "Fullscreen"
+      },
+      "live": {
+        "errors": {
+          "recordingUnsupported": "This browser can't record audio from your microphone. Use a recent version of Chrome, Edge or Firefox.",
+          "emptyRecording": "No sound was recorded. Check your microphone, answer again and select Done.",
+          "recordingFailed": "Recording stopped unexpectedly. Check that your microphone is connected, then try recording again."
+        }
+      },
+      "result": {
+        "previewLabel": "Preview outcome",
+        "previewHint": "Sample states. The real outcome will come from the interview service.",
+        "tabs": {
+          "result": "Result",
+          "underReview": "Under review",
+          "resume": "Interrupted",
+          "cannotResume": "Can't resume",
+          "orientation": "Orientation"
+        },
+        "title": "Your Interview Result",
+        "subtitle": "Your {{type}} result is ready.",
+        "confirmed": "Confirmed",
+        "finalLevel": "Final level",
+        "levelNote": "This level will be used for your InternsHub journey in the selected track.",
+        "appeal": "Appeal Result",
+        "appealNote": "You can submit an appeal within {{days}} days of receiving your result.",
+        "underReview": {
+          "title": "Your Interview Is Under Review",
+          "subtitle": "Your interview has been completed and is being reviewed before your final result is confirmed.",
+          "badge": "Under Review",
+          "progressTitle": "Review in progress",
+          "progressBody": "You'll be notified when your final result is available.",
+          "note": "You can check your interview status here later."
+        },
+        "resume": {
+          "title": "Resume Interview",
+          "subtitle": "Your interview was interrupted before it was completed.",
+          "badge": "Interrupted",
+          "availableTitle": "Resume available",
+          "availableBody": "You can resume this interview within {{hours}} hour of the interruption.",
+          "timeRemaining": "Time remaining:",
+          "minutes": "{{count}} minutes",
+          "attempts": "Resume attempts:",
+          "attemptsValue": "{{used}} of {{total}}",
+          "attemptsLeft": "{{count}} attempts remaining",
+          "action": "Resume Interview",
+          "note": "You'll repeat the device check, then continue from question {{number}}."
+        },
+        "cannotResume": {
+          "title": "Interview Can't Be Resumed",
+          "subtitle": "This interview attempt has been closed as incomplete.",
+          "badge": "Incomplete",
+          "expired": "The {{hours}}-hour resume window has expired.",
+          "retakeTitle": "Retake available after {{hours}} hours",
+          "retakeBody": "You can start a new interview attempt after the waiting period has elapsed.",
+          "nextSession": "Next eligible session",
+          "countdown": "In {{hours}} hours, {{minutes}} minutes",
+          "note": "Your previous attempt will remain marked as incomplete."
+        },
+        "orientation": {
+          "title": "AI Interview",
+          "subtitle": "Review your orientation result and next step.",
+          "badge": "Completed",
+          "resultTitle": "Result: Fit",
+          "resultBody": "Your selected track appears to be a good fit.",
+          "advisoryTitle": "This result is advisory only.",
+          "advisoryBody": "You can still continue with your selected track.",
+          "nextTitle": "Next Step",
+          "nextBody": "Your orientation is complete."
+        }
+      },
+      "appeal": {
+        "title": "Appeal Interview Result",
+        "subtitle": "Request a review of your confirmed {{type}} level.",
+        "currentLevel": "Current level",
+        "windowTitle": "Appeal available within {{days}} days of result confirmation.",
+        "windowBody": "Requests submitted after {{days}} days cannot be accepted.",
+        "reasonLabel": "Why would you like this result reviewed?",
+        "reasonHint": "Briefly explain why you believe your interview level should be reviewed.",
+        "placeholder": "Write your reason here…",
+        "counter": "{{count}} / {{max}} characters",
+        "reasonRequired": "Enter a reason to submit your appeal.",
+        "reviewerTitle": "Your appeal will be reviewed by a different reviewer.",
+        "reviewerBody": "The appeal decision will be final.",
+        "submit": "Submit Appeal",
+        "cancel": "Cancel",
+        "notSent": "Preview only: appeals are not sent anywhere yet.",
+        "submitted": {
+          "eyebrow": "Appeal confirmation",
+          "title": "Appeal Submitted",
+          "subtitle": "Your request to review your {{type}} result has been submitted.",
+          "badge": "Under Review",
+          "reviewTitle": "Your appeal is under review",
+          "reviewBody": "A different reviewer will review your interview result.",
+          "final": "The appeal decision will be final.",
+          "viewDecision": "View sample decision"
+        },
+        "decision": {
+          "title": "Appeal Decision",
+          "subtitle": "Your appeal has been reviewed and a final decision has been made.",
+          "final": "Final",
+          "outcomeLabel": "Sample decision",
+          "changed": "Level Changed",
+          "unchanged": "Level Unchanged",
+          "previousLevel": "Previous level",
+          "initial": "Initial",
+          "finalLevel": "Final level",
+          "updated": "Updated",
+          "changedNote": "Your interview level has been updated following the appeal review.",
+          "unchangedNote": "Your interview level stays the same following the appeal review.",
+          "isFinal": "This appeal decision is final."
+        }
+      }
+    }
+  }
+}

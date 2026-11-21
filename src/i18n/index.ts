@@ -1,86 +1,155 @@
-import i18n from 'i18next'
-import { initReactI18next } from 'react-i18next'
-import arTranslation from './locales/ar.json'
-import employerAr from './locales/employer.ar.json'
-import employerEn from './locales/employer.en.json'
-import enTranslation from './locales/en.json'
-import recruitmentAr from './locales/recruitment.ar.json'
-import recruitmentEn from './locales/recruitment.en.json'
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
 
-// Locale files by flow (each has an English and an Arabic file with the same keys):
-//   en/ar.json                public site, auth, onboarding and the student dashboard (`dashboard.*`)
-//   employer.en/ar.json       employer decision/agreement flow (PR #32), merged at the top level
-//   recruitment.en/ar.json    student recruitment flow (PR #31), nested under `recruitment`
-// The legacy employer prototype (PR #30) has hardcoded English text and no locale file.
-// Employer keys are spread over the base keys, so a new top-level employer key with the same
-// name as a base key would replace it; today only `nav` overlaps, and it is merged explicitly.
-const mergeEmployerTranslations = (
-  base: typeof enTranslation,
-  employer: typeof employerEn,
-): typeof enTranslation => ({
-  ...base,
-  ...employer,
-  nav: { ...base.nav, ...employer.nav },
-})
+import commonEn from '@/i18n/locales/en/common.json';
+import commonAr from '@/i18n/locales/ar/common.json';
 
-const getInitialLanguage = (): string => {
+import landingEn from '@/features/landing/locales/en.json';
+import landingAr from '@/features/landing/locales/ar.json';
+import authenticationEn from '@/features/authentication/locales/en.json';
+import authenticationAr from '@/features/authentication/locales/ar.json';
+import onboardingEn from '@/features/onboarding/locales/en.json';
+import onboardingAr from '@/features/onboarding/locales/ar.json';
+import recruitmentEn from '@/features/recruitment/locales/en.json';
+import recruitmentAr from '@/features/recruitment/locales/ar.json';
+import coursesEn from '@/features/courses/locales/en.json';
+import coursesAr from '@/features/courses/locales/ar.json';
+import internshipsEn from '@/features/internships/locales/en.json';
+import internshipsAr from '@/features/internships/locales/ar.json';
+import mentorshipEn from '@/features/mentorship/locales/en.json';
+import mentorshipAr from '@/features/mentorship/locales/ar.json';
+
+export const SUPPORTED_LANGUAGES = ['en', 'ar'] as const;
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+
+export const I18N_NAMESPACES = [
+  'translation',
+  'common',
+  'landing',
+  'authentication',
+  'onboarding',
+  'recruitment',
+  'courses',
+  'internships',
+  'mentorship',
+] as const;
+
+const STORAGE_KEY = 'edtech_lang';
+
+function composeDefaultBundle(
+  common: typeof commonEn,
+  landing: typeof landingEn,
+  authentication: typeof authenticationEn,
+  onboarding: typeof onboardingEn,
+  recruitment: typeof recruitmentEn,
+  courses: typeof coursesEn,
+  internships: typeof internshipsEn,
+  mentorship: typeof mentorshipEn,
+) {
+  return {
+    ...common,
+    ...landing,
+    ...authentication,
+    ...onboarding,
+    ...courses,
+    ...internships,
+    ...mentorship,
+    ...recruitment,
+    // Explicitly merge overlapping top-level namespaces so no keys are clobbered
+    nav: {
+      ...common.nav,
+      ...recruitment.nav,
+    },
+    common: {
+      ...recruitment.common,
+      ...common.common,
+    },
+  };
+}
+
+const getInitialLanguage = (): SupportedLanguage => {
   if (typeof window !== 'undefined' && window.localStorage) {
-    const saved = window.localStorage.getItem('edtech_lang')
-    if (saved && (saved === 'en' || saved === 'ar')) {
-      return saved
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved === 'en' || saved === 'ar') {
+      return saved;
     }
   }
-  return 'en'
-}
+  return 'en';
+};
 
-const initialLanguage = getInitialLanguage()
+const initialLanguage = getInitialLanguage();
 
-i18n
-  .use(initReactI18next)
-  .init({
-    // Exactly one entry per language: add a flow's strings into these objects rather than
-    // declaring `en` / `ar` again (a repeated key silently replaces the earlier entry).
-    resources: {
-      en: {
-        translation: {
-          ...mergeEmployerTranslations(enTranslation, employerEn),
-          recruitment: recruitmentEn,
-        },
-      },
-      ar: {
-        translation: {
-          ...mergeEmployerTranslations(arTranslation, employerAr),
-          recruitment: recruitmentAr,
-        },
-      },
+void i18n.use(initReactI18next).init({
+  ns: [...I18N_NAMESPACES],
+  defaultNS: 'translation',
+  fallbackNS: 'common',
+  resources: {
+    en: {
+      translation: composeDefaultBundle(
+        commonEn,
+        landingEn,
+        authenticationEn,
+        onboardingEn,
+        recruitmentEn,
+        coursesEn,
+        internshipsEn,
+        mentorshipEn,
+      ),
+      common: commonEn,
+      landing: landingEn,
+      authentication: authenticationEn,
+      onboarding: onboardingEn,
+      recruitment: recruitmentEn,
+      courses: coursesEn,
+      internships: internshipsEn,
+      mentorship: mentorshipEn,
     },
-    lng: initialLanguage,
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false, // React already escapes values
+    ar: {
+      translation: composeDefaultBundle(
+        commonAr,
+        landingAr,
+        authenticationAr,
+        onboardingAr,
+        recruitmentAr,
+        coursesAr,
+        internshipsAr,
+        mentorshipAr,
+      ),
+      common: commonAr,
+      landing: landingAr,
+      authentication: authenticationAr,
+      onboarding: onboardingAr,
+      recruitment: recruitmentAr,
+      courses: coursesAr,
+      internships: internshipsAr,
+      mentorship: mentorshipAr,
     },
-    react: {
-      useSuspense: false, // Prevents SSG hydration suspense issues
-    },
-  })
+  },
+  lng: initialLanguage,
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false,
+  },
+  react: {
+    useSuspense: false,
+  },
+});
 
-export const updateHtmlDirection = (lang: string) => {
+export const updateHtmlDirection = (lang: string): void => {
   if (typeof document !== 'undefined') {
-    const dir = lang === 'ar' ? 'rtl' : 'ltr'
-    document.documentElement.setAttribute('dir', dir)
-    document.documentElement.setAttribute('lang', lang)
+    const dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', lang);
   }
-}
+};
 
-// Set direction on init
-updateHtmlDirection(initialLanguage)
+updateHtmlDirection(initialLanguage);
 
-// Update document direction on language changes
 i18n.on('languageChanged', (lng: string) => {
-  updateHtmlDirection(lng)
+  updateHtmlDirection(lng);
   if (typeof window !== 'undefined' && window.localStorage) {
-    window.localStorage.setItem('edtech_lang', lng)
+    window.localStorage.setItem(STORAGE_KEY, lng);
   }
-})
+});
 
-export default i18n
+export default i18n;

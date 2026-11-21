@@ -1,0 +1,128 @@
+import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+
+import calendarIcon from '@/assets/dashboard/ic-calendar-add.svg';
+import githubErrorIcon from '@/assets/dashboard/ic-github-error.svg';
+import clockIcon from '@/assets/dashboard/ic-clock.svg';
+import codeIcon from '@/assets/dashboard/ic-code.svg';
+import peopleIcon from '@/assets/dashboard/ic-people.svg';
+import securityIcon from '@/assets/dashboard/ic-security-time.svg';
+import verifyIcon from '@/assets/dashboard/ic-verify.svg';
+import { CARD_LARGE, IconHeading, OUTLINE_CARD, StatusPill } from '@/features/internships/components/primitives';
+import { MemberAvatar } from '@/features/internships/components/SquadMemberCard';
+import { WAITING_AVATARS, type GithubStatus, type WaitingState } from '@/features/internships/data/internshipDashboard';
+import type { InternshipData } from '@/features/internships/hooks/useInternship';
+import { levelKey, waitingDay } from '@/features/internships/utils/internship';
+
+import { GithubUsernameCard } from '@/features/internships/components/GithubUsernameCard';
+
+function PackageTimeline({ variant }: { variant: WaitingState['packageCard'] }) {
+  const { t } = useTranslation();
+  return (
+    <section aria-labelledby="package-title" className={`${OUTLINE_CARD} p-6`}>
+      <IconHeading icon={securityIcon} className="gap-2">
+        <h2 id="package-title" className="text-base font-semibold">
+          <Trans i18nKey={`dashboard.waiting.package.${variant}.title`} components={{ purple: <span className="text-[#42046b]" /> }} />
+        </h2>
+      </IconHeading>
+      <p className="mt-2 ps-8 text-xs font-semibold leading-[18px] text-[#828282]">
+        {t(`dashboard.waiting.package.${variant}.description`)}
+      </p>
+    </section>
+  );
+}
+
+const NEXT_STEPS = [
+  { key: 'forming', icon: peopleIcon },
+  { key: 'setup', icon: codeIcon },
+  { key: 'starts', icon: verifyIcon },
+] as const;
+
+function NextSteps() {
+  const { t } = useTranslation();
+  return (
+    <section aria-labelledby="next-steps-title" className={`${OUTLINE_CARD} p-6`}>
+      <h2 id="next-steps-title" className="text-xl font-semibold">{t('dashboard.waiting.nextTitle')}</h2>
+      <ol className="mt-3 flex flex-col gap-4">
+        {NEXT_STEPS.map(({ key, icon }, index) => (
+          <li key={key} className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <IconHeading icon={icon} className="gap-2">
+                <h3 className="text-base font-semibold text-[#42046b]">{t(`dashboard.waiting.next.${key}.title`, { number: index + 1 })}</h3>
+              </IconHeading>
+              <p className="mt-2 ps-8 text-xs font-semibold leading-[18px] text-[#828282]">{t(`dashboard.waiting.next.${key}.description`)}</p>
+            </div>
+            {index === 0 && <StatusPill>{t('dashboard.waiting.inProgress')}</StatusPill>}
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+// More than this many days on the waiting list shows the "taking longer" message.
+const USUAL_WAIT_DAYS = 7;
+
+export function FindingSquadView({ state, internship }: { state: WaitingState; internship: InternshipData }) {
+  const { t, i18n } = useTranslation();
+  const [githubStatus, setGithubStatus] = useState<GithubStatus>('add');
+  const day = waitingDay(internship.waitingSince, Date.now());
+  const delayed = day > USUAL_WAIT_DAYS;
+  const waitingDate = new Intl.DateTimeFormat(i18n.language, { year: 'numeric', month: 'long', day: 'numeric' })
+    .format(new Date(internship.waitingSince));
+  const level = internship.level ? t(`onboarding.interview.levels.${levelKey(internship.level)}`) : '—';
+
+  return (
+    <>
+      {githubStatus === 'invalid' && (
+        <div role="alert" className="flex items-center gap-3 rounded-[14px] border border-red-100 bg-[#fde5e5] p-4 text-xs text-[#a10000]">
+          <img src={githubErrorIcon} alt="" className="size-6 shrink-0" />
+          {t('dashboard.github.invalid.notification')}
+        </div>
+      )}
+    <section aria-labelledby="internship-title" className={`${CARD_LARGE} flex min-w-0 flex-col gap-6 p-4 sm:p-6`}>
+      <IconHeading icon={peopleIcon} className="gap-2">
+        <h1 id="internship-title" className="text-base font-bold">{t('dashboard.waiting.title')}</h1>
+      </IconHeading>
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <IconHeading icon={clockIcon}>
+            <h2 className="text-xl font-bold sm:text-2xl">
+              <Trans i18nKey="dashboard.waiting.finding" components={{ purple: <span className="text-[#42046b]" /> }} />
+            </h2>
+          </IconHeading>
+          <StatusPill>{t('dashboard.waiting.inProgress')}</StatusPill>
+        </div>
+        <p className="mt-1 text-xs font-semibold leading-[18px] text-[#737373]">{t('dashboard.waiting.description')}</p>
+      </div>
+      <ul aria-label={t('dashboard.waiting.avatars')} className="mx-auto grid w-full max-w-[840px] grid-cols-2 justify-items-center gap-x-2 gap-y-6 py-4 md:grid-cols-4">
+        {WAITING_AVATARS.map((avatar) => <li key={avatar}><MemberAvatar src={avatar} /></li>)}
+      </ul>
+      <dl className="flex flex-wrap justify-between gap-x-8 gap-y-5 sm:px-10">
+        {[
+          ['track', internship.trackName || '—'],
+          ['packageLabel', t('dashboard.waiting.months', { count: state.packageMonths })],
+          ['level', level],
+        ].map(([label, content]) => (
+          <div key={label} className="text-center">
+            <dt className="text-base font-bold">{t(`dashboard.waiting.${label}`)}</dt>
+            <dd className="mt-3 text-sm text-[#828282]"><bdi>{content}</bdi></dd>
+          </div>
+        ))}
+      </dl>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <IconHeading icon={calendarIcon} className="gap-3">
+          <p className="text-base font-semibold">{t('dashboard.waiting.since', { date: waitingDate })}</p>
+        </IconHeading>
+        <p className="text-sm font-semibold text-[#828282]">
+          {t(delayed ? 'dashboard.waiting.overSevenDays' : 'dashboard.waiting.day', { day })}
+        </p>
+        {delayed && <p className="w-full text-sm font-medium text-[#737373]">{t('dashboard.waiting.delayed')}</p>}
+      </div>
+      <PackageTimeline variant={state.packageCard} />
+      <NextSteps />
+      <GithubUsernameCard onStatusChange={setGithubStatus} />
+    </section>
+    </>
+  );
+}
