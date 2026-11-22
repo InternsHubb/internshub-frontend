@@ -1,0 +1,50 @@
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+  font-family: var(--font-sans);
+}
+
+html[lang='ar'],
+html[dir='rtl'] {
+  font-family: var(--font-arabic);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+    @apply bg-white font-sans text-ink antialiased;
+  }
+}
+
+/* Decorative & font helpers preserved for existing feature sections */
+.curved-shape {
+  border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+}
+
+.curved-shape-peach {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.arch-card-top {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+}
+
+.font-moul {
+  font-family: 'Moul', cursive, serif;
+}
+
+/* Scroll containers with hidden scrollbars */
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

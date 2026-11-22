@@ -1,0 +1,572 @@
+{
+  "dashboard": {
+    "home": {
+      "eyebrow": "من طالب إلى مسيرة تقنية",
+      "greeting": {
+        "morning": "صباح الخير يا {{name}}.",
+        "afternoon": "مساء الخير يا {{name}}.",
+        "evening": "مساء الخير يا {{name}}.",
+        "morningNoName": "صباح الخير.",
+        "afternoonNoName": "مساء الخير.",
+        "eveningNoName": "مساء الخير."
+      },
+      "next": {
+        "courses": "أكمل دورات مسارك لتفتح مقابلتك التقنية.",
+        "technicalInterview": "أنهيت دورات مسارك. مقابلتك التقنية هي الخطوة التالية.",
+        "review": "مقابلتك قيد المراجعة. سنبلغك بالنتيجة.",
+        "findingSquad": "أنت على قائمة الانتظار. نختار لك فريقًا مناسبًا.",
+        "squadForming": "فريقك قيد التكوين. سيبدأه مشرفك قريبًا.",
+        "squadActive": "مشروع فريقك جارٍ. واصل إنجاز مهام السبرنت."
+      },
+      "noEnrollment": "اختر باقة ومسارًا لتبدأ رحلتك.",
+      "continueLearning": "تابع التعلّم",
+      "openInternship": "افتح التدريب",
+      "continueOnboarding": "تابع إعداد حسابك",
+      "loading": "جارٍ التحميل…",
+      "loadError": "تعذّر تحميل هذا الآن.",
+      "retry": "أعد المحاولة",
+      "journey": {
+        "label": "رحلة تعلّمك",
+        "status": {
+          "done": "مكتملة",
+          "current": "الخطوة الحالية",
+          "upcoming": "قادمة"
+        },
+        "payment": "الدفع",
+        "paymentCaption": "تم",
+        "aiInterview": "مقابلة الذكاء الاصطناعي",
+        "aiInterviewCaption": "المستوى: {{level}}",
+        "aiInterviewPending": "النتيجة قيد الانتظار",
+        "courses": "الدورات",
+        "coursesCaption": "مكتمل {{value}}%",
+        "technicalInterview": "المقابلة التقنية",
+        "technicalInterviewCaption": "بعد الدورات",
+        "internship": "التدريب",
+        "internshipCaption": "مشروع الفريق",
+        "recruitment": "التوظيف",
+        "recruitmentCaption": "حسب الدرجة"
+      },
+      "todayTask": {
+        "eyebrow": "مهمة اليوم",
+        "due": "التسليم {{date}} · نهاية السبرنت",
+        "open": "افتح مهمة اليوم",
+        "emptyTitle": "لا توجد مهام بعد",
+        "emptyBody": "ستظهر مهامك هنا بعد انضمامك إلى فريق.",
+        "emptyForming": "ستظهر مهامك هنا بعد أن يبدأ مشرفك الفريق.",
+        "doneTitle": "أنجزت كل مهامك",
+        "doneBody": "لا توجد مهام مفتوحة مسندة إليك في السبرنت الحالي."
+      },
+      "nextSession": {
+        "eyebrow": "الجلسة القادمة",
+        "title": "جلسة فردية مع {{name}}",
+        "mentorFallback": "مرشدك",
+        "join": "انضم",
+        "joinUnavailable": "لم يُضَف رابط الاجتماع بعد.",
+        "emptyTitle": "لا توجد جلسة محجوزة",
+        "emptyBody": "احجز جلسة فردية مع مرشد.",
+        "book": "احجز"
+      },
+      "interview": {
+        "title": "نتيجة المقابلة",
+        "empty": "سيظهر مستواك هنا بعد تأكيد نتيجة مقابلتك.",
+        "levelNote": "فريقك ومهام مشروعك مناسبة لهذا المستوى."
+      },
+      "hub": {
+        "title": "مركزك",
+        "subtitle": "أربع خدمات ورحلة واحدة",
+        "courses": {
+          "title": "الدورات",
+          "statuses": {
+            "inProgress": "قيد التقدّم",
+            "completed": "مكتملة",
+            "notIncluded": "غير مشمولة",
+            "notStarted": "لم تبدأ"
+          },
+          "detail": "دورات مسار {{track}}",
+          "notIncludedDetail": "باقتك تنتقل مباشرة إلى التدريب.",
+          "noPackage": "مشمولة في باقتَي 6 و12 شهرًا.",
+          "progressLabel": "تقدّم الدورة",
+          "complete": "مكتمل {{value}}%"
+        },
+        "internship": {
+          "title": "التدريب",
+          "statuses": {
+            "locked": "مقفل",
+            "waiting": "قائمة الانتظار",
+            "forming": "قيد التكوين",
+            "active": "نشط"
+          },
+          "details": {
+            "courses": "يُفتح بعد مقابلتك التقنية",
+            "technicalInterview": "يُفتح بعد مقابلتك التقنية",
+            "review": "يُفتح بعد تأكيد نتيجة مقابلتك",
+            "findingSquad": "نختار لك فريقًا في مسار {{track}}",
+            "squadForming": "فريقك في مسار {{track}} قيد التكوين",
+            "squadActive": "مشروع فريقك في مسار {{track}} جارٍ",
+            "none": "يبدأ بعد اختيار باقة ودفع رسومها"
+          },
+          "extra": "مشروع حقيقي · إشراف من خبير"
+        },
+        "mentorship": {
+          "title": "الإرشاد",
+          "statuses": {
+            "booked": "محجوزة",
+            "none": "لا توجد جلسة"
+          },
+          "mentor": "المرشد: {{name}}",
+          "next": "الجلسة الفردية القادمة · {{date}}",
+          "empty": "لا توجد جلسة قادمة"
+        },
+        "recruitment": {
+          "title": "التوظيف",
+          "status": "حسب الدرجة",
+          "detail": "يُفتح بدرجة نهائية قوية",
+          "extra": "يُشارك ملفك مع شركاء التوظيف"
+        }
+      },
+      "squad": {
+        "title": "فريقك",
+        "viewAll": "عرض الكل ({{count}})",
+        "open": "افتح التدريب",
+        "empty": "سيظهر فريقك هنا بعد اختيار فريق لك.",
+        "you": "(أنت)"
+      }
+    },
+    "sidebar": {
+      "navLabel": "التنقل في لوحة التحكم",
+      "drawerDescription": "تصفح أقسام لوحة تحكم التدريب.",
+      "close": "إغلاق القائمة",
+      "toggle": "فتح القائمة أو طيها",
+      "toggleShortcut": "فتح القائمة أو طيها (Ctrl/Cmd + B)",
+      "dashboard": "لوحة التحكم",
+      "internship": "التدريب العملي",
+      "mySquad": "فريقي",
+      "courses": "الدورات",
+      "mentorship": "التوجيه المهني",
+      "recruitment": "التوظيف",
+      "sprints": "دورات العمل",
+      "progress": "التقدم",
+      "chat": "المحادثات",
+      "certificate": "الشهادة"
+    },
+    "topNav": {
+      "search": "بحث",
+      "searchPlaceholder": "ابحث...",
+      "darkMode": "داكن",
+      "darkModeLabel": "الوضع الداكن",
+      "darkModeUnavailable": "الوضع الداكن غير متاح بعد."
+    },
+    "journey": {
+      "courses": "الدورات",
+      "label": "رحلة التدريب العملي",
+      "technicalInterview": "المقابلة التقنية",
+      "waitingForSquad": "بانتظار الفريق",
+      "squadReady": "الفريق جاهز (قبل البدء)",
+      "project": "المشروع",
+      "done": "مكتمل"
+    },
+    "common": {
+      "percent": "{{value}} ٪"
+    },
+    "coursesStage": {
+      "inProgress": {
+        "title": "رحلة تدريبك تبدأ من هنا!",
+        "description": "أكمل دوراتك المطلوبة لتفتح الخطوة التالية نحو تدريبك.",
+        "stage1": "المرحلة 1 - الدورات",
+        "requiredTrack": "دورات المسار المطلوبة",
+        "continueLearning": "تابع تعلّم دوراتك المطلوبة.",
+        "stage2": "المرحلة 2 — التدريب",
+        "stage2Locked": "تُفتح بعد إكمال الدورات المطلوبة",
+        "stage2Hint": "يصبح تدريبك وفريقك متاحين هنا.",
+        "stage3": "المرحلة 3 — التخرّج",
+        "stage3Locked": "المرحلة الأخيرة",
+        "stage3Hint": "احصل على شهادات الدورات والتدريب والإرشاد.",
+        "cta": "تابع دوراتك"
+      },
+      "completed": {
+        "title": "أحسنت! لقد أكملت دوراتك",
+        "description": "أكملت كل دوراتك المطلوبة! حان الآن وقت المقابلة التقنية",
+        "cta": "ابدأ المقابلة التقنية",
+        "unavailable": "المقابلة التقنية غير متاحة من لوحة التحكم بعد."
+      }
+    },
+    "requiredCourses": {
+      "status": {
+        "locked": "مغلق",
+        "lockedInterview": "مغلق - أجرِ المقابلة التقنية",
+        "lockedReview": "مغلق - المقابلة قيد المراجعة",
+        "unlocked": "مفتوح"
+      },
+      "title": "التقدم في الدورات المطلوبة",
+      "locked": "مقفلة - أجرِ المقابلة التقنية"
+    },
+    "project": {
+      "yourProject": "مشروعك",
+      "squadProject": "مشروع فريق {{track}}",
+      "summary": "يبني فريقك مشروعًا حقيقيًا على دورات عمل أسبوعية بقيادة مشرفك ومراجعته.",
+      "startsSoon": "سيبدأ مشرفك المشروع عندما يكتمل الفريق.",
+      "open": "فتح المشروع",
+      "active": "نشط",
+      "completed": "مكتمل",
+      "teamLabel": "فريق المشروع",
+      "teamLeader": "قائد الفريق",
+      "notStartedTitle": "لم يبدأ مشروعك بعد",
+      "notStartedBody": "سيفتح المشروع هنا عندما يبدأ مشرفك فريقك.",
+      "backToInternship": "العودة إلى تدريبي العملي",
+      "details": "تفاصيل المشروع",
+      "detailsModalTitle": "نظرة عامة على مشروع الفريق",
+      "detailsModalDesc": "المواصفات الرئيسية والمخرجات وهيكلية العمل لمشروع فريقك النشط.",
+      "projectTrack": "مسار التخصص",
+      "projectLeader": "قائد الفريق التقني (سينيور)",
+      "sprintCycle": "دورة السبرنت",
+      "sprintCycleValue": "دورات أسبوعية (4 سبرنتات إجمالاً) مع مراجعات أجايل البرمجية",
+      "repositoryLabel": "مستودع الكود (GitHub)",
+      "projectScope": "نطاق المشروع وأهدافه",
+      "projectScopeText": "يعمل فريقك على بناء تطبيق فعلي بمستوى شركات الإنتاج وفق المعايير البرمجية الاحترافية. تعملون ضمن دورات أسبوعية، وتكتبون كوداً نظيفاً وقابلاً للصيانة، وتقدمون طلبات مراجعة كود (Pull Requests) لمشرفكم الخبير.",
+      "keyDeliverables": "المخرجات ومعايير الجودة",
+      "deliverable1": "بنية مكونات معيارية قابلة لإعادة الاستخدام ومتجاوبة بالكامل",
+      "deliverable2": "مسار عمل Git احترافي مع فروع منفصلة ومراجعة دقيقة لكل طلب كود",
+      "deliverable3": "الالتزام بمعايير إمكانية الوصول (a11y) والأداء العالي للواجهات",
+      "deliverable4": "عروض تقديمية أسبوعية للمخرجات واجتماعات تقييم ومراجعة",
+      "close": "إغلاق"
+    },
+    "internship": {
+      "loading": "جارٍ تحميل تدريبك العملي…",
+      "loadError": "تعذّر تحميل تدريبك العملي.",
+      "retry": "إعادة المحاولة",
+      "noneTitle": "لم يبدأ تدريبك العملي بعد",
+      "noneBody": "اختر باقة وأكمل التسجيل للانضمام إلى التدريب العملي.",
+      "noneCta": "متابعة التسجيل"
+    },
+    "review": {
+      "title": "المقابلة قيد المراجعة",
+      "description": "مقابلتك قيد المراجعة. يمكنك توقع تحديث خلال 7 أيام.",
+      "expected": "متوقع خلال 7 أيام"
+    },
+    "waiting": {
+      "title": "تدريبي العملي",
+      "finding": "جارٍ <purple>تشكيل فريقك</purple>",
+      "inProgress": "قيد التنفيذ",
+      "description": "نحن نجهز فريقك. سنبلغك عندما يصبح فريقك جاهزًا.",
+      "avatars": "فريقك القادم",
+      "track": "المسار",
+      "packageLabel": "الباقة",
+      "level": "المستوى",
+      "months_zero": "{{count}} شهر",
+      "months_one": "شهر واحد",
+      "months_two": "شهران",
+      "months_few": "{{count}} أشهر",
+      "months_many": "{{count}} شهرًا",
+      "months_other": "{{count}} شهر",
+      "since": "في الانتظار منذ {{date}}",
+      "day": "اليوم {{day}} من الانتظار",
+      "overSevenDays": "أكثر من 7 أيام من الانتظار",
+      "delayed": "يستغرق تشكيل الفريق وقتًا أطول من المعتاد لهذا المسار. سنبلغك بمجرد أن يصبح فريقك جاهزًا.",
+      "nextTitle": "ماذا يحدث بعد ذلك؟",
+      "package": {
+        "timeline": {
+          "title": "الجدول الزمني <purple>لباقتك</purple>",
+          "description": "تبدأ مدة باقتك عندما يبدأ فريقك. لا تُستهلك مدة الباقة أثناء الانتظار."
+        },
+        "active": {
+          "title": "<purple>باقتك</purple> نشطة",
+          "description": "مدة باقتك سارية منذ تاريخ الدفع."
+        }
+      },
+      "next": {
+        "forming": {
+          "title": "{{number}}. تشكيل الفريق",
+          "description": "نعمل على ضمك إلى الفريق المناسب."
+        },
+        "setup": {
+          "title": "{{number}}. المشرف يجهز المشروع",
+          "description": "يجهز المشرف المشروع لفريقك."
+        },
+        "starts": {
+          "title": "{{number}}. انطلاق فريقك",
+          "description": "تعرف على فريقك وابدأ مشروع التدريب العملي."
+        }
+      }
+    },
+    "github": {
+      "placeholder": "يرجى إدخال اسم المستخدم على GitHub",
+      "usernameLabel": "اسم المستخدم على GitHub",
+      "save": "حفظ اسم المستخدم",
+      "saving": "جارٍ الحفظ…",
+      "saveError": "تعذّر حفظ اسم المستخدم.",
+      "edit": "تعديل اسم المستخدم",
+      "add": {
+        "title": "أضف اسم المستخدم على GitHub",
+        "hint": "أضفه الآن لتوفير الوقت عندما يصبح فريقك جاهزًا."
+      },
+      "invalid": {
+        "title": "اسم المستخدم غير صالح",
+        "hint": "يرجى إدخال اسم مستخدم صالح",
+        "error": "اسم المستخدم غير صالح، عدّله الآن!",
+        "notification": "اسم المستخدم على GitHub غير صالح. يرجى إدخال اسم مستخدم صالح للانضمام إلى فريق."
+      },
+      "saved": {
+        "title": "تم حفظ اسم المستخدم على GitHub!",
+        "hint": "تم حفظ اسم المستخدم بنجاح. أنت جاهز للخطوة التالية."
+      }
+    },
+    "squad": {
+      "title": "<purple>فريقك</purple>",
+      "description": "تعرف على فريقك، واستكشف مشروعك، وأكمل قائمة استعداداتك قبل بدء المشروع.",
+      "seniorTitle": "مشرفك",
+      "seniorRole": "الدور: قائد الفريق",
+      "readinessTitle": "جاهزية <purple>الفريق</purple>",
+      "seatsFilled": "المقاعد المشغولة",
+      "seats": "{{value}}/{{max}} مقاعد",
+      "seniorPending": "سيُعيَّن المشرف قريبًا",
+      "startsWhenReady": "يبدأ مشرفك الفريق عندما تمتلئ كل المقاعد.",
+      "started": "بدأ فريقك. افتح المشروع لترى دورة العمل.",
+      "emptySeatName": "العضو {{number}}",
+      "emptySeatTrack": "المسار {{number}}",
+      "emptySeatGithub": "اسم المستخدم",
+      "emptySeatEmail": "عنوان Gmail",
+      "github": "GitHub",
+      "gmail": "Gmail",
+      "notice": {
+        "forming": "يجري تشكيل فريقك. سيبدأه مشرفك قريبًا.",
+        "allSet": "بدأ فريقك. مشروعك مفتوح الآن."
+      }
+    },
+    "layout": {
+      "loading": "جارٍ التحميل"
+    },
+    "sprint": {
+      "select": "اختيار السبرنت",
+      "current": "السبرنت {{number}} — الحالي",
+      "currentBadge": "الحالي",
+      "option": "السبرنت {{number}}",
+      "title": "السبرنت {{number}}",
+      "dates": "{{start}} - {{end}}",
+      "daysLeft_zero": "لم يتبقَّ أي يوم",
+      "daysLeft_one": "تبقّى يوم واحد",
+      "daysLeft_two": "تبقّى يومان",
+      "daysLeft_few": "تبقّى {{count}} أيام",
+      "daysLeft_many": "تبقّى {{count}} يومًا",
+      "daysLeft_other": "تبقّى {{count}} يوم",
+      "statuses": {
+        "Planning": "قيد التخطيط",
+        "Active": "نشط",
+        "Completed": "مكتمل"
+      },
+      "none": "لم يخطط مشرفك لأي سبرنت بعد.",
+      "tasksDone": "أُنجزت {{done}} من {{total}} مهمة",
+      "progressLabel": "تقدّم السبرنت",
+      "stats": {
+        "total": "إجمالي المهام",
+        "completed": "المهام المكتملة",
+        "remaining": "المهام المتبقية"
+      }
+    },
+    "links": {
+      "title": "روابط المشروع",
+      "repository": "مستودع الفريق",
+      "none": "سيظهر رابط مستودع فريقك هنا بعد إضافته."
+    },
+    "tasks": {
+      "title": "مهامي في هذا السبرنت",
+      "topTasks": "أهم مهامي",
+      "empty": "لا توجد مهام مفتوحة مسندة إليك في هذا السبرنت.",
+      "status": {
+        "todo": "للتنفيذ",
+        "inProgress": "قيد التنفيذ",
+        "inReview": "قيد المراجعة"
+      }
+    },
+    "board": {
+      "title": "لوحة المهام",
+      "empty": "لا توجد مهام هنا بعد.",
+      "moveTask": "نقل {{title}}",
+      "viewLabel": "عرض لوحة المهام",
+      "hint": "اسحب مهامك أو اختر حالتها لنقلها. تكتمل المهمة بعد موافقة مشرفك عليها.",
+      "moveError": "تعذّر نقل المهمة.",
+      "unassigned": "غير مسندة",
+      "pullRequest": "طلب الدمج",
+      "tabs": {
+        "mine": "مهامي",
+        "squad": "لوحة الفريق"
+      },
+      "columns": {
+        "todo": "مهام للتنفيذ",
+        "inProgress": "مهام قيد التنفيذ",
+        "inReview": "مهام قيد المراجعة",
+        "completed": "مهام مكتملة"
+      }
+    },
+    "courses": {
+      "search": {
+        "label": "ابحث في الدورات",
+        "placeholder": "ابحث عن الدورات والموضوعات والمدرّبين...",
+        "filter": "تصفية الدورات",
+        "close": "إغلاق",
+        "lockedTitle": "لا يمكنك البحث الآن!",
+        "lockedDescription": "الدورات غير مشمولة في باقتك الحالية لمدة 3 أشهر."
+      },
+      "empty": {
+        "title": "الدورات غير مشمولة في خطتك",
+        "description": "الدورات غير مشمولة في باقتك الحالية لمدة 3 أشهر.",
+        "upgradeDescription": "الدورات غير مشمولة في باقتك الحالية لمدة 3 أشهر. رقِّ خطتك لتحصل على كل الدورات وتواصل رحلة تعلّمك.",
+        "viewPlans": "عرض خطط الترقية"
+      }
+    },
+    "plans": {
+      "perMonth": "ج.م/شهرياً",
+      "startNow": "ابدأ الآن",
+      "currentBadge": "خطتك الحالية",
+      "currentPlan": "خطتك الحالية",
+      "upgradeNow": "رقِّ الآن",
+      "upgradePriceTitle": "سعر الترقية",
+      "amount": "{{value}} ج.م",
+      "upgradePriceHint": "ادفع الفرق فقط للترقية من باقتك الحالية.",
+      "upgradeWithPrice": "رقِّ الآن - {{value}} ج.م",
+      "paymentUnavailable": "الدفع الإلكتروني غير متاح بعد، لذلك لم تتغيّر خطتك.",
+      "quoteLoading": "جاري حساب سعر الترقية…",
+      "upgrading": "جاري تنفيذ الترقية…",
+      "upgradeSuccess": "تمت ترقية الخطة بنجاح!",
+      "quoteError": "تعذر حساب سعر الترقية. يرجى المحاولة مرة أخرى.",
+      "upgradeError": "فشلت عملية الترقية. يرجى المحاولة مرة أخرى.",
+      "noActiveEnrollment": "لم يتم العثور على اشتراك نشط للترقية."
+    },
+    "taskDetails": {
+      "viewTaskDetails": "عرض تفاصيل المهمة",
+      "backToProject": "العودة إلى مساحة عمل المشروع",
+      "steps": {
+        "todo": "قيد الانتظار",
+        "inProgress": "قيد التنفيذ",
+        "inReview": "قيد المراجعة",
+        "done": "مكتمل"
+      },
+      "yourProject": "مشروعك",
+      "projectTitle": "TaskFlow — تطبيق إدارة المهام",
+      "projectDesc": "بناء تطبيق إدارة المهام حيث يمكن للمستخدمين تنظيم المهام وتتبع التقدم والتعاون مع فريقهم.",
+      "active": "نشط",
+      "taskTitle": "إنشاء واجهة مستخدم قائمة المهام",
+      "uiUx": "UI/UX",
+      "storyPoints": "2 نقاط قصة",
+      "taskMeta": "مهمة #17 · سبرينت 2",
+      "taskDetailsHeading": "تفاصيل المهمة",
+      "taskDetailsDesc": "بناء واجهة قائمة المهام وفقاً لمتطلبات المشروع.",
+      "assignee": "المسند إليه",
+      "assigneeName": "ميرنا عادل",
+      "submitForReview": "إرسال للمراجعة",
+      "submitForReviewDesc": "أضف رابط طلب السحب (Pull Request) الخاص بك على GitHub.",
+      "prPlaceholder": "يرجى إضافة رابط الـ PR للمراجعة",
+      "submitPrBtn": "إرسال طلب السحب للمراجعة",
+      "submitting": "جاري الإرسال...",
+      "prNotice": "إضافة رابط الـ PR ينقل المهمة إلى قيد المراجعة تلقائياً.",
+      "prSuccess": "تم إرسال طلب السحب بنجاح! تم نقل المهمة إلى قيد المراجعة.",
+      "projectsLinks": "روابط المشاريع",
+      "editMyLink": "تعديل الرابط الخاص بي",
+      "editModalTitle": "تعديل رابط المشروع الخاص بك",
+      "editModalDesc": "قم بتحديث رابط المستودع أو التصميم المشترك مع فريقك.",
+      "linkLabel": "رابط المشروع",
+      "saveLink": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "linkSaved": "تم تحديث الرابط بنجاح!",
+      "waitingForReview": "في انتظار مراجعة المهندس المشرف (Senior)",
+      "openInGithub": "فتح في GitHub",
+      "currentLink": "الرابط الحالي",
+      "replaceLink": "استبدال الرابط",
+      "submittedTime": "وقت الإرسال {{time}}",
+      "defaultSubmittedTime": "وقت الإرسال 08:23 م",
+      "replaceModalTitle": "استبدال رابط طلب السحب",
+      "replaceModalDesc": "أرسل رابط طلب سحب (PR) جديد ليقوم المهندس المشرف بمراجعته.",
+      "newPrPlaceholder": "أدخل رابط GitHub PR الجديد",
+      "updatePrBtn": "تحديث رابط الـ PR",
+      "backToForm": "العودة لنموذج الإرسال",
+      "viewDoneStep": "عرض حالة الاعتماد (الخطوة التالية) ←",
+      "viewReviewStep": "العودة إلى حالة قيد المراجعة ←",
+      "readOnly": "للقراءة فقط",
+      "viewCompletedStep": "عرض الحالة النهائية (للقراءة فقط) ←",
+      "viewApprovedStep": "عرض حالة الاعتماد ←",
+      "viewProgressStep": "العودة إلى حالة قيد التنفيذ ←",
+      "readOnlyNotice": "تم إنهاء هذه المهمة وإغلاقها، وهي الآن للقراءة فقط.",
+      "viewFinalReview": "عرض المراجعة النهائية للمشروع",
+      "backToTaskDetails": "العودة إلى تفاصيل المهمة (مكتملة)"
+    },
+    "finalReview": {
+      "projectEndState": "مساحة عمل المشروع — الحالة النهائية",
+      "allTasksCompletedBanner": "اكتملت جميع مهام السبرنت الأخير · في مرحلة المراجعة النهائية",
+      "title": "في المراجعة النهائية",
+      "waiting": "قيد الانتظار",
+      "underFinalReview": "مشروعك قيد المراجعة النهائية",
+      "underFinalReviewDesc": "يقوم المشرف بمراجعة مشروعك النهائي. ستظهر النتيجة هنا بمجرد اكتمال المراجعة.",
+      "sprintNumber": "السبرنت 04",
+      "sprintDates": "10 أكتوبر - 17 أكتوبر 2026",
+      "sprintSelect": "السبرنت 4 — الحالي",
+      "sprintGoal": "هدف السبرنت",
+      "sprintGoalDesc": "بناء الميزات الأساسية لإدارة المهام.",
+      "tasksDone": "تم إنجاز 4 من أصل 11 مهمة",
+      "totalTasks": "إجمالي المهام",
+      "completedTasks": "المهام المكتملة",
+      "remainingTasks": "المهام المتبقية",
+      "storyPoint": "نقاط الجهد",
+      "taskBoard": "لوحة المهام",
+      "myTasks": "مهامي",
+      "squadBoard": "لوحة الفريق",
+      "allTasksCompleted": "اكتملت جميع المهام · السبرنت الأخير",
+      "allTasksCompletedDesc": "عمل رائع! لقد أكملت جميع مهامك لهذا السبرنت، وهذا هو السبرنت النهائي لمشروع التدريب الخاص بك.",
+      "readyForFinalReview": "مشروعك الآن جاهز للمراجعة النهائية من قبل المشرف الخاص بك.",
+      "switchState": "تبديل حالة المراجعة",
+      "stateWaiting": "1. قيد الانتظار",
+      "stateChanges": "2. تعديلات مطلوبة",
+      "stateApproved": "3. معتمد (ناجح)",
+      "stateRejected": "4. مرفوض",
+      "changesRequested": "تعديلات مطلوبة",
+      "needsChanges": "مشروعك يحتاج إلى بعض التعديلات",
+      "needsChangesDesc": "قام المشرف بمراجعة مشروعك وطلب إجراء تعديلات. يرجى إصلاح المشكلات أدناه وإعادة تقديم المشروع خلال سبرنت إضافي مدته أسبوع.",
+      "rejectionReasons": "أسباب الرفض",
+      "reason1": "بعض الميزات المطلوبة مفقودة أو غير مكتملة",
+      "reason1Detailed": "بعض الميزات المطلوبة مفقودة أو غير مكتملة.",
+      "reason2": "المشروع لا يلبي المتطلبات المحددة بشكل كامل ويحتاج إلى مزيد من التحسينات.",
+      "sprintEndsOn": "ينتهي السبرنت الإضافي في",
+      "goToBoard": "الانتقال إلى لوحة المهام",
+      "approvedBadge": "معتمد",
+      "congratsApproved": "تهانينا! تمت الموافقة على مشروعك.",
+      "congratsApprovedDesc": "لقد أكملت مشروع التدريب الخاص بك بنجاح. نتائجك النهائية جاهزة للعرض.",
+      "viewMyResults": "عرض نتائجي",
+      "notApprovedBadge": "غير معتمد",
+      "wasNotApproved": "لم تتم الموافقة على مشروعك",
+      "wasNotApprovedDesc": "تم رفض مشروعك بعد المراجعة الثانية. لن يتم إصدار شهادة تدريب لهذا المشروع.",
+      "contactSupportNotice": "إذا كانت لديك أسئلة أو كنت بحاجة إلى مساعدة، يرجى التواصل مع الدعم.",
+      "contactSupport": "التواصل مع الدعم",
+      "viewResultsPage": "عرض نتائجي ←"
+    },
+    "results": {
+      "title": "نتائجي",
+      "subtitle": "نظرة عامة على إتمام التدريب والأداء",
+      "backToReview": "العودة إلى المراجعة النهائية",
+      "yourPrefix": "درجتك",
+      "composite": "المركبة",
+      "scoreSuffix": "النهائية",
+      "scoreDesc": "تعتمد درجتك النهائية على نقاطك، ومعدل النجاح من المحاولة الأولى، وتقييم المشرف.",
+      "score": "تفاصيل",
+      "breakdown": "الدرجات",
+      "points": "النقاط",
+      "weight40": "الوزن: 40%",
+      "firstPassRate": "معدل القبول من المرة الأولى",
+      "seniorRating": "تقييم المشرف",
+      "weight20": "الوزن: 20%",
+      "project": "ملخص",
+      "summary": "المشروع",
+      "approvedPrs": "طلبات السحب المقبولة",
+      "storyPoints": "نقاط الجهد",
+      "sprints": "السبرنتات",
+      "certReady": "شهادتك جاهزة",
+      "certDesc": "عرض شهادة إتمام التدريب الخاصة بك.",
+      "viewCert": "عرض الشهادة",
+      "talentInvite": "تمت دعوتك إلى دليل المواهب!",
+      "talentDesc": "درجتك تؤهلك للانضمام إلى دليل المواهب والتوظيف.",
+      "viewInvite": "عرض الدعوة",
+      "certModalTitle": "شهادة التدريب",
+      "certModalSubtitle": "شهادة إتمام معتمدة · تطبيق TaskFlow",
+      "certAwardedTo": "شهادة تميز ممنوحة للمتدربة ميرنا عادل",
+      "certStatement": "لإتمام برنامج التدريب في تطوير الواجهات الأمامية وتصميم واجهة وتجربة المستخدم بنجاح بمعدل إجمالي 86%.",
+      "downloadCert": "تحميل الشهادة (PDF)"
+    }
+  }
+}

@@ -1,52 +1,73 @@
-import { fileURLToPath, URL } from "node:url";
+import { fileURLToPath, URL } from 'node:url';
 
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, loadEnv } from "vite";
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig, loadEnv } from 'vite';
 
-const DEFAULT_API_PROXY_TARGET = "https://api.16-171-93-217.sslip.io";
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiProxyTarget = env.API_PROXY_TARGET?.trim();
 
-export default defineConfig(({ mode }) => ({
-  plugins: [react(), tailwindcss()],
-  server: {
-    // The API only allows the production origin through CORS, so dev requests go through here.
-    // Deployed builds use the matching /api rewrite in vercel.json. `vite preview` reuses this proxy.
-    proxy: {
-      "/api": {
-        // API_PROXY_TARGET (no VITE_ prefix, so it never reaches the bundle) overrides the backend.
-        target: loadEnv(mode, process.cwd(), "").API_PROXY_TARGET || DEFAULT_API_PROXY_TARGET,
-        changeOrigin: true,
-        secure: true,
+  return {
+    plugins: [react(), tailwindcss()],
+    define: {
+      __API_PROXY_ACTIVE__: JSON.stringify(Boolean(apiProxyTarget)),
+    },
+    server: apiProxyTarget
+      ? {
+          proxy: {
+            '/api': {
+              target: apiProxyTarget,
+              changeOrigin: true,
+              secure: true,
+            },
+          },
+        }
+      : undefined,
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
-  },
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
-  build: {
-    target: "es2020",
-    cssCodeSplit: true,
-    chunkSizeWarningLimit: 600,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (
-            id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/') ||
-            id.includes('node_modules/react-router-dom/')
-          ) {
-            return 'vendor-react';
-          }
-          if (
-            id.includes('node_modules/i18next/') ||
-            id.includes('node_modules/react-i18next/')
-          ) {
-            return 'vendor-i18n';
-          }
+    build: {
+      target: 'es2020',
+      cssCodeSplit: true,
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            const normalizedId = id.replace(/\\/g, '/');
+            if (
+              normalizedId.includes('node_modules/react/') ||
+              normalizedId.includes('node_modules/react-dom/') ||
+              normalizedId.includes('node_modules/react-router-dom/')
+            ) {
+              return 'vendor-react';
+            }
+            if (
+              normalizedId.includes('node_modules/i18next/') ||
+              normalizedId.includes('node_modules/react-i18next/')
+            ) {
+              return 'vendor-i18n';
+            }
+            if (normalizedId.includes('node_modules/three/')) {
+              return 'vendor-three';
+            }
+            if (
+              normalizedId.includes('/locales/en/') ||
+              normalizedId.endsWith('/locales/en.json')
+            ) {
+              return 'locales-en';
+            }
+            if (
+              normalizedId.includes('/locales/ar/') ||
+              normalizedId.endsWith('/locales/ar.json')
+            ) {
+              return 'locales-ar';
+            }
+          },
         },
       },
     },
-  },
-}));
+  };
+});

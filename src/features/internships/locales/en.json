@@ -1,0 +1,564 @@
+{
+  "dashboard": {
+    "home": {
+      "eyebrow": "From student to a tech career",
+      "greeting": {
+        "morning": "Good morning, {{name}}.",
+        "afternoon": "Good afternoon, {{name}}.",
+        "evening": "Good evening, {{name}}.",
+        "morningNoName": "Good morning.",
+        "afternoonNoName": "Good afternoon.",
+        "eveningNoName": "Good evening."
+      },
+      "next": {
+        "courses": "Finish your track courses to unlock your technical interview.",
+        "technicalInterview": "Your track courses are done. Your technical interview comes next.",
+        "review": "Your interview is being reviewed. We'll let you know your result.",
+        "findingSquad": "You're on the waiting list. We're matching you with a squad.",
+        "squadForming": "Your squad is forming. Your Senior will start it soon.",
+        "squadActive": "Your squad project is under way. Keep your sprint tasks moving."
+      },
+      "noEnrollment": "Choose a package and track to start your journey.",
+      "continueLearning": "Continue learning",
+      "openInternship": "Open internship",
+      "continueOnboarding": "Continue onboarding",
+      "loading": "Loading…",
+      "loadError": "We couldn't load this right now.",
+      "retry": "Try again",
+      "journey": {
+        "label": "Your learning journey",
+        "status": {
+          "done": "done",
+          "current": "current step",
+          "upcoming": "upcoming"
+        },
+        "payment": "Payment",
+        "paymentCaption": "Done",
+        "aiInterview": "AI interview",
+        "aiInterviewCaption": "Level: {{level}}",
+        "aiInterviewPending": "Result pending",
+        "courses": "Courses",
+        "coursesCaption": "{{value}}% complete",
+        "technicalInterview": "Technical interview",
+        "technicalInterviewCaption": "After courses",
+        "internship": "Internship",
+        "internshipCaption": "Squad project",
+        "recruitment": "Recruitment",
+        "recruitmentCaption": "Score-gated"
+      },
+      "todayTask": {
+        "eyebrow": "Today's task",
+        "due": "Due {{date}} · end of sprint",
+        "open": "Open today's task",
+        "emptyTitle": "No tasks yet",
+        "emptyBody": "Your tasks appear here once you join a squad.",
+        "emptyForming": "Your tasks appear here once your Senior starts the squad.",
+        "doneTitle": "You're all caught up",
+        "doneBody": "No open tasks are assigned to you in the current sprint."
+      },
+      "nextSession": {
+        "eyebrow": "Next session",
+        "title": "1:1 with {{name}}",
+        "mentorFallback": "your mentor",
+        "join": "Join",
+        "joinUnavailable": "The meeting link hasn't been added yet.",
+        "emptyTitle": "No session booked",
+        "emptyBody": "Book a 1:1 session with a mentor.",
+        "book": "Book"
+      },
+      "interview": {
+        "title": "Interview result",
+        "empty": "Your interview level appears here once your result is confirmed.",
+        "levelNote": "Your squad and project tasks are matched to this level."
+      },
+      "hub": {
+        "title": "Your hub",
+        "subtitle": "Four services, one journey",
+        "courses": {
+          "title": "Courses",
+          "statuses": {
+            "inProgress": "In progress",
+            "completed": "Completed",
+            "notIncluded": "Not included",
+            "notStarted": "Not started"
+          },
+          "detail": "{{track}} track courses",
+          "notIncludedDetail": "Your package goes straight to the internship.",
+          "noPackage": "Included in the 6- and 12-month packages.",
+          "progressLabel": "Course progress",
+          "complete": "{{value}}% complete"
+        },
+        "internship": {
+          "title": "Internship",
+          "statuses": {
+            "locked": "Locked",
+            "waiting": "Waiting list",
+            "forming": "Forming",
+            "active": "Active"
+          },
+          "details": {
+            "courses": "Opens after your technical interview",
+            "technicalInterview": "Opens after your technical interview",
+            "review": "Opens once your interview result is confirmed",
+            "findingSquad": "Matching you with a {{track}} squad",
+            "squadForming": "Your {{track}} squad is forming",
+            "squadActive": "Your {{track}} squad project is under way",
+            "none": "Starts after you choose and pay for a package"
+          },
+          "extra": "Real project · senior supervision"
+        },
+        "mentorship": {
+          "title": "Mentorship",
+          "statuses": {
+            "booked": "Booked",
+            "none": "No session"
+          },
+          "mentor": "Mentor: {{name}}",
+          "next": "Next 1:1 · {{date}}",
+          "empty": "No upcoming session"
+        },
+        "recruitment": {
+          "title": "Recruitment",
+          "status": "Score-gated",
+          "detail": "Unlocks with a strong final score",
+          "extra": "Profile shared with hiring partners"
+        }
+      },
+      "squad": {
+        "title": "Your squad",
+        "viewAll": "View all {{count}}",
+        "open": "Open internship",
+        "empty": "Your squad appears here once you're matched.",
+        "you": "(you)"
+      }
+    },
+    "sidebar": {
+      "navLabel": "Dashboard navigation",
+      "drawerDescription": "Browse your internship dashboard sections.",
+      "close": "Close navigation",
+      "toggle": "Toggle navigation",
+      "toggleShortcut": "Toggle navigation (Ctrl/Cmd + B)",
+      "dashboard": "Dashboard",
+      "internship": "Internship",
+      "mySquad": "My Squad",
+      "courses": "Courses",
+      "mentorship": "Mentorship",
+      "recruitment": "Recruitment",
+      "sprints": "Sprints",
+      "progress": "Progress",
+      "chat": "Chat",
+      "certificate": "Certificate"
+    },
+    "topNav": {
+      "search": "Search",
+      "searchPlaceholder": "Search...",
+      "darkMode": "Dark",
+      "darkModeLabel": "Dark mode",
+      "darkModeUnavailable": "Dark mode is not available yet."
+    },
+    "journey": {
+      "courses": "Courses",
+      "label": "Internship journey",
+      "technicalInterview": "Technical Interview",
+      "waitingForSquad": "Waiting for squad",
+      "squadReady": "Squad ready (pre-start)",
+      "project": "Project",
+      "done": "Completed"
+    },
+    "common": {
+      "percent": "{{value}} %"
+    },
+    "coursesStage": {
+      "inProgress": {
+        "title": "Your internship journey starts here!",
+        "description": "Complete your required courses to unlock the next step toward your internship.",
+        "stage1": "Stage 1 - Courses",
+        "requiredTrack": "Required track courses",
+        "continueLearning": "Continue learning your required courses.",
+        "stage2": "Stage 2 — Internship",
+        "stage2Locked": "Unlocks after completing required courses",
+        "stage2Hint": "Your internship and squad become available here.",
+        "stage3": "Stage 3 — Graduation",
+        "stage3Locked": "Final stage",
+        "stage3Hint": "Collect your course, internship and mentorship certificates.",
+        "cta": "Continue Your Courses"
+      },
+      "completed": {
+        "title": "Great Job! You've Completed Your Courses",
+        "description": "You've completed all your required courses! Now it's time to take your Technical Interview",
+        "cta": "Start Technical Interview",
+        "unavailable": "The technical interview is not available from the dashboard yet."
+      }
+    },
+    "requiredCourses": {
+      "status": {
+        "locked": "Locked",
+        "lockedInterview": "Locked - Take Technical Interview",
+        "lockedReview": "Locked - Interview in Review",
+        "unlocked": "UNLOCKED"
+      },
+      "title": "Required Courses Progress",
+      "locked": "Locked - Take Technical Interview"
+    },
+    "project": {
+      "yourProject": "Your project",
+      "squadProject": "{{track}} squad project",
+      "summary": "Your squad builds a real project in weekly sprints, led and reviewed by your Senior.",
+      "startsSoon": "Your Senior will start the project once the squad is ready.",
+      "open": "Open project",
+      "active": "Active",
+      "completed": "Completed",
+      "teamLabel": "Project team",
+      "teamLeader": "Team Leader",
+      "notStartedTitle": "Your project hasn't started yet",
+      "notStartedBody": "The project opens here once your Senior starts your squad.",
+      "backToInternship": "Back to My Internship",
+      "details": "Project Details",
+      "detailsModalTitle": "Squad Project Overview",
+      "detailsModalDesc": "Key specifications, deliverables, and architecture for your squad's active project.",
+      "projectTrack": "Specialization Track",
+      "projectLeader": "Senior Team Leader",
+      "sprintCycle": "Sprint Cycle",
+      "sprintCycleValue": "Weekly sprints (4 sprints total) with agile code reviews",
+      "repositoryLabel": "Project Repository",
+      "projectScope": "Project Scope & Objectives",
+      "projectScopeText": "Your squad builds a production-grade application following professional engineering standards. You work in weekly sprints, write clean modular code, submit pull requests for code review by your Senior, and collaborate using Agile/Scrum practices.",
+      "keyDeliverables": "Key Deliverables & Standards",
+      "deliverable1": "Modular, reusable component architecture with full responsiveness",
+      "deliverable2": "Git workflow with branch isolation, meaningful commits, and PR reviews",
+      "deliverable3": "Adherence to accessibility (a11y) standards and performance best practices",
+      "deliverable4": "Sprint demos, standup updates, and retrospective learning sessions",
+      "close": "Close"
+    },
+    "internship": {
+      "loading": "Loading your internship…",
+      "loadError": "We couldn't load your internship.",
+      "retry": "Try again",
+      "noneTitle": "Your internship hasn't started yet",
+      "noneBody": "Choose a package and finish onboarding to join the internship.",
+      "noneCta": "Continue onboarding"
+    },
+    "review": {
+      "title": "Interview in Review",
+      "description": "Your interview is being reviewed. You can expect an update within 7 days.",
+      "expected": "Expected within 7 days"
+    },
+    "waiting": {
+      "title": "My Internship",
+      "finding": "<purple>Finding</purple> Your <purple>Squad</purple>",
+      "inProgress": "In progress",
+      "description": "We're preparing your team. We'll notify you when your squad is ready.",
+      "avatars": "Your future squad",
+      "track": "TRACK",
+      "packageLabel": "PACKAGE",
+      "level": "LEVEL",
+      "months_one": "{{count}} Month",
+      "months_other": "{{count}} Months",
+      "since": "Waiting since {{date}}",
+      "day": "Day {{day}} of waiting",
+      "overSevenDays": "Over 7 Days of waiting",
+      "delayed": "Taking longer than usual for this track, we will notify you as soon as your squad is ready.",
+      "nextTitle": "What Happens Next?",
+      "package": {
+        "timeline": {
+          "title": "Your <purple>Package</purple> Timeline",
+          "description": "Your package time starts when your squad starts. No package time is used while you're waiting."
+        },
+        "active": {
+          "title": "Your <purple>package</purple> is active",
+          "description": "Your package has been running since your payment date."
+        }
+      },
+      "next": {
+        "forming": {
+          "title": "{{number}}. Squad Forming",
+          "description": "We're matching you with your squad."
+        },
+        "setup": {
+          "title": "{{number}}. Senior Sets Up the Project",
+          "description": "Your Senior prepares the project for your team."
+        },
+        "starts": {
+          "title": "{{number}}. Your Squad Starts",
+          "description": "Meet your team and begin your internship project."
+        }
+      }
+    },
+    "github": {
+      "placeholder": "Please enter your GitHub username",
+      "usernameLabel": "GitHub username",
+      "save": "Save Username",
+      "saving": "Saving…",
+      "saveError": "We couldn't save your username.",
+      "edit": "Edit Username",
+      "add": {
+        "title": "Add Your GitHub Username",
+        "hint": "Add it now to save time when your squad is ready."
+      },
+      "invalid": {
+        "title": "Invalid user name",
+        "hint": "Please enter valid username",
+        "error": "Invalid username edit it now!",
+        "notification": "Invalid GitHub username. Please enter a valid GitHub username to join a squad."
+      },
+      "saved": {
+        "title": "GitHub username saved!",
+        "hint": "Your username has been saved successfully. You're all set for the next step."
+      }
+    },
+    "squad": {
+      "title": "Your <purple>Squad</purple>",
+      "description": "Meet your squad, explore your project, and complete your checklist before the project starts.",
+      "seniorTitle": "Your Senior",
+      "seniorRole": "role : Team Leader",
+      "readinessTitle": "<purple>Squad</purple> Readiness",
+      "seatsFilled": "Seats filled",
+      "seats": "{{value}}/{{max}} Seats",
+      "seniorPending": "Senior to be assigned",
+      "startsWhenReady": "Your Senior starts the squad once every seat is filled.",
+      "started": "Your squad has started. Open the project to see your sprint.",
+      "emptySeatName": "Member {{number}}",
+      "emptySeatTrack": "TRACK {{number}}",
+      "emptySeatGithub": "Username",
+      "emptySeatEmail": "Gmail address",
+      "github": "GitHub",
+      "gmail": "Gmail",
+      "notice": {
+        "forming": "Your squad is forming. Your Senior will start it soon.",
+        "allSet": "Your squad has started. Your project is open."
+      }
+    },
+    "layout": {
+      "loading": "Loading"
+    },
+    "sprint": {
+      "select": "Select sprint",
+      "current": "Sprint {{number}} — Current",
+      "currentBadge": "Current",
+      "option": "Sprint {{number}}",
+      "title": "Sprints {{number}}",
+      "dates": "{{start}} - {{end}}",
+      "daysLeft_one": "{{count}} day left",
+      "daysLeft_other": "{{count}} days left",
+      "statuses": {
+        "Planning": "Planning",
+        "Active": "Active",
+        "Completed": "Completed"
+      },
+      "none": "Your Senior hasn't planned a sprint yet.",
+      "tasksDone": "{{done}} of {{total}} tasks done",
+      "progressLabel": "Sprint progress",
+      "stats": {
+        "total": "total tasks",
+        "completed": "Completed tasks",
+        "remaining": "Remaining tasks"
+      }
+    },
+    "links": {
+      "title": "Projects Links",
+      "repository": "Squad repository",
+      "none": "Your squad's repository link will appear here once it's added."
+    },
+    "tasks": {
+      "title": "My Tasks This Sprint",
+      "topTasks": "My Top Tasks",
+      "empty": "No open tasks assigned to you in this sprint.",
+      "status": {
+        "todo": "to do",
+        "inProgress": "In Progress",
+        "inReview": "In Review"
+      }
+    },
+    "board": {
+      "title": "Task Board",
+      "empty": "No tasks here yet.",
+      "moveTask": "Move {{title}}",
+      "viewLabel": "Task board view",
+      "hint": "Drag your tasks or choose their status to move them. A task is completed once your Senior approves it.",
+      "moveError": "We couldn't move the task.",
+      "unassigned": "Unassigned",
+      "pullRequest": "Pull request",
+      "tabs": {
+        "mine": "My tasks",
+        "squad": "Squad board"
+      },
+      "columns": {
+        "todo": "Task to do",
+        "inProgress": "Tasks in progress",
+        "inReview": "Tasks in review",
+        "completed": "Completed tasks"
+      }
+    },
+    "courses": {
+      "search": {
+        "label": "Search courses",
+        "placeholder": "Search courses, topics, instructors...",
+        "filter": "Filter courses",
+        "close": "Close",
+        "lockedTitle": "You can’t search right now!",
+        "lockedDescription": "Courses aren’t included in your current 3-month package."
+      },
+      "empty": {
+        "title": "Courses Not Included in Your Plan",
+        "description": "Courses aren’t included in your current 3-month package.",
+        "upgradeDescription": "Courses aren’t included in your current 3-month package. Upgrade your plan to unlock access to all courses and continue your learning journey.",
+        "viewPlans": "View upgrade plans"
+      }
+    },
+    "plans": {
+      "perMonth": "EGP/Month",
+      "startNow": "Start Now",
+      "currentBadge": "Current plan",
+      "currentPlan": "Your Current Plan",
+      "upgradeNow": "Upgrade Now",
+      "upgradePriceTitle": "Your Upgrade Price",
+      "amount": "{{value}} EGP",
+      "upgradePriceHint": "Pay only the difference to upgrade from your current package.",
+      "upgradeWithPrice": "Upgrade Now - {{value}} EGP",
+      "paymentUnavailable": "Online payment isn't available yet, so your plan hasn't changed.",
+      "quoteLoading": "Calculating upgrade price…",
+      "upgrading": "Processing upgrade…",
+      "upgradeSuccess": "Plan upgraded successfully!",
+      "quoteError": "Unable to calculate upgrade price. Please try again.",
+      "upgradeError": "Failed to apply upgrade. Please try again.",
+      "noActiveEnrollment": "No active enrollment found to upgrade."
+    },
+    "taskDetails": {
+      "viewTaskDetails": "View Task Details",
+      "backToProject": "Back to Project Workspace",
+      "steps": {
+        "todo": "To Do",
+        "inProgress": "In Progress",
+        "inReview": "In Review",
+        "done": "Done"
+      },
+      "yourProject": "Your project",
+      "projectTitle": "TaskFlow — Task Management App",
+      "projectDesc": "Build a task management application where users can organize tasks, track progress, and collaborate with their team.",
+      "active": "Active",
+      "taskTitle": "Create Task List UI",
+      "uiUx": "UI/UX",
+      "storyPoints": "2 Story Points",
+      "taskMeta": "Task #17 · Sprint 2",
+      "taskDetailsHeading": "Task Details",
+      "taskDetailsDesc": "Build the task list interface according to the project requirements.",
+      "assignee": "Assignee",
+      "assigneeName": "Merna Adel",
+      "submitForReview": "Submit for Review",
+      "submitForReviewDesc": "Add the link to your Pull Request on GitHub.",
+      "prPlaceholder": "Please Add PR link for review",
+      "submitPrBtn": "Submit PR for Review",
+      "submitting": "Submitting...",
+      "prNotice": "Adding the PR link moves the task to In Review automatically.",
+      "prSuccess": "PR submitted successfully! Task moved to In Review.",
+      "projectsLinks": "Projects Links",
+      "editMyLink": "Edit my link",
+      "editModalTitle": "Edit Your Project Link",
+      "editModalDesc": "Update the repository or design deliverable link shared with your squad.",
+      "linkLabel": "Link URL",
+      "saveLink": "Save Changes",
+      "cancel": "Cancel",
+      "linkSaved": "Link updated successfully!",
+      "waitingForReview": "waiting for Senior review",
+      "openInGithub": "Open in github",
+      "currentLink": "Current Link",
+      "replaceLink": "Replace Link",
+      "submittedTime": "Submitted time {{time}}",
+      "defaultSubmittedTime": "Submitted time 08:23 pm",
+      "replaceModalTitle": "Replace PR Link",
+      "replaceModalDesc": "Submit a new Pull Request link for your Senior to review.",
+      "newPrPlaceholder": "Enter new GitHub PR link",
+      "updatePrBtn": "Update PR Link",
+      "backToForm": "Back to Form",
+      "viewDoneStep": "View Approved State (Next Step) →",
+      "viewReviewStep": "← Back to In Review State",
+      "readOnly": "Read Only",
+      "viewCompletedStep": "View Final Read-Only State →",
+      "viewApprovedStep": "View Approved State →",
+      "viewProgressStep": "← Back to In Progress State",
+      "readOnlyNotice": "This task has been finalized and closed. It is now read-only.",
+      "viewFinalReview": "View Final Project Review",
+      "backToTaskDetails": "Back to Task Details (Done)"
+    },
+    "finalReview": {
+      "projectEndState": "Project Workspace — End State",
+      "allTasksCompletedBanner": "Final Sprint Completed · In Final Review",
+      "title": "In Final Review",
+      "waiting": "Waiting",
+      "underFinalReview": "Your project is under final review",
+      "underFinalReviewDesc": "Your Senior is reviewing your final project. You'll see the result here once the review is complete.",
+      "sprintNumber": "Sprints 04",
+      "sprintDates": "oct 10 - oct 17, 2026",
+      "sprintSelect": "Sprint 4 — Current",
+      "sprintGoal": "SPRINT GOAL",
+      "sprintGoalDesc": "Build the core task management features.",
+      "tasksDone": "4 of 11 tasks done",
+      "totalTasks": "total tasks",
+      "completedTasks": "Completed tasks",
+      "remainingTasks": "Remaining tasks",
+      "storyPoint": "story point",
+      "taskBoard": "Task Board",
+      "myTasks": "My tasks",
+      "squadBoard": "Squad board",
+      "allTasksCompleted": "All tasks completed · Final Sprint",
+      "allTasksCompletedDesc": "Amazing work! You've completed all your tasks for this sprint, and this is the final sprint of your internship project.",
+      "readyForFinalReview": "Your project is now ready for final review by your Senior.",
+      "switchState": "Switch Review State",
+      "stateWaiting": "1. Waiting",
+      "stateChanges": "2. Changes Requested",
+      "stateApproved": "3. Approved (Success)",
+      "stateRejected": "4. Rejected",
+      "changesRequested": "Changes Requested",
+      "needsChanges": "Your project needs some changes",
+      "needsChangesDesc": "Your Senior reviewed your project and requested changes. Fix the issues below and resubmit your project within your additional one-week sprint.",
+      "rejectionReasons": "Rejection reasons",
+      "reason1": "Some required features are missing or incomplete",
+      "reason1Detailed": "Some required features are missing or incomplete.",
+      "reason2": "The project does not fully meet the specified requirements and needs further improvements.",
+      "sprintEndsOn": "Additional sprint ends on",
+      "goToBoard": "Go To Board",
+      "approvedBadge": "Approved",
+      "congratsApproved": "Congratulations! Your project is approved.",
+      "congratsApprovedDesc": "You’ve successfully completed your internship project. Your final results are ready to view.",
+      "viewMyResults": "View my results",
+      "notApprovedBadge": "Not Approved",
+      "wasNotApproved": "Your project was not approved",
+      "wasNotApprovedDesc": "Your project has been rejected after the second review. No internship certificate will be issued for this project.",
+      "contactSupportNotice": "If you have questions or need assistance, please contact support.",
+      "contactSupport": "Contact support",
+      "viewResultsPage": "View My Results →"
+    },
+    "results": {
+      "title": "My Results",
+      "subtitle": "Internship Completion & Performance Overview",
+      "backToReview": "Back to Final Review",
+      "yourPrefix": "YOUR",
+      "composite": "COMPOSITE",
+      "scoreSuffix": "SCORE",
+      "scoreDesc": "Your final score is based on your points, first-pass rate, and Senior rating.",
+      "score": "Score",
+      "breakdown": "breakdown",
+      "points": "Points",
+      "weight40": "Weight: 40%",
+      "firstPassRate": "First-pass rate",
+      "seniorRating": "Senior rating",
+      "weight20": "Weight: 20%",
+      "project": "Project",
+      "summary": "summary",
+      "approvedPrs": "Approved PRs",
+      "storyPoints": "story points",
+      "sprints": "Sprints",
+      "certReady": "Your certificate is ready",
+      "certDesc": "View your internship certificate.",
+      "viewCert": "View certificate",
+      "talentInvite": "You're invited to the Talent Directory!",
+      "talentDesc": "Your score qualifies you for the Talent Directory.",
+      "viewInvite": "View invitation",
+      "certModalTitle": "Internship Certificate",
+      "certModalSubtitle": "Certified Completion · TaskFlow App",
+      "certAwardedTo": "Certificate of Excellence Awarded to Merna Adel",
+      "certStatement": "For outstanding completion of the Frontend & UI/UX Internship Program with an overall score of 86%.",
+      "downloadCert": "Download PDF"
+    }
+  }
+}

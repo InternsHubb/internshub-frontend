@@ -1,0 +1,111 @@
+{
+  "nav": {
+    "brand": "InternsHub",
+    "homeLabel": "InternsHub — Home",
+    "home": "Home",
+    "courses": "Courses",
+    "internship": "Internship",
+    "recruitment": "Recruitment",
+    "mentorship": "Mentorship",
+    "pricing": "Pricing",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "login": "Log In",
+    "signUp": "Sign Up Free",
+    "dashboard": "Dashboard",
+    "account": "My Account",
+    "signOut": "Sign Out",
+    "toggleLanguage": "العربية",
+    "currentLanguage": "EN",
+    "languageSelector": "Select language",
+    "english": "English",
+    "arabic": "العربية",
+    "openMenu": "Open main menu",
+    "closeMenu": "Close main menu"
+  },
+  "footer": {
+    "brandDescription": "A learning platform that helps you build practical skills from zero to pro, with clear paths and real projects.",
+    "colEdtech": "EdTech",
+    "colCompany": "Company",
+    "colCourses": "Courses",
+    "colSupport": "Support",
+    "linkAbout": "About Us",
+    "linkBlog": "Blog",
+    "linkCareers": "Careers",
+    "linkPartners": "Partners",
+    "linkAllCourses": "All Courses",
+    "linkLearningPaths": "Learning Paths",
+    "linkInstructors": "Instructors",
+    "linkFreeCourses": "Free Courses",
+    "linkHelp": "Help Center",
+    "linkFaq": "FAQ",
+    "linkContact": "Contact Us",
+    "linkPrivacy": "Privacy Policy",
+    "copyright": "EdTech. All rights reserved by SpaceTech.",
+    "socialLabel": "Follow us",
+    "newsletterTitle": "Start Learning Today",
+    "newsletterBody": "Join a community of curious learners and get the latest courses, tips, and opportunities straight to your inbox.",
+    "newsletterEmailLabel": "Email address",
+    "newsletterPlaceholder": "Your email address",
+    "newsletterCta": "Join Now",
+    "newsletterInvalidEmail": "Enter a valid email address."
+  },
+  "account": {
+    "menuLabel": "Account menu for {{name}}",
+    "loading": "Loading your account…",
+    "fallbackName": "Your account",
+    "signOut": "Sign out"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "buttonWithCount_one": "Notifications, {{count}} unread",
+    "buttonWithCount_other": "Notifications, {{count}} unread",
+    "unreadCount_one": "{{count}} unread",
+    "unreadCount_other": "{{count}} unread",
+    "unread": "Unread",
+    "markAllRead": "Mark all as read",
+    "loading": "Loading notifications…",
+    "loadError": "Notifications couldn't be loaded",
+    "retry": "Try again",
+    "emptyTitle": "No notifications yet",
+    "emptyBody": "Updates about your CV, enrollment, interview, squad and mentorship will appear here.",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "signedOut": "Sign in to see your notifications."
+  },
+  "api": {
+    "errors": {
+      "network": "We couldn't reach the server. Check your connection and try again.",
+      "validation": "Please check the entered information and try again.",
+      "badRequest": "The request could not be processed. Please try again.",
+      "unauthorized": "Please sign in to continue.",
+      "forbidden": "You do not have permission to perform this action.",
+      "onboardingRequired": "Complete the remaining onboarding steps first.",
+      "notFound": "The requested item could not be found.",
+      "conflict": "This item or action conflicts with existing data. Please refresh and try again.",
+      "server": "Something went wrong on our side. Please try again in a moment.",
+      "unavailable": "The service is temporarily unavailable. Please try again in a few minutes.",
+      "unknown": "An unexpected error occurred. Please try again."
+    }
+  },
+  "common": {
+    "errors": {
+      "backendNotConnected": "This action requires backend integration, which is not connected yet.",
+      "timeout": "The request timed out. Please check your connection and try again.",
+      "network": "Unable to reach the server. Check your connection and try again.",
+      "badRequest": "Please check your input and try again.",
+      "unauthorized": "Please sign in to continue.",
+      "forbidden": "You do not have permission to perform this action.",
+      "notFound": "The requested item could not be found.",
+      "conflict": "This action conflicts with the current state. Please refresh and try again.",
+      "server": "Something went wrong on our side. Please try again later.",
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "goHome": "Back to Home",
+      "goDashboard": "Go to Dashboard"
+    }
+  }
+}

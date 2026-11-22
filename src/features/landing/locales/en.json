@@ -1,0 +1,327 @@
+{
+  "hero": {
+    "titlePart1": "Learn",
+    "titleHighlight1": "Skills.",
+    "titlePart2": "Gain",
+    "titleHighlight2": "Experience.",
+    "titlePart3": "Build Your",
+    "titleHighlight3": "Career.",
+    "subtitle": "Learn practical skills, work with mentors, experience real-world projects, and access internships and job opportunities — all designed to prepare you for the reality of the workplace.",
+    "cta": "Start Now",
+    "imageAlt": "University students collaborating together around a laptop"
+  },
+  "journey": {
+    "badgeTitle": "Everything",
+    "badgeHighlight": "You Need to Become Job-Ready",
+    "step1Title": "Learn",
+    "step1Desc": "Practical courses designed around the skills companies actually use.",
+    "step2Title": "Get Mentored",
+    "step2Desc": "Connect with experienced professionals who give you actionable feedback.",
+    "step3Title": "Gain Experience",
+    "step3Desc": "Work on realistic projects, that simulate real workplace experiences.",
+    "step4Title": "Find Opportunities",
+    "step4Desc": "Discover internships and job opportunities that match the skills you’ve built."
+  },
+  "experience": {
+    "titlePart1": "Experience Work",
+    "titleHighlight1": "",
+    "titlePart2": "Before You",
+    "titleHighlight2": "Get Hired",
+    "subtitle": "Experience realistic projects, teamwork, deadlines, and challenges inspired by real workplaces.",
+    "item1Title": "Work on Real Projects",
+    "item1Desc": "Take on realistic projects that mirror the kind of work you’ll encounter in a real company.",
+    "item2Title": "Collaborate as a Team",
+    "item2Desc": "Work with others, share responsibilities, and experience how real teams collaborate.",
+    "item3Title": "Work With Deadlines",
+    "item3Desc": "Manage tasks, prioritize your work, and deliver projects within realistic timelines.",
+    "item4Title": "Get Expert Feedback",
+    "item4Desc": "Receive feedback from mentors and professionals to improve your work and learn .",
+    "coursesCount": "1850+",
+    "coursesLabel": "Courses",
+    "verifiedBadge": "Verified Experience",
+    "mentorImageAlt": "Professional mentor in lavender jacket with laptop",
+    "headingBadge": "REAL CAREER EXPERIENCES & MENTORSHIP",
+    "mainHeading": "Learn From Those Who've Been There",
+    "mainHeadingPart1": "Learn From",
+    "mainHeadingHighlight": "Those Who've",
+    "mainHeadingPart2": "Been There",
+    "mainSubtitle": "Discover the journeys behind successful careers, connect with experienced professionals, and learn from the lessons that helped them grow.",
+    "allFilter": "All Specializations",
+    "frontendFilter": "Frontend",
+    "fullstackFilter": "Full-Stack & Systems",
+    "designFilter": "UI/UX & Product Design",
+    "devopsFilter": "Platform & Cloud",
+    "connectLinkedIn": "Connect on LinkedIn",
+    "exploreJourney": "Explore Their Journey",
+    "viewPortfolio": "Visit Portfolio",
+    "viewGithub": "GitHub",
+    "yearsExperience": "{{years}}+ Years Exp",
+    "verifiedJourney": "Verified Senior Journey",
+    "fictionalDisclaimer": "Fictional senior profile created for demonstration and career learning inspiration.",
+    "fictionalNoticeBadge": "Interactive Career Case Studies",
+    "fictionalNoticeText": "These profiles showcase realistic career progressions, challenges, and architectural decisions to guide your transition into tech.",
+    "backToSeniors": "Back to Senior Experiences",
+    "careerTimeline": "Career Progression Timeline",
+    "theStory": "The Professional Journey",
+    "keySkills": "Skills & Technologies Acquired",
+    "featuredWork": "Featured Projects & Impact",
+    "adviceSectionTitle": "Practical Advice for Beginners",
+    "adviceSectionSubtitle": "Concrete lessons learned the hard way to accelerate your own growth.",
+    "projectsShipped": "Projects Shipped",
+    "menteesGuided": "Mentees Guided",
+    "industryExperience": "Years Industry Exp",
+    "viewSeniorProfile": "Open Dedicated Journey Page",
+    "quickPreview": "Quick Journey Preview"
+  },
+  "internship": {
+    "title": "Get Real Experience",
+    "subtitle": "Build your experience through internships, projects, and career opportunities.",
+    "cta": "Explore Internship",
+    "applyBtn": "Select Track"
+  },
+  "landingInternships": {
+    "badge": "REAL-WORLD INTERNSHIP OPPORTUNITIES",
+    "title": "Hands-On Internships in Real Teams",
+    "subtitle": "Join realistic product squads, work with industry mentors, and build verified experience that stands out to tech employers.",
+    "cta": "Explore Internship Portal",
+    "applyBtn": "Apply via InternsHub",
+    "viewDetails": "View Full Details",
+    "collapse": "Collapse"
+  },
+  "landingRecruitment": {
+    "badge": "Recruitment",
+    "headingPrefix": "Find the ",
+    "headingHighlight1": "Right Talent",
+    "headingMiddle": "or Your ",
+    "headingHighlight2": "Next Opportunity",
+    "descriptionPrefix": "Whether you’re a student looking for your next career step or a company searching for top talent, ",
+    "descriptionBrand": "InternsHub",
+    "descriptionSuffix": " connects you with the right opportunities.",
+    "exploreJobs": "Explore Jobs",
+    "forEmployers": "For Employers",
+    "personAlt": "Smiling young professional student holding a laptop",
+    "cards": {
+      "opportunitiesTitle": "Great Opportunities",
+      "opportunitiesSubtitle": "for Your Future",
+      "companiesTitle": "Top Companies",
+      "companiesSubtitle": "Hiring",
+      "candidatesTitle": "Talented",
+      "candidatesSubtitle": "Candidates",
+      "featuredRole": "Frontend Developer",
+      "featuredMeta": "Cairo, Egypt • Internship",
+      "applyNow": "Apply Now"
+    },
+    "features": {
+      "studentsTitle": "For Students & Graduates",
+      "studentsDesc": "Discover real job opportunities, build your career, and get hired.",
+      "companiesTitle": "For Companies & Recruiters",
+      "companiesDesc": "Find qualified talent and build strong teams.",
+      "matchingTitle": "Smart Matching",
+      "matchingDesc": "AI-powered recommendations for the best fit.",
+      "supportTitle": "End-to-End Support",
+      "supportDesc": "From application to onboarding, we’re with you."
+    }
+  },
+  "pricing": {
+    "title": "Choose Your Growth Plan",
+    "subtitle": "Follow a flexible path built around your goals, skills, and career direction.",
+    "popularBadge": "MOST POPULAR",
+    "plan3mName": "3 Months",
+    "plan3mPrice": "3499 EGP/Month",
+    "plan3mFeature1": "Internship in an Agile squad",
+    "plan3mFeature2": "3 mentorship sessions",
+    "plan3mFeature3": "Internship certificate",
+    "plan3mBtn": "Choose Plan",
+    "plan6mName": "6 Months",
+    "plan6mPrice": "5499 EGP/Month",
+    "plan6mFeature1": "Access to all published courses",
+    "plan6mFeature2": "Internship included",
+    "plan6mFeature3": "6 mentorship sessions",
+    "plan6mFeature4": "Course & Internship certificates",
+    "plan6mBtn": "Get Started",
+    "plan12mName": "12 Months",
+    "plan12mPrice": "9,500 EGP/Package",
+    "plan12mFeature1": "6 months of courses first",
+    "plan12mFeature2": "Internship after the courses",
+    "plan12mFeature3": "12 mentorship sessions",
+    "plan12mFeature4": "3 certificates + Graduation page",
+    "plan12mBtn": "Choose Plan"
+  },
+  "testimonials": {
+    "title": "Trusted by Learners & Mentors",
+    "subtitle": "Join a growing community where learners and mentors connect, share, and grow together.",
+    "quote1": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
+    "user1Name": "Lina S.",
+    "user1Role": "Marketing Intern",
+    "quote2": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
+    "user2Name": "Lina S.",
+    "user2Role": "Marketing Intern",
+    "quote3": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
+    "user3Name": "Lina S.",
+    "user3Role": "Marketing Intern",
+    "quote4": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
+    "user4Name": "Lina S.",
+    "user4Role": "Marketing Intern",
+    "quote5": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
+    "user5Name": "Lina S.",
+    "user5Role": "Marketing Intern"
+  },
+  "videoShowcase": {
+    "badge": "Discover EdTech",
+    "title": "Know More About EdTech",
+    "subtitle": "Take a look inside our platform, collaborative community, and how we help learners turn practical skills into thriving tech careers.",
+    "playLabel": "Watch Overview",
+    "duration": "25 sec video",
+    "feature1": "Real Workplace Simulation",
+    "feature2": "1-on-1 Expert Mentorship",
+    "feature3": "Verified Experience Certificates"
+  },
+  "internshipPage": {
+    "hero": {
+      "badge": "INTERNSHIP PROGRAM",
+      "titleLine1": "Real Projects.",
+      "titleLine2": "Real <accent>Teams.</accent>",
+      "titleLine3": "Real Experience.",
+      "description": "Join an Agile squad, work on real projects, and gain hands-on experience with the guidance of a Senior Team Leader. Build your skills, collaborate with your team, and prepare for your career.",
+      "cta": "Start Now",
+      "imageAlt": "Four interns collaborating around a laptop"
+    },
+    "whyChooseUs": {
+      "eyebrow": "WHY CHOOSE US",
+      "title": "Weekly Sprints: Real tasks & PRs",
+      "subtitle": "Follow a clear path"
+    },
+    "steps": {
+      "signup": {
+        "title": "Sign Up & CV",
+        "description": "Verify email & phone, upload your CV, pick package and track."
+      },
+      "interview": {
+        "title": "AI Interview",
+        "description": "Desktop only: camera, mic and screen share. Level set by AI."
+      },
+      "squad": {
+        "title": "Pay & Join a Squad",
+        "description": "Pay after your result. Squad starts when full, led by a Senior."
+      },
+      "certify": {
+        "title": "Sprint & Certify",
+        "description": "Weekly sprints, Senior-approved PRs, then a verifiable certificate."
+      }
+    },
+    "tracks": {
+      "title": "Choose Your Track",
+      "description": "Pick your package and track. We place you in a squad automatically after your interview is confirmed.",
+      "searchLabel": "Search tracks",
+      "searchPlaceholder": "Search tracks...",
+      "searchButton": "Search",
+      "filtersLabel": "Filter tracks by category",
+      "filters": {
+        "all": "All",
+        "frontend": "Frontend",
+        "backend": "Backend",
+        "mobile": "Mobile",
+        "data": "Data"
+      },
+      "shown": "{{value}} tracks shown",
+      "emptyTitle": "No tracks match your search",
+      "emptyHint": "Try another keyword or category.",
+      "clearFilters": "Clear filters",
+      "seeAll": "See all tracks",
+      "items": {
+        "designSystems": {
+          "title": "Advanced Design Systems & Component Libraries",
+          "tag": "UI/UX Design",
+          "instructor": "Senior Alaa Khamis"
+        },
+        "react": {
+          "title": "React & Redux: From Basics to Advanced",
+          "tag": "Frontend Development",
+          "instructor": "Instructor Mia Chen"
+        },
+        "agile": {
+          "title": "Mastering Agile & Lean Methodologies",
+          "tag": "Product Management",
+          "instructor": "Lead Jordan Smith"
+        }
+      },
+      "card": {
+        "rated": "Rated",
+        "duration": "Duration",
+        "level": "Level",
+        "lessonsLabel": "Lessons",
+        "hours_one": "{{count}} hour",
+        "hours_other": "{{count}} hours",
+        "lessons_one": "{{count}} lesson",
+        "lessons_other": "{{count}} lessons",
+        "squadMembers": "{{value}} squad members",
+        "select": "Select Track",
+        "levels": {
+          "beginner": "Beginner",
+          "intermediate": "Intermediate",
+          "advanced": "Advanced"
+        }
+      }
+    },
+    "promo": {
+      "title": "Not sure which track is for you?",
+      "description": "12-month plans start with a short Orientation interview to check the track fits you.",
+      "cta": "Start Now"
+    },
+    "testimonials": {
+      "eyebrow": "Testimonials",
+      "title": "What Our Interns Say",
+      "descriptionLine1": "Real stories from learners who started their journey with us and achieved real results.",
+      "descriptionLine2": "Read their experiences and start your own journey.",
+      "rated": "Rated {{rating}} out of 5",
+      "items": {
+        "lina": {
+          "quote": "The internship gave me hands-on experience with live projects, which made learning much more engaging and practical.",
+          "name": "Lina S.",
+          "role": "Marketing Intern"
+        },
+        "jason": {
+          "quote": "I appreciated the mentorship from senior staff; their guidance helped me grow both technically and professionally.",
+          "name": "Jason M.",
+          "role": "Software Engineering Intern"
+        },
+        "priya": {
+          "quote": "The team was welcoming and inclusive, creating an environment where I felt comfortable asking questions and contributing ideas.",
+          "name": "Priya K.",
+          "role": "Design Intern"
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "QUESTIONS",
+      "title": "Frequently Asked Questions",
+      "description": "Everything you need to know before you start.",
+      "items": {
+        "whoCanJoin": {
+          "question": "Who can join InternsHub?",
+          "answer": "Anyone aged 18 or older. Verify your email and phone, upload your CV, and choose a package and a track."
+        },
+        "uploadCv": {
+          "question": "Do I need to upload a CV?",
+          "answer": "Yes. Uploading your CV is part of the sign-up step, before you pick your package and track."
+        },
+        "aiInterview": {
+          "question": "How does the AI interview work?",
+          "answer": "The interview runs on desktop only and uses your camera, microphone and screen share. Your level is set by AI."
+        },
+        "whenPay": {
+          "question": "When do I pay?",
+          "answer": "You pay after you receive your interview result."
+        },
+        "packageStart": {
+          "question": "When does my package time start?",
+          "answer": "Your squad starts once it is full, led by a Senior Team Leader."
+        },
+        "certificates": {
+          "question": "Which certificates will I get?",
+          "answer": "After your weekly sprints and Senior-approved PRs, you receive a verifiable certificate."
+        }
+      }
+    }
+  }
+}
